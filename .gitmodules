@@ -1,0 +1,3 @@
+[submodule "GABCtoMEI"]
+	path = GABCtoMEI
+	url = git@github.com:notkaramel/GABCtoMEI.git
