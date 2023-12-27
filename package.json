@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=/echoes/",
+    "deploy-gh": "vite build",
     "preview": "vite preview",
     "generate-docs": "jsdoc src"
   },
