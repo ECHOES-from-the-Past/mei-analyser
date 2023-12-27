@@ -79,31 +79,40 @@ export function load_MEI_file(file_name, order) {
 };
 
 export function parse_user_input() {
-  // let user_input = [];
   const user_input = document.getElementById('search-bar').value;
-  return 
+  return user_input.match(/-?\d/g).map(Number);
+}
+
+export function clear_all_highlight() {
+  const all_NC = document.querySelectorAll("g.nc");
+  all_NC.forEach(element => {
+    element.style.fill = 'black';
+    element.style.strokeWidth = '0px';
+  });
 }
 
 /**
 * 
 * @param {Array<Number>} search_AQ an array of number, parse from user's input
 */
-export function highlight_nc_to_search_AQ(MEI_file_path, search_AQ) {
-  const search_AQ_hardcode = [1, 2, 1]; // temporary hardcode
+export function highlight_nc_to_search_AQ(MEI_file_path) {
+  clear_all_highlight();
+  const search_array = parse_user_input(); 
   parse_MEI_AQ(MEI_file_path)
     .then((res) => res)
     .then((nc_arr) => {
+      let search_count = 0;
       // console.log(nc_arr);
       /**
        * nc is type NeumeComponentAQ
        * @param {NeumeComponentAQ[]} nc_arr
        */
       for (let i_nc = 0; i_nc < nc_arr.length; i_nc++) {
-        if(nc_arr[i_nc].loc == search_AQ_hardcode[0]) {
+        if(nc_arr[i_nc].loc == search_array[0]) {
           let i_search = 1;
           let search_found = [nc_arr[i_nc]];
-          do {
-            if(nc_arr[i_nc + i_search].loc == search_AQ_hardcode[i_search]) {
+          while (i_search < search_array.length) {
+            if(nc_arr[i_nc + i_search].loc == search_array[i_search]) {
               search_found.push(nc_arr[i_nc + i_search]);
               i_search++;
             } else {
@@ -111,14 +120,18 @@ export function highlight_nc_to_search_AQ(MEI_file_path, search_AQ) {
               search_found = [];
               break;
             }
-          } while (i_search < search_AQ_hardcode.length)
+          } 
           
           // highlight the search found
           for (const nc of search_found) {
             nc.highlight();
           }
+          search_count++;
+
         }
       }
+
+      document.getElementById("search-count").innerHTML = search_count;
     });
 }
 
