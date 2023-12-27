@@ -11,9 +11,15 @@
 </head>
 
 <body>
-  <input type="text" name="search-bar" id="search-bar">
-  <button type="button" onclick="loadSearch()">Search</button>
-  <div id="search-output"></div>
+  <p>
+    Aquitanian Search:
+    <input type="text" name="search-bar" id="search-bar" placeholder="e.g., 1 2 1">
+    <button type="button" onclick="load_search()">Search</button>
+    <span id="search-output">
+    </span>
+  </p>
+
+  <p>Hardcoded search for [1, 2, 1] ("Do" in "...do mi num hym...")</p>
   <div id="mei-display">
     <div class="mei-file" id="mei-file-1">
     </div>

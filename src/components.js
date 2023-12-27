@@ -13,7 +13,7 @@ class NeumeComponent {
 
     highlight() {
         const nc_svg = document.getElementById(this.id);
-        nc_svg.style.fill = 'red';
+        nc_svg.style.fill = 'hsl(276,69%,52%)';
     }
 
     unhighlight() {
