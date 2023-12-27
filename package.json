@@ -6,9 +6,13 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=/echoes/",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "generate-docs": "jsdoc src"
   },
   "devDependencies": {
     "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "jsdoc": "^4.0.2"
   }
 }
