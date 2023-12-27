@@ -2,3 +2,6 @@
 
 - A tool to analyse MEI files, highlighting sections and comparing them to other MEI files.
 - A part of project ECHOES from the Past: Unveiling a Lost Soundscape
+
+## Class Diagram
+![](https://mermaid.ink/img/pako:eNrFk0trwzAMx7-KMAy20hZ29a10x657ZKeRi-q4jcGP1JFHS-l3n50mfQW63hYCsqW_JesnvGPCFZJxJjTW9YvClUeTW4BCeSlIOQuzz9wmD0CjgWyrNS60hN3Bm75g1TpI2BjNVdHJ971zN450blGipdnWK1FzqMkru7rKdqyfs-ecwWA0alcxcFlxLoO545rwR94mTad-eGjTTp2pnJGWYOk8ZOuAXoJ1hAla7xaN2kZ19nEHhFjkXZEowWKq3LmrtOUwLdGjIOkvDrwJ-sEzsRPEYR7M4kr3pTSdTffRVcmifjqpKEo4ZJfwkzl0fs5n0PE5a7CHSnSxBtVkHRShVXiD0uROStqJhjfEn0oJtXBxCidJjP8LhMkRQm_643FPy2HjPBsyI71BVcTX2DSfs9hSnD_jcVnIJQZNOcvtPkoxkMu2VjBOPsghC1WBJNv3y_gSdR29Fdpv5057WShy_rV98cnsfwGFRz2V?type=png)
