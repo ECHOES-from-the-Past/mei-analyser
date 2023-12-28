@@ -33,10 +33,8 @@ jobs:
       - name: Set up Node
         uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 21
           cache: 'npm'
-      - name: Remove ARM `package-lock.json`
-        run: rm package-lock.json
       - name: Install dependencies
         run: npm install
       - name: Build
