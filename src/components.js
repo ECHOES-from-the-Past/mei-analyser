@@ -22,6 +22,11 @@ class NeumeComponent {
         const nc_svg = document.getElementById(this.id);
         nc_svg.style.fill = 'black';
     }
+
+    log() {
+        const nc_svg = document.getElementById(this.id);
+        console.log(nc_svg);
+    }
 }
 
 /**

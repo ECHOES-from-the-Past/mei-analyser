@@ -1,53 +1,64 @@
 import { NeumeComponentAQ, NeumeComponentSQ } from './components.js';
 
-async function parse_MEI_AQ(MEI_file_path) {
+/**
+ * A function that parses the MEI content of an Aquitanian chant and
+ * return an array of Aquitanian Neume Component (typeof `NeumeComponentAQ`)
+ * @param {MEI_content} MEI_content the content of the .mei file
+ * @returns {Array<NeumeComponentAQ>} an array of NeumeComponentAQ for Aquitanian
+ */
+function parse_MEI_AQ(MEI_content) {
   let mei_array = [];
-  await fetch(MEI_file_path)
-    .then((res) => res.text())
-    .then((mei) => {
-      // Parse the XML .mei file to mutable JS type
-      let parser = new DOMParser();
-      let htmldoc = parser.parseFromString(mei, "text/xml");
-      // Aquitanian
-      const staff_layer = htmldoc.querySelectorAll('syllable');
-      for (let syllable of staff_layer) {
-        const neume_components = syllable.querySelectorAll('nc');
 
-        for (const nc of neume_components) {
-          const nc_attributes = nc.attributes;
-          const nc_AQ = new NeumeComponentAQ(nc_attributes.getNamedItem("xml:id").nodeValue, nc_attributes.getNamedItem("loc").nodeValue, nc_attributes.getNamedItem('tilt'));
-          mei_array.push(nc_AQ);
-        }
-      }
-    });
+  // Parse the XML .mei file to mutable JS type
+  let parser = new DOMParser();
+  let htmldoc = parser.parseFromString(MEI_content, "text/xml");
+  // Aquitanian
+  const staff_layer = htmldoc.querySelectorAll('syllable');
+  for (let syllable of staff_layer) {
+    const neume_components = syllable.querySelectorAll('nc');
+
+    for (const nc of neume_components) {
+      const nc_attributes = nc.attributes;
+
+
+      const nc_AQ = new NeumeComponentAQ(nc_attributes.getNamedItem("xml:id").nodeValue, nc_attributes.getNamedItem("loc").nodeValue, nc_attributes.getNamedItem('tilt'));
+      mei_array.push(nc_AQ);
+    }
+  }
   return mei_array;
 }
 
-async function parse_MEI_SQ(MEI_file_path) {
-  let mei_array = [];
-  await fetch(MEI_file_path)
-    .then((res) => res.text())
-    .then((mei) => {
-      // Parse the XML .mei file to mutable JS type
-      let parser = new DOMParser();
-      let htmldoc = parser.parseFromString(mei, "text/xml");
-      // console.log(htmldoc);
-      // Aquitanian
-      const staff_layer = htmldoc.querySelectorAll('syllable');
-      for (let syllable of staff_layer) {
-        // console.log(syllable);
-        const neume_components = syllable.querySelectorAll('nc');
+/**
+ * A function that parses the MEI content of a Square notation chant and
+ * return an array of Square Neume Component (typeof `NeumeComponentSQ`)
+ * @param {MEI_content} MEI_content the content of the .mei file
+ * @returns {Array<NeumeComponentSQ>} an array of NeumeComponentSQ for Square notation
+ */
+function parse_MEI_SQ(MEI_content) {
+  let sq_mei_array = [];
+  // Parse the XML .mei file to mutable JS type
+  let parser = new DOMParser();
+  let htmldoc = parser.parseFromString(MEI_content, "text/xml");
+  
+  const all_syllables = htmldoc.querySelectorAll('syllable');
 
-        for (const nc of neume_components) {
-          const nc_attributes = nc.attributes;
-          // nc_attributes contains loc.nodeValue and xml:id.nodeValue
-          const nc_AQ = new NeumeComponentSQ(nc_attributes.getNamedItem("xml:id").nodeValue, nc_attributes.getNamedItem("pname").nodeValue, nc_attributes.getNamedItem("oct").nodeValue, nc_attributes.getNamedItem('tilt'));
-          mei_array.push(nc_AQ);
-        }
-      }
-    });
+  // Iterate through every syllable of the chant
+  for (let syllable of all_syllables) {
+    const neume_components = syllable.querySelectorAll('nc');
+
+    for (const nc of neume_components) {      
+      // getting attributes of interest from each neume component `<nc>` 
+      const nc_id = nc.attributes.getNamedItem("xml:id").nodeValue;
+      const nc_pitch = nc.attributes.getNamedItem("pname").nodeValue;
+      const nc_octave = nc.attributes.getNamedItem("oct").nodeValue;
+      const nc_tilt = nc.attributes.getNamedItem('tilt'); // could be null value
+
+      const nc_SQ = new NeumeComponentSQ(nc_id, nc_pitch, nc_octave, nc_tilt);
+      sq_mei_array.push(nc_SQ);
+    }
+  }
   // console.log(mei_array);
-  return mei_array;
+  return sq_mei_array;
 }
 
 /**
@@ -74,6 +85,10 @@ export function load_MEI_file(file_name, order) {
       const meifile = document.getElementById("mei-file-" + order);
 
       meifile.innerHTML = svg;
+
+      // save MEI file to session
+      // console.log(mei);
+      sessionStorage.setItem("mei-file-" + order, mei);
     }
     )
 };
@@ -100,45 +115,42 @@ export function clear_all_highlight() {
 
 /**
  * A function that highlight Aquitanian chant based on its absolute location (`@loc` attribute in the MEI file)
- * @param {file} MEI_file_path the aquitanian MEI (.mei) file to be highlighted
+ * @param {MEI_Content} MEI_Content the aquitanian MEI (.mei) file to be highlighted
  * @param {Array<Number>} search_pattern an array of number, parse from user's input
  */
-export function highlight_absolute(MEI_file_path, search_pattern) {
-  parse_MEI_AQ(MEI_file_path)
-    .then((res) => res)
-    .then((nc_arr) => {
-      let search_count = 0;
+export function highlight_absolute(MEI_Content, search_pattern) {
+  let neume_array = parse_MEI_AQ(MEI_Content);
+  let search_count = 0;
 
-      /**
-       * nc is type NeumeComponentAQ
-       * @param {NeumeComponentAQ[]} nc_arr
-       */
-      for (let i_nc = 0; i_nc < nc_arr.length; i_nc++) {
-        if (nc_arr[i_nc].loc == search_pattern[0]) {
-          let i_search = 1;
-          let search_found = [nc_arr[i_nc]];
-          while (i_search < search_pattern.length) {
-            if (nc_arr[i_nc + i_search].loc == search_pattern[i_search]) {
-              search_found.push(nc_arr[i_nc + i_search]);
-              i_search++;
-            } else {
-              // Reset list if no search found
-              search_found = [];
-              break;
-            }
-          }
-
-          // highlight the search found
-          for (const nc of search_found) {
-            nc.highlight();
-          }
-          search_count++;
-
+  /**
+   * nc is type NeumeComponentAQ
+   * @param {NeumeComponentAQ[]} nc_arr
+   */
+  for (let i_nc = 0; i_nc < neume_array.length; i_nc++) {
+    if (neume_array[i_nc].loc == search_pattern[0]) {
+      let i_search = 1;
+      let search_found = [neume_array[i_nc]];
+      while (i_search < search_pattern.length) {
+        if (neume_array[i_nc + i_search].loc == search_pattern[i_search]) {
+          search_found.push(neume_array[i_nc + i_search]);
+          i_search++;
+        } else {
+          // Reset list if no search found
+          search_found = [];
+          break;
         }
       }
 
-      document.getElementById("search-count").innerHTML = search_count;
-    });
+      // highlight the search found
+      for (const nc of search_found) {
+        nc.highlight();
+      }
+      search_count++;
+
+    }
+  }
+
+  document.getElementById("search-count").innerHTML = search_count;
 }
 
 /**
@@ -147,49 +159,43 @@ export function highlight_absolute(MEI_file_path, search_pattern) {
  * 
  * The seach output may overlap; hence, it needs a pattern record and should allow
  * users to visit each pattern at a time.
- * @param {file} Aquitanian_Chant the chant's MEI file in Aquitanian notation
- * @param {file} Square_Chant the chant's MEI file in square notation 
+ * @param {MEI_Content} Aquitanian_MEI the chant's MEI file in Aquitanian notation
+ * @param {MEI_Content} Square_MEI the chant's MEI file in square notation 
  * @param {Array<Number>} search_pattern an array of number, parse from user's input
  */
-export function highlight_contour_square(Aquitanian_Chant, Square_Chant, search_pattern) {
-  parse_MEI_AQ(Aquitanian_Chant)
-  .then((res) => res)
-  .then((nc_arr) => {
-    let search_count = 0;
-    /**
-     * nc is type NeumeComponentAQ
-     * @param {NeumeComponentAQ[]} nc_arr
-     */
-    for (let i_nc = 0; i_nc < nc_arr.length; i_nc++) {
-      if (nc_arr[i_nc].loc == search_pattern[0]) {
-        let i_search = 1;
-        let search_found = [nc_arr[i_nc]];
-        while (i_search < search_pattern.length) {
-          if (nc_arr[i_nc + i_search].loc == search_pattern[i_search]) {
-            search_found.push(nc_arr[i_nc + i_search]);
-            i_search++;
-          } else {
-            // Reset list if no search found
-            search_found = [];
-            break;
-          }
-        }
+export function highlight_contour_square(Aquitanian_MEI, Square_MEI, search_pattern) {
+  let aquitanian_content = parse_MEI_AQ(Aquitanian_MEI);
 
-        // highlight the search found
-        for (const nc of search_found) {
-          nc.highlight();
+  let search_count = 0;
+  /**
+   * nc is type NeumeComponentAQ
+   * @param {NeumeComponentAQ[]} nc_arr
+   */
+  for (let i_nc = 0; i_nc < aquitanian_content.length; i_nc++) {
+    if (aquitanian_content[i_nc].loc == search_pattern[0]) {
+      let i_search = 1;
+      let search_found = [aquitanian_content[i_nc]];
+      while (i_search < search_pattern.length) {
+        if (aquitanian_content[i_nc + i_search].loc == search_pattern[i_search]) {
+          search_found.push(aquitanian_content[i_nc + i_search]);
+          i_search++;
+        } else {
+          // Reset list if no search found
+          search_found = [];
+          break;
         }
-        search_count++;
-
       }
+
+      // highlight the search found
+      for (const nc of search_found) {
+        nc.highlight();
+        nc.log();
+      }
+      search_count++;
+
     }
+  }
+  document.getElementById("search-count").innerHTML = search_count;
 
-    document.getElementById("search-count").innerHTML = search_count;
-  });
-
-  parse_MEI_SQ(Square_Chant)
-  .then((res) => res)
-  .then(() => {
-    console.log("hehe");
-  })
+  let square_content = parse_MEI_SQ(Square_MEI);
 }
