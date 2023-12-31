@@ -1,19 +1,17 @@
 {
   "name": "mei-analyser",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.1.0-dev",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=/echoes/",
     "deploy-gh": "vite build",
     "preview": "vite preview",
-    "generate-docs": "jsdoc src"
+    "generate-docs": "jsdoc README.md src/*.js"
   },
   "devDependencies": {
+    "jsdoc": "^4.0.2",
     "vite": "^5.0.8"
-  },
-  "dependencies": {
-    "jsdoc": "^4.0.2"
   }
 }
