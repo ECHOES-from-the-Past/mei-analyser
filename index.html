@@ -11,11 +11,17 @@
 </head>
 
 <body>
-  <p>
-    Aquitanian Search:
+  <form id="search-form">
+    <input type="radio" id="aquitanian-absolute" name="search-option" value="absolute" checked>
+    <label for="aquitanian-absolute">Aquitanian (absolute)</label>
+    <br>
+    <input type="radio" id="aquitanian-contour-square" name="search-option" value="contour-square">
+    <label for="aquitanian-contour-square">Aquitanian (contour) & Square </label>
+    <br>
     <input type="text" name="search-bar" id="search-bar" placeholder="e.g., 1 2 1">
+
     <button type="button" id="search-btn">Search</button> <br>
-  </p>
+  </form>
   <p>Patterns found: <span id="search-count"></span> <br> (currently only work for single note)</p>
 
   <div id="mei-display">
