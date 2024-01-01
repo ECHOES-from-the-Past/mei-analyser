@@ -17,6 +17,7 @@ function load_search() {
   const search_option = form_data.get("search-option");
   const search_bar_input = form_data.get("search-bar");
   localStorage.setItem("search-choice", search_option);
+  localStorage.setItem("search-query", search_bar_input);
 
   // Parse search pattern into an array of number
   const search_pattern = parse_search_input(search_bar_input);
@@ -43,6 +44,9 @@ document.addEventListener("DOMContentLoaded", () => {
       e.checked = true;
     }
   }
+  const prev_search = localStorage.getItem("search-query");
+  document.getElementById("search-bar").value = prev_search;
+
   load_MEI_file(AQUIT_SAMPLE, 1);
   load_MEI_file(SQUARE_SAMPLE, 2);
 });
