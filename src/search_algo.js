@@ -45,7 +45,6 @@ export function highlight_absolute(MEI_Content, search_pattern) {
  * The seach output may overlap; hence, it needs a pattern record and should allow
  * users to visit each pattern at a time.
  * @param {MEI_Content} Aquitanian_MEI the chant's MEI file in Aquitanian notation
- * @param {MEI_Content} Square_MEI the chant's MEI file in square notation 
  * @param {Array<Number>} search_pattern an array of number, parse from user's input
  */
 export function highlight_aquitanian_pattern(Aquitanian_MEI, search_pattern) {
@@ -102,28 +101,36 @@ export function highlight_aquitanian_pattern(Aquitanian_MEI, search_pattern) {
  * The seach output may overlap; hence, it needs a pattern record and should allow
  * users to visit each pattern at a time.
  * @param {MEI_Content} Aquitanian_MEI the chant's MEI file in Aquitanian notation
- * @param {MEI_Content} Square_MEI the chant's MEI file in square notation 
- * @param {Array<Number>} search_pattern an array of number, parse from user's input
+ * @param {Array<Number>} contour_pattern an array of number, parse from user's input
  */
-export function highlight_contour_AQ(Aquitanian_MEI, search_pattern) {
+export function highlight_contour_AQ(Aquitanian_MEI, contour_pattern) {
   /**
    * @param {Array<NeumeComponentAQ>} aquitanian_content 
    */
   let aquitanian_content = parse_MEI_AQ(Aquitanian_MEI);
   let aq_count = 0;
 
-  for (let i_nc = 0; i_nc < aquitanian_content.length - search_pattern.length; i_nc++) {
-    /**
-     * Algorithm:
-    */
-
+  /**
+   * Algorithm:
+   * Check if the next note's `@loc` equals to
+   * the current note's `@loc` + the search pattern melodic interval
+   * 
+   * - At aq_note with index `nc` (`nc` = [0, aq-content_length - contour_pattern.length])
+   * - Add the aq_note[nc] to found_pattern as the starting point
+   * - Traverse the contour_pattern from i = 0 to i < contour_pattern.length
+   * - Return True and add aq_note[nc+1] to found_pattern if 
+   * <b> aq_note[nc+i].loc + contour_pattern[i] = aq_note[nc+i+1].loc <b>
+   * - If return False, clear the found_pattern array and break out of contour_pattern loop
+   * 
+   * Misc. notes: aq_note[i_nc].loc must be cast to Number to be able to add with contour_pattern[i] 
+  */
+  for (let i_nc = 0; i_nc < aquitanian_content.length - contour_pattern.length; i_nc++) {
     /**
      * @param {Array<NeumeComponentAQ>} found_pattern the found pattern of Aquitanian Neume Component
     */
     let found_pattern = [aquitanian_content[i_nc]];
-    for (let i = 0; i < search_pattern.length; i++) {
-      // console.log(Number(aquitanian_content[i_nc + i].loc) + search_pattern[i] == Number(aquitanian_content[i_nc + i + 1].loc));
-      if (Number(aquitanian_content[i_nc + i].loc) + search_pattern[i] == Number(aquitanian_content[i_nc + i + 1].loc)) {
+    for (let i = 0; i < contour_pattern.length; i++) {
+      if (Number(aquitanian_content[i_nc + i].loc) + contour_pattern[i] == Number(aquitanian_content[i_nc + i + 1].loc)) {
         found_pattern.push(aquitanian_content[i_nc + i + 1]);
       } else {
         // console.log(found_pattern);
