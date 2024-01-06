@@ -8,7 +8,7 @@
     "build": "vite build --base=/echoes/",
     "deploy-gh": "vite build",
     "preview": "vite preview",
-    "generate-docs": "jsdoc README.md src/*.js"
+    "generate-docs": "jsdoc --readme README.md --destination ./docs src/*.js"
   },
   "devDependencies": {
     "jsdoc": "^4.0.2",

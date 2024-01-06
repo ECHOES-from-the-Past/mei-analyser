@@ -24,4 +24,4 @@ dist-ssr
 *.sw?
 
 # Documentation output
-out
+docs

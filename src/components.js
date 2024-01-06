@@ -56,7 +56,7 @@ export class NeumeComponentAQ extends NeumeComponent {
     /**
      * 
      * @param {*} id 
-     * @param {*} loc location of the note relative to the staff
+     * @param {Number} loc location of the note relative to the staff
      * @param {*} tilt 
      */
     constructor(id, loc, tilt) {
