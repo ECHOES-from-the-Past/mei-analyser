@@ -1,5 +1,5 @@
 import { load_MEI_file, parse_search_pattern, clear_all_highlight } from './utils.js';
-import { highlight_absolute, highlight_aquitanian_pattern, highlight_contour_AQ } from './search_algo.js';
+import { highlight_absolute, highlight_aquitanian_pattern, highlight_contour_AQ, highlight_contour_SQ } from './search_algo.js';
 
 import AQUIT_SAMPLE from '../GABCtoMEI/MEI_outfiles/01_benedicte-omnes_pem82441_aquit_AQUIT.mei?url'
 import SQUARE_SAMPLE from '../GABCtoMEI/MEI_outfiles/02_benedicte-omnes_pem85041_square_SQUARE.mei?url'
@@ -32,6 +32,7 @@ function load_search() {
     highlight_aquitanian_pattern(aquitanian_chant, search_pattern);
   } else if (search_option == "contour") {
     highlight_contour_AQ(aquitanian_chant, search_pattern);
+    highlight_contour_SQ(square_chant, search_pattern);
   }
 
 }

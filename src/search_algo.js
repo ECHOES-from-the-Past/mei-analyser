@@ -1,4 +1,5 @@
-import { parse_MEI_AQ, parse_MEI_SQ } from "./utils.js";
+import { NeumeComponentAQ, NeumeComponentSQ } from "./components.js";
+import { parse_MEI_AQ, parse_MEI_SQ, highlight_pattern } from "./utils.js";
 
 /**
  * A function that highlight Aquitanian chant based on its absolute location (`@loc` attribute in the MEI file)
@@ -12,30 +13,26 @@ export function highlight_absolute(MEI_Content, search_pattern) {
   for (let i_nc = 0; i_nc < neume_array.length - search_pattern.length + 1; i_nc++) {
     if (neume_array[i_nc].loc == search_pattern[0]) {
       let i_search = 1;
-      let search_found = [neume_array[i_nc]];
+      let found_pattern = [neume_array[i_nc]];
       while (i_search < search_pattern.length) {
         if (neume_array[i_nc + i_search].loc == search_pattern[i_search]) {
-          search_found.push(neume_array[i_nc + i_search]);
+          found_pattern.push(neume_array[i_nc + i_search]);
           i_search++;
         } else {
           // Reset list if no search found
-          search_found = [];
+          found_pattern = [];
           break;
         }
       }
 
-      // highlight the search found
-      if (search_found.length != 0) {
-        for (const nc of search_found) {
-          nc.highlight();
-        }
+      if (found_pattern.length > 0) {
+        highlight_pattern(found_pattern);
         aq_count++;
       }
-
     }
   }
 
-  document.getElementById("search-count").innerHTML = aq_count;
+  document.getElementById("aq-count").innerHTML = aq_count;
 }
 
 /**
@@ -81,12 +78,8 @@ export function highlight_aquitanian_pattern(Aquitanian_MEI, search_pattern) {
         break;
       }
     }
-    if (found_pattern.length != 0) {
-      // highlight the search found
-      for (const nc of found_pattern) {
-        nc.highlight();
-        // nc.log();
-      }
+    if (found_pattern.length > 0) {
+      highlight_pattern(found_pattern);
       aq_count++;
     }
   }
@@ -96,7 +89,6 @@ export function highlight_aquitanian_pattern(Aquitanian_MEI, search_pattern) {
 
 /**
  * A function that highlight Aquitanian chant based on its contour location.
- * It also search the Square chant for a similar contour pattern.
  * 
  * The seach output may overlap; hence, it needs a pattern record and should allow
  * users to visit each pattern at a time.
@@ -130,22 +122,64 @@ export function highlight_contour_AQ(Aquitanian_MEI, contour_pattern) {
     */
     let found_pattern = [aquitanian_content[i_nc]];
     for (let i = 0; i < contour_pattern.length; i++) {
-      if (Number(aquitanian_content[i_nc + i].loc) + contour_pattern[i] == Number(aquitanian_content[i_nc + i + 1].loc)) {
+      if (aquitanian_content[i_nc + i].get_loc() + contour_pattern[i] == aquitanian_content[i_nc + i + 1].get_loc()) {
         found_pattern.push(aquitanian_content[i_nc + i + 1]);
       } else {
-        // console.log(found_pattern);
         found_pattern = [];
         break;
       }
     }
-    if (found_pattern.length != 0) {
-      // highlight the search found
-      for (const nc of found_pattern) {
-        nc.highlight();
-        // nc.log();
-      }
+    if (found_pattern.length > 0) {
+      highlight_pattern(found_pattern);
       aq_count++;
     }
   }
-  document.getElementById("search-count").innerHTML = aq_count;
+
+  // Display the pattern count
+  document.getElementById("aq-count").innerHTML = aq_count;
+}
+
+
+/**
+ * A function that highlight Square chant based on its contour location.
+ * 
+ * The seach output may overlap; hence, it needs a pattern record and should allow
+ * users to visit each pattern at a time.
+ * @param {MEI_Content} Square_MEI the chant's MEI file in square notation
+ * @param {Array<Number>} contour_pattern an array of number, parse from user's input
+ */
+export function highlight_contour_SQ(Square_MEI, contour_pattern) {
+  /**
+   * @param {Array<NeumeComponentSQ>} square_content 
+   */
+  let square_content = parse_MEI_SQ(Square_MEI);
+  let sq_count = 0;
+
+  /**
+   * Algorithm: convert square neume component to base-7 value (via `septenary()`)
+   * and check the melodic interval between two values.
+   * NOTE: there are some redundancy/repetition in the calculation that can be optimized. 
+   */
+  for (let i_nc = 0; i_nc < square_content.length - contour_pattern.length; i_nc++) {
+    /**
+     * @param {Array<NeumeComponentAQ>} found_pattern the found pattern of Aquitanian Neume Component
+    */
+    let found_pattern = [square_content[i_nc]];
+    for (let i = 0; i < contour_pattern.length; i++) {
+      if (square_content[i_nc + i].septenary() + contour_pattern[i] == square_content[i_nc + i + 1].septenary()) {
+        found_pattern.push(square_content[i_nc + i + 1]);
+      } else {
+        found_pattern = [];
+        break;
+      }
+    }
+    if (found_pattern.length > 0) {
+      highlight_pattern(found_pattern);
+      sq_count++;
+    }
+
+
+    // Display the pattern count
+    document.getElementById("sq-count").innerHTML = sq_count;
+  }
 }

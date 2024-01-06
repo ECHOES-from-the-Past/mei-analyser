@@ -1,4 +1,4 @@
-import { NeumeComponentAQ, NeumeComponentSQ } from './components.js';
+import { NeumeComponent, NeumeComponentAQ, NeumeComponentSQ } from './components.js';
 
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
@@ -111,4 +111,17 @@ export function clear_all_highlight() {
     element.style.fill = 'black';
     element.style.strokeWidth = '0px';
   });
+}
+
+/**
+ * 
+ * @param {Array<NeumeComponentAQ> | Array<NeumeComponentSQ>} found_pattern An array of type NeumeComponentAQ or NeumeComponentSQ
+ */
+export function highlight_pattern(found_pattern) {
+  // highlight the search found
+  if (found_pattern.length != 0) {
+    for (const nc of found_pattern) {
+      nc.highlight();
+    }
+  }
 }
