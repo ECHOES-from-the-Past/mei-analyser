@@ -3,7 +3,8 @@
 
 <head>
   <meta charset="UTF-8" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎶</text></svg>">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎶</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="src/style.css" />
   <script src="https://www.verovio.org/javascript/develop/verovio-toolkit-wasm.js" defer></script>
@@ -16,16 +17,18 @@
     <label for="aquitanian-absolute">Aquitanian (absolute)</label>
     <br> -->
     <input type="radio" id="aquitanian-pattern" name="search-option" value="pattern">
-    <label for="aquitanian-pattern">Aquitanian pattern </label>
+    <label for="aquitanian-pattern">Aquitanian pattern (absolute location) </label>
     <br>
     <input type="radio" id="aquitanian-contour" name="search-option" value="contour">
-    <label for="aquitanian-contour"> Contour (Melodic internvals) </label>
+    <label for="aquitanian-contour"> Contour (Melodic intervals) </label>
     <br>
     <input type="text" name="search-bar" id="search-bar" placeholder="e.g., 1 2 1">
 
     <button type="button" id="search-btn">Search</button> <br>
   </form>
-  <p>Patterns found on Aquitanian: <span id="search-count"></span> </p>
+  <p>Pattern(s) found on Aquitanian: <span id="aq-count"></span> </p>
+  <p>Pattern(s) found on Square: <span id="sq-count"></span> </p>
+
 
   <div id="mei-display">
     <div class="mei-file" id="mei-file-1">
