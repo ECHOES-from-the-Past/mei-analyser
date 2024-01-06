@@ -2,7 +2,7 @@
  * An "abstract" class for a Neume Component (`<nc>`).
  * All Neume Components has an id and an optional tilt field.
  */
-class NeumeComponent {
+export class NeumeComponent {
     /**
      * 
      * @param {String} id the @xml:id attribute of the neume component 
@@ -29,6 +29,10 @@ class NeumeComponent {
         const nc_svg = document.getElementById(this.id);
         console.log(nc_svg);
     }
+
+    get_id() {
+        return this.id;
+    }
 }
 
 /**
@@ -47,6 +51,23 @@ export class NeumeComponentSQ extends NeumeComponent {
         this.pname = pname;
         this.oct = oct;
     }
+
+    /**
+     * Represent square neume component using base-7 value
+     * Septenary = pitch * 7^0 + octave * 7^1
+     */
+    septenary() {
+        const sq_pitch = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
+        return Number(sq_pitch.indexOf(this.pname)) + Number(this.oct) * 7;
+    }
+
+    get_pname() {
+        return this.pname;
+    }
+
+    get_oct() {
+        return Number(this.oct);
+    }
 }
 
 /**
@@ -62,5 +83,9 @@ export class NeumeComponentAQ extends NeumeComponent {
     constructor(id, loc, tilt) {
         super(id, tilt);
         this.loc = loc;
+    }
+
+    get_loc() {
+        return Number(this.loc);
     }
 }
