@@ -4,7 +4,29 @@ import { highlight_absolute, highlight_aquitanian_pattern, highlight_contour_AQ,
 import AQUIT_SAMPLE from '../GABCtoMEI/MEI_outfiles/01_benedicte-omnes_pem82441_aquit_AQUIT.mei?url'
 import SQUARE_SAMPLE from '../GABCtoMEI/MEI_outfiles/02_benedicte-omnes_pem85041_square_SQUARE.mei?url'
 
-document.getElementById('search-btn').addEventListener("click", load_search, false)
+document.getElementById('search-btn').addEventListener("click", load_search, false);
+document.getElementById('file-input-1').addEventListener("change", () => {
+  upload_file(1);
+}, false);
+
+document.getElementById('file-input-2').addEventListener("change", (evt) => {
+  upload_file(2)
+}, false);
+
+
+/**
+ * 
+ */
+function upload_file(slot) {
+  clear_all_highlight();
+  const uploaded_file = document.getElementById('file-input-' + slot).files[0];
+  console.log(uploaded_file);
+  const objectURL = URL.createObjectURL(uploaded_file);
+  console.log(objectURL)
+  load_MEI_file(objectURL, slot);
+  URL.revokeObjectURL(upload_file);
+
+}
 
 /**
  * Perform highlighting when user clicks on "Search" button
@@ -50,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   const prev_search = localStorage.getItem("search-query");
   document.getElementById("search-bar").value = prev_search;
-
+  
   load_MEI_file(AQUIT_SAMPLE, 1);
   load_MEI_file(SQUARE_SAMPLE, 2);
 });
