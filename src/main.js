@@ -9,13 +9,14 @@ document.getElementById('file-input-1').addEventListener("change", () => {
   upload_file(1);
 }, false);
 
-document.getElementById('file-input-2').addEventListener("change", (evt) => {
+document.getElementById('file-input-2').addEventListener("change", () => {
   upload_file(2)
 }, false);
 
 
 /**
- * 
+ * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
+ * @param {Number} slot either 1 or 2
  */
 function upload_file(slot) {
   clear_all_highlight();
@@ -72,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
   const prev_search = localStorage.getItem("search-query");
   document.getElementById("search-bar").value = prev_search;
-  
+
   load_MEI_file(AQUIT_SAMPLE, 1);
   load_MEI_file(SQUARE_SAMPLE, 2);
 });
