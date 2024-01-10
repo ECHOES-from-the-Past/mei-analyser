@@ -1,5 +1,6 @@
 import { NeumeComponentAQ, NeumeComponentSQ } from "./components.js";
 import { parse_MEI_AQ, parse_MEI_SQ, highlight_pattern } from "./utils.js";
+import { NeedlemanSearch } from "needleman-js";
 
 /**
  * A function that highlight Aquitanian chant based on its absolute location (`@loc` attribute in the MEI file)
@@ -182,4 +183,14 @@ export function highlight_contour_SQ(Square_MEI, contour_pattern) {
     // Display the pattern count
     document.getElementById("sq-count").innerHTML = sq_count;
   }
+}
+
+
+/**
+ * Using Needleman-Wunch algorithm to analyse the difference between two different chants
+ * @param {Array<Number>} pattern_1
+ * @param {Array<Number>} pattern_2
+ */
+export function pattern_analysis(pattern_1, pattern_2) {
+  
 }

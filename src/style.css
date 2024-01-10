@@ -38,3 +38,13 @@ g {
   grid-template-columns: 1fr 1fr;
 }
 
+#aq-count, #sq-count {
+  color:hsl(357, 95%, 25%);
+  font-weight: bold;
+}
+
+#needleman-wunch-analysis {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

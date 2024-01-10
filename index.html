@@ -16,18 +16,18 @@
     <!-- <input type="radio" id="aquitanian-absolute" name="search-option" value="absolute" checked>
     <label for="aquitanian-absolute">Aquitanian (absolute)</label>
     <br> -->
+    <h2>Select a search option: </h2>
     <input type="radio" id="aquitanian-pattern" name="search-option" value="pattern">
-    <label for="aquitanian-pattern">Aquitanian pattern (location-based) </label>
+    <label for="aquitanian-pattern"> Pitch Pattern (pitch-based) </label>
     <br>
     <input type="radio" id="aquitanian-contour" name="search-option" value="contour">
-    <label for="aquitanian-contour"> Contour (Melodic intervals) </label>
+    <label for="aquitanian-contour"> Contour (melodic intervals) </label>
     <br>
     <input type="text" name="search-bar" id="search-bar" placeholder="e.g., 1 2 1">
 
     <button type="button" id="search-btn">Search</button> <br>
   </form>
-  <p>Pattern(s) found on Aquitanian: <span id="aq-count"></span> </p>
-  <p>Pattern(s) found on Square: <span id="sq-count"></span> </p>
+  <p>Pattern(s) found on Aquitanian: <span id="aq-count"></span> and on Square: <span id="sq-count"></span>  </p>
 
   <div id="mei-file-upload">
     <p>Upload to left slot:
@@ -47,6 +47,12 @@
     <div class="mei-file" id="mei-file-1">
     </div>
     <div class="mei-file" id="mei-file-2">
+    </div>
+  </div>
+  <div id="needleman-wunch-analysis">
+    <h3>Pattern Analysis (Needleman-Wunch)</h3>
+    <div>
+
     </div>
   </div>
 
