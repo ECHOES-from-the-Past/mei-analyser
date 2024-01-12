@@ -33,6 +33,12 @@ g {
   fill: black;
 }
 
+#top-elements {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  align-items: center;
+}
+
 #mei-display {
   display: grid;
   grid-template-columns: 1fr 1fr;

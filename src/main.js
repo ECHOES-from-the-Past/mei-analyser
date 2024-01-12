@@ -1,8 +1,37 @@
-import { load_MEI_file, parse_search_pattern, clear_all_highlight } from './utils.js';
-import { highlight_absolute, highlight_aquitanian_pattern, highlight_contour_AQ, highlight_contour_SQ } from './search_algo.js';
+import { 
+  load_MEI_file,
+  parse_MEI_AQ,
+  parse_MEI_SQ,
+  parse_search_pattern, 
+  clear_all_highlight } from './utils.js';
+import {
+  highlight_absolute, 
+  highlight_aquitanian_pattern, 
+  highlight_contour_AQ, 
+  highlight_contour_SQ, 
+  pattern_analysis
+} from './search_algo.js';
 
 import AQUIT_SAMPLE from '../GABCtoMEI/MEI_outfiles/01_benedicte-omnes_pem82441_aquit_AQUIT.mei?url'
 import SQUARE_SAMPLE from '../GABCtoMEI/MEI_outfiles/02_benedicte-omnes_pem85041_square_SQUARE.mei?url'
+
+/**
+ * Load predefined files when DOM is loaded
+ */
+document.addEventListener("DOMContentLoaded", () => {
+  const prev_search_choice = localStorage.getItem("search-choice");
+  const radio_checkbox = document.getElementsByName("search-option");
+  for (let e of radio_checkbox) {
+    if (e.value == prev_search_choice) {
+      e.checked = true;
+    }
+  }
+  const prev_search = localStorage.getItem("search-query");
+  document.getElementById("search-bar").value = prev_search;
+
+  load_MEI_file(AQUIT_SAMPLE, 1);
+  load_MEI_file(SQUARE_SAMPLE, 2);
+});
 
 document.getElementById('search-btn').addEventListener("click", load_search, false);
 document.getElementById('file-input-1').addEventListener("change", () => {
@@ -13,6 +42,16 @@ document.getElementById('file-input-2').addEventListener("change", () => {
   upload_file(2)
 }, false);
 
+document.getElementById('cross-comparison-btn').addEventListener("click", () => {
+  let left_chant = sessionStorage.getItem("mei-file-1");
+  let right_chant = sessionStorage.getItem("mei-file-2");
+
+  // Parse MEI file into an array of NeumeComponent
+  let aquitanian_content = parse_MEI_AQ(left_chant);
+  let square_content = parse_MEI_SQ(right_chant);
+
+  pattern_analysis(aquitanian_content, square_content);
+}, false);
 
 /**
  * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
@@ -26,7 +65,6 @@ function upload_file(slot) {
   console.log(objectURL)
   load_MEI_file(objectURL, slot);
   URL.revokeObjectURL(upload_file);
-
 }
 
 /**
@@ -49,31 +87,19 @@ function load_search() {
   let aquitanian_chant = sessionStorage.getItem("mei-file-1");
   let square_chant = sessionStorage.getItem("mei-file-2");
 
-  if (search_option == "absolute") {
-    highlight_absolute(aquitanian_chant, search_pattern);
-  } else if (search_option == "pattern") {
-    highlight_aquitanian_pattern(aquitanian_chant, search_pattern);
-  } else if (search_option == "contour") {
-    highlight_contour_AQ(aquitanian_chant, search_pattern);
-    highlight_contour_SQ(square_chant, search_pattern);
-  }
+  // Parse MEI file into an array of NeumeComponent
+  let aquitanian_content = parse_MEI_AQ(aquitanian_chant);
+  let square_content = parse_MEI_SQ(square_chant);
 
+  if (search_option == "absolute") {
+    highlight_absolute(aquitanian_content, search_pattern);
+  } else if (search_option == "pattern") {
+    highlight_aquitanian_pattern(aquitanian_content, search_pattern);
+  } else if (search_option == "contour") {
+    highlight_contour_AQ(aquitanian_content, search_pattern);
+    highlight_contour_SQ(square_content, search_pattern);
+  }
 }
 
-/**
- * Load predefined files when DOM is loaded
- */
-document.addEventListener("DOMContentLoaded", () => {
-  const prev_search_choice = localStorage.getItem("search-choice");
-  const radio_checkbox = document.getElementsByName("search-option");
-  for (let e of radio_checkbox) {
-    if (e.value == prev_search_choice) {
-      e.checked = true;
-    }
-  }
-  const prev_search = localStorage.getItem("search-query");
-  document.getElementById("search-bar").value = prev_search;
-
-  load_MEI_file(AQUIT_SAMPLE, 1);
-  load_MEI_file(SQUARE_SAMPLE, 2);
-});
+function cross_comparison() {
+}

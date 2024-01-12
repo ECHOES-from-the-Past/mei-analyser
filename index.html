@@ -12,49 +12,61 @@
 </head>
 
 <body>
-  <form id="search-form">
-    <!-- <input type="radio" id="aquitanian-absolute" name="search-option" value="absolute" checked>
-    <label for="aquitanian-absolute">Aquitanian (absolute)</label>
-    <br> -->
-    <h2>Select a search option: </h2>
-    <input type="radio" id="aquitanian-pattern" name="search-option" value="pattern">
-    <label for="aquitanian-pattern"> Pitch Pattern (pitch-based) </label>
-    <br>
-    <input type="radio" id="aquitanian-contour" name="search-option" value="contour">
-    <label for="aquitanian-contour"> Contour (melodic intervals) </label>
-    <br>
-    <input type="text" name="search-bar" id="search-bar" placeholder="e.g., 1 2 1">
+  <div id="top-elements">
+    <div id="utility">
 
-    <button type="button" id="search-btn">Search</button> <br>
-  </form>
-  <p>Pattern(s) found on Aquitanian: <span id="aq-count"></span> and on Square: <span id="sq-count"></span>  </p>
+      <form id="search-form">
+        <!-- <input type="radio" id="aquitanian-absolute" name="search-option" value="absolute" checked>
+          <label for="aquitanian-absolute">Aquitanian (absolute)</label>
+          <br> -->
+        <h2>Select a search option: </h2>
+        <input type="radio" id="aquitanian-pattern" name="search-option" value="pattern">
+        <label for="aquitanian-pattern"> Pitch Pattern (pitch-based) </label>
+        <br>
+        <input type="radio" id="aquitanian-contour" name="search-option" value="contour">
+        <label for="aquitanian-contour"> Contour (melodic intervals) </label>
+        <br>
+        <input type="text" name="search-bar" id="search-bar" placeholder="e.g., 1 2 1">
 
-  <div id="mei-file-upload">
-    <p>Upload to left slot:
-      <span>
-        <input type='file' id='file-input-1'/>
-      </span>
-    </p>
-    <p>Upload to right slot:
-      <span>
-        <input type='file' id='file-input-2' />
-      </span>
-    </p>
+        <button type="button" id="search-btn">Search</button> <br>
+      </form>
+      <p>Pattern(s) found on Aquitanian: <span id="aq-count"></span> and on Square: <span id="sq-count"></span> </p>
 
-    <!-- <input type="button" value="Upload" id="file-upload-btn"> -->
+      <div id="mei-file-upload">
+        <p>Upload to left slot:
+          <span>
+            <input type='file' id='file-input-1' />
+          </span>
+        </p>
+        <p>Upload to right slot:
+          <span>
+            <input type='file' id='file-input-2' />
+          </span>
+        </p>
+      </div>
+    </div>
+
+    <!-- Cross-comparison Analysis Section -->
+
+    <div id="cross-comparison-analysis">
+      <h3>Pattern Analysis (Needleman-Wunch)</h3>
+      <button type="button" id="cross-comparison-btn">
+        Analyse
+      </button>
+      <div id="cross-comparison-result">
+        <p id="cross-comparison-1" style="text-wrap: wrap;"></p>
+        <p id="cross-comparison-2" style="text-wrap: wrap;"></p>
+      </div>
+    </div>
   </div>
+
   <div id="mei-display">
     <div class="mei-file" id="mei-file-1">
     </div>
     <div class="mei-file" id="mei-file-2">
     </div>
   </div>
-  <div id="needleman-wunch-analysis">
-    <h3>Pattern Analysis (Needleman-Wunch)</h3>
-    <div>
 
-    </div>
-  </div>
 
   <script type="module" src="src/main.js"></script>
 </body>

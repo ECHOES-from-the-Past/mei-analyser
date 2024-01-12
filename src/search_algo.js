@@ -1,14 +1,13 @@
 import { NeumeComponentAQ, NeumeComponentSQ } from "./components.js";
-import { parse_MEI_AQ, parse_MEI_SQ, highlight_pattern } from "./utils.js";
-import { NeedlemanSearch } from "needleman-js";
+import { highlight_pattern } from "./utils.js";
+import { needlemanWunch } from "./needleman-wunch.js";
 
 /**
  * A function that highlight Aquitanian chant based on its absolute location (`@loc` attribute in the MEI file)
- * @param {MEI_Content} MEI_Content the aquitanian MEI (.mei) file to be highlighted
+ * @param {Array<NeumeComponentAQ>} neume_array the aquitanian MEI (.mei) file to be highlighted
  * @param {Array<Number>} search_pattern an array of number, parse from user's input
  */
-export function highlight_absolute(MEI_Content, search_pattern) {
-  let neume_array = parse_MEI_AQ(MEI_Content);
+export function highlight_absolute(neume_array, search_pattern) {
   let aq_count = 0;
 
   for (let i_nc = 0; i_nc < neume_array.length - search_pattern.length + 1; i_nc++) {
@@ -42,28 +41,23 @@ export function highlight_absolute(MEI_Content, search_pattern) {
  * 
  * The seach output may overlap; hence, it needs a pattern record and should allow
  * users to visit each pattern at a time.
- * @param {MEI_Content} Aquitanian_MEI the chant's MEI file in Aquitanian notation
+ * @param {Array<NeumeComponentAQ>} aquitanian_content the chant's MEI file in Aquitanian notation
  * @param {Array<Number>} search_pattern an array of number, parse from user's input
  */
-export function highlight_aquitanian_pattern(Aquitanian_MEI, search_pattern) {
-  /**
-   * @param {Array<NeumeComponentAQ>} aquitanian_content 
-   */
-  let aquitanian_content = parse_MEI_AQ(Aquitanian_MEI);
+export function highlight_aquitanian_pattern(aquitanian_content, search_pattern) {
   let aq_count = 0;
 
+  /**
+   * Algorithm:
+   * 1. Get the distance between the first value of search_pattern
+   * and the neume component of aquitanian_content
+   * 2. Subtract all values in search_pattern by the distance 
+   * found above 
+   * 3. Check the matching sequence (aquitanian_content[i:].loc and search_pattern[i:])
+   * until the end of search pattern.
+   * 4. Highlight found pattern
+  */
   for (let i_nc = 0; i_nc < aquitanian_content.length - search_pattern.length + 1; i_nc++) {
-    /**
-     * Algorithm:
-     * 1. Get the distance between the first value of search_pattern
-     * and the neume component of aquitanian_content
-     * 2. Subtract all values in search_pattern by the distance 
-     * found above 
-     * 3. Check the matching sequence (aquitanian_content[i:].loc and search_pattern[i:])
-     * until the end of search pattern.
-     * 4. Highlight found pattern
-    */
-
     /**
      * @param {Array<NeumeComponentAQ>} found_pattern the found pattern of Aquitanian Neume Component
     */
@@ -93,14 +87,10 @@ export function highlight_aquitanian_pattern(Aquitanian_MEI, search_pattern) {
  * 
  * The seach output may overlap; hence, it needs a pattern record and should allow
  * users to visit each pattern at a time.
- * @param {MEI_Content} Aquitanian_MEI the chant's MEI file in Aquitanian notation
+ * @param {Array<NeumeComponentAQ>} aquitanian_content an array of NeumeComponentAQ
  * @param {Array<Number>} contour_pattern an array of number, parse from user's input
  */
-export function highlight_contour_AQ(Aquitanian_MEI, contour_pattern) {
-  /**
-   * @param {Array<NeumeComponentAQ>} aquitanian_content 
-   */
-  let aquitanian_content = parse_MEI_AQ(Aquitanian_MEI);
+export function highlight_contour_AQ(aquitanian_content, contour_pattern) {
   let aq_count = 0;
 
   /**
@@ -146,14 +136,10 @@ export function highlight_contour_AQ(Aquitanian_MEI, contour_pattern) {
  * 
  * The seach output may overlap; hence, it needs a pattern record and should allow
  * users to visit each pattern at a time.
- * @param {MEI_Content} Square_MEI the chant's MEI file in square notation
+ * @param {Array<NeumeComponentSQ>} Square_MEI the chant's MEI file in square notation
  * @param {Array<Number>} contour_pattern an array of number, parse from user's input
  */
-export function highlight_contour_SQ(Square_MEI, contour_pattern) {
-  /**
-   * @param {Array<NeumeComponentSQ>} square_content 
-   */
-  let square_content = parse_MEI_SQ(Square_MEI);
+export function highlight_contour_SQ(square_content, contour_pattern) {
   let sq_count = 0;
 
   /**
@@ -188,9 +174,38 @@ export function highlight_contour_SQ(Square_MEI, contour_pattern) {
 
 /**
  * Using Needleman-Wunch algorithm to analyse the difference between two different chants
- * @param {Array<Number>} pattern_1
- * @param {Array<Number>} pattern_2
+ * @param {Array<NeumeComponentAQ>} pattern_1 assuming pattern 1 is aquitanian
+ * @param {Array<NeumeComponentSQ>} pattern_2
  */
 export function pattern_analysis(pattern_1, pattern_2) {
-  
+  const aquitanian_location = pattern_1.map((e) => e.get_loc());
+  const square_septenary = pattern_2.map((e) => e.septenary());
+
+  console.log(aquitanian_location);
+  console.log(square_septenary);
+
+  const aquitanian_contour = aquitanian_location.map((e, i, arr) => {
+    if (i == 0) {
+      return 0;
+    } else {
+      return e - arr[i - 1];
+    }
+  });
+
+  const square_contour = square_septenary.map((e, i, arr) => {
+    if (i == 0) {
+      return 0;
+    } else {
+      return e - arr[i - 1];
+    }
+  }
+  );
+
+  console.log(aquitanian_contour);
+  console.log(square_contour);
+
+  const result = needlemanWunch(aquitanian_contour, square_contour);
+
+  document.getElementById("cross-comparison-1").innerHTML = result[0];
+  document.getElementById("cross-comparison-2").innerHTML = result[1];
 }

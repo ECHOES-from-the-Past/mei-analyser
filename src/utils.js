@@ -15,7 +15,7 @@ export function load_MEI_file(file_name, order) {
       let zoom = 80;
       const options = {
         pageWidth: document.body.clientWidth * 50 / zoom,
-        // pageHeight: document.body.clientHeight / zoom,
+        // pageHeight: document.body.clientHeight * 50 / zoom,
         scale: zoom,
       };
       vero_toolkit.setOptions(options);
