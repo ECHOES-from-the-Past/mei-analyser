@@ -1,7 +1,7 @@
 {
   "name": "mei-analyser",
   "private": true,
-  "version": "0.1.2-dev",
+  "version": "0.1.3-dev",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,8 +13,5 @@
   "devDependencies": {
     "jsdoc": "^4.0.2",
     "vite": "^5.0.8"
-  },
-  "dependencies": {
-    "needleman-js": "^1.1.0"
   }
 }
