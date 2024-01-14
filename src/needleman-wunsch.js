@@ -92,10 +92,10 @@ function align(M, A, B, match = 1, mismatch = -1, gap = -2) {
  * @param {Array<Array<Number>>} M The 2D matrix from `matrix()` function
  * @param {Array<Number>} A_nc The first array of NeumeComponent
  * @param {Array<Number>} B_nc The second array of NeumeComponent
- * @param {Number} match score for each match
- * @param {Number} mismatch score for each mismatch between two elements
- * @param {Number} gap score for each gap  
- * @returns 
+ * @param {Number} [match=1] score for each match
+ * @param {Number} [mismatch=-1] score for each mismatch between two elements
+ * @param {Number} [gap=-2] score for each gap  
+ * @returns 4 arrays of numbers: [AlignmentA, AlignmentB, gap_index_A, gap_index_B]
  */
 export function align_nc(M, A_nc, B_nc, match = 1, mismatch = -1, gap = -2) {
   let AlignmentA = [];
