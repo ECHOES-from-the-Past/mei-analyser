@@ -1,6 +1,6 @@
 import { NeumeComponentAQ, NeumeComponentSQ } from "./components.js";
 import { highlight_pattern } from "./utils.js";
-import { needlemanWunch } from "./needleman-wunch.js";
+import { needlemanWunsch, needlemanWunsch_nc } from "./needleman-wunsch.js";
 
 /**
  * A function that highlight Aquitanian chant based on its absolute location (`@loc` attribute in the MEI file)
@@ -173,39 +173,62 @@ export function highlight_contour_SQ(square_content, contour_pattern) {
 
 
 /**
- * Using Needleman-Wunch algorithm to analyse the difference between two different chants
+ * Using Needleman-Wunsch algorithm to analyse the difference between two different chants
  * @param {Array<NeumeComponentAQ>} pattern_1 assuming pattern 1 is aquitanian
- * @param {Array<NeumeComponentSQ>} pattern_2
+ * @param {Array<NeumeComponentSQ>} pattern_2 assuming pattern 2 is square
  */
 export function pattern_analysis(pattern_1, pattern_2) {
   const aquitanian_location = pattern_1.map((e) => e.get_loc());
   const square_septenary = pattern_2.map((e) => e.septenary());
 
-  console.log(aquitanian_location);
-  console.log(square_septenary);
-
-  const aquitanian_contour = aquitanian_location.map((e, i, arr) => {
-    if (i == 0) {
+  /**
+   * Constructing the contour matrix based on Aquitanian's `@loc` and Square's `septenary` value
+   */
+  const aquitanian_contour = aquitanian_location.map((element, index, array) => {
+    if (index == 0) {
       return 0;
     } else {
-      return e - arr[i - 1];
+      return element - array[index - 1];
     }
   });
 
-  const square_contour = square_septenary.map((e, i, arr) => {
-    if (i == 0) {
+  const square_contour = square_septenary.map((element, index, array) => {
+    if (index == 0) {
       return 0;
     } else {
-      return e - arr[i - 1];
+      return element - array[index - 1];
     }
-  }
-  );
+  });
 
-  console.log(aquitanian_contour);
-  console.log(square_contour);
+  // console.log(aquitanian_contour);
+  // console.log(square_contour);
 
-  const result = needlemanWunch(aquitanian_contour, square_contour);
+  // const result = needlemanWunsch(aquitanian_contour, square_contour);
+  const result = needlemanWunsch_nc(aquitanian_contour, square_contour);
+  console.table(result);
 
-  document.getElementById("cross-comparison-1").innerHTML = result[0];
-  document.getElementById("cross-comparison-2").innerHTML = result[1];
+  document.getElementById("cross-comparison-1").innerHTML = result[0].join(" ");
+  document.getElementById("cross-comparison-2").innerHTML = result[1].join(" ");
+
+  // Highlight the difference
+  const gap_1 = result[2];
+  const gap_2 = result[3];
+  const yellow = 'rgba(255, 255, 0, 1)';
+  const yellow_stroke = 'rgb(128,128,0)';
+  gap_1.forEach((e, i, arr) => {
+    pattern_1[e - 1 - 1].highlight('rgba(255, 0, 0, 0.3)', 'rgba(149, 48, 217, 0.6)');
+    pattern_1[e - 1].highlight('rgba(255, 0, 0, 1)', 'rgba(149, 48, 217, 1)');
+    pattern_1[e + 1 - 1].highlight('rgba(255, 0, 0, 0.3)', 'rgba(149, 48, 217, 0.6)');
+
+    pattern_2[e - 1 - i - 1].highlight(yellow, yellow_stroke);
+    pattern_2[e - i - 1].highlight(yellow, yellow_stroke);
+  });
+  gap_2.forEach((e, i, arr) => {
+    pattern_2[e - 1 - 1].highlight('rgba(255, 0, 0, 0.3)', 'rgba(149, 48, 217, 0.6)');
+    pattern_2[e - 1].highlight('rgba(255, 0, 0, 1)', 'rgba(149, 48, 217, 1)');
+    pattern_2[e + 1 - 1].highlight('rgba(255, 0, 0, 0.3)', 'rgba(149, 48, 217, 0.6)');
+
+    pattern_1[e - 1 - i - 1 + gap_1.length].highlight(yellow, yellow_stroke);
+    pattern_1[e - 1 - i + gap_1.length].highlight(yellow, yellow_stroke);
+  });
 }

@@ -43,6 +43,7 @@ document.getElementById('file-input-2').addEventListener("change", () => {
 }, false);
 
 document.getElementById('cross-comparison-btn').addEventListener("click", () => {
+  clear_all_highlight();
   let left_chant = sessionStorage.getItem("mei-file-1");
   let right_chant = sessionStorage.getItem("mei-file-2");
 

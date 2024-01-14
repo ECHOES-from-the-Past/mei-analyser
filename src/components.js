@@ -13,10 +13,10 @@ export class NeumeComponent {
         this.tilt = tilt;
     }
 
-    highlight() {
+    highlight(color = 'rgba(149, 48, 217, 0.6)', stroke_color = 'rgba(149, 48, 217, 1)') {
         const nc_svg = document.getElementById(this.id);
-        nc_svg.style.fill = 'rgba(149, 48, 217, 0.6)';
-        nc_svg.style.stroke = 'rgba(149, 48, 217, 1)';
+        nc_svg.style.fill = color;
+        nc_svg.style.stroke = stroke_color;
         nc_svg.style.strokeWidth = '30px';
     }
 
