@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=/echoes/",
-    "deploy-gh": "vite build",
+    "deploy-gh": "vite build --base=/mei-analyser/ ",
     "preview": "vite preview",
     "generate-docs": "jsdoc --readme README.md --destination ./docs src/*.js"
   },
