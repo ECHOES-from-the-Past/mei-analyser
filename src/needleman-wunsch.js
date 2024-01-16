@@ -48,7 +48,7 @@ function matrix(A1, A2, match = 1, mismatch = -1, gap = -2) {
  * @param {Number} match score for each match
  * @param {Number} mismatch score for each mismatch between two elements
  * @param {Number} gap score for each gap  
- * @returns 
+ * @returns alignment of two arrays in order of [AlignmentA, AlignmentB]
  */
 function align(M, A, B, match = 1, mismatch = -1, gap = -2) {
   var AlignmentA = [];
