@@ -221,7 +221,7 @@ export function pattern_analysis(pattern_1, pattern_2) {
 
   // const result = needlemanWunsch(aquitanian_contour, square_contour);
   const result = needlemanWunsch_nc(pattern_1_contour, pattern_2_contour);
-  console.table(result);
+  // console.table(result);
 
   document.getElementById("cross-comparison-1").innerHTML = result[0].join(" ");
   document.getElementById("cross-comparison-2").innerHTML = result[1].join(" ");

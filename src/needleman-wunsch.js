@@ -1,8 +1,6 @@
 /**
  * An implementation of Needleman-Wunsch algorithm
  */
-
-import { NeumeComponent } from "./components";
 import {
   parse_MEI_AQ,
   parse_MEI_SQ,
@@ -97,7 +95,7 @@ function align(M, A, B, match = 1, mismatch = -1, gap = -2) {
  * @param {Number} [gap=-2] score for each gap  
  * @returns 4 arrays of numbers: [AlignmentA, AlignmentB, gap_index_A, gap_index_B]
  */
-export function align_nc(M, A_nc, B_nc, match = 1, mismatch = -1, gap = -2) {
+function align_nc(M, A_nc, B_nc, match = 1, mismatch = -1, gap = -2) {
   let AlignmentA = [];
   let AlignmentB = [];
 
@@ -152,6 +150,9 @@ export function needlemanWunsch_nc(A_nc, B_nc, match = 1, mismatch = -1, gap = -
   return [A1, A2, g1, g2];
 }
 
+/**
+ * Example of Needleman-Wunsch algorithm
+ */
 function example() {
   const A1 = [2, 5, 7, 9, 3, 1, 2, 4];
   const A2 = [2, 3, 5, 7, 9, 3, 1, 2, 4];

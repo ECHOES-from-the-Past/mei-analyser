@@ -109,6 +109,7 @@ export function clear_all_highlight() {
     element.style.fill = 'black';
     element.style.strokeWidth = '0px';
   });
+  document.querySelectorAll('.spotlight-rect').forEach(e => e.remove());
 }
 
 /**
@@ -120,6 +121,7 @@ export function highlight_pattern(found_pattern) {
   if (found_pattern.length != 0) {
     for (const nc of found_pattern) {
       nc.highlight();
+      // nc.spotlight();
     }
   }
 }
