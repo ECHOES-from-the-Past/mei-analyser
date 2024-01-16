@@ -1,14 +1,14 @@
-import { 
+import {
   load_MEI_file,
   parse_MEI_AQ,
   parse_MEI_SQ,
-  parse_search_pattern, 
-  clear_all_highlight } from './utils.js';
+  parse_search_pattern,
+  clear_all_highlight,
+  get_annotation_type
+} from './utils.js';
 import {
-  highlight_absolute, 
-  highlight_aquitanian_pattern, 
-  highlight_contour_AQ, 
-  highlight_contour_SQ, 
+  highlight_contour_AQ,
+  highlight_contour_SQ,
   pattern_analysis
 } from './search_algo.js';
 
@@ -47,11 +47,21 @@ document.getElementById('cross-comparison-btn').addEventListener("click", () => 
   let left_chant = sessionStorage.getItem("mei-file-1");
   let right_chant = sessionStorage.getItem("mei-file-2");
 
+  let left_chant_content, right_chant_content;
   // Parse MEI file into an array of NeumeComponent
-  let aquitanian_content = parse_MEI_AQ(left_chant);
-  let square_content = parse_MEI_SQ(right_chant);
+  if(get_annotation_type(left_chant) == "aquitanian"){
+    left_chant_content = parse_MEI_AQ(left_chant);
+  } else if (get_annotation_type(left_chant) == "square"){
+    left_chant_content = parse_MEI_SQ(left_chant);
+  }
 
-  pattern_analysis(aquitanian_content, square_content);
+  if(get_annotation_type(right_chant) == "aquitanian"){
+    right_chant_content = parse_MEI_AQ(right_chant);
+  } else if (get_annotation_type(right_chant) == "square"){
+    right_chant_content = parse_MEI_SQ(right_chant);
+  }
+
+  pattern_analysis(left_chant_content, right_chant_content);
 }, false);
 
 /**
@@ -61,9 +71,9 @@ document.getElementById('cross-comparison-btn').addEventListener("click", () => 
 function upload_file(slot) {
   clear_all_highlight();
   const uploaded_file = document.getElementById('file-input-' + slot).files[0];
-  console.log(uploaded_file);
+  // console.log(uploaded_file);
   const objectURL = URL.createObjectURL(uploaded_file);
-  console.log(objectURL)
+  // console.log(objectURL);
   load_MEI_file(objectURL, slot);
   URL.revokeObjectURL(upload_file);
 }
@@ -85,22 +95,29 @@ function load_search() {
   // Parse search pattern into an array of number
   const search_pattern = parse_search_pattern(search_bar_input);
 
-  let aquitanian_chant = sessionStorage.getItem("mei-file-1");
-  let square_chant = sessionStorage.getItem("mei-file-2");
+  let left_chant = sessionStorage.getItem("mei-file-1");
+  let right_chant = sessionStorage.getItem("mei-file-2");
 
-  // Parse MEI file into an array of NeumeComponent
-  let aquitanian_content = parse_MEI_AQ(aquitanian_chant);
-  let square_content = parse_MEI_SQ(square_chant);
+  // console.log(left_chant);
+  // console.log(right_chant);
 
-  if (search_option == "absolute") {
-    highlight_absolute(aquitanian_content, search_pattern);
-  } else if (search_option == "pattern") {
-    highlight_aquitanian_pattern(aquitanian_content, search_pattern);
-  } else if (search_option == "contour") {
-    highlight_contour_AQ(aquitanian_content, search_pattern);
-    highlight_contour_SQ(square_content, search_pattern);
+  if (search_option == "contour") {
+    process_contour(left_chant, search_pattern);
+    process_contour(right_chant, search_pattern);
   }
 }
 
 function cross_comparison() {
+}
+
+function process_contour(MEI_file, search_pattern) {
+  // console.log(get_annotation_type(MEI_file));
+  if (get_annotation_type(MEI_file) == "aquitanian") {
+    const aquitanian_content = parse_MEI_AQ(MEI_file);
+    highlight_contour_AQ(aquitanian_content, search_pattern);
+  } else if (get_annotation_type(MEI_file) == "square") {
+    const square_content = parse_MEI_SQ(MEI_file);
+    console.log(square_content[0]);
+    highlight_contour_SQ(square_content, search_pattern);
+  }
 }

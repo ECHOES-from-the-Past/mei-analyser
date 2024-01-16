@@ -14,20 +14,30 @@ export class NeumeComponent {
     }
 
     highlight(color = 'rgba(149, 48, 217, 0.6)', stroke_color = 'rgba(149, 48, 217, 1)') {
-        const nc_svg = document.getElementById(this.id);
-        nc_svg.style.fill = color;
-        nc_svg.style.stroke = stroke_color;
-        nc_svg.style.strokeWidth = '30px';
+        const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
+        nc_svg.forEach((nc) => {
+            nc.style.fill = color;
+            nc.style.stroke = stroke_color;
+            nc.style.strokeWidth = '30px';
+        });
     }
 
     unhighlight() {
-        const nc_svg = document.getElementById(this.id);
-        nc_svg.style.fill = 'black';
+        const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
+        nc_svg.forEach((nc) => {
+            nc.style.fill = 'black';
+        });
     }
 
+    /**
+     * Log the neume component to the console.
+     * Useful for debugging purposes.
+     */
     log() {
-        const nc_svg = document.getElementById(this.id);
-        console.log(nc_svg);
+        const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
+        nc_svg.forEach((nc) => {
+            console.log(nc);
+        });
     }
 
     get_id() {

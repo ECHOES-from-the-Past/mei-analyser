@@ -26,11 +26,9 @@ export function load_MEI_file(file_name, order) {
       meifile.innerHTML = svg;
 
       // save MEI file to session
-      // console.log(mei);
       sessionStorage.setItem("mei-file-" + order, mei);
-    }
-    )
-};
+    })
+}
 
 /**
  * A function that parses the MEI content of an Aquitanian chant and
@@ -123,5 +121,19 @@ export function highlight_pattern(found_pattern) {
     for (const nc of found_pattern) {
       nc.highlight();
     }
+  }
+}
+
+export function get_annotation_type(MEI_content) {
+  let parser = new DOMParser();
+  let htmldoc = parser.parseFromString(MEI_content, "text/xml");
+
+  const staffDef = htmldoc.querySelector('staffDef');
+  const lines = staffDef.attributes.getNamedItem('lines').nodeValue;
+  if (lines > 1) {
+    return "square";
+  }
+  else {
+    return "aquitanian";
   }
 }
