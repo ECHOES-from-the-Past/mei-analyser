@@ -9,7 +9,7 @@
     "preview": " vite preview",
     "docs": "jsdoc --destination ./docs --readme README.md src/*.js",
     "docs-production": "jsdoc --destination ./dist/docs --readme README.md src/*.js",
-    "build-production": "vite build --base=/mei-analyser/ && npm run docs-prod"
+    "build-production": "vite build --base=/mei-analyser/ && npm run docs-production"
   },
   "devDependencies": {
     "jsdoc": "^4.0.2",
