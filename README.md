@@ -1,6 +1,6 @@
 # MEI Analyser
 - Development site: https://echoes-from-the-past.github.io/mei-analyser/
-- Code Documentation (temporary): http://server.notkaramel.me/echoes/docs
+- Code Documentation (temporary): https://echoes-from-the-past.github.io/mei-analyser/docs/
 - A tool to analyse MEI files, highlighting sections and comparing them to other MEI files.
 - A part of project ECHOES from the Past: Unveiling a Lost Soundscape
 # Development
