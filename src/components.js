@@ -22,6 +22,29 @@ export class NeumeComponent {
         });
     }
 
+    spotlight(color = 'rgba(149, 48, 217, 0.6)', stroke_color = 'rgba(149, 48, 217, 1)') {
+        const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
+        nc_svg.forEach((nc) => {
+            const x_coord = nc.querySelector('use').attributes.getNamedItem('x').value;
+            const y_coord = nc.querySelector('use').attributes.getNamedItem('y').value;
+            const width = '300';
+            const height = '400';
+
+            // construct a spotlight rectangle to highlight the neume component
+            const spotlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+            spotlight.setAttribute('class', 'spotlight-rect');
+            spotlight.setAttribute('x', x_coord - width / 3);
+            spotlight.setAttribute('y', y_coord - height / 2);
+            spotlight.setAttribute('width', width);
+            spotlight.setAttribute('height', height);
+            spotlight.setAttribute('fill', color);
+            spotlight.setAttribute('stroke', stroke_color);
+            spotlight.setAttribute('stroke-width', '30px');
+            // Display the spotlight rectangle
+            nc.appendChild(spotlight);
+        });
+    }
+
     unhighlight() {
         const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
         nc_svg.forEach((nc) => {
