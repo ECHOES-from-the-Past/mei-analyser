@@ -39,8 +39,12 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm install
-      - name: Build
-        run: npm run deploy-gh
+      - name: Build Webpage
+        run: npm run build-production
+      - name: Generate documentation
+        run: npm run docs
+      - name: Copy documentation to dist
+        run: cp -r docs dist/
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
