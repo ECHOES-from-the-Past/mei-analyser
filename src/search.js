@@ -89,6 +89,7 @@ export function highlight_aquitanian_pattern(aquitanian_content, search_pattern)
  * users to visit each pattern at a time.
  * @param {Array<NeumeComponentAQ>} aquitanian_content an array of NeumeComponentAQ
  * @param {Array<Number>} contour_pattern an array of number, parse from user's input
+ * @returns {Number} the number of pattern found 
  */
 export function highlight_contour_AQ(aquitanian_content, contour_pattern) {
   let aq_count = 0;
@@ -126,6 +127,7 @@ export function highlight_contour_AQ(aquitanian_content, contour_pattern) {
     }
   }
 
+  return aq_count;
   // Display the pattern count
   // document.getElementById("aq-count").innerHTML = aq_count;
 }
@@ -138,6 +140,7 @@ export function highlight_contour_AQ(aquitanian_content, contour_pattern) {
  * users to visit each pattern at a time.
  * @param {Array<NeumeComponentSQ>} Square_MEI the chant's MEI file in square notation
  * @param {Array<Number>} contour_pattern an array of number, parse from user's input
+ * @returns {Number} the number of pattern found
  */
 export function highlight_contour_SQ(square_content, contour_pattern) {
   let sq_count = 0;
@@ -165,10 +168,8 @@ export function highlight_contour_SQ(square_content, contour_pattern) {
       sq_count++;
     }
 
-
-    // Display the pattern count
-    // document.getElementById("sq-count").innerHTML = sq_count;
   }
+  return sq_count;
 }
 
 
@@ -178,22 +179,22 @@ export function highlight_contour_SQ(square_content, contour_pattern) {
  * @param {Array<NeumeComponentAQ | NeumeComponentSQ>} pattern_2 Neume Component array of pattern 2
  */
 export function pattern_analysis(pattern_1, pattern_2) {
-  if(pattern_1.length == 0 || pattern_2.length == 0){
+  if (pattern_1.length == 0 || pattern_2.length == 0) {
     alert("Please upload both files before comparing them.");
     return;
   }
 
   let pattern_1_loc = [], pattern_2_loc = [];
-  if(pattern_1[0] instanceof NeumeComponentAQ){
+  if (pattern_1[0] instanceof NeumeComponentAQ) {
     pattern_1_loc = pattern_1.map((e) => e.get_loc());
-  } else if(pattern_1[0] instanceof NeumeComponentSQ){
+  } else if (pattern_1[0] instanceof NeumeComponentSQ) {
     pattern_1_loc = pattern_1.map((e) => e.septenary());
   }
 
-  if(pattern_2[0] instanceof NeumeComponentAQ){
+  if (pattern_2[0] instanceof NeumeComponentAQ) {
     pattern_2_loc = pattern_2.map((e) => e.get_loc());
   }
-  else if(pattern_2[0] instanceof NeumeComponentSQ){
+  else if (pattern_2[0] instanceof NeumeComponentSQ) {
     pattern_2_loc = pattern_2.map((e) => e.septenary());
   }
 
@@ -227,10 +228,13 @@ export function pattern_analysis(pattern_1, pattern_2) {
   document.getElementById("cross-comparison-2").innerHTML = result[1].join(" ");
 
   // Highlight the difference
+  // Colour: having the same shade for the same melodic interval on both chants
+  // Adding clarification for the user
   const gap_1 = result[2];
   const gap_2 = result[3];
   const yellow = 'rgba(255, 255, 0, 1)';
   const yellow_stroke = 'rgb(128,128,0)';
+
   gap_1.forEach((e, i, arr) => {
     pattern_1[e - 1 - 1].highlight('rgba(255, 0, 0, 0.3)', 'rgba(149, 48, 217, 0.6)');
     pattern_1[e - 1].highlight('rgba(255, 0, 0, 1)', 'rgba(149, 48, 217, 1)');
@@ -248,3 +252,7 @@ export function pattern_analysis(pattern_1, pattern_2) {
     pattern_1[e - 1 - i + gap_1.length].highlight(yellow, yellow_stroke);
   });
 }
+
+/**
+ * Display mismatched pattern in the cross-comparison analysis
+ */

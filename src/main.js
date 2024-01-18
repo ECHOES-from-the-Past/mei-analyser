@@ -10,7 +10,7 @@ import {
   highlight_contour_AQ,
   highlight_contour_SQ,
   pattern_analysis
-} from './search_algo.js';
+} from './search.js';
 
 import AQUIT_SAMPLE from '../GABCtoMEI/MEI_outfiles/01_benedicte-omnes_pem82441_aquit_AQUIT.mei?url'
 import SQUARE_SAMPLE from '../GABCtoMEI/MEI_outfiles/02_benedicte-omnes_pem85041_square_SQUARE.mei?url'
@@ -55,8 +55,8 @@ function load_search() {
   let right_chant = sessionStorage.getItem("mei-file-2");
 
   if (search_option == "contour") {
-    process_contour(left_chant, search_pattern);
-    process_contour(right_chant, search_pattern);
+    process_contour(left_chant, search_pattern, 'left');
+    process_contour(right_chant, search_pattern, 'right');
   }
 }
 
@@ -102,15 +102,15 @@ document.getElementById('cross-comparison-btn').addEventListener("click", () => 
 
   let left_chant_content, right_chant_content;
   // Parse MEI file into an array of NeumeComponent
-  if(get_annotation_type(left_chant) == "aquitanian"){
+  if (get_annotation_type(left_chant) == "aquitanian") {
     left_chant_content = parse_MEI_AQ(left_chant);
-  } else if (get_annotation_type(left_chant) == "square"){
+  } else if (get_annotation_type(left_chant) == "square") {
     left_chant_content = parse_MEI_SQ(left_chant);
   }
 
-  if(get_annotation_type(right_chant) == "aquitanian"){
+  if (get_annotation_type(right_chant) == "aquitanian") {
     right_chant_content = parse_MEI_AQ(right_chant);
-  } else if (get_annotation_type(right_chant) == "square"){
+  } else if (get_annotation_type(right_chant) == "square") {
     right_chant_content = parse_MEI_SQ(right_chant);
   }
 
@@ -121,14 +121,21 @@ document.getElementById('cross-comparison-btn').addEventListener("click", () => 
 function cross_comparison() {
 }
 
-function process_contour(MEI_file, search_pattern) {
-  if (get_annotation_type(MEI_file) == "aquitanian") {
+function process_contour(MEI_file, search_pattern, slot) {
+  let pattern_count = 0;
+  let chant_type = get_annotation_type(MEI_file);
+  if (chant_type == "aquitanian") {
     // Process the Aquitanian MEI file
     const aquitanian_content = parse_MEI_AQ(MEI_file);
-    highlight_contour_AQ(aquitanian_content, search_pattern);
-  } else if (get_annotation_type(MEI_file) == "square") {
+    pattern_count = highlight_contour_AQ(aquitanian_content, search_pattern);
+  } else if (chant_type == "square") {
     // Process the Square Notation MEI file
     const square_content = parse_MEI_SQ(MEI_file);
-    highlight_contour_SQ(square_content, search_pattern);
+    pattern_count = highlight_contour_SQ(square_content, search_pattern);
+  } else {
+    alert(`Invalid MEI file on slot ${slot}.`);
+    console.error(MEI_file);
   }
+  document.getElementById("chant-type-" + slot).innerHTML = chant_type;
+  document.getElementById("pattern-count-" + slot).innerHTML = pattern_count;
 }

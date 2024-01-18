@@ -44,9 +44,14 @@ g {
   grid-template-columns: 1fr 1fr;
 }
 
-#aq-count, #sq-count {
+.pattern-count {
   color:hsl(357, 95%, 25%);
   font-weight: bold;
+}
+
+.file-upload-box {
+  border: 1px solid #ccc;
+  width: 60%;
 }
 
 #needleman-wunch-analysis {

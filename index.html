@@ -30,17 +30,25 @@
 
         <button type="button" id="search-btn">Search</button> <br>
       </form>
-      <p>Pattern(s) found on Aquitanian: <span id="aq-count"></span> and on Square: <span id="sq-count"></span> </p>
+      <p>Pattern(s) count: </p>
+      <ul>
+        <li>
+          Left (type: <span id="chant-type-left">?</span>) - <span class="pattern-count" id="pattern-count-left"></span>
+        </li>
+        <li>
+          Right (type: <span id="chant-type-right">?</span>) - <span class="pattern-count" id="pattern-count-right"></span>
+        </li>
+      </ul>
 
       <div id="mei-file-upload">
         <p>Upload to left slot:
           <span>
-            <input type='file' id='file-input-1' />
+            <input type='file' class="file-upload-box" id='file-input-1' />
           </span>
         </p>
         <p>Upload to right slot:
           <span>
-            <input type='file' id='file-input-2' />
+            <input type='file' class="file-upload-box" id='file-input-2' />
           </span>
         </p>
       </div>
