@@ -13,6 +13,11 @@ export class NeumeComponent {
         this.tilt = tilt;
     }
 
+    /**
+     * Highlight the neume component.
+     * @param {String} color the fill colour of the neume component (default: 'rgba(149, 48, 217, 0.6)' - purple)
+     * @param {String} stroke_color the stroke colour of the neume component (default: 'rgba(149, 48, 217, 1)' - purple)
+     */
     highlight(color = 'rgba(149, 48, 217, 0.6)', stroke_color = 'rgba(149, 48, 217, 1)') {
         const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
         nc_svg.forEach((nc) => {
@@ -22,6 +27,11 @@ export class NeumeComponent {
         });
     }
 
+    /**
+     * Put the neume component in a spotlight by surrounding it with a box.
+     * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
+     * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
+     */
     spotlight(color = 'rgba(149, 48, 217, 0.6)', stroke_color = 'rgba(149, 48, 217, 1)') {
         const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
         nc_svg.forEach((nc) => {

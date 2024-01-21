@@ -5,29 +5,38 @@ import { NeumeComponent, NeumeComponentAQ, NeumeComponentSQ } from './components
  * @param {MEI_file} file_name link to the MEI (.mei) file to be rendered
  * @param {Number} order the number
  */
-export function load_MEI_file(file_name, order) {
-  fetch(file_name)
+export async function load_MEI_file(file_name, order) {
+  let mei_content;
+  await fetch(file_name)
     .then((response) => response.text())
     .then((mei) => {
-      // This line initializes the Verovio toolkit
-      const vero_toolkit = new verovio.toolkit();
-
-      let zoom = 80;
-      const options = {
-        pageWidth: document.body.clientWidth * 50 / zoom,
-        // pageHeight: document.body.clientHeight * 50 / zoom,
-        scale: zoom,
-      };
-      vero_toolkit.setOptions(options);
-      vero_toolkit.loadData(mei);
-      let svg = vero_toolkit.renderToSVG(1);
-      const meifile = document.getElementById("mei-file-" + order);
-
-      meifile.innerHTML = svg;
-
-      // save MEI file to session
-      sessionStorage.setItem("mei-file-" + order, mei);
+      sessionStorage.setItem("mei-content-" + order, mei);
+      mei_content = mei;
     })
+  return mei_content;
+}
+
+export function loadMEIContent(MEI_content, order) {
+  // This line initializes the Verovio toolkit
+  try {
+    let vero_toolkit = new verovio.toolkit();
+    let zoom = 80;
+    const options = {
+      pageWidth: document.body.clientWidth * 50 / zoom,
+      // pageHeight: document.body.clientHeight * 50 / zoom,
+      scale: zoom,
+    };
+    vero_toolkit.setOptions(options);
+    vero_toolkit.loadData(MEI_content);
+    let svg = vero_toolkit.renderToSVG(1);
+
+    const meifile = document.getElementById("mei-file-" + order);
+
+    meifile.innerHTML = svg;
+  } catch (error) {
+    console.log(error);
+    alert("Please reload the page and try again.")
+  }
 }
 
 /**

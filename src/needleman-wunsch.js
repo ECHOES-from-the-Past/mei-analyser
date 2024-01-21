@@ -26,8 +26,8 @@ function matrix(A1, A2, match = 1, mismatch = -1, gap = -2) {
   }
 
   // Fill the matrix
-  for(let i = 0; i < m; i++) {
-    for(let j = 0; j < n; j++) {
+  for (let i = 0; i < m; i++) {
+    for (let j = 0; j < n; j++) {
       let score = A1[i] === A2[j] ? match : mismatch;
       let up = M[i][j + 1] + gap;
       let left = M[i + 1][j] + gap;
@@ -57,24 +57,24 @@ function align(M, A, B, match = 1, mismatch = -1, gap = -2) {
 
   A.unshift(0);
   B.unshift(0);
-  
+
   const gap_symbol = '<span style=color:red>GAP</span>';
 
-  while(i > 0 || j > 0) {
+  while (i > 0 || j > 0) {
     // console.log(A[i], B[j]);
     let match_score = A[i] === B[j] ? match : mismatch;
-    if(i > 0 && j > 0 && M[i][j] === M[i - 1][j - 1] + match_score) {
+    if (i > 0 && j > 0 && M[i][j] === M[i - 1][j - 1] + match_score) {
       AlignmentA.unshift(A[i]);
       AlignmentB.unshift(B[j]);
       i--;
       j--;
     }
-    else if(i > 0 && M[i][j] === M[i - 1][j] + gap) {
+    else if (i > 0 && M[i][j] === M[i - 1][j] + gap) {
       AlignmentA.unshift(A[i]);
       AlignmentB.unshift(gap_symbol);
       i--;
     }
-    else if(j > 0 && M[i][j] === M[i][j - 1] + gap) {
+    else if (j > 0 && M[i][j] === M[i][j - 1] + gap) {
       AlignmentA.unshift(gap_symbol);
       AlignmentB.unshift(B[j]);
       j--;
@@ -95,7 +95,7 @@ function align(M, A, B, match = 1, mismatch = -1, gap = -2) {
  * @param {Number} [gap=-2] score for each gap  
  * @returns 4 arrays of numbers: [AlignmentA, AlignmentB, gap_index_A, gap_index_B]
  */
-function align_nc(M, A_nc, B_nc, match = 1, mismatch = -1, gap = -2) {
+function align_nc(M, A_nc, B_nc, gap_symbol = '<span style=color:red>GAP</span>', match = 1, mismatch = -1, gap = -2) {
   let AlignmentA = [];
   let AlignmentB = [];
 
@@ -107,31 +107,39 @@ function align_nc(M, A_nc, B_nc, match = 1, mismatch = -1, gap = -2) {
 
   A_nc.unshift(0);
   B_nc.unshift(0);
-  
-  const gap_symbol = '<span style=color:red>GAP</span>';
 
-  while(i > 0 || j > 0) {
+  while (i > 0 || j > 0) {
     // console.log(A[i], B[j]);
     let match_score = A_nc[i] === B_nc[j] ? match : mismatch;
-    if(i > 0 && j > 0 && M[i][j] === M[i - 1][j - 1] + match_score) {
+    if (i > 0 && j > 0 && M[i][j] === M[i - 1][j - 1] + match_score) {
       AlignmentA.unshift(A_nc[i]);
       AlignmentB.unshift(B_nc[j]);
       i--;
       j--;
     }
-    else if(i > 0 && M[i][j] === M[i - 1][j] + gap) {
-      // Gap filler is on array A
+    else if (i > 0 && M[i][j] === M[i - 1][j] + gap) {
+      // Gap filler is on array A, gap index is on array B
       AlignmentA.unshift(A_nc[i]);
-      gap_index_A.unshift(i);
       AlignmentB.unshift(gap_symbol);
+      // gap_index_B.unshift(j);
       i--;
     }
-    else if(j > 0 && M[i][j] === M[i][j - 1] + gap) {
-      // Gap filler is on array B
+    else if (j > 0 && M[i][j] === M[i][j - 1] + gap) {
+      // Gap filler is on array B, gap index is on array A
       AlignmentA.unshift(gap_symbol);
       AlignmentB.unshift(B_nc[j]);
-      gap_index_B.unshift(j);
+      // gap_index_A.unshift(i);
       j--;
+    }
+  }
+  for(let i = 0; i < AlignmentA.length; i++) {
+    if(AlignmentA[i] == gap_symbol) {
+      gap_index_A.push(i);
+    }
+  }
+  for(let i = 0; i < AlignmentB.length; i++) {
+    if(AlignmentB[i] == gap_symbol) {
+      gap_index_B.push(i);
     }
   }
   // console.table(AlignmentA);
@@ -144,9 +152,9 @@ export function needlemanWunsch(A, B, match = 1, mismatch = -1, gap = -2) {
   return [A1, A2];
 }
 
-export function needlemanWunsch_nc(A_nc, B_nc, match = 1, mismatch = -1, gap = -2) {
+export function needlemanWunsch_nc(A_nc, B_nc, gap_symbol = '<span style=color:red>GAP</span>', match = 1, mismatch = -1, gap = -2) {
   const M = matrix(A_nc, B_nc, match, mismatch, gap);
-  const [A1, A2, g1, g2] = align_nc(M, A_nc, B_nc, match, mismatch, gap);
+  const [A1, A2, g1, g2] = align_nc(M, A_nc, B_nc, gap_symbol, match, mismatch, gap);
   return [A1, A2, g1, g2];
 }
 

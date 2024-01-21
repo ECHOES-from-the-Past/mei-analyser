@@ -1,5 +1,6 @@
 import {
   load_MEI_file,
+  loadMEIContent,
   parse_MEI_AQ,
   parse_MEI_SQ,
   parse_search_pattern,
@@ -29,8 +30,26 @@ document.addEventListener("DOMContentLoaded", () => {
   const prev_search = localStorage.getItem("search-query");
   document.getElementById("search-bar").value = prev_search;
 
-  load_MEI_file(AQUIT_SAMPLE, 1);
-  load_MEI_file(SQUARE_SAMPLE, 2);
+  const prev_analysis_mode = localStorage.getItem("analysis-mode");
+  const analysis_radio_checkbox = document.getElementsByName("analysis-mode");
+  for (let e of analysis_radio_checkbox) {
+    if (e.value == prev_analysis_mode) {
+      e.checked = true;
+    }
+  }
+
+  if (sessionStorage.getItem("mei-content-1") == null) {
+    const newContent = load_MEI_file(AQUIT_SAMPLE, 1);
+    loadMEIContent(newContent, 1);
+  } else {
+    loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+  }
+  if (sessionStorage.getItem("mei-content-2") == null) {
+    const newContent = load_MEI_file(SQUARE_SAMPLE, 2);
+    loadMEIContent(newContent, 2);
+  } else {
+    loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+  }
 });
 
 
@@ -51,8 +70,8 @@ function load_search() {
   // Parse search pattern into an array of number
   const search_pattern = parse_search_pattern(search_bar_input);
 
-  let left_chant = sessionStorage.getItem("mei-file-1");
-  let right_chant = sessionStorage.getItem("mei-file-2");
+  let left_chant = sessionStorage.getItem("mei-content-1");
+  let right_chant = sessionStorage.getItem("mei-content-2");
 
   if (search_option == "contour") {
     process_contour(left_chant, search_pattern, 'left');
@@ -69,12 +88,13 @@ document.getElementById('search-btn').addEventListener("click", load_search, fal
  * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
  * @param {Number} slot either 1 or 2
  */
-function upload_file(slot) {
+async function upload_file(slot) {
   clear_all_highlight();
   const uploaded_file = document.getElementById('file-input-' + slot).files[0];
   const objectURL = URL.createObjectURL(uploaded_file);
 
-  load_MEI_file(objectURL, slot);
+  const newContent = await load_MEI_file(objectURL, slot);
+  loadMEIContent(newContent, slot);
   URL.revokeObjectURL(upload_file);
 }
 
@@ -97,8 +117,8 @@ document.getElementById('file-input-2').addEventListener("change", () => {
  */
 document.getElementById('cross-comparison-btn').addEventListener("click", () => {
   clear_all_highlight();
-  let left_chant = sessionStorage.getItem("mei-file-1");
-  let right_chant = sessionStorage.getItem("mei-file-2");
+  let left_chant = sessionStorage.getItem("mei-content-1");
+  let right_chant = sessionStorage.getItem("mei-content-2");
 
   let left_chant_content, right_chant_content;
   // Parse MEI file into an array of NeumeComponent
@@ -113,13 +133,11 @@ document.getElementById('cross-comparison-btn').addEventListener("click", () => 
   } else if (get_annotation_type(right_chant) == "square") {
     right_chant_content = parse_MEI_SQ(right_chant);
   }
+  const analysis_mode = document.querySelector('input[name="analysis-mode"]:checked').value;
+  pattern_analysis(left_chant_content, right_chant_content, analysis_mode);
 
-  pattern_analysis(left_chant_content, right_chant_content);
+  localStorage.setItem("analysis-mode", analysis_mode);
 }, false);
-
-
-function cross_comparison() {
-}
 
 function process_contour(MEI_file, search_pattern, slot) {
   let pattern_count = 0;
