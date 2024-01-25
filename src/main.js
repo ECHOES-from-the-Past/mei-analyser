@@ -1,5 +1,4 @@
 import {
-  load_MEI_file,
   loadMEIContent,
   parse_MEI_AQ,
   parse_MEI_SQ,
@@ -13,19 +12,16 @@ import {
   pattern_analysis
 } from './search.js';
 
-import AQUIT_SAMPLE from '../GABCtoMEI/MEI_outfiles/01_benedicte-omnes_pem82441_aquit_AQUIT.mei?url'
-import SQUARE_SAMPLE from '../GABCtoMEI/MEI_outfiles/02_benedicte-omnes_pem85041_square_SQUARE.mei?url'
-
 /**
  * Load predefined files when DOM is loaded
  */
-document.onreadystatechange = async function () {
+document.onreadystatechange = function () {
   if (document.readyState === 'complete') {
-    await loadContent();
+    loadContent();
   }
 }
 
-async function loadContent() {
+function loadContent() {
   const prev_search_choice = localStorage.getItem("search-choice");
   const radio_checkbox = document.getElementsByName("search-option");
   for (let e of radio_checkbox) {
@@ -43,20 +39,9 @@ async function loadContent() {
       e.checked = true;
     }
   }
-
-  if (sessionStorage.getItem("mei-content-1") == null) {
-    const newContent = await load_MEI_file(AQUIT_SAMPLE, 1);
-    loadMEIContent(newContent, 1);
-  } else {
-    loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-  }
-
-  if (sessionStorage.getItem("mei-content-2") == null) {
-    const newContent = await load_MEI_file(SQUARE_SAMPLE, 2);
-    loadMEIContent(newContent, 2);
-  } else {
-    loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
-  }
+  
+  loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+  loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
 }
 
 

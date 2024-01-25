@@ -1,11 +1,12 @@
 import { NeumeComponent, NeumeComponentAQ, NeumeComponentSQ } from './components.js';
-
+import AQUIT_SAMPLE from '../GABCtoMEI/MEI_outfiles/01_benedicte-omnes_pem82441_aquit_AQUIT.mei?url'
+import SQUARE_SAMPLE from '../GABCtoMEI/MEI_outfiles/02_benedicte-omnes_pem85041_square_SQUARE.mei?url'
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
  * @param {MEI_file} file_name link to the MEI (.mei) file to be rendered
  * @param {Number} order the number
  */
-export async function load_MEI_file(file_name, order) {
+async function load_MEI_file(file_name, order) {
   let mei_content;
   await fetch(file_name)
     .then((response) => response.text())
@@ -17,6 +18,12 @@ export async function load_MEI_file(file_name, order) {
 }
 
 export async function loadMEIContent(MEI_content, order) {
+  if (MEI_content == null && order == 1) {
+    MEI_content = await load_MEI_file(AQUIT_SAMPLE, 1);
+  } else if (MEI_content == null && order == 2) {
+    MEI_content = await load_MEI_file(SQUARE_SAMPLE, 2);
+  }
+
   // This line initializes the Verovio toolkit
   try {
     let vero_toolkit = new verovio.toolkit();
@@ -34,8 +41,8 @@ export async function loadMEIContent(MEI_content, order) {
 
     meifile.innerHTML = svg;
   } catch (error) {
-    console.log(error);
-    alert("Please reload the page and try again.");
+    console.error(error);
+    console.log("Please reload the page and try again.");
   }
 }
 
