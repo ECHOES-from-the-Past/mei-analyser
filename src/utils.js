@@ -6,7 +6,7 @@ import SQUARE_SAMPLE from '../GABCtoMEI/MEI_outfiles/02_benedicte-omnes_pem85041
  * @param {MEI_file} file_name link to the MEI (.mei) file to be rendered
  * @param {Number} order the number
  */
-async function load_MEI_file(file_name, order) {
+export async function load_MEI_file(file_name, order) {
   let mei_content;
   await fetch(file_name)
     .then((response) => response.text())
