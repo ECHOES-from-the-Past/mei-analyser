@@ -16,7 +16,7 @@ export async function load_MEI_file(file_name, order) {
   return mei_content;
 }
 
-export function loadMEIContent(MEI_content, order) {
+export async function loadMEIContent(MEI_content, order) {
   // This line initializes the Verovio toolkit
   try {
     let vero_toolkit = new verovio.toolkit();
@@ -35,7 +35,7 @@ export function loadMEIContent(MEI_content, order) {
     meifile.innerHTML = svg;
   } catch (error) {
     console.log(error);
-    alert("Please reload the page and try again.")
+    alert("Please reload the page and try again.");
   }
 }
 

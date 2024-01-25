@@ -19,7 +19,13 @@ import SQUARE_SAMPLE from '../GABCtoMEI/MEI_outfiles/02_benedicte-omnes_pem85041
 /**
  * Load predefined files when DOM is loaded
  */
-document.addEventListener("DOMContentLoaded", () => {
+document.onreadystatechange = async function () {
+  if (document.readyState === 'complete') {
+    await loadContent();
+  }
+}
+
+async function loadContent() {
   const prev_search_choice = localStorage.getItem("search-choice");
   const radio_checkbox = document.getElementsByName("search-option");
   for (let e of radio_checkbox) {
@@ -39,18 +45,19 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (sessionStorage.getItem("mei-content-1") == null) {
-    const newContent = load_MEI_file(AQUIT_SAMPLE, 1);
+    const newContent = await load_MEI_file(AQUIT_SAMPLE, 1);
     loadMEIContent(newContent, 1);
   } else {
     loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
   }
+
   if (sessionStorage.getItem("mei-content-2") == null) {
-    const newContent = load_MEI_file(SQUARE_SAMPLE, 2);
+    const newContent = await load_MEI_file(SQUARE_SAMPLE, 2);
     loadMEIContent(newContent, 2);
   } else {
     loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
   }
-});
+}
 
 
 /**
