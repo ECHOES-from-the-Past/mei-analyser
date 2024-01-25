@@ -1,4 +1,5 @@
 import {
+  load_MEI_file,
   loadMEIContent,
   parse_MEI_AQ,
   parse_MEI_SQ,
