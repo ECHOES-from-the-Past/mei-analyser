@@ -152,7 +152,7 @@ export function highlight_contour_SQ(square_content, contour_pattern) {
    */
   for (let i_nc = 0; i_nc < square_content.length - contour_pattern.length; i_nc++) {
     /**
-     * @param {Array<NeumeComponentAQ>} found_pattern the found pattern of Aquitanian Neume Component
+     * @param {Array<NeumeComponentSQ>} found_pattern the found pattern of Aquitanian Neume Component
     */
     let found_pattern = [square_content[i_nc]];
     for (let i = 0; i < contour_pattern.length; i++) {
@@ -217,7 +217,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
   });
 
   const gap_symbol = '<span style=color:red>GAP</span>';
-  const result = needlemanWunsch_nc(pattern_1_contour, pattern_2_contour, gap_symbol);
+  const result = needlemanWunsch_nc(pattern_1_contour, pattern_2_contour, gap_symbol, 1, -1, -2);
 
   let mismatch = [];
   for (let i = 0; i < result[0].length; i++) {
@@ -243,6 +243,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
   const gap_note = ['rgba(255, 0, 0, 0.7)', 'rgba(255, 0, 0, 1)']
 
   if (mode == "mismatch") {
+    // !! @martha-thomae said highlight the mismatch notes only
     // Highlight the mismatched contours: note[mismatch_index] and note[mismatch_index - 1]
     for (let mismatch_index of mismatch) {
       // console.log(mismatch);
@@ -272,9 +273,9 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       pattern_1[mismatch_index - offset_1()].log();
       pattern_2[mismatch_index - offset_2()].log();
 
-      pattern_1[mismatch_index - 1 - offset_1()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
+      // pattern_1[mismatch_index - 1 - offset_1()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
       pattern_1[mismatch_index - offset_1()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
-      pattern_2[mismatch_index - 1 - offset_2()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
+      // pattern_2[mismatch_index - 1 - offset_2()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
       pattern_2[mismatch_index - offset_2()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
     }
   } else if (mode == "gap-1") {

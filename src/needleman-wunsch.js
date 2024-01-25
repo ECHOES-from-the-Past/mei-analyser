@@ -121,17 +121,16 @@ function align_nc(M, A_nc, B_nc, gap_symbol = '<span style=color:red>GAP</span>'
       // Gap filler is on array A, gap index is on array B
       AlignmentA.unshift(A_nc[i]);
       AlignmentB.unshift(gap_symbol);
-      // gap_index_B.unshift(j);
       i--;
     }
     else if (j > 0 && M[i][j] === M[i][j - 1] + gap) {
       // Gap filler is on array B, gap index is on array A
       AlignmentA.unshift(gap_symbol);
       AlignmentB.unshift(B_nc[j]);
-      // gap_index_A.unshift(i);
       j--;
     }
   }
+  
   for(let i = 0; i < AlignmentA.length; i++) {
     if(AlignmentA[i] == gap_symbol) {
       gap_index_A.push(i);
