@@ -1,13 +1,16 @@
 {
   "name": "mei-analyser",
   "private": true,
-  "version": "0.1.5-dev",
+  "version": "0.1.6-dev",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": " vite preview",
+    "preview-production": "vite preview --base=/mei-analyser/",
     "docs": "jsdoc --destination ./docs --readme README.md src/*.js",
+    "database": "mkdir ./dist/database && cp ./GABCtoMEI/MEI_outfiles/*.mei ./dist/database",
+    "updateDatabase": "node updateDatabase.cjs",
     "docs-production": "jsdoc --destination ./dist/docs --readme README.md src/*.js",
     "build-production": "vite build --base=/mei-analyser/ && npm run docs-production"
   },
