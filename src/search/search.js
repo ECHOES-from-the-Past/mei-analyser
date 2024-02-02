@@ -1,3 +1,5 @@
+import { highlight_pattern } from "../utility/utils.js";
+
 function loadCorpus() {
   let corpus = [];
   for (let i = 0; i < 10; i++) {
