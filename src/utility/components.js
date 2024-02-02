@@ -132,3 +132,28 @@ export class NeumeComponentAQ extends NeumeComponent {
         return Number(this.loc);
     }
 }
+
+class Chant {
+    constructor() {
+        this.fileName = null;
+        this.meiContent = null;
+        this.annotationType = null;
+        this.neumeComponents = null;
+    }
+
+    getFileName() {
+        return this.fileName;
+    }
+
+    getMEIContent() {
+        return this.meiContent;
+    }
+
+    getAnnotationType() {
+        return this.annotationType;
+    }
+
+    getNeumeComponents() {
+        return this.neumeComponents;
+    }
+}

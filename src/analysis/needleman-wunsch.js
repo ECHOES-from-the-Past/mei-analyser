@@ -4,7 +4,7 @@
 import {
   parse_MEI_AQ,
   parse_MEI_SQ,
-} from "./utils.js";
+} from "../utility/utils.js";
 
 /**
  * Needleman-Wunsch algorithm - Step 1: Construct the matrix

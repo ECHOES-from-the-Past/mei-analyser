@@ -6,13 +6,14 @@ import {
   parse_search_pattern,
   clear_all_highlight,
   get_annotation_type
-} from './utils.js';
+} from './utility/utils.js';
 import {
   highlight_contour_AQ,
   highlight_contour_SQ,
+} from './search/search.js';
+import {
   pattern_analysis
-} from './search.js';
-
+} from './analysis/analysis.js';
 /**
  * Load predefined files when DOM is loaded
  */
