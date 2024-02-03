@@ -18,3 +18,6 @@ await fetch(file_name)
 })
 return mei_content;
 ```
+
+# Highlighting functions
+- 
