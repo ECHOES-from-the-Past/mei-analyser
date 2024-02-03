@@ -33,6 +33,12 @@ g {
   fill: black;
 }
 
+g.nc:hover {
+  fill: #ace600;
+  stroke: #314b01;
+  stroke-width: 5px;
+}
+
 #top-elements {
   display: grid;
   grid-template-columns: 1fr 2fr;
