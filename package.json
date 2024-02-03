@@ -8,10 +8,10 @@
     "build": "vite build",
     "preview": " vite preview",
     "preview-production": "vite preview --base=/mei-analyser/",
-    "docs": "jsdoc --destination ./docs --readme README.md src/*.js",
+    "docs": "jsdoc --destination ./docs --readme README.md -r src",
     "database": "mkdir ./dist/database && cp ./GABCtoMEI/MEI_outfiles/*.mei ./dist/database",
-    "updateDatabase": "node updateDatabase.cjs",
-    "docs-production": "jsdoc --destination ./dist/docs --readme README.md src/*.js",
+    "updateDatabase": "node src/search/updateDatabase.cjs",
+    "docs-production": "jsdoc --destination ./dist/docs --readme README.md -r src",
     "build-production": "vite build --base=/mei-analyser/ && npm run docs-production"
   },
   "devDependencies": {
