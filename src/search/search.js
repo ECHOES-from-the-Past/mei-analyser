@@ -1,13 +1,8 @@
 import { highlight_pattern } from "../utility/utils.js";
+import database from "./database.json";
 
-function loadCorpus() {
-  let corpus = [];
-  for (let i = 0; i < 10; i++) {
-    let corpus_item = [];
-    corpus_item.push(left_chant);
-    corpus_item.push(right_chant);
-    corpus.push(corpus_item);
-  }
+export function loadCorpus() {
+  console.table(database);
 }
 
 /**

@@ -8,6 +8,7 @@ import {
   get_annotation_type
 } from './utility/utils.js';
 import {
+  loadCorpus,
   highlight_contour_AQ,
   highlight_contour_SQ,
 } from './search/search.js';
@@ -23,7 +24,16 @@ document.onreadystatechange = function () {
   }
 }
 
+/**
+ * Redraw the MEI content when the window is resized
+ */
+window.onresize = function () {
+//   loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+//   loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+}
+
 function loadContent() {
+  loadCorpus();
   const prev_search_choice = localStorage.getItem("search-choice");
   const radio_checkbox = document.getElementsByName("search-option");
   for (let e of radio_checkbox) {
@@ -74,6 +84,7 @@ function load_search() {
 }
 
 /**
+ * ----------------------- SEARCH -----------------------
  * Event listener for the "Search" button for pattern search
  */
 document.getElementById('search-btn').addEventListener("click", load_search, false);
@@ -107,6 +118,7 @@ document.getElementById('file-input-2').addEventListener("change", () => {
 }, false);
 
 /**
+ * ----------------------- ANALYSIS -----------------------
  * Event listener for the "Analyse" button for cross-comparison functionality
  */
 document.getElementById('cross-comparison-btn').addEventListener("click", () => {
