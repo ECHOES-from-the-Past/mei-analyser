@@ -17,6 +17,11 @@ export async function load_MEI_file(file_name, order) {
   return mei_content;
 }
 
+/**
+ * 
+ * @param {MEI_Content} MEI_content 
+ * @param {Number} order 1 for left position, 2 for right position
+ */
 export async function loadMEIContent(MEI_content, order) {
   if (MEI_content == null && order == 1) {
     MEI_content = await load_MEI_file(AQUIT_SAMPLE, 1);
@@ -27,7 +32,7 @@ export async function loadMEIContent(MEI_content, order) {
   // This line initializes the Verovio toolkit
   try {
     let vero_toolkit = new verovio.toolkit();
-    let zoom = 80;
+    let zoom = 100;
     const options = {
       pageWidth: document.body.clientWidth * 50 / zoom,
       // pageHeight: document.body.clientHeight * 50 / zoom,
