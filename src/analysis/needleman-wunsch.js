@@ -7,7 +7,7 @@
  * @returns {number[][]}
  * Pseudocode: https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm#Advanced_presentation_of_algorithm
  */
-export function matrix(A1, A2, match = 1, mismatch = -1, gap = -2) {
+export function matrix_nw(A1, A2, match = 1, mismatch = -1, gap = -2) {
   var m = A1.length;
   var n = A2.length;
   var M = new Array(n + 1);
@@ -140,13 +140,13 @@ function align_nc(M, A_nc, B_nc, gap_symbol = '<span style=color:red>GAP</span>'
 }
 
 export function needlemanWunsch(A, B, match = 1, mismatch = -1, gap = -2) {
-  const M = matrix(A, B, match, mismatch, gap);
+  const M = matrix_nw(A, B, match, mismatch, gap);
   const [A1, A2] = align(M, A, B, match, mismatch, gap);
   return [A1, A2];
 }
 
 export function needlemanWunsch_nc(A_nc, B_nc, gap_symbol = '<span style=color:red>GAP</span>', match = 1, mismatch = -1, gap = -2) {
-  const M = matrix(A_nc, B_nc, match, mismatch, gap);
+  const M = matrix_nw(A_nc, B_nc, match, mismatch, gap);
   const [A1, A2, g1, g2] = align_nc(M, A_nc, B_nc, gap_symbol, match, mismatch, gap);
   return [A1, A2, g1, g2];
 }

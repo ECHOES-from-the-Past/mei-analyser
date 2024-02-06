@@ -1,18 +1,35 @@
-import { matrix, align, needlemanWunsch, needlemanWunsch_nc } from "./needleman-wunsch.js";
-import { } from './smith-waterman.js';
+import { matrix_nw, align, needlemanWunsch, needlemanWunsch_nc } from "./needleman-wunsch.js";
+import { matrix_sw, align_sw, smithWaterman } from './smith-waterman.js';
 
 /**
  * Example of Needleman-Wunsch algorithm
  */
-function example() {
+function nw_test01() {
   const A = [2, 5, 7, 9, 3, 1, 2, 4];
   const B = [2, 3, 5, 7, 9, 3, 1, 2, 4];
   const match = 1, mismatch = -1, gap = -2;
-  const M = matrix(A, B, match, mismatch, gap);
+  const M = matrix_nw(A, B, match, mismatch, gap);
   console.table(M);
   const [A1a, A2a] = align(M, A, B, match, mismatch, gap);
   console.log(A1a.join(' '));
   console.log(A2a.join(' '));
+}
+
+function sw_test01() {
+  const A = [2, 5, 7, 9, 3, 1, 2, 4];
+  const B = [2, 3, 5, 7, 9, 3, 1, 2, 4];
+  const match = 1, mismatch = -1, gap = -1;
+  const M = matrix_sw(A, B, match, mismatch, gap);
+  console.table(M);
+}
+
+function sw_test02() {
+  const A = [2,    5, 7, 9, 3, 1, 2, 4];
+  const B = [2, 3, 5, 7, 9, 3, 1, 2, 4];
+  const match = 1, mismatch = -1, gap = -1;
+  const M = matrix_sw(A, B, match, mismatch, gap);
+  console.table(M);
+  console.log(align_sw(M, A, B, match, mismatch, gap));
 }
 
 // function example_nc() {
@@ -53,7 +70,9 @@ function example() {
 // }
 
 function main() {
-  example();
+  nw_test01();
+  sw_test01();
+  sw_test02();
   // example_nc();
 }
 
