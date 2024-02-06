@@ -6,9 +6,9 @@
   "scripts": {
     "dev": "vite",
     "docs": "jsdoc --destination ./dist/docs --readme README.md -r src",
-    "build": "vite build --base=/mei-analyser/ && npm run docs-production",
-    "preview": "vite preview --base=/mei-analyser/",
     "database": "mkdir ./dist/database && cp ./GABCtoMEI/MEI_outfiles/*.mei ./dist/database",
+    "build": "vite build --base=/mei-analyser/ && npm run docs && npm run database",
+    "preview": "vite preview --base=/mei-analyser/",
     "updateDatabase": "node src/search/updateDatabase.cjs",
     "test": "node src/analysis/test-algorithm.js"
   },
