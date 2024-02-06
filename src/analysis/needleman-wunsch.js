@@ -1,3 +1,5 @@
+/*---- An implementation of the Needleman-Wunsch algorithm ----*/
+
 /**
  * Needleman-Wunsch algorithm - Step 1: Construct the matrix
  * @param {Array<Number>} A1 The first array of number - row
@@ -5,21 +7,21 @@
  * @returns {number[][]}
  * Pseudocode: https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm#Advanced_presentation_of_algorithm
  */
-function matrix(A1, A2, match = 1, mismatch = -1, gap = -2) {
+export function matrix(A1, A2, match = 1, mismatch = -1, gap = -2) {
   var m = A1.length;
   var n = A2.length;
-  var M = new Array(m + 1);
-  for (let i = 0; i <= m; i++) {
-    M[i] = new Array(n + 1);
+  var M = new Array(n + 1);
+  for (let i = 0; i <= n; i++) {
+    M[i] = new Array(m + 1);
     M[i][0] = Number(i * gap);
   }
-  for (let j = 0; j <= n; j++) {
+  for (let j = 0; j <= m; j++) {
     M[0][j] = Number(j * gap);
   }
 
   // Fill the matrix
-  for (let i = 0; i < m; i++) {
-    for (let j = 0; j < n; j++) {
+  for (let i = 0; i < n; i++) {
+    for (let j = 0; j < m; j++) {
       let score = A1[i] === A2[j] ? match : mismatch;
       let up = M[i][j + 1] + gap;
       let left = M[i + 1][j] + gap;
@@ -40,12 +42,12 @@ function matrix(A1, A2, match = 1, mismatch = -1, gap = -2) {
  * @param {Number} gap score for each gap  
  * @returns alignment of two arrays in order of [AlignmentA, AlignmentB]
  */
-function align(M, A, B, match = 1, mismatch = -1, gap = -2) {
+export function align(M, A, B, match = 1, mismatch = -1, gap = -2) {
   var AlignmentA = [];
   var AlignmentB = [];
 
-  let i = A.length;
-  let j = B.length;
+  let i = B.length;
+  let j = A.length;
 
   A.unshift(0);
   B.unshift(0);
@@ -94,8 +96,8 @@ function align_nc(M, A_nc, B_nc, gap_symbol = '<span style=color:red>GAP</span>'
   let gap_index_A = [];
   let gap_index_B = [];
 
-  let i = A_nc.length;
-  let j = B_nc.length;
+  let j = A_nc.length;
+  let i = B_nc.length;
 
   A_nc.unshift(0);
   B_nc.unshift(0);

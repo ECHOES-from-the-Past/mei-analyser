@@ -5,14 +5,12 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": " vite preview",
-    "preview-production": "vite preview --base=/mei-analyser/",
-    "docs": "jsdoc --destination ./docs --readme README.md -r src",
+    "docs": "jsdoc --destination ./dist/docs --readme README.md -r src",
+    "build": "vite build --base=/mei-analyser/ && npm run docs-production",
+    "preview": "vite preview --base=/mei-analyser/",
     "database": "mkdir ./dist/database && cp ./GABCtoMEI/MEI_outfiles/*.mei ./dist/database",
     "updateDatabase": "node src/search/updateDatabase.cjs",
-    "docs-production": "jsdoc --destination ./dist/docs --readme README.md -r src",
-    "build-production": "vite build --base=/mei-analyser/ && npm run docs-production"
+    "test": "node src/analysis/test-algorithm.js"
   },
   "devDependencies": {
     "jsdoc": "^4.0.2",
