@@ -41,9 +41,9 @@ export async function loadMEIContent(MEI_content, order) {
       MEI_content = await load_MEI_file(sample_aquitanian, 1);
     } else if (order == 2) {
       MEI_content = await load_MEI_file(sample_square, 2);
+    } else {
+      console.error(`Cannot load sample MEI content to invalid order: ${order}.\n Should be 1 (left) or 2 (right).`);
     }
-  } else {
-    console.error(`Missing content for MEI file on slot ${order}.`);
   }
 
   // This line initializes the Verovio toolkit
