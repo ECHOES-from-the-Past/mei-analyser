@@ -28,42 +28,6 @@ document.onreadystatechange = function () {
   }
 }
 
-/**
- * Redraw the MEI content when the window is resized
- */
-window.onresize = function () {
-  //   loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-  //   loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
-}
-
-
-/**
- * Dynamically resize the page
- */
-// timeOutFunctionId stores a numeric ID which is 
-// used by clearTimeOut to reset timer
-var timeOutFunctionId;
-
-// The function that we want to execute after 
-// we are done resizing
-function workAfterResizeIsDone() {
-  message.innerHTML += "Window Resized";
-}
-
-// The following event is triggered continuously
-// while we are resizing the window
-window.addEventListener("resize", function () {
-
-  // clearTimeOut() resets the setTimeOut() timer
-  // due to this the function in setTimeout() is 
-  // fired after we are done resizing
-  clearTimeout(timeOutFunctionId);
-
-  // setTimeout returns the numeric ID which is used by
-  // clearTimeOut to reset the timer
-  timeOutFunctionId = setTimeout(workAfterResizeIsDone, 500);
-});
-
 function loadContent() {
   // loadCorpus();
   const prev_search_choice = localStorage.getItem("search-choice");
@@ -88,6 +52,19 @@ function loadContent() {
   loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
 }
 
+/**
+ * Dynamically redraw the MEI content when the window is resized
+ * See: https://www.geeksforgeeks.org/how-to-wait-resize-end-event-and-then-perform-an-action-using-javascript/
+ */
+let timeOutFunctionId;
+window.onresize = function () {
+  clearTimeout(timeOutFunctionId);
+
+  timeOutFunctionId = setTimeout(() => {
+    loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+    loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+  }, 500);
+}
 
 /**
  * Perform highlighting when user clicks on "Search" button
