@@ -134,15 +134,15 @@ export class NeumeComponentAQ extends NeumeComponent {
 }
 
 class Chant {
-    constructor() {
-        this.fileName = null;
-        this.meiContent = null;
-        this.annotationType = null;
-        this.neumeComponents = null;
+    constructor(filePath, meiContent, annotationType, neumeComponents) {
+        this.filePath = filePath;
+        this.meiContent = meiContent;
+        this.annotationType = annotationType;
+        this.neumeComponents = neumeComponents;
     }
 
     getFileName() {
-        return this.fileName;
+        return this.filePath;
     }
 
     getMEIContent() {
