@@ -15,6 +15,10 @@ import {
 import {
   pattern_analysis
 } from './analysis/analysis.js';
+
+const env = import.meta.env.MODE;
+console.debug(`Current environment: ${env}`);
+
 /**
  * Load predefined files when DOM is loaded
  */
@@ -28,12 +32,40 @@ document.onreadystatechange = function () {
  * Redraw the MEI content when the window is resized
  */
 window.onresize = function () {
-//   loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-//   loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+  //   loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+  //   loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
 }
 
+
+/**
+ * Dynamically resize the page
+ */
+// timeOutFunctionId stores a numeric ID which is 
+// used by clearTimeOut to reset timer
+var timeOutFunctionId;
+
+// The function that we want to execute after 
+// we are done resizing
+function workAfterResizeIsDone() {
+  message.innerHTML += "Window Resized";
+}
+
+// The following event is triggered continuously
+// while we are resizing the window
+window.addEventListener("resize", function () {
+
+  // clearTimeOut() resets the setTimeOut() timer
+  // due to this the function in setTimeout() is 
+  // fired after we are done resizing
+  clearTimeout(timeOutFunctionId);
+
+  // setTimeout returns the numeric ID which is used by
+  // clearTimeOut to reset the timer
+  timeOutFunctionId = setTimeout(workAfterResizeIsDone, 500);
+});
+
 function loadContent() {
-  loadCorpus();
+  // loadCorpus();
   const prev_search_choice = localStorage.getItem("search-choice");
   const radio_checkbox = document.getElementsByName("search-option");
   for (let e of radio_checkbox) {
@@ -51,7 +83,7 @@ function loadContent() {
       e.checked = true;
     }
   }
-  
+
   loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
   loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
 }

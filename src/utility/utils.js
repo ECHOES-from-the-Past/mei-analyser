@@ -1,6 +1,8 @@
 import { NeumeComponent, NeumeComponentAQ, NeumeComponentSQ } from './components.js';
-import AQUIT_SAMPLE from '../../GABCtoMEI/MEI_outfiles/antiphonae_ad_communionem/001_C01_benedicte-omnes_pem82441_aquit_AQUIT.mei?url'
-import SQUARE_SAMPLE from '../../GABCtoMEI/MEI_outfiles/antiphonae_ad_communionem/002_C02_benedicte-omnes_pem85041_square_SQUARE.mei?url'
+import database from '../search/database.json';
+
+const env = import.meta.env.MODE; // 'development' or 'production'
+
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
  * @param {MEI_file} file_name link to the MEI (.mei) file to be rendered
@@ -23,20 +25,36 @@ export async function load_MEI_file(file_name, order) {
  * @param {Number} order 1 for left position, 2 for right position
  */
 export async function loadMEIContent(MEI_content, order) {
-  if (MEI_content == null && order == 1) {
-    MEI_content = await load_MEI_file(AQUIT_SAMPLE, 1);
-  } else if (MEI_content == null && order == 2) {
-    MEI_content = await load_MEI_file(SQUARE_SAMPLE, 2);
+  
+  let databasePath = "";
+  if(env === "development") {
+    databasePath = "../../GABCtoMEI/MEI_outfiles/";
+  } else if(env === "production") {
+    databasePath = "./database/";
+  }
+  
+  const sample_aquitanian = databasePath + database[0];
+  const sample_square = databasePath + database[1];
+
+  if (MEI_content == null) {
+    if (order == 1) {
+      MEI_content = await load_MEI_file(sample_aquitanian, 1);
+    } else if (order == 2) {
+      MEI_content = await load_MEI_file(sample_square, 2);
+    }
+  } else {
+    console.error(`Missing content for MEI file on slot ${order}.`);
   }
 
   // This line initializes the Verovio toolkit
   try {
     let vero_toolkit = new verovio.toolkit();
-    let zoom = 100;
+    let zoom = 80;
     const options = {
       pageWidth: document.body.clientWidth * 50 / zoom,
       // pageHeight: document.body.clientHeight * 50 / zoom,
       scale: zoom,
+      footer: "none",
     };
     vero_toolkit.setOptions(options);
     vero_toolkit.loadData(MEI_content);

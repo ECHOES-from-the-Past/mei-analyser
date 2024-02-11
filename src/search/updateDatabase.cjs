@@ -8,20 +8,22 @@
  */
 const fs = require('fs');
 
-let allMEIfiles = fs.readdirSync('./GABCtoMEI/MEI_outfiles');
+let allMEIfiles = fs.readdirSync('GABCtoMEI/MEI_outfiles', { recursive: true });
+console.log(allMEIfiles);
 
 // Filter out only MEI files
 let i = 0;
 while (i < allMEIfiles.length) {
-    if (!allMEIfiles[i].endsWith('.mei')) {
+    if (!allMEIfiles[i].endsWith('.mei') || allMEIfiles[i].includes('testfiles') || allMEIfiles[i].includes('intermed')) {
         allMEIfiles.splice(i, 1);
     } else {
         i++;
     }
 }
+console.log(allMEIfiles);
 
 // Write all files/folder to database.json (a JSON list)
-fs.writeFileSync('./database.json', JSON.stringify(allMEIfiles), 'utf8');
+fs.writeFileSync('src/search/database.json', JSON.stringify(allMEIfiles), 'utf8');
 
 // Check if the database is written correctly
 const database = require('./database.json');

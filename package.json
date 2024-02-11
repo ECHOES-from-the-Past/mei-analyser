@@ -6,10 +6,10 @@
   "scripts": {
     "dev": "vite",
     "docs": "jsdoc --destination ./dist/docs --readme README.md -r src",
-    "database": "mkdir ./dist/database && cp ./GABCtoMEI/MEI_outfiles/*.mei ./dist/database",
+    "database": "mkdir ./dist/database && cp -r ./GABCtoMEI/MEI_outfiles/* ./dist/database",
     "build": "vite build --base=/mei-analyser/ && npm run docs && npm run database",
     "preview": "vite preview --base=/mei-analyser/",
-    "updateDatabase": "node src/search/updateDatabase.cjs",
+    "updateDatabaseList": "node src/search/updateDatabase.cjs",
     "test": "node src/analysis/test-algorithm.js"
   },
   "devDependencies": {
