@@ -8,6 +8,24 @@
 # SSH clone
 git clone --recurse-submodules git@github.com:ECHOES-from-the-Past/mei-analyser.git
 ```
+
+- To detect `development` or `production` environment, use `import.meta.env.MODE` from Vite (see [Vite documentation](https://vitejs.dev/guide/env-and-mode#modes)). This is important due to the root file path to the MEI files (called "database") is different in development and production environment.
+```js
+const env = import.meta.env.MODE
+console.log(env) // `development` or `production`
+
+// proceed with an if statement
+```
+
+- `npm` scripts:
+  - `npm run dev` - Start development server
+  - `npm run build` - Build for production, including documentation and database (MEI files)
+  - `npm run preview` - Serve the production build with root path `/mei-analyser/`, similar to the GitHub Pages path
+  - `npm run database` - make a copy of the database (MEI files) inside the `./dist/database/` folder. This is called within the `build` script, but can be called separately.
+  - `npm run docs` - make the folder `./dist/docs/` and generate documentation using [JSdoc](https://jsdoc.app/)
+  - `npm run updateDatabaseList`: update the list of MEI files in the `./src/search/database.json`. This is only necessary when the submodule `GABCtoMEI` is resynced.
+  - `npm test` - Run the algorithm test file(s) 
+
 # Cross comparison analysis
 - Using [Needleman-Wunsch algorithm](https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm) for global alignment:
   - Parsing MEI files into a list of NeumeComponents
