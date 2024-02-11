@@ -15,6 +15,9 @@ deno run src/analysis/test-algorithm.js
 ```md
 Input list A: [2, 5, 7, 9, 3, 1, 2, 4] 
 Input list B: [2, 3, 5, 7, 9, 5, 2, 1, 4]
+Match score: 1
+Mismatch score: -1
+Gap score: -2
 ```
 
 - Expected matrix (using https://github.com/drdrsh/Needleman-Wunsch):

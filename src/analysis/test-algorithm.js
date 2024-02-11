@@ -2,17 +2,28 @@ import { matrix_nw, align, needlemanWunsch, needlemanWunsch_nc } from "./needlem
 import { matrix_sw, align_sw, smithWaterman } from './smith-waterman.js';
 
 /**
- * Example of Needleman-Wunsch algorithm
+ * Testing matrix construction of Needleman-Wunsch algorithm
  */
 function nw_test01() {
-  const A = [2, 5, 7, 9, 3, 1, 2, 4];
+  console.log("Testing matrix construction of Needleman-Wunsch algorithm");
+  const A = [2,    5, 7, 9, 3, 1, 2, 4];
   const B = [2, 3, 5, 7, 9, 3, 1, 2, 4];
   const match = 1, mismatch = -1, gap = -2;
   const M = matrix_nw(A, B, match, mismatch, gap);
   console.table(M);
-  const [A1a, A2a] = align(M, A, B, match, mismatch, gap);
-  console.log(A1a.join(' '));
-  console.log(A2a.join(' '));
+  console.log("END TEST NW_TEST01()\n");
+}
+
+/**
+ * Testing alignment of Needleman-Wunsch algorithm
+  */
+function nw_test02() {
+  const A = [2,    5, 7, 9, 3, 1, 2, 4];
+  const B = [2, 3, 5, 7, 9, 3, 1, 2, 4];
+  const match = 1, mismatch = -1, gap = -2;
+  const M = matrix_nw(A, B, match, mismatch, gap);
+  console.table(M);
+  console.log(align(M, A, B, match, mismatch, gap));
 }
 
 function sw_test01() {
@@ -71,8 +82,9 @@ function sw_test02() {
 
 function main() {
   nw_test01();
-  sw_test01();
-  sw_test02();
+  nw_test02();
+  // sw_test01();
+  // sw_test02();
   // example_nc();
 }
 

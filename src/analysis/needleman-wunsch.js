@@ -2,31 +2,42 @@
 
 /**
  * Needleman-Wunsch algorithm - Step 1: Construct the matrix
- * @param {Array<Number>} A1 The first array of number - row
- * @param {Array<Number>} A2 The second array of number - column
- * @returns {number[][]}
+ * @param {Array<Number>} A The first array of number - row
+ * @param {Array<Number>} B The second array of number - column
+ * @returns {number[][]} the 2D matrix with dimensions (A.length + 1) x (B.length + 1)
  * Pseudocode: https://en.wikipedia.org/wiki/Needleman%E2%80%93Wunsch_algorithm#Advanced_presentation_of_algorithm
  */
-export function matrix_nw(A1, A2, match = 1, mismatch = -1, gap = -2) {
-  var m = A1.length;
-  var n = A2.length;
-  var M = new Array(n + 1);
-  for (let i = 0; i <= n; i++) {
-    M[i] = new Array(m + 1);
+export function matrix_nw(A, B, match = 1, mismatch = -1, gap = -2) {
+  var rowLength = A.length + 1;
+  var colLength = B.length + 1;
+  var M = new Array(colLength + 1);
+
+  // Fill each row with an empty array
+  for (let i = 0; i < colLength; i++) {
+    M[i] = new Array(rowLength + 1);
+    // Also fill the first column
     M[i][0] = Number(i * gap);
   }
-  for (let j = 0; j <= m; j++) {
+
+  // Fill the first row
+  for (let j = 0; j < rowLength; j++) {
     M[0][j] = Number(j * gap);
   }
 
-  // Fill the matrix
-  for (let i = 0; i < n; i++) {
-    for (let j = 0; j < m; j++) {
-      let score = A1[i] === A2[j] ? match : mismatch;
-      let up = M[i][j + 1] + gap;
-      let left = M[i + 1][j] + gap;
-      let ul = M[i][j] + score;
-      M[i + 1][j + 1] = Math.max(up, left, ul);
+  // Fill the remaining of matrix
+  // Matrix coordinates are [column][row] or [b_col][a_row]
+  // M[b_col][a_row] = "DIAG";
+  // M[b_col + 1][a_row] = "SIDE";
+  // M[b_col][a_row + 1] = "UP";
+  // M[b_col + 1][a_row + 1] = "TARGET CELL";
+  for (let a_row = 0; a_row < rowLength - 1; a_row++) {
+    for (let b_col = 0; b_col < colLength - 1; b_col++) {
+      let match_score = B[b_col] === A[a_row] ? match : mismatch;
+
+      let diagCell = M[b_col][a_row] + match_score;
+      let leftCell = M[b_col + 1][a_row] + gap;
+      let upCell = M[b_col][a_row + 1] + gap;
+      M[b_col + 1][a_row + 1] = Math.max(diagCell, leftCell, upCell);
     }
   }
   return M;
@@ -43,38 +54,45 @@ export function matrix_nw(A1, A2, match = 1, mismatch = -1, gap = -2) {
  * @returns alignment of two arrays in order of [AlignmentA, AlignmentB]
  */
 export function align(M, A, B, match = 1, mismatch = -1, gap = -2) {
-  var AlignmentA = [];
-  var AlignmentB = [];
+  let alignmentPath = [];
+  let AlignmentA = [];
+  let AlignmentB = [];
 
-  let i = B.length;
-  let j = A.length;
+  let a_row = A.length;
+  let b_col = B.length;
+  console.debug(`List A: ${A}`);
+  console.debug(`List B: ${B}`);
 
-  A.unshift(0);
-  B.unshift(0);
+  const gap_symbol = 'GAP';
 
-  const gap_symbol = '<span style=color:red>GAP</span>';
+  // Reminder: Matrix coordinates are [column][row] or [b_col][a_row]
+  while (b_col > 0 || a_row > 0) {
+    const currentCell = M[b_col][a_row];
+    alignmentPath.push(currentCell);
 
-  while (i > 0 || j > 0) {
-    // console.log(A[i], B[j]);
-    let match_score = A[i] === B[j] ? match : mismatch;
-    if (i > 0 && j > 0 && M[i][j] === M[i - 1][j - 1] + match_score) {
-      AlignmentA.unshift(A[i]);
-      AlignmentB.unshift(B[j]);
-      i--;
-      j--;
-    }
-    else if (i > 0 && M[i][j] === M[i - 1][j] + gap) {
-      AlignmentA.unshift(A[i]);
-      AlignmentB.unshift(gap_symbol);
-      i--;
-    }
-    else if (j > 0 && M[i][j] === M[i][j - 1] + gap) {
+    const upLeft = M[b_col][a_row];
+    const up = M[b_col - 1][a_row];
+    const left = M[b_col][a_row - 1];
+    const max = Math.max(upLeft, up, left);
+    if (max == upLeft) {
+      AlignmentA.unshift(A[a_row - 1]);
+      AlignmentB.unshift(B[b_col - 1]);
+      a_row--;
+      b_col--;
+    } else if (max == up) {
+      AlignmentB.unshift(B[b_col - 1]);
       AlignmentA.unshift(gap_symbol);
-      AlignmentB.unshift(B[j]);
-      j--;
+      b_col--;
+    } else if (max == left) {
+      AlignmentA.unshift(A[a_row - 1]);
+      AlignmentB.unshift(gap_symbol);
+      a_row--;
     }
+    // console.debug(`A: ${AlignmentA}`);
+    // console.debug(`B: ${AlignmentB}`);
   }
   // console.table(AlignmentA);
+  console.debug(alignmentPath);
   return [AlignmentA, AlignmentB];
 }
 
@@ -92,46 +110,44 @@ export function align(M, A, B, match = 1, mismatch = -1, gap = -2) {
 function align_nc(M, A_nc, B_nc, gap_symbol = '<span style=color:red>GAP</span>', match = 1, mismatch = -1, gap = -2) {
   let AlignmentA = [];
   let AlignmentB = [];
-
   let gap_index_A = [];
   let gap_index_B = [];
 
-  let j = A_nc.length;
-  let i = B_nc.length;
+  let a_row = A_nc.length;
+  let b_col = B_nc.length;
 
-  A_nc.unshift(0);
-  B_nc.unshift(0);
+  // Reminder: Matrix coordinates are [column][row] or [b_col][a_row]
+  while (b_col > 0 || a_row > 0) {
+    // const currentCell = M[b_col][a_row];
 
-  while (i > 0 || j > 0) {
-    // console.log(A[i], B[j]);
-    let match_score = A_nc[i] === B_nc[j] ? match : mismatch;
-    if (i > 0 && j > 0 && M[i][j] === M[i - 1][j - 1] + match_score) {
-      AlignmentA.unshift(A_nc[i]);
-      AlignmentB.unshift(B_nc[j]);
-      i--;
-      j--;
-    }
-    else if (i > 0 && M[i][j] === M[i - 1][j] + gap) {
-      // Gap filler is on array A, gap index is on array B
-      AlignmentA.unshift(A_nc[i]);
-      AlignmentB.unshift(gap_symbol);
-      i--;
-    }
-    else if (j > 0 && M[i][j] === M[i][j - 1] + gap) {
-      // Gap filler is on array B, gap index is on array A
+    const upLeft = M[b_col][a_row];
+    const up = M[b_col - 1][a_row];
+    const left = M[b_col][a_row - 1];
+    const max = Math.max(upLeft, up, left);
+    if (max == upLeft) {
+      AlignmentA.unshift(A_nc[a_row - 1]);
+      AlignmentB.unshift(B_nc[b_col - 1]);
+      a_row--;
+      b_col--;
+    } else if (max == up) {
+      AlignmentB.unshift(B_nc[b_col - 1]);
       AlignmentA.unshift(gap_symbol);
-      AlignmentB.unshift(B_nc[j]);
-      j--;
+      b_col--;
+    } else if (max == left) {
+      AlignmentA.unshift(A_nc[a_row - 1]);
+      AlignmentB.unshift(gap_symbol);
+      a_row--;
     }
   }
-  
-  for(let i = 0; i < AlignmentA.length; i++) {
-    if(AlignmentA[i] == gap_symbol) {
+
+
+  for (let i = 0; i < AlignmentA.length; i++) {
+    if (AlignmentA[i] == gap_symbol) {
       gap_index_A.push(i);
     }
   }
-  for(let i = 0; i < AlignmentB.length; i++) {
-    if(AlignmentB[i] == gap_symbol) {
+  for (let i = 0; i < AlignmentB.length; i++) {
+    if (AlignmentB[i] == gap_symbol) {
       gap_index_B.push(i);
     }
   }

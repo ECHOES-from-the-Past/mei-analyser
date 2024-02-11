@@ -1,6 +1,6 @@
 import { NeumeComponent, NeumeComponentAQ, NeumeComponentSQ } from './components.js';
-import AQUIT_SAMPLE from '../../GABCtoMEI/MEI_outfiles/01_benedicte-omnes_pem82441_aquit_AQUIT.mei?url'
-import SQUARE_SAMPLE from '../../GABCtoMEI/MEI_outfiles/02_benedicte-omnes_pem85041_square_SQUARE.mei?url'
+import AQUIT_SAMPLE from '../../GABCtoMEI/MEI_outfiles/antiphonae_ad_communionem/001_C01_benedicte-omnes_pem82441_aquit_AQUIT.mei?url'
+import SQUARE_SAMPLE from '../../GABCtoMEI/MEI_outfiles/antiphonae_ad_communionem/002_C02_benedicte-omnes_pem85041_square_SQUARE.mei?url'
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
  * @param {MEI_file} file_name link to the MEI (.mei) file to be rendered
