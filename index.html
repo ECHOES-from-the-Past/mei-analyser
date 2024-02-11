@@ -71,21 +71,36 @@
         </button>
         <br>
       </div>
-      <div id="cross-comparison-result">
-        <p id="cross-comparison-1" style="word-wrap: break-word;"></p>
-        <p id="cross-comparison-2" style="word-wrap: break-word;"></p>
-      </div>
     </div>
+  </div>
+  <div id="cross-comparison-result">
+    <p id="cross-comparison-1"></p>
+    <p id="cross-comparison-2"></p>
   </div>
 
   <div id="mei-grid">
+    
     <div id="mei-file-select">
-      <p>Upload to left slot:
+      <div>
+        <label for="database-chant-left">Choose a chant from database:</label>
+        <select class="database-select" name="database-chant-left" id="database-chant-left">
+           <option value="placeholder">Select a chant for left slot</option>
+        </select>
+      </div>
+      <div>
+        <label for="database-chant-right">Choose a chant from database:</label>
+        <select class="database-select" name="database-chant-right" id="database-chant-right">
+        </select>
+      </div>
+    </div>
+    <div id="mei-file-select">
+      <p>or upload to left slot:
         <span>
           <input type='file' class="file-upload-box" id='file-input-1' />
         </span>
       </p>
-      <p>Upload to right slot:
+
+      <p>or upload to right slot:
         <span>
           <input type='file' class="file-upload-box" id='file-input-2' />
         </span>

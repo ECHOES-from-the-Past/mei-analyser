@@ -8,7 +8,6 @@ import {
   get_annotation_type
 } from './utility/utils.js';
 import {
-  loadCorpus,
   highlight_contour_AQ,
   highlight_contour_SQ,
 } from './search/search.js';
@@ -29,7 +28,6 @@ document.onreadystatechange = function () {
 }
 
 function loadContent() {
-  // loadCorpus();
   const prev_search_choice = localStorage.getItem("search-choice");
   const radio_checkbox = document.getElementsByName("search-option");
   for (let e of radio_checkbox) {
@@ -47,6 +45,13 @@ function loadContent() {
       e.checked = true;
     }
   }
+
+  // Load previous files. The value will be `null` if there's no previous file
+  const prev_file_1 = sessionStorage.getItem('database-chant-1');
+  const prev_file_2 = sessionStorage.getItem('database-chant-2');
+
+  document.getElementById('database-chant-left').value = prev_file_1;
+  document.getElementById('database-chant-right').value = prev_file_2;
 
   loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
   loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
@@ -96,7 +101,7 @@ function load_search() {
  * ----------------------- SEARCH -----------------------
  * Event listener for the "Search" button for pattern search
  */
-document.getElementById('search-btn').addEventListener("click", load_search, false);
+document.getElementById('search-btn').addEventListener("click", load_search);
 
 /**
  * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
@@ -115,16 +120,12 @@ async function upload_file(slot) {
 /**
  * Event listener for the "Upload" button, LEFT slot
  */
-document.getElementById('file-input-1').addEventListener("change", () => {
-  upload_file(1);
-}, false);
+document.getElementById('file-input-1').addEventListener("change", () => {upload_file(1)});
 
 /**
  * Event listener for the "Upload" button, RIGHT slot
  */
-document.getElementById('file-input-2').addEventListener("change", () => {
-  upload_file(2)
-}, false);
+document.getElementById('file-input-2').addEventListener("change", () => {upload_file(2)});
 
 /**
  * ----------------------- ANALYSIS -----------------------
@@ -172,3 +173,35 @@ function process_contour(MEI_file, search_pattern, slot) {
   document.getElementById("chant-type-" + slot).innerHTML = chant_type;
   document.getElementById("pattern-count-" + slot).innerHTML = pattern_count;
 }
+
+import database from './search/database.json';
+
+const chantMenuLeft = document.getElementById('database-chant-left');
+const chantMenuRight = document.getElementById('database-chant-right');
+
+chantMenuLeft.innerHTML = database.map((e) => {
+  return `<option value=${e}>${e}</option>`;
+}).join('');
+
+chantMenuRight.innerHTML = database.map((e) => {
+  return `<option value=${e}>${e}</option>`;
+}).join('');
+
+async function loadFromDatabase(fileName, order) {
+  let rootPath = "";
+  if(env === "development") {
+    rootPath = "../../GABCtoMEI/MEI_outfiles/";
+  } else if(env === "production") {
+    rootPath = "./database/";
+  }
+
+  sessionStorage.setItem('database-chant-' + order, fileName);
+
+  const filePath = rootPath + fileName;
+  console.log(filePath);
+  let MEI_file = await load_MEI_file(filePath, order);
+  loadMEIContent(MEI_file, order);
+}
+
+chantMenuLeft.addEventListener('change', () => {loadFromDatabase(chantMenuLeft.value, 1)});
+chantMenuRight.addEventListener('change', () => {loadFromDatabase(chantMenuRight.value, 2)});

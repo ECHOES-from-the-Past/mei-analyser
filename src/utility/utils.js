@@ -25,7 +25,6 @@ export async function load_MEI_file(file_name, order) {
  * @param {Number} order 1 for left position, 2 for right position
  */
 export async function loadMEIContent(MEI_content, order) {
-  
   let databasePath = "";
   if(env === "development") {
     databasePath = "../../GABCtoMEI/MEI_outfiles/";

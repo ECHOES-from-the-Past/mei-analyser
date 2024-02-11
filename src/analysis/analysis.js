@@ -57,8 +57,8 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
     }
   }
 
-  document.getElementById("cross-comparison-1").innerHTML = result[0].join(" ");
-  document.getElementById("cross-comparison-2").innerHTML = result[1].join(" ");
+  document.getElementById("cross-comparison-1").innerHTML = "LEFT : " + result[0].join(" ");
+  document.getElementById("cross-comparison-2").innerHTML = "RIGHT: " +  result[1].join(" ");
 
 
   // Highlight the gaps

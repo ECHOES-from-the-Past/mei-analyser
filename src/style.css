@@ -60,3 +60,37 @@ g.nc:hover {
   border: 1px solid #ccc;
   width: 60%;
 }
+
+#cross-comparison-result{
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  align-items: center;
+  justify-content: center;
+}
+
+#cross-comparison-result > p {
+  word-wrap: break-word;
+  margin: 0.5em;
+}
+
+.database-select {
+  width: 85%;
+  padding: 0.5em;
+  margin: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  text-align: justify;
+  /* pointer-events: none; */
+}
+
+.database-select option {
+  padding: 0.5em;
+  margin: 0.5em;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+.database-select option:hover {
+  background-color: #ace600;
+  color: white;
+}
