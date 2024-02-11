@@ -45,7 +45,8 @@ g.nc:hover {
   align-items: center;
 }
 
-#mei-display {
+#mei-display, #mei-file-select {
+  text-align: center;
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
@@ -58,10 +59,4 @@ g.nc:hover {
 .file-upload-box {
   border: 1px solid #ccc;
   width: 60%;
-}
-
-#needleman-wunch-analysis {
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }

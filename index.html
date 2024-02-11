@@ -20,7 +20,7 @@
         <!-- <input type="radio" id="aquitanian-absolute" name="search-option" value="absolute" checked>
           <label for="aquitanian-absolute">Aquitanian (absolute)</label>
           <br> -->
-        <h2>Select a search option: </h2>
+        <h1> Pattern Search </h1>
         <input type="radio" id="aquitanian-pattern" name="search-option" value="pattern">
         <label for="aquitanian-pattern"> Pitch Pattern (pitch-based) </label>
         <br>
@@ -37,39 +37,35 @@
           Left (type: <span id="chant-type-left">?</span>) - <span class="pattern-count" id="pattern-count-left"></span>
         </li>
         <li>
-          Right (type: <span id="chant-type-right">?</span>) - <span class="pattern-count" id="pattern-count-right"></span>
+          Right (type: <span id="chant-type-right">?</span>) - <span class="pattern-count"
+            id="pattern-count-right"></span>
         </li>
       </ul>
+      <p>View <a href="./docs">code documentation</a></p>
 
-      <div id="mei-file-upload">
-        <p>Upload to left slot:
-          <span>
-            <input type='file' class="file-upload-box" id='file-input-1' />
-          </span>
-        </p>
-        <p>Upload to right slot:
-          <span>
-            <input type='file' class="file-upload-box" id='file-input-2' />
-          </span>
-        </p>
-      </div>
     </div>
 
     <!-- Cross-comparison Analysis Section -->
 
     <div id="cross-comparison-analysis">
-      <h3>Pattern Analysis</h3>
+      <h1>Similarity Analysis</h1>
       <div>
         <input type="radio" id="mismatch-analysis" name="analysis-mode" value="mismatch" checked>
-        <label for="mismatch-analysis"> Mismatch Analysis </label>
+        <label for="mismatch-analysis"> Contour mismatches (blue) </label>
         <br>
-        <input type="radio" id="gap-analysis-left" name="analysis-mode" value="gap-1">
-        <label for="gap-analysis-left"> Contour Gap Analysis (Needleman-Wunsch | Left) </label>
+        <input type="radio" id="gap-right" name="analysis-mode" value="gaps-right">
+        <label for="gap-right"> Contour gaps (red fillers on left chant) </label>
         <br>
-        <input type="radio" id="gap-analysis-right" name="analysis-mode" value="gap-2">
-        <label for="gap-analysis-right"> Contour Gap Analysis (Needleman-Wunsch | Right) </label>
+        <input type="radio" id="gap-left" name="analysis-mode" value="gaps-left">
+        <label for="gap-left"> Contour gaps (red fillers on right chant) </label>
         <br>
-        <p> More instructions will be added here </p>
+        <input type="radio" id="gap-mismatch-right" name="analysis-mode" value="gaps-mismatch-right">
+        <label for="gap-mismatch-right"> Contour gaps and mismatches (red fillers on left chant) </label>
+        <br>
+        <input type="radio" id="gap-mismatch-left" name="analysis-mode" value="gaps-mismatch-left">
+        <label for="gap-mismatch-left"> Contour gaps and mismatches (red fillers on right chant) </label>
+        <br>
+        <br>
         <button type="button" id="cross-comparison-btn">
           Analyse
         </button>
@@ -82,14 +78,25 @@
     </div>
   </div>
 
-  <div id="mei-display">
-    <div class="mei-file" id="mei-file-1">
+  <div id="mei-grid">
+    <div id="mei-file-select">
+      <p>Upload to left slot:
+        <span>
+          <input type='file' class="file-upload-box" id='file-input-1' />
+        </span>
+      </p>
+      <p>Upload to right slot:
+        <span>
+          <input type='file' class="file-upload-box" id='file-input-2' />
+        </span>
+      </p>
     </div>
-    <div class="mei-file" id="mei-file-2">
+    <div id="mei-display">
+      <div class="mei-file" id="mei-file-1">
+      </div>
+      <div class="mei-file" id="mei-file-2">
+      </div>
     </div>
-  </div>
-  <div>
-    <p>View <a href="./docs">code documentation</a></p>
   </div>
 </body>
 

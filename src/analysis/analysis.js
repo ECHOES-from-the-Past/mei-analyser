@@ -100,12 +100,11 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       // pattern_2[mismatch_index - 1 - offset_2()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
       pattern_2[mismatch_index - offset_2()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
     }
-  } else if (mode == "gap-1") {
+  } else if (mode == "gaps-right") {
     // Highlight the gaps
     console.log(gap_1);
     console.log(gap_2);
     for (let gap of gap_1) {
-
       let offset = (gap_index, gap_array) => {
         let offset = 0;
         for (let i = 0; i < gap_array.length; i++) {
@@ -125,7 +124,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       pattern_1[gap - 1 - offset(gap, gap_1)].highlight(...side_note);
       pattern_1[gap - offset(gap, gap_1)].highlight(...side_note);
     }
-  } else if (mode == "gap-2") {
+  } else if (mode == "gaps-left") {
     for (let gap of gap_2) {
 
       let offset = (gap_index, gap_array) => {
@@ -146,7 +145,78 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       pattern_2[gap - 2 - offset(gap, gap_2)].highlight(...side_note);
       pattern_2[gap - 1 - offset(gap, gap_2)].highlight(...side_note);
       pattern_2[gap - offset(gap, gap_2)].highlight(...side_note);
+    }
+  } else if (mode == "gaps-mismatch-right" || mode == "gaps-mismatch-left") {
+    for (let mismatch_index of mismatch) {
+      let offset_1 = () => {
+        let offset = 0;
+        for (let i = 0; i < gap_1.length; i++) {
+          if (mismatch_index > gap_1[i]) {
+            offset++;
+          }
+        }
+        return offset;
+      }
 
+      let offset_2 = () => {
+        let offset = 0;
+        for (let i = 0; i < gap_2.length; i++) {
+          if (mismatch_index > gap_2[i]) {
+            offset++;
+          }
+        }
+        return offset;
+      }
+
+      // pattern_1[mismatch_index - 1 - offset_1()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
+      pattern_1[mismatch_index - offset_1()].spotlight('rgba(0,0,255,0.1)', 'rgb(0,0,255)');
+      // pattern_2[mismatch_index - 1 - offset_2()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
+      pattern_2[mismatch_index - offset_2()].spotlight('rgba(0,0,255,0.1)', 'rgb(0,0,255)');
+    }
+
+    if (mode.endsWith('right')) {
+      for (let gap of gap_1) {
+        let offset = (gap_index, gap_array) => {
+          let offset = 0;
+          for (let i = 0; i < gap_array.length; i++) {
+            if (gap_index > gap_array[i]) {
+              offset++;
+            }
+          }
+          return offset;
+        }
+        pattern_2[gap - 2 - offset(gap, gap_2)].highlight(...side_note);
+        pattern_2[gap - 1 - offset(gap, gap_2)].highlight(...gap_note);
+        pattern_2[gap + 0 - offset(gap, gap_2)].highlight(...gap_note);
+        pattern_2[gap + 1 - offset(gap, gap_2)].highlight(...side_note);
+
+        pattern_1[gap - offset(gap, gap_1)].log();
+        pattern_1[gap - 2 - offset(gap, gap_1)].highlight(...side_note);
+        pattern_1[gap - 1 - offset(gap, gap_1)].highlight(...side_note);
+        pattern_1[gap - offset(gap, gap_1)].highlight(...side_note);
+      }
+    } else if (mode.endsWith('left')) {
+      for (let gap of gap_2) {
+
+        let offset = (gap_index, gap_array) => {
+          let offset = 0;
+          for (let i = 0; i < gap_array.length; i++) {
+            if (gap_index > gap_array[i]) {
+              offset++;
+            }
+          }
+          return offset;
+        }
+        pattern_1[gap - 2 - offset(gap, gap_1)].highlight(...side_note);
+        pattern_1[gap - 1 - offset(gap, gap_1)].highlight(...gap_note);
+        pattern_1[gap + 0 - offset(gap, gap_1)].highlight(...gap_note);
+        pattern_1[gap + 1 - offset(gap, gap_1)].highlight(...side_note);
+
+        pattern_2[gap - offset(gap, gap_2)].log();
+        pattern_2[gap - 2 - offset(gap, gap_2)].highlight(...side_note);
+        pattern_2[gap - 1 - offset(gap, gap_2)].highlight(...side_note);
+        pattern_2[gap - offset(gap, gap_2)].highlight(...side_note);
+      }
     }
   }
 }

@@ -52,7 +52,8 @@ export async function loadMEIContent(MEI_content, order) {
     let zoom = 80;
     const options = {
       pageWidth: document.body.clientWidth * 50 / zoom,
-      // pageHeight: document.body.clientHeight * 50 / zoom,
+      adjustPageHeight: true,
+      shrinkToFit: true,
       scale: zoom,
       footer: "none",
     };
