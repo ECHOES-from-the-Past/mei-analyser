@@ -1,4 +1,4 @@
-import { matrix_nw, align, needlemanWunsch, needlemanWunsch_nc } from "./needleman-wunsch.js";
+import { matrix_nw, align_nw, needlemanWunsch, needlemanWunsch_nc } from "./needleman-wunsch.js";
 import { matrix_sw, align_sw, smithWaterman } from './smith-waterman.js';
 
 /**
@@ -21,9 +21,10 @@ function nw_test02() {
   const A = [2,    5, 7, 9, 3, 1, 2, 4];
   const B = [2, 3, 5, 7, 9, 3, 1, 2, 4];
   const match = 1, mismatch = -1, gap = -2;
+  const gapSymbol = '-';
   const M = matrix_nw(A, B, match, mismatch, gap);
   console.table(M);
-  console.log(align(M, A, B, match, mismatch, gap));
+  console.log(align_nw(M, A, B, gapSymbol));
 }
 
 function sw_test01() {

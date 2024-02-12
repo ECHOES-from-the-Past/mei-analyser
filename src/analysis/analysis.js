@@ -12,6 +12,30 @@ function location_septenary_mapping(NeumeComponentPattern) {
   return pattern_location;
 }
 
+function mapLocToContour(locationPattern) {
+  let contourPattern = locationPattern.map((element, index, array) => {
+    if (index < array.length - 1) {
+      return array[index + 1] - array[index];
+    }
+  });
+
+  return contourPattern;
+}
+
+function gapOffset(currentIndex, gapArray) {
+  let offset = 0;
+  for (let i = 0; i < gapArray.length; i++) {
+    if (currentIndex > gapArray[i]) {
+      offset++;
+    }
+  }
+  return offset;
+}
+
+function highlightMismatches() {
+
+}
+
 /**
  * Using Needleman-Wunsch algorithm to analyse the difference between two different chants
  * @param {Array<NeumeComponentAQ | NeumeComponentSQ>} pattern_1 Neume Component array of pattern 1
@@ -22,6 +46,11 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
     alert("Please upload both files before comparing them.");
     return;
   }
+  // Define the scores for the Needleman-Wunsch algorithm
+  const MATCH = 10;
+  const MISMATCH = -1;
+  const GAP = -2;
+  const GAP_SYMBOL = '<span style=color:red>GAP</span>';
 
   let pattern_1_loc = location_septenary_mapping(pattern_1);
   let pattern_2_loc = location_septenary_mapping(pattern_2);
@@ -29,28 +58,14 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
   /**
    * Constructing the contour matrix based on Aquitanian's `@loc` and Square's `septenary` value
    */
-  const pattern_1_contour = pattern_1_loc.map((element, index, array) => {
-    if (index == 0) {
-      return 0;
-    } else {
-      return element - array[index - 1];
-    }
-  });
+  const pattern_1_contour = mapLocToContour(pattern_1_loc);
+  const pattern_2_contour = mapLocToContour(pattern_2_loc);
 
-  const pattern_2_contour = pattern_2_loc.map((element, index, array) => {
-    if (index == 0) {
-      return 0;
-    } else {
-      return element - array[index - 1];
-    }
-  });
-
-  const gap_symbol = '<span style=color:red>GAP</span>';
-  const result = needlemanWunsch_nc(pattern_1_contour, pattern_2_contour, gap_symbol, 10, -10, -20);
+  const result = needlemanWunsch_nc(pattern_1_contour, pattern_2_contour, GAP_SYMBOL, MATCH, MISMATCH, GAP);
 
   let mismatch = [];
   for (let i = 0; i < result[0].length; i++) {
-    if (result[0][i] != result[1][i] && result[0][i] != gap_symbol && result[1][i] != gap_symbol) {
+    if (result[0][i] != result[1][i] && result[0][i] != GAP_SYMBOL && result[1][i] != GAP_SYMBOL) {
       mismatch.push(i);
       result[0][i] = `<span style="color: blue">${result[0][i]}</span>`;
       result[1][i] = `<span style="color: blue">${result[1][i]}</span>`;
@@ -58,165 +73,86 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
   }
 
   document.getElementById("cross-comparison-1").innerHTML = "LEFT : " + result[0].join(" ");
-  document.getElementById("cross-comparison-2").innerHTML = "RIGHT: " +  result[1].join(" ");
+  document.getElementById("cross-comparison-2").innerHTML = "RIGHT: " + result[1].join(" ");
 
+  const gapsOfLeft = result[2];
+  const gapsOfRight = result[3];
+  const side_note = ['rgba(255, 0, 90, 0.3)', 'rgba(255, 0, 90, 0.5)']
+  const filler_note = ['rgba(255, 10, 0, 0.7)', 'rgba(255, 10, 0, 1)']
 
-  // Highlight the gaps
-  // Colour: having the same shade for the same melodic interval on both chants
-  // Adding clarification for the user
-  const gap_1 = result[2];
-  const gap_2 = result[3];
-  const side_note = ['rgba(255, 0, 120, 0.3)', 'rgba(255, 0, 120, 0.5)']
-  const gap_note = ['rgba(255, 0, 0, 0.7)', 'rgba(255, 0, 0, 1)']
+  const mismatch_note = ['rgba(0, 0, 255, 0.7)', 'rgba(0, 0, 255, 1)'];
+  const mismatch_box = ['rgba(0, 0, 255, 0.12)', 'rgba(0, 0, 255, 0.4)'];
 
-  if (mode == "mismatch") {
-    // Highlight the mismatched contours: note[mismatch_index] and note[mismatch_index - 1]
+  const highlightMismatch = () => {
+    // Highlight the mismatched contours
     for (let mismatch_index of mismatch) {
-      let offset_1 = () => {
-        let offset = 0;
-        for (let i = 0; i < gap_1.length; i++) {
-          if (mismatch_index > gap_1[i]) {
-            offset++;
-          }
-        }
-        return offset;
-      }
+      let offsetP1 = gapOffset(mismatch_index, gapsOfLeft);
+      let offsetP2 = gapOffset(mismatch_index, gapsOfRight);
 
-      let offset_2 = () => {
-        let offset = 0;
-        for (let i = 0; i < gap_2.length; i++) {
-          if (mismatch_index > gap_2[i]) {
-            offset++;
-          }
-        }
-        return offset;
-      }
-
-      pattern_1[mismatch_index - offset_1()].log();
-      pattern_2[mismatch_index - offset_2()].log();
-
-      // pattern_1[mismatch_index - 1 - offset_1()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
-      pattern_1[mismatch_index - offset_1()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
-      // pattern_2[mismatch_index - 1 - offset_2()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
-      pattern_2[mismatch_index - offset_2()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
+      pattern_1[mismatch_index - offsetP1].highlight(...mismatch_note);
+      pattern_1[mismatch_index + 1 - offsetP1].highlight(...mismatch_note);
+      pattern_2[mismatch_index - offsetP2].highlight(...mismatch_note);
+      pattern_2[mismatch_index + 1 - offsetP2].highlight(...mismatch_note);
     }
-  } else if (mode == "gaps-right") {
-    // Highlight the gaps
-    console.log(gap_1);
-    console.log(gap_2);
-    for (let gap of gap_1) {
-      let offset = (gap_index, gap_array) => {
-        let offset = 0;
-        for (let i = 0; i < gap_array.length; i++) {
-          if (gap_index > gap_array[i]) {
-            offset++;
-          }
-        }
-        return offset;
-      }
-      pattern_2[gap - 2 - offset(gap, gap_2)].highlight(...side_note);
-      pattern_2[gap - 1 - offset(gap, gap_2)].highlight(...gap_note);
-      pattern_2[gap + 0 - offset(gap, gap_2)].highlight(...gap_note);
-      pattern_2[gap + 1 - offset(gap, gap_2)].highlight(...side_note);
+  }
 
-      pattern_1[gap - offset(gap, gap_1)].log();
-      pattern_1[gap - 2 - offset(gap, gap_1)].highlight(...side_note);
-      pattern_1[gap - 1 - offset(gap, gap_1)].highlight(...side_note);
-      pattern_1[gap - offset(gap, gap_1)].highlight(...side_note);
-    }
-  } else if (mode == "gaps-left") {
-    for (let gap of gap_2) {
-
-      let offset = (gap_index, gap_array) => {
-        let offset = 0;
-        for (let i = 0; i < gap_array.length; i++) {
-          if (gap_index > gap_array[i]) {
-            offset++;
-          }
-        }
-        return offset;
-      }
-      pattern_1[gap - 2 - offset(gap, gap_1)].highlight(...side_note);
-      pattern_1[gap - 1 - offset(gap, gap_1)].highlight(...gap_note);
-      pattern_1[gap + 0 - offset(gap, gap_1)].highlight(...gap_note);
-      pattern_1[gap + 1 - offset(gap, gap_1)].highlight(...side_note);
-
-      pattern_2[gap - offset(gap, gap_2)].log();
-      pattern_2[gap - 2 - offset(gap, gap_2)].highlight(...side_note);
-      pattern_2[gap - 1 - offset(gap, gap_2)].highlight(...side_note);
-      pattern_2[gap - offset(gap, gap_2)].highlight(...side_note);
-    }
-  } else if (mode == "gaps-mismatch-right" || mode == "gaps-mismatch-left") {
+  const spotlightMismatch = () => {
+    // Spotlight the mismatched contours by putting a box around the notes
     for (let mismatch_index of mismatch) {
-      let offset_1 = () => {
-        let offset = 0;
-        for (let i = 0; i < gap_1.length; i++) {
-          if (mismatch_index > gap_1[i]) {
-            offset++;
-          }
-        }
-        return offset;
-      }
+      let offsetP1 = gapOffset(mismatch_index, gapsOfLeft);
+      let offsetP2 = gapOffset(mismatch_index, gapsOfRight);
 
-      let offset_2 = () => {
-        let offset = 0;
-        for (let i = 0; i < gap_2.length; i++) {
-          if (mismatch_index > gap_2[i]) {
-            offset++;
-          }
-        }
-        return offset;
-      }
-
-      // pattern_1[mismatch_index - 1 - offset_1()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
-      pattern_1[mismatch_index - offset_1()].spotlight('rgba(0,0,255,0.1)', 'rgb(0,0,255)');
-      // pattern_2[mismatch_index - 1 - offset_2()].highlight('rgb(0,0,255)', 'rgb(0,0,255)');
-      pattern_2[mismatch_index - offset_2()].spotlight('rgba(0,0,255,0.1)', 'rgb(0,0,255)');
+      pattern_1[mismatch_index - offsetP1].spotlight(...mismatch_box);
+      pattern_1[mismatch_index + 1 - offsetP1].spotlight(...mismatch_box);
+      pattern_2[mismatch_index - offsetP2].spotlight(...mismatch_box);
+      pattern_2[mismatch_index + 1 - offsetP2].spotlight(...mismatch_box);
     }
+  }
 
-    if (mode.endsWith('right')) {
-      for (let gap of gap_1) {
-        let offset = (gap_index, gap_array) => {
-          let offset = 0;
-          for (let i = 0; i < gap_array.length; i++) {
-            if (gap_index > gap_array[i]) {
-              offset++;
-            }
-          }
-          return offset;
-        }
-        pattern_2[gap - 2 - offset(gap, gap_2)].highlight(...side_note);
-        pattern_2[gap - 1 - offset(gap, gap_2)].highlight(...gap_note);
-        pattern_2[gap + 0 - offset(gap, gap_2)].highlight(...gap_note);
-        pattern_2[gap + 1 - offset(gap, gap_2)].highlight(...side_note);
+  const highlightRightFillers = () => {
+    // Highlight the gap fillers on the right chant (pattern_2)
+    for (let gap of gapsOfLeft) {
+      let offsetP1 = gapOffset(gap, gapsOfLeft);
+      let offsetP2 = gapOffset(gap, gapsOfRight);
 
-        pattern_1[gap - offset(gap, gap_1)].log();
-        pattern_1[gap - 2 - offset(gap, gap_1)].highlight(...side_note);
-        pattern_1[gap - 1 - offset(gap, gap_1)].highlight(...side_note);
-        pattern_1[gap - offset(gap, gap_1)].highlight(...side_note);
-      }
-    } else if (mode.endsWith('left')) {
-      for (let gap of gap_2) {
+      pattern_2[gap - 2 - offsetP2].highlight(...side_note);
+      pattern_2[gap - 1 - offsetP2].highlight(...filler_note);
+      pattern_2[gap + 0 - offsetP2].highlight(...filler_note);
+      pattern_2[gap + 1 - offsetP2].highlight(...side_note);
 
-        let offset = (gap_index, gap_array) => {
-          let offset = 0;
-          for (let i = 0; i < gap_array.length; i++) {
-            if (gap_index > gap_array[i]) {
-              offset++;
-            }
-          }
-          return offset;
-        }
-        pattern_1[gap - 2 - offset(gap, gap_1)].highlight(...side_note);
-        pattern_1[gap - 1 - offset(gap, gap_1)].highlight(...gap_note);
-        pattern_1[gap + 0 - offset(gap, gap_1)].highlight(...gap_note);
-        pattern_1[gap + 1 - offset(gap, gap_1)].highlight(...side_note);
-
-        pattern_2[gap - offset(gap, gap_2)].log();
-        pattern_2[gap - 2 - offset(gap, gap_2)].highlight(...side_note);
-        pattern_2[gap - 1 - offset(gap, gap_2)].highlight(...side_note);
-        pattern_2[gap - offset(gap, gap_2)].highlight(...side_note);
-      }
+      pattern_1[gap - 2 - offsetP1].highlight(...side_note);
+      pattern_1[gap - 1 - offsetP1].highlight(...side_note);
+      pattern_1[gap - offsetP1].highlight(...side_note);
     }
+  }
+
+  const highlightLeftFillers = () => {
+    // Highlight the gap fillers on the left chant (pattern_1)
+    for (let gap of gapsOfRight) {
+      let offsetP1 = gapOffset(gap, gapsOfLeft);
+      let offsetP2 = gapOffset(gap, gapsOfRight);
+
+      pattern_1[gap - 2 - offsetP1].highlight(...side_note);
+      pattern_1[gap - 1 - offsetP1].highlight(...filler_note);
+      pattern_1[gap + 0 - offsetP1].highlight(...filler_note);
+      pattern_1[gap + 1 - offsetP1].highlight(...side_note);
+
+      pattern_2[gap - 2 - offsetP2].highlight(...side_note);
+      pattern_2[gap - 1 - offsetP2].highlight(...side_note);
+      pattern_2[gap - offsetP2].highlight(...side_note);
+    }
+  }
+
+  if (mode.includes("mismatch")) {
+    if (mode.includes("gaps")) {
+      spotlightMismatch();
+    } else {
+      highlightMismatch();
+    }
+  }
+  if (mode.includes("right")) {
+    highlightRightFillers();
+  } else if (mode.includes("left")) {
+    highlightLeftFillers();
   }
 }
