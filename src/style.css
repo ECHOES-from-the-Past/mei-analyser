@@ -11,6 +11,13 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Colour scheme */
+  --button: hsl(81, 90%, 15%);
+  --button-hover: hsla(80, 64%, 12%, 0.667);
+
+  --highlight-fill: hsla(276, 69%, 52%, 0.6);
+  --highlight-stroke: hsl(276, 69%, 52%);
 }
 
 button {
@@ -21,34 +28,33 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #2c4300;
+  background-color: var(--button);
   cursor: pointer;
   transition: background-color 0.25s;
 }
+
 button:hover {
-  background-color: #2c4300aa;
+  background-color: var(--button-hover);
 }
 
 g {
-  fill: black;
-}
-
-g.nc:hover {
-  fill: #ace600;
-  stroke: #314b01;
-  stroke-width: 5px;
+  fill: hsl(0, 0%, 0%);
 }
 
 #top-elements {
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  align-items: center;
+  grid-template-columns: 1fr 1fr;
+  align-items: start;
 }
 
 #mei-display, #mei-file-select {
   text-align: center;
   display: grid;
   grid-template-columns: 1fr 1fr;
+}
+
+.panel {
+  padding: 0 2em 0;
 }
 
 .pattern-count {
@@ -75,22 +81,11 @@ g.nc:hover {
 
 .database-select {
   width: 85%;
-  padding: 0.5em;
+  font-size: medium;
+  padding: 0.7em;
   margin: 0.5em;
   border: 1px solid #ccc;
   border-radius: 8px;
   text-align: justify;
   /* pointer-events: none; */
-}
-
-.database-select option {
-  padding: 0.5em;
-  margin: 0.5em;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-}
-
-.database-select option:hover {
-  background-color: #ace600;
-  color: white;
 }

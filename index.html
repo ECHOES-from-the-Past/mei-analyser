@@ -14,7 +14,7 @@
   <script src="https://www.verovio.org/javascript/develop/verovio-toolkit-wasm.js" defer></script>
   <script type="module" src="src/main.js"></script>
   <div id="top-elements">
-    <div id="utility">
+    <div class="panel">
 
       <form id="search-form">
         <!-- <input type="radio" id="aquitanian-absolute" name="search-option" value="absolute" checked>
@@ -48,8 +48,8 @@
     <!-- Cross-comparison Analysis Section -->
 
     <div id="cross-comparison-analysis">
-      <h1>Similarity Analysis</h1>
-      <div>
+      <div class="panel">
+        <h1>Similarity Analysis</h1>
         <input type="radio" id="mismatch-analysis" name="analysis-mode" value="mismatch" checked>
         <label for="mismatch-analysis"> Contour mismatches (blue) </label>
         <br>
@@ -79,12 +79,12 @@
   </div>
 
   <div id="mei-grid">
-    
+
     <div id="mei-file-select">
       <div>
         <label for="database-chant-left">Choose a chant from database:</label>
         <select class="database-select" name="database-chant-left" id="database-chant-left">
-           <option value="placeholder">Select a chant for left slot</option>
+          <option value="placeholder">Select a chant for left slot</option>
         </select>
       </div>
       <div>
