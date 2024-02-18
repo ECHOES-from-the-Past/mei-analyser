@@ -1,13 +1,13 @@
 # Terminologies in the MEI analyser
 
-- MEI file: usually the name of the file, passing as a URL object
+- **MEI file**: usually the name of the file, passing as a URL object
 ```js
 // from utility/utils.js
 const objectURL = URL.createObjectURL(uploaded_file);
 const newContent = await load_MEI_file(objectURL, slot);
 ```
 
-- MEI Content: the content of the MEI file, parsed via `fetch`
+- **MEI Content**: the content of the MEI file, parsed via `fetch`
 ```js
 // from utility/utils.js
 let mei_content;
@@ -48,3 +48,58 @@ return mei_content;
     - The filler contour is of index `i` and `i+1` in the contour array from the index alignment above.
   - On the gap side:
     - Highlight the corresponding NeumeComponent of indecies `[i-1, i, i+1]` in the two NeumeComponent arrays.
+
+# Components
+- In an .mei file, the structure of a neume and syllable are as follows:
+```xml
+<!-- Example of an Aquitanian chant -->
+<score>
+  <scoreDef xml:id="...">
+    <staffGrp xml:id="...">
+      <staffDef n="1" lines="1" notationtype="neume" xml:id="...">
+    </staffGrp>
+  </scoreDef>
+
+  <syllable xml:id="...">
+    <syl wordpos="i" con="d" xml:id="...">pa</syl>
+    <neume xml:id="...">
+      <nc loc="1" xml:id="..."/>
+      <nc loc="1" xml:id="..."/>
+      <nc loc="2" tilt="ne" xml:id="..."/>
+    </neume>
+    <neume xml:id="...">
+      <nc loc="4" xml:id="..."/>
+      <nc loc="4" xml:id="..."/>
+      <nc loc="5" tilt="ne" xml:id="..."/>
+      <nc loc="2" xml:id="..."/>
+    </neume>
+  </syllable>
+  <!-- more <syllable> elements -->
+</score>
+```
+- From the structure above, we can "encapsulate" the neume and syllable into classes, following OOP principles. The classes are as follows:
+  - `Syllable` for the `<syllable>` element, which contains:
+    - `syl` for the `<syl>` element
+    - NeumeComponent for all the `<nc>` elements. Due to two different notation types, we have 2 classes (below). Each class contains different attributes and methods, while both inherit same attributes such as `xml:id` and `tilt`, and methods such as `highlight()`.
+      - `NeumeComponentAQ` for the Aquitanian notation
+      - `NeumeComponentSQ` for the Square notation
+
+# Colour scheme
+- For a clear and consistent visualisation, the following colour scheme is used:
+
+| Highlight Type | Colour | Fill | Stroke |
+| --- | --- | --- | --- |
+| Display | Black | hsl(0, 0%, 0%) | hsl(0, 0%, 0%) |
+| Contour Pattern | Purple (default) | rgba(149, 48, 217, 0.6) | rgba(149, 48, 217, 1) |
+| Mismatch | Blue | #FFD700 | hsl(50, 100%, 50%) |
+| Gap side notes | Light pink | #FFFF00 | hsl(60, 100%, 50%) |
+| Gap filler notes | Rose | #FFFFE0 | hsl(60, 100%, 90%) |
+> This colour table is subject to change as the project progresses.
+
+# Code Style
+- Variable naming: camelCase
+- Class naming: PascalCase
+- Method naming: camelCase
+- Constants: UPPERCASE
+- File naming: kebab-case
+- Note: the code style was determined later on in the project; hence, some functions/variable names may not be updated (yet) to follow the style.

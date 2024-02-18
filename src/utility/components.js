@@ -4,13 +4,16 @@
  */
 export class NeumeComponent {
     /**
+     * Constructor of a Neume Component.
+     * @param {String} id (required) the @xml:id attribute of the neume component 
+     * @param {*} tilt (optional) the tilt direction of the neume component (e.g., "s", "n")
+     * @param {*} ornamental (optional) the ornamental shape of the component
      * 
-     * @param {String} id the @xml:id attribute of the neume component 
-     * @param {*} tilt the tilt field. This is optional so the field might be null.
      */
-    constructor(id, tilt) {
+    constructor(id, tilt, ornamental) {
         this.id = id;
         this.tilt = tilt;
+        this.ornamental = ornamental;
     }
 
     /**
@@ -18,7 +21,7 @@ export class NeumeComponent {
      * @param {String} color the fill colour of the neume component (default: 'rgba(149, 48, 217, 0.6)' - purple)
      * @param {String} stroke_color the stroke colour of the neume component (default: 'rgba(149, 48, 217, 1)' - purple)
      */
-    highlight(color = 'rgba(149, 48, 217, 0.6)', stroke_color = 'rgba(149, 48, 217, 1)') {
+    highlight(color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
         const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
         nc_svg.forEach((nc) => {
             nc.style.fill = color;
@@ -32,7 +35,7 @@ export class NeumeComponent {
      * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
      * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
      */
-    spotlight(color = 'rgba(149, 48, 217, 0.6)', stroke_color = 'rgba(149, 48, 217, 1)') {
+    spotlight(color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
         const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
         nc_svg.forEach((nc) => {
             const x_coord = nc.querySelector('use').attributes.getNamedItem('x').value;
