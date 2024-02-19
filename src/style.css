@@ -1,12 +1,9 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  font-family: system-ui, ui-sans-serif, Helvetica, sans-serif;
   line-height: 1.5;
   font-weight: 400;
 
-  /* color-scheme: light dark; */
-  /* color: rgba(255, 255, 255, 0.87); */
-  background-color: whitesmoke;
-
+  color-scheme: light;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -16,8 +13,21 @@
   --button: hsl(81, 90%, 15%);
   --button-hover: hsla(80, 64%, 12%, 0.667);
 
+  /* Default highlighting colours */
   --highlight-fill: hsla(276, 69%, 52%, 0.6);
   --highlight-stroke: hsl(276, 69%, 52%);
+
+  /* Gap highlighting */
+  --gap-side-note-fill: hsla(339, 100%, 50%, 0.3);
+  --gap-side-note-stroke: hsla(339, 100%, 50%, 0.8);
+  --gap-filler-fill: hsla(2, 100%, 50%, 0.7);
+  --gap-filler-stroke: hsl(2, 100%, 50%);
+
+  /* Mismatch highlighting */
+  --mismatch-fill: hsla(240, 100%, 50%, 0.7);
+  --mismatch-stroke: hsl(240, 100%, 50%);
+  --mismatch-fill-box: hsla(240, 100%, 50%, 0.12);
+  --mismatch-stroke-box: hsla(240, 100%, 50%, 0.4);
 }
 
 button {
@@ -67,7 +77,7 @@ g {
   width: 60%;
 }
 
-#cross-comparison-result{
+#cross-comparison-result {
   display: grid;
   grid-template-rows: 1fr 1fr;
   align-items: center;

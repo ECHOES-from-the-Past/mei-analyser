@@ -1,11 +1,8 @@
 import {
   load_MEI_file,
-  loadMEIContent,
-  parse_MEI_AQ,
-  parse_MEI_SQ,
+  drawMEIContent,
   parse_search_pattern,
   clear_all_highlight,
-  get_annotation_type
 } from './utility/utils.js';
 import {
   highlight_contour_AQ,
@@ -14,7 +11,9 @@ import {
 import {
   pattern_analysis
 } from './analysis/analysis.js';
-
+import {
+  Chant
+} from './utility/components.js';
 const env = import.meta.env.MODE;
 console.debug(`Current environment: ${env}`);
 
@@ -47,14 +46,14 @@ function loadContent() {
   }
 
   // Load previous files. The value will be `null` if there's no previous file
-  const prev_file_1 = sessionStorage.getItem('database-chant-1');
-  const prev_file_2 = sessionStorage.getItem('database-chant-2');
+  const prevFilePathLeft = sessionStorage.getItem('database-chant-1');
+  const prevFilePathRight = sessionStorage.getItem('database-chant-2');
 
-  document.getElementById('database-chant-left').value = prev_file_1;
-  document.getElementById('database-chant-right').value = prev_file_2;
+  document.getElementById('database-chant-left').value = prevFilePathLeft;
+  document.getElementById('database-chant-right').value = prevFilePathRight;
 
-  loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-  loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+  drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+  drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
 }
 
 /**
@@ -66,15 +65,21 @@ window.onresize = function () {
   clearTimeout(timeOutFunctionId);
 
   timeOutFunctionId = setTimeout(() => {
-    loadMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-    loadMEIContent(sessionStorage.getItem('mei-content-2'), 2);
-  }, 500);
+    drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+    drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+  }, 100);
 }
+
+/**
+ * ----------------------- SEARCH -----------------------
+ * Event listener for the "Search" button for pattern search
+ */
+document.getElementById('search-btn').addEventListener("click", performSearch);
 
 /**
  * Perform highlighting when user clicks on "Search" button
  */
-function load_search() {
+function performSearch() {
   clear_all_highlight();
   const form = document.querySelector("#search-form");
   const form_data = new FormData(form);
@@ -88,20 +93,41 @@ function load_search() {
   // Parse search pattern into an array of number
   const search_pattern = parse_search_pattern(search_bar_input);
 
-  let left_chant = sessionStorage.getItem("mei-content-1");
-  let right_chant = sessionStorage.getItem("mei-content-2");
+  const leftFileContent = sessionStorage.getItem("mei-content-1");
+  const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
+  const leftChant = new Chant(leftFileContent, leftChantFilePath);
+
+  const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
+  const rightFileContent = sessionStorage.getItem("mei-content-2");
+  const rightChant = new Chant(rightFileContent, rightChantFilePath);
+
 
   if (search_option == "contour") {
-    process_contour(left_chant, search_pattern, 'left');
-    process_contour(right_chant, search_pattern, 'right');
+    process_contour(leftChant, search_pattern, 'left');
+    process_contour(rightChant, search_pattern, 'right');
   }
 }
 
 /**
- * ----------------------- SEARCH -----------------------
- * Event listener for the "Search" button for pattern search
+ * Process the contour search pattern for both left and right slots
+ * @param {Chant} chant the Chant object
+ * @param {Number[]} search_pattern 
+ * @param {Number} slot 
  */
-document.getElementById('search-btn').addEventListener("click", load_search);
+function process_contour(chant, search_pattern, slot) {
+  let pattern_count = 0;
+  const chantType = chant.getAnnotationType();
+  const chantNCs = chant.getNeumeComponents();
+
+  if (chantType == "aquitanian") {
+    pattern_count = highlight_contour_AQ(chantNCs, search_pattern);
+  } else if (chantType == "square") {
+    pattern_count = highlight_contour_SQ(chantNCs, search_pattern);
+  }
+
+  document.getElementById("chant-type-" + slot).innerHTML = chantType;
+  document.getElementById("pattern-count-" + slot).innerHTML = pattern_count;
+}
 
 /**
  * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
@@ -113,19 +139,19 @@ async function upload_file(slot) {
   const objectURL = URL.createObjectURL(uploaded_file);
 
   const newContent = await load_MEI_file(objectURL, slot);
-  loadMEIContent(newContent, slot);
+  drawMEIContent(newContent, slot);
   URL.revokeObjectURL(upload_file);
 }
 
 /**
  * Event listener for the "Upload" button, LEFT slot
  */
-document.getElementById('file-input-1').addEventListener("change", () => {upload_file(1)});
+document.getElementById('file-input-1').addEventListener("change", () => { upload_file(1) });
 
 /**
  * Event listener for the "Upload" button, RIGHT slot
  */
-document.getElementById('file-input-2').addEventListener("change", () => {upload_file(2)});
+document.getElementById('file-input-2').addEventListener("change", () => { upload_file(2) });
 
 /**
  * ----------------------- ANALYSIS -----------------------
@@ -133,46 +159,22 @@ document.getElementById('file-input-2').addEventListener("change", () => {upload
  */
 document.getElementById('cross-comparison-btn').addEventListener("click", () => {
   clear_all_highlight();
-  let left_chant = sessionStorage.getItem("mei-content-1");
-  let right_chant = sessionStorage.getItem("mei-content-2");
+  const leftFileContent = sessionStorage.getItem("mei-content-1");
+  const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
+  const leftChant = new Chant(leftFileContent, leftChantFilePath);
 
-  let left_chant_content, right_chant_content;
-  // Parse MEI file into an array of NeumeComponent
-  if (get_annotation_type(left_chant) == "aquitanian") {
-    left_chant_content = parse_MEI_AQ(left_chant);
-  } else if (get_annotation_type(left_chant) == "square") {
-    left_chant_content = parse_MEI_SQ(left_chant);
-  }
+  const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
+  const rightFileContent = sessionStorage.getItem("mei-content-2");
+  const rightChant = new Chant(rightFileContent, rightChantFilePath);
 
-  if (get_annotation_type(right_chant) == "aquitanian") {
-    right_chant_content = parse_MEI_AQ(right_chant);
-  } else if (get_annotation_type(right_chant) == "square") {
-    right_chant_content = parse_MEI_SQ(right_chant);
-  }
+  const leftChantNCList = leftChant.getNeumeComponents();
+  const rightChantNCList = rightChant.getNeumeComponents();
+
   const analysis_mode = document.querySelector('input[name="analysis-mode"]:checked').value;
-  pattern_analysis(left_chant_content, right_chant_content, analysis_mode);
+  pattern_analysis(leftChantNCList, rightChantNCList, analysis_mode);
 
   localStorage.setItem("analysis-mode", analysis_mode);
-}, false);
-
-function process_contour(MEI_file, search_pattern, slot) {
-  let pattern_count = 0;
-  let chant_type = get_annotation_type(MEI_file);
-  if (chant_type == "aquitanian") {
-    // Process the Aquitanian MEI file
-    const aquitanian_content = parse_MEI_AQ(MEI_file);
-    pattern_count = highlight_contour_AQ(aquitanian_content, search_pattern);
-  } else if (chant_type == "square") {
-    // Process the Square Notation MEI file
-    const square_content = parse_MEI_SQ(MEI_file);
-    pattern_count = highlight_contour_SQ(square_content, search_pattern);
-  } else {
-    alert(`Invalid MEI file on slot ${slot}.`);
-    console.error(MEI_file);
-  }
-  document.getElementById("chant-type-" + slot).innerHTML = chant_type;
-  document.getElementById("pattern-count-" + slot).innerHTML = pattern_count;
-}
+});
 
 import database from './search/database.json';
 
@@ -189,9 +191,9 @@ chantMenuRight.innerHTML = database.map((e) => {
 
 async function loadFromDatabase(fileName, order) {
   let rootPath = "";
-  if(env === "development") {
+  if (env === "development") {
     rootPath = "../../GABCtoMEI/MEI_outfiles/";
-  } else if(env === "production") {
+  } else if (env === "production") {
     rootPath = "./database/";
   }
 
@@ -200,8 +202,8 @@ async function loadFromDatabase(fileName, order) {
   const filePath = rootPath + fileName;
   console.log(filePath);
   let MEI_file = await load_MEI_file(filePath, order);
-  loadMEIContent(MEI_file, order);
+  drawMEIContent(MEI_file, order);
 }
 
-chantMenuLeft.addEventListener('change', () => {loadFromDatabase(chantMenuLeft.value, 1)});
-chantMenuRight.addEventListener('change', () => {loadFromDatabase(chantMenuRight.value, 2)});
+chantMenuLeft.addEventListener('change', () => { loadFromDatabase(chantMenuLeft.value, 1) });
+chantMenuRight.addEventListener('change', () => { loadFromDatabase(chantMenuRight.value, 2) });

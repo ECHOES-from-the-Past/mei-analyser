@@ -1,45 +1,46 @@
-import { NeumeComponent, NeumeComponentAQ, NeumeComponentSQ } from './components.js';
+import { NeumeComponentAQ, NeumeComponentSQ } from './components.js';
 import database from '../search/database.json';
 
 const env = import.meta.env.MODE; // 'development' or 'production'
 
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
- * @param {MEI_file} file_name link to the MEI (.mei) file to be rendered
+ * @param {MEI_filePath} filePath link to the MEI (.mei) file to be rendered
  * @param {Number} order the number
  */
-export async function load_MEI_file(file_name, order) {
+export async function load_MEI_file(filePath, order) {
   let mei_content;
-  await fetch(file_name)
+  await fetch(filePath)
     .then((response) => response.text())
     .then((mei) => {
       sessionStorage.setItem("mei-content-" + order, mei);
+      sessionStorage.setItem("mei-file-path-" + order, filePath);
       mei_content = mei;
     })
   return mei_content;
 }
 
 /**
- * 
- * @param {MEI_Content} MEI_content 
+ * Draw the MEI content to the screen on a specific slot/order (1: left, 2: right)
+ * @param {MEI_FileContent} meiContent file content of the MEI file
  * @param {Number} order 1 for left position, 2 for right position
  */
-export async function loadMEIContent(MEI_content, order) {
+export async function drawMEIContent(meiContent, order) {
   let databasePath = "";
   if(env === "development") {
     databasePath = "../../GABCtoMEI/MEI_outfiles/";
   } else if(env === "production") {
     databasePath = "./database/";
   }
-  
-  const sample_aquitanian = databasePath + database[0];
-  const sample_square = databasePath + database[1];
 
-  if (MEI_content == null) {
+  if (meiContent == null) {
+    // In case the MEI content is not loaded (e.g., on first load of the page), load the sample MEI content
+    const sampleAquitanianChant = databasePath + database[0];
+    const sampleSquareChant = databasePath + database[1];
     if (order == 1) {
-      MEI_content = await load_MEI_file(sample_aquitanian, 1);
+      meiContent = await load_MEI_file(sampleAquitanianChant, 1);
     } else if (order == 2) {
-      MEI_content = await load_MEI_file(sample_square, 2);
+      meiContent = await load_MEI_file(sampleSquareChant, 2);
     } else {
       console.error(`Cannot load sample MEI content to invalid order: ${order}.\n Should be 1 (left) or 2 (right).`);
     }
@@ -47,87 +48,29 @@ export async function loadMEIContent(MEI_content, order) {
 
   // This line initializes the Verovio toolkit
   try {
-    let vero_toolkit = new verovio.toolkit();
+    let verovioToolkit = new verovio.toolkit();
+
+    // Setting options for the toolkit
     let zoom = 80;
-    const options = {
+    verovioToolkit.setOptions({
       pageWidth: document.body.clientWidth * 50 / zoom,
       adjustPageHeight: true,
       shrinkToFit: true,
       scale: zoom,
       footer: "none",
-    };
-    vero_toolkit.setOptions(options);
-    vero_toolkit.loadData(MEI_content);
-    let svg = vero_toolkit.renderToSVG(1);
+    });
 
+    verovioToolkit.loadData(meiContent);
+    let svg = verovioToolkit.renderToSVG(1);
+
+    // Get the div element to render the MEI content and set the innerHTML to the SVG content
     const meifile = document.getElementById("mei-file-" + order);
-
     meifile.innerHTML = svg;
+
   } catch (error) {
     console.error(error);
     console.log("Please reload the page and try again.");
   }
-}
-
-/**
- * A function that parses the MEI content of an Aquitanian chant and
- * return an array of Aquitanian Neume Component (typeof `NeumeComponentAQ`)
- * @param {MEI_content} MEI_content the content of the .mei file
- * @returns {Array<NeumeComponentAQ>} an array of NeumeComponentAQ for Aquitanian
- */
-export function parse_MEI_AQ(MEI_content) {
-  let mei_array = [];
-
-  // Parse the XML .mei file to mutable JS type
-  let parser = new DOMParser();
-  let htmldoc = parser.parseFromString(MEI_content, "text/xml");
-  // Aquitanian
-  const staff_layer = htmldoc.querySelectorAll('syllable');
-  for (let syllable of staff_layer) {
-    const neume_components = syllable.querySelectorAll('nc');
-
-    for (const nc of neume_components) {
-      const nc_attributes = nc.attributes;
-
-
-      const nc_AQ = new NeumeComponentAQ(nc_attributes.getNamedItem("xml:id").nodeValue, nc_attributes.getNamedItem("loc").nodeValue, nc_attributes.getNamedItem('tilt'));
-      mei_array.push(nc_AQ);
-    }
-  }
-  return mei_array;
-}
-
-/**
- * A function that parses the MEI content of a Square notation chant and
- * return an array of Square Neume Component (typeof `NeumeComponentSQ`)
- * @param {MEI_content} MEI_content the content of the .mei file
- * @returns {Array<NeumeComponentSQ>} an array of NeumeComponentSQ for Square notation
- */
-export function parse_MEI_SQ(MEI_content) {
-  let sq_mei_array = [];
-  // Parse the XML .mei file to mutable JS type
-  let parser = new DOMParser();
-  let htmldoc = parser.parseFromString(MEI_content, "text/xml");
-
-  const all_syllables = htmldoc.querySelectorAll('syllable');
-
-  // Iterate through every syllable of the chant
-  for (let syllable of all_syllables) {
-    const neume_components = syllable.querySelectorAll('nc');
-
-    for (const nc of neume_components) {
-      // getting attributes of interest from each neume component `<nc>` 
-      const nc_id = nc.attributes.getNamedItem("xml:id").nodeValue;
-      const nc_pitch = nc.attributes.getNamedItem("pname").nodeValue;
-      const nc_octave = nc.attributes.getNamedItem("oct").nodeValue;
-      const nc_tilt = nc.attributes.getNamedItem('tilt'); // could be null value
-
-      const nc_SQ = new NeumeComponentSQ(nc_id, nc_pitch, nc_octave, nc_tilt);
-      sq_mei_array.push(nc_SQ);
-    }
-  }
-  // console.log(mei_array);
-  return sq_mei_array;
 }
 
 /**
@@ -162,19 +105,5 @@ export function highlight_pattern(found_pattern) {
       nc.highlight();
       // nc.spotlight();
     }
-  }
-}
-
-export function get_annotation_type(MEI_content) {
-  let parser = new DOMParser();
-  let htmldoc = parser.parseFromString(MEI_content, "text/xml");
-
-  const staffDef = htmldoc.querySelector('staffDef');
-  const lines = staffDef.attributes.getNamedItem('lines').nodeValue;
-  if (lines > 1) {
-    return "square";
-  }
-  else {
-    return "aquitanian";
   }
 }

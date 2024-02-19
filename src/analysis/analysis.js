@@ -77,11 +77,11 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
 
   const gapsOfLeft = result[2];
   const gapsOfRight = result[3];
-  const side_note = ['rgba(255, 0, 90, 0.3)', 'rgba(255, 0, 90, 0.5)']
-  const filler_note = ['rgba(255, 10, 0, 0.7)', 'rgba(255, 10, 0, 1)']
+  const side_note = ['var(--gap-side-note-fill)', 'var(--gap-side-note-stroke)']
+  const filler_note = ['var(--gap-filler-fill)', 'var(--gap-filler-stroke)']
 
-  const mismatch_note = ['rgba(0, 0, 255, 0.7)', 'rgba(0, 0, 255, 1)'];
-  const mismatch_box = ['rgba(0, 0, 255, 0.12)', 'rgba(0, 0, 255, 0.4)'];
+  const mismatch_note = ['var(--mismatch-fill)', 'var(--mismatch-stroke)'];
+  const mismatch_box = ['var(--mismatch-fill-box)', 'var(--mismatch-stroke-box)'];
 
   const highlightMismatch = () => {
     // Highlight the mismatched contours
