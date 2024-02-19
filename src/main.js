@@ -53,6 +53,9 @@ function loadContent() {
   document.getElementById('database-chant-left').value = prevFilePathLeft;
   document.getElementById('database-chant-right').value = prevFilePathRight;
 
+  drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+  drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+
   const leftFileContent = sessionStorage.getItem("mei-content-1");
   const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
   const leftChant = new Chant(leftFileContent, leftChantFilePath);
@@ -60,10 +63,7 @@ function loadContent() {
   const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
   const rightFileContent = sessionStorage.getItem("mei-content-2");
   const rightChant = new Chant(rightFileContent, rightChantFilePath);
-
-  drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-  drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
-
+  
   displayChantMode(leftChant, 1);
   displayChantMode(rightChant, 2);
 }
