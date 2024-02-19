@@ -8,7 +8,7 @@ const env = import.meta.env.MODE; // 'development' or 'production'
  * @param {MEI_filePath} filePath link to the MEI (.mei) file to be rendered
  * @param {Number} order the number
  */
-export async function load_MEI_file(filePath, order) {
+export async function loadMEIFile(filePath, order) {
   let mei_content;
   await fetch(filePath)
     .then((response) => response.text())
@@ -38,9 +38,9 @@ export async function drawMEIContent(meiContent, order) {
     const sampleAquitanianChant = databasePath + database[0];
     const sampleSquareChant = databasePath + database[1];
     if (order == 1) {
-      meiContent = await load_MEI_file(sampleAquitanianChant, 1);
+      meiContent = await loadMEIFile(sampleAquitanianChant, 1);
     } else if (order == 2) {
-      meiContent = await load_MEI_file(sampleSquareChant, 2);
+      meiContent = await loadMEIFile(sampleSquareChant, 2);
     } else {
       console.error(`Cannot load sample MEI content to invalid order: ${order}.\n Should be 1 (left) or 2 (right).`);
     }

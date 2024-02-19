@@ -1,5 +1,5 @@
 import {
-  load_MEI_file,
+  loadMEIFile,
   drawMEIContent,
   parse_search_pattern,
   clear_all_highlight,
@@ -7,6 +7,7 @@ import {
 import {
   highlight_contour_AQ,
   highlight_contour_SQ,
+  displayChantMode
 } from './search/search.js';
 import {
   pattern_analysis
@@ -52,8 +53,19 @@ function loadContent() {
   document.getElementById('database-chant-left').value = prevFilePathLeft;
   document.getElementById('database-chant-right').value = prevFilePathRight;
 
+  const leftFileContent = sessionStorage.getItem("mei-content-1");
+  const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
+  const leftChant = new Chant(leftFileContent, leftChantFilePath);
+
+  const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
+  const rightFileContent = sessionStorage.getItem("mei-content-2");
+  const rightChant = new Chant(rightFileContent, rightChantFilePath);
+
   drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
   drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+
+  displayChantMode(leftChant, 1);
+  displayChantMode(rightChant, 2);
 }
 
 /**
@@ -100,7 +112,7 @@ function performSearch() {
   const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
   const rightFileContent = sessionStorage.getItem("mei-content-2");
   const rightChant = new Chant(rightFileContent, rightChantFilePath);
-
+  sessionStorage.setItem('chant-test', JSON.stringify(leftChant));
 
   if (search_option == "contour") {
     process_contour(leftChant, search_pattern, 'left');
@@ -138,7 +150,7 @@ async function upload_file(slot) {
   const uploaded_file = document.getElementById('file-input-' + slot).files[0];
   const objectURL = URL.createObjectURL(uploaded_file);
 
-  const newContent = await load_MEI_file(objectURL, slot);
+  const newContent = await loadMEIFile(objectURL, slot);
   drawMEIContent(newContent, slot);
   URL.revokeObjectURL(upload_file);
 }
@@ -200,10 +212,15 @@ async function loadFromDatabase(fileName, order) {
   sessionStorage.setItem('database-chant-' + order, fileName);
 
   const filePath = rootPath + fileName;
-  console.log(filePath);
-  let MEI_file = await load_MEI_file(filePath, order);
-  drawMEIContent(MEI_file, order);
+  let MEIFileContentString = await loadMEIFile(filePath, order);
+  let chant = new Chant(MEIFileContentString, filePath);
+  drawMEIContent(MEIFileContentString, order);
+  displayChantMode(chant, order);
 }
 
-chantMenuLeft.addEventListener('change', () => { loadFromDatabase(chantMenuLeft.value, 1) });
-chantMenuRight.addEventListener('change', () => { loadFromDatabase(chantMenuRight.value, 2) });
+chantMenuLeft.addEventListener('change', () => {
+  loadFromDatabase(chantMenuLeft.value, 1);
+});
+chantMenuRight.addEventListener('change', () => { 
+  loadFromDatabase(chantMenuRight.value, 2)
+});

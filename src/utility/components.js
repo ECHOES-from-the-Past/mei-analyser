@@ -1,5 +1,3 @@
-import { parse_MEI_SQ, parse_MEI_AQ } from './utils.js';
-
 /**
  * An "abstract" class for a Neume Component (`<nc>`).
  * All Neume Components has an id and an optional tilt field.
@@ -16,6 +14,18 @@ export class NeumeComponent {
     this.id = id;
     this.tilt = tilt;
     this.ornamental = ornamental;
+  }
+
+  getId() {
+    return this.id;
+  }
+
+  getTilt() {
+    return this.tilt;
+  }
+
+  getOrnamental() {
+    return this.ornamental;
   }
 
   /**
@@ -76,10 +86,6 @@ export class NeumeComponent {
     nc_svg.forEach((nc) => {
       console.log(nc);
     });
-  }
-
-  get_id() {
-    return this.id;
   }
 }
 
@@ -172,24 +178,24 @@ export class Chant {
       const ncList = syllable.querySelectorAll('nc');
       for (const nc of ncList) {
         // Getting common attributes of NeumeComponent: id, tilt, ornamental
-        const id = nc.attributes.getNamedItem("xml:id").nodeValue;
+        const id = nc.attributes.getNamedItem("xml:id").value;
         let tilt = nc.attributes.getNamedItem('tilt');
-        tilt == null ? null : tilt.nodeValue;
+        tilt = tilt != null ? tilt.value : null;
         const ornamental = nc.children.length > 0 ? {
           "type": nc.children[0].nodeName,
-          "id": nc.children[0].attributes.getNamedItem("xml:id").nodeValue
+          "id": nc.children[0].attributes.getNamedItem("xml:id").value
         } : null;
 
         if (this.annotationType === "square") {
           // Getting all the necessary attributes of NeumeComponentSQ
-          const pitch = nc.attributes.getNamedItem("pname").nodeValue;
-          const octave = nc.attributes.getNamedItem("oct").nodeValue;
+          const pitch = nc.attributes.getNamedItem("pname").value;
+          const octave = nc.attributes.getNamedItem("oct").value;
 
           const nc_SQ = new NeumeComponentSQ(id, tilt, ornamental, pitch, octave);
           ncArray.push(nc_SQ);
         } else if (this.annotationType === "aquitanian") {
           // Getting the necessary attribute of NeumeComponentAQ
-          const loc = nc.attributes.getNamedItem("loc").nodeValue;
+          const loc = nc.attributes.getNamedItem("loc").value;
 
           const nc_AQ = new NeumeComponentAQ(id, tilt, ornamental, loc);
           ncArray.push(nc_AQ);
@@ -199,14 +205,89 @@ export class Chant {
     return ncArray;
   }
 
+  /**
+   * Parse the MEI Content to extract the annotation type
+   * @returns {String} the annotation type of the chant (either "aquitanian" or "square")
+   */
   parseMEIContentForAnnotationType() {
     const staffDef = this.meiContent.querySelector('staffDef');
-    const lines = staffDef.attributes.getNamedItem('lines').nodeValue;
+    const lines = staffDef.attributes.getNamedItem('lines').value;
     if (lines > 1) {
       return "square";
     } else {
       return "aquitanian";
     }
+  }
+
+  /**
+   * Parse the MEI Content to extract the mode of the chant. This only works for Aquitanian notation.
+   * 
+   * See: https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8
+   * @returns {Number} the mode of the chant
+   */
+  getMode() {
+    if (this.annotationType === "square") {
+      return `¯\\_(ツ)_/¯`;
+    }
+
+    let mode;
+    // Checking last note
+    const lastNote = this.neumeComponents[this.neumeComponents.length - 1];
+    // Checking every `nc` with `@tilt == 'se'`
+    const allWithSETilt = this.neumeComponents.filter((nc) => nc.getTilt() === 'se');
+    let allWithSETiltLoc = allWithSETilt.map((nc) => nc.get_loc());
+
+    const neg1pos3 = allWithSETiltLoc.filter((loc) => {
+      loc != -1 || loc != 3
+    }).length == 0;
+    const neg2pos2 = allWithSETiltLoc.filter((loc) => {
+      loc != -2 || loc != 2
+    }).length == 0;
+    const neg3pos1 = allWithSETiltLoc.filter((loc) => {
+      loc != -3 || loc != 1
+    }).length == 0;
+    const zeropos3 = allWithSETiltLoc.filter((loc) => {
+      loc != 0 || loc != 3
+    }).length == 0;
+    const zeroneg3pos4 = allWithSETiltLoc.filter((loc) => {
+      loc != 0 || loc != -3 || loc != 4
+    }).length == 0;
+    const neg2pos1 = allWithSETiltLoc.filter((loc) => {
+      loc != -2 || loc != 1
+    }).length == 0;
+
+    if (lastNote.get_loc() == -2) {
+      if (neg1pos3) {
+        mode = 1;
+      } else if (neg2pos2) {
+        mode = 3;
+      } else if (neg3pos1) {
+        mode = 5;
+      } else if (zeropos3) {
+        mode = 7;
+      } else {
+        mode = -1;
+      }
+    } else if (lastNote.get_loc() == 0) {
+      if (neg1pos3) {
+        mode = 6;
+      } else if (neg2pos1) {
+        mode = 2;
+      } else if (zeroneg3pos4) {
+        mode = 4;
+      } else if (neg2pos2) {
+        mode = 8;
+      } else {
+        mode = -1;
+      }
+    } else if (lastNote.get_loc() == -1) {
+      if (neg1pos3) {
+        mode = 4;
+      } else {
+        mode = -1;
+      }
+    }
+    return mode;
   }
 
   getFileName() {

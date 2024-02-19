@@ -1,25 +1,21 @@
 import { highlight_pattern } from "../utility/utils.js";
-import database from "./database.json";
-
-export function loadCorpus() {
-  console.table(database);
-}
+import { Chant } from "../utility/components.js";
 
 /**
  * A function that highlight Aquitanian chant based on its absolute location (`@loc` attribute in the MEI file)
- * @param {Array<NeumeComponentAQ>} neume_array the aquitanian MEI (.mei) file to be highlighted
- * @param {Array<Number>} search_pattern an array of number, parse from user's input
+ * @param {NeumeComponentAQ[]} ncArray the aquitanian MEI (.mei) file to be highlighted
+ * @param {Number[]} searchPattern an array of number, parse from user's input
  */
-export function highlight_absolute(neume_array, search_pattern) {
+export function highlight_absolute(ncArray, searchPattern) {
   let aq_count = 0;
 
-  for (let i_nc = 0; i_nc < neume_array.length - search_pattern.length + 1; i_nc++) {
-    if (neume_array[i_nc].loc == search_pattern[0]) {
+  for (let i_nc = 0; i_nc < ncArray.length - searchPattern.length + 1; i_nc++) {
+    if (ncArray[i_nc].loc == searchPattern[0]) {
       let i_search = 1;
-      let found_pattern = [neume_array[i_nc]];
-      while (i_search < search_pattern.length) {
-        if (neume_array[i_nc + i_search].loc == search_pattern[i_search]) {
-          found_pattern.push(neume_array[i_nc + i_search]);
+      let found_pattern = [ncArray[i_nc]];
+      while (i_search < searchPattern.length) {
+        if (ncArray[i_nc + i_search].loc == searchPattern[i_search]) {
+          found_pattern.push(ncArray[i_nc + i_search]);
           i_search++;
         } else {
           // Reset list if no search found
@@ -174,4 +170,12 @@ export function highlight_contour_SQ(square_content, contour_pattern) {
 
   }
   return sq_count;
+}
+
+/**
+ * @param {Chant} chant the Chant object
+ * @param {Number} slot the slot number (1 or 2)
+ */
+export function displayChantMode(chant, slot) {
+  document.getElementById("chant-mode-" + slot).innerHTML = chant.getMode();
 }
