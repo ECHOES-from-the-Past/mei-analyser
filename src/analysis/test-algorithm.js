@@ -27,6 +27,27 @@ function nw_test02() {
   console.log(align_nw(M, A, B, gapSymbol));
 }
 
+function nw_test03() {
+  const A = [1, 2, 4, 5, 1, 3, 2, 6, 7, 2];
+  const B = [2, 5, 1, 4, 2, 6, 2, 1, 6, 3];
+  const match = 1, mismatch = -1, gap = -2;
+  const gapSymbol = '-';
+  const M = matrix_nw(A, B, match, mismatch, gap);
+  console.table(M);
+  console.log(align_nw(M, A, B, gapSymbol));
+}
+
+function nw_test04() {
+  console.log("Test Needleman-Wunsch 04")
+  const A = [1, 1, 2, 4, 5, 1, 3, 2, 6, 7, 2];
+  const B = [2, 4, 5, 1, 4, 2, 6, 2, 1, 6, 3];
+  const match = 1, mismatch = -1, gap = -2;
+  const gapSymbol = '-';
+  const M = matrix_nw(A, B, match, mismatch, gap);
+  console.table(M);
+  console.log(align_nw(M, A, B, gapSymbol));
+}
+
 function sw_test01() {
   const A = [2, 5, 7, 9, 3, 1, 2, 4];
   const B = [2, 3, 5, 7, 9, 3, 1, 2, 4];
@@ -84,6 +105,8 @@ function sw_test02() {
 function main() {
   nw_test01();
   nw_test02();
+  nw_test03();
+  nw_test04();
   // sw_test01();
   // sw_test02();
   // example_nc();

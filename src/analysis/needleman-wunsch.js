@@ -54,13 +54,10 @@ export function matrix_nw(A, B, match = 1, mismatch = -1, gap = -2) {
 
 /**
  * Needleman-Wunsch algorithm - Step 2: Alignment and backtracking
- * @param {Array<Array<Number>>} M The 2D matrix from `matrix()` function
- * @param {Array<Number>} A The first array of number
- * @param {Array<Number>} B The second array of number
+ * @param {Number[][]} M The 2D matrix from `matrix()` function
+ * @param {Number[]} A The first array of number
+ * @param {Number[]} B The second array of number
  * @param {String} gapSymbol The symbol for gap(s)
- * @param {Number} match score for each match
- * @param {Number} mismatch score for each mismatch between two elements
- * @param {Number} gap score for each gap  
  * @returns alignment of two arrays in order of [AlignmentA, AlignmentB]
  */
 export function align_nw(M, A, B, gapSymbol = 'GAP') {
@@ -76,12 +73,28 @@ export function align_nw(M, A, B, gapSymbol = 'GAP') {
   // Reminder: Matrix coordinates are [column][row] or [b_col][a_row]
   while (b_col > 0 || a_row > 0) {
     const currentCell = M[b_col][a_row];
+    console.log(`Current cell: ${currentCell}`)
     alignmentPath.push(currentCell);
+
+    if (b_col == 0) {
+      AlignmentA.unshift(A[a_row - 1]);
+      AlignmentB.unshift(gapSymbol);
+      a_row--;
+      continue;
+    }
+
+    if (a_row == 0) {
+      AlignmentA.unshift(gapSymbol);
+      AlignmentB.unshift(B[b_col - 1]);
+      b_col--;
+      continue;
+    }
 
     const upLeft = M[b_col][a_row];
     const up = M[b_col - 1][a_row];
     const left = M[b_col][a_row - 1];
     const max = Math.max(upLeft, up, left);
+
     if (max == upLeft) {
       AlignmentA.unshift(A[a_row - 1]);
       AlignmentB.unshift(B[b_col - 1]);
@@ -96,10 +109,7 @@ export function align_nw(M, A, B, gapSymbol = 'GAP') {
       AlignmentB.unshift(gapSymbol);
       a_row--;
     }
-    // console.debug(`A: ${AlignmentA}`);
-    // console.debug(`B: ${AlignmentB}`);
   }
-  // console.table(AlignmentA);
   console.debug(alignmentPath);
   return [AlignmentA, AlignmentB];
 }
