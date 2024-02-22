@@ -78,19 +78,21 @@ export async function drawMEIContent(meiContent, order) {
  * Regex pattern: `/-?\d/g`
  * - an optional negative `-` sign
  * - a single digit
- * @param {FormData} search_pattern 
+ * @param {FormData} searchPattern 
  * @returns {Array<Number>} an array of type number from user's input
  */
-export function parse_search_pattern(search_pattern) {
-  return search_pattern.match(/-?\d/g).map(Number);
+export function parseSearchPattern(searchPattern) {
+  return searchPattern.match(/-?\d/g).map(Number);
 }
 
-export function clear_all_highlight() {
-  const all_NC = document.querySelectorAll("g.nc");
-  all_NC.forEach(element => {
+export function clearHighlights() {
+  const allNeumeComponents = document.querySelectorAll("g.nc");
+  // Clear all highlighted neume components
+  allNeumeComponents.forEach(element => {
     element.style.fill = 'black';
     element.style.strokeWidth = '0px';
   });
+  // Clear all spotlight rectangles
   document.querySelectorAll('.spotlight-rect').forEach(e => e.remove());
 }
 

@@ -179,3 +179,12 @@ export function highlight_contour_SQ(square_content, contour_pattern) {
 export function displayChantMode(chant, slot) {
   document.getElementById("chant-mode-" + slot).innerHTML = chant.getMode();
 }
+
+/**
+ * Make a function that search for all the chants with a certain mode
+ * @param {Number} mode the mode to be searched
+*/
+
+/**
+ * Search for pitch/melodic pattern + mode (combining search functions)
+ */

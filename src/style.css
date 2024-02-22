@@ -47,6 +47,14 @@ button:hover {
   background-color: var(--button-hover);
 }
 
+p {
+  margin: 0.5em;
+}
+
+ul {
+  margin: 0;
+}
+
 g {
   fill: hsl(0, 0%, 0%);
 }

@@ -13,13 +13,12 @@
 <body>
   <script src="https://www.verovio.org/javascript/develop/verovio-toolkit-wasm.js" defer></script>
   <script type="module" src="src/main.js"></script>
+
   <div id="top-elements">
+    <!-- Search panel -->
     <div class="panel">
+      <h1> Pattern Search </h1>
       <form id="search-form">
-        <!-- <input type="radio" id="aquitanian-absolute" name="search-option" value="absolute" checked>
-          <label for="aquitanian-absolute">Aquitanian (absolute)</label>
-          <br> -->
-        <h1> Pattern Search </h1>
         <input type="radio" id="aquitanian-pattern" name="search-option" value="pattern">
         <label for="aquitanian-pattern"> Pitch Pattern (pitch-based) </label>
         <br>
@@ -40,6 +39,18 @@
             id="pattern-count-right"></span>
         </li>
       </ul>
+    
+      <!-- Checkboxes for ornamental shapes -->
+      <p>Ornamental shapes</p>
+      <input type="checkbox" id="liquescent-checkbox" name="ornament-1" value="liquescent" checked>
+      <label for="ornament-1"> Liquescent </label>
+      <input type="checkbox" id="quilisma-checkbox" name="ornament-2" value="quilisma">
+      <label for="ornament-2"> Quilisma </label>
+      <input type="checkbox" id="oriscus-checkbox" name="ornament-3" value="oriscus">
+      <label for="ornament-3"> Oriscus </label>
+      <button type="button" id="ornament-btn" style="margin-left: 12px;">Search</button>
+      <br>
+      <!-- Displaying modes of chants -->
       <p>Chant Mode (only Aquitanian)</p>
       <ul>
         <li>Left: <span id="chant-mode-1"> ~ </span></li>
@@ -52,6 +63,7 @@
     <!-- Cross-comparison Analysis Section -->
 
     <div id="cross-comparison-analysis">
+      <!-- Analysis panel -->
       <div class="panel">
         <h1>Similarity Analysis</h1>
         <input type="radio" id="mismatch-analysis" name="analysis-mode" value="mismatch" checked>
@@ -77,13 +89,14 @@
       </div>
     </div>
   </div>
+  <!-- Displaying the cross comparison results -->
   <div id="cross-comparison-result">
     <p id="cross-comparison-1"></p>
     <p id="cross-comparison-2"></p>
   </div>
 
   <div id="mei-grid">
-
+    <!-- File/Database selection part -->
     <div id="mei-file-select">
       <div>
         <label for="database-chant-left">Choose a chant from database:</label>
@@ -97,6 +110,7 @@
         </select>
       </div>
     </div>
+    <!-- File upload section -->
     <div id="mei-file-select">
       <p>or upload to left slot:
         <span>
@@ -110,6 +124,8 @@
         </span>
       </p>
     </div>
+
+    <!-- Display of the chants -->
     <div id="mei-display">
       <div class="mei-file" id="mei-file-1">
       </div>

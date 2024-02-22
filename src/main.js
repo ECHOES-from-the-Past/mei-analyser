@@ -1,8 +1,8 @@
 import {
   loadMEIFile,
   drawMEIContent,
-  parse_search_pattern,
-  clear_all_highlight,
+  parseSearchPattern,
+  clearHighlights,
 } from './utility/utils.js';
 import {
   highlight_contour_AQ,
@@ -63,7 +63,7 @@ function loadContent() {
   const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
   const rightFileContent = sessionStorage.getItem("mei-content-2");
   const rightChant = new Chant(rightFileContent, rightChantFilePath);
-  
+
   displayChantMode(leftChant, 1);
   displayChantMode(rightChant, 2);
 }
@@ -92,7 +92,7 @@ document.getElementById('search-btn').addEventListener("click", performSearch);
  * Perform highlighting when user clicks on "Search" button
  */
 function performSearch() {
-  clear_all_highlight();
+  clearHighlights();
   const form = document.querySelector("#search-form");
   const form_data = new FormData(form);
 
@@ -103,7 +103,7 @@ function performSearch() {
   localStorage.setItem("search-query", search_bar_input);
 
   // Parse search pattern into an array of number
-  const search_pattern = parse_search_pattern(search_bar_input);
+  const search_pattern = parseSearchPattern(search_bar_input);
 
   const leftFileContent = sessionStorage.getItem("mei-content-1");
   const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
@@ -146,7 +146,7 @@ function process_contour(chant, search_pattern, slot) {
  * @param {Number} slot either 1 or 2
  */
 async function upload_file(slot) {
-  clear_all_highlight();
+  clearHighlights();
   const uploaded_file = document.getElementById('file-input-' + slot).files[0];
   const objectURL = URL.createObjectURL(uploaded_file);
 
@@ -170,7 +170,7 @@ document.getElementById('file-input-2').addEventListener("change", () => { uploa
  * Event listener for the "Analyse" button for cross-comparison functionality
  */
 document.getElementById('cross-comparison-btn').addEventListener("click", () => {
-  clear_all_highlight();
+  clearHighlights();
   const leftFileContent = sessionStorage.getItem("mei-content-1");
   const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
   const leftChant = new Chant(leftFileContent, leftChantFilePath);
@@ -221,6 +221,6 @@ async function loadFromDatabase(fileName, order) {
 chantMenuLeft.addEventListener('change', () => {
   loadFromDatabase(chantMenuLeft.value, 1);
 });
-chantMenuRight.addEventListener('change', () => { 
+chantMenuRight.addEventListener('change', () => {
   loadFromDatabase(chantMenuRight.value, 2)
 });

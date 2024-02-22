@@ -160,8 +160,8 @@ export class Chant {
     // Getting the content of the MEI file
     this.meiContent = htmldoc.children[0];
     this.filePath = filePath; // could be null, but shouldn't be
-    this.annotationType = this.parseMEIContentForAnnotationType();
-    this.neumeComponents = this.parseMEIforNeumeComponents(); // depends on the annotation type
+    this.notationType = this.parseMEIContentForNotationType();
+    this.neumeComponents = this.parseMEIforNeumeComponents();
   }
 
   /**
@@ -186,14 +186,14 @@ export class Chant {
           "id": nc.children[0].attributes.getNamedItem("xml:id").value
         } : null;
 
-        if (this.annotationType === "square") {
+        if (this.notationType === "square") {
           // Getting all the necessary attributes of NeumeComponentSQ
           const pitch = nc.attributes.getNamedItem("pname").value;
           const octave = nc.attributes.getNamedItem("oct").value;
 
           const nc_SQ = new NeumeComponentSQ(id, tilt, ornamental, pitch, octave);
           ncArray.push(nc_SQ);
-        } else if (this.annotationType === "aquitanian") {
+        } else if (this.notationType === "aquitanian") {
           // Getting the necessary attribute of NeumeComponentAQ
           const loc = nc.attributes.getNamedItem("loc").value;
 
@@ -206,10 +206,10 @@ export class Chant {
   }
 
   /**
-   * Parse the MEI Content to extract the annotation type
-   * @returns {String} the annotation type of the chant (either "aquitanian" or "square")
+   * Parse the MEI Content to extract the notation type
+   * @returns {String} the notation type of the chant (either "aquitanian" or "square")
    */
-  parseMEIContentForAnnotationType() {
+  parseMEIContentForNotationType() {
     const staffDef = this.meiContent.querySelector('staffDef');
     const lines = staffDef.attributes.getNamedItem('lines').value;
     if (lines > 1) {
@@ -226,7 +226,7 @@ export class Chant {
    * @returns {Number} the mode of the chant
    */
   getMode() {
-    if (this.annotationType === "square") {
+    if (this.getNotationType() === "square") {
       return `¯\\_(ツ)_/¯`;
     }
 
@@ -298,8 +298,8 @@ export class Chant {
     return this.meiContent;
   }
 
-  getAnnotationType() {
-    return this.annotationType;
+  getNotationType() {
+    return this.notationType;
   }
 
   getNeumeComponents() {
