@@ -73,7 +73,7 @@ export function align_nw(M, A, B, gapSymbol = 'GAP') {
   // Reminder: Matrix coordinates are [column][row] or [b_col][a_row]
   while (b_col > 0 || a_row > 0) {
     const currentCell = M[b_col][a_row];
-    console.log(`Current cell: ${currentCell}`)
+    console.debug(`Current cell: ${currentCell}`)
     alignmentPath.push(currentCell);
 
     if (b_col == 0) {
