@@ -89,9 +89,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       let offsetP1 = gapOffset(mismatch_index, gapsOfLeft);
       let offsetP2 = gapOffset(mismatch_index, gapsOfRight);
 
-      pattern_1[mismatch_index - offsetP1].highlight(...mismatch_note);
       pattern_1[mismatch_index + 1 - offsetP1].highlight(...mismatch_note);
-      pattern_2[mismatch_index - offsetP2].highlight(...mismatch_note);
       pattern_2[mismatch_index + 1 - offsetP2].highlight(...mismatch_note);
     }
   }
@@ -102,9 +100,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       let offsetP1 = gapOffset(mismatch_index, gapsOfLeft);
       let offsetP2 = gapOffset(mismatch_index, gapsOfRight);
 
-      pattern_1[mismatch_index - offsetP1].spotlight(...mismatch_box);
       pattern_1[mismatch_index + 1 - offsetP1].spotlight(...mismatch_box);
-      pattern_2[mismatch_index - offsetP2].spotlight(...mismatch_box);
       pattern_2[mismatch_index + 1 - offsetP2].spotlight(...mismatch_box);
     }
   }
@@ -116,14 +112,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       let offsetP1 = gapOffset(gap, gapsOfLeft);
       let offsetP2 = gapOffset(gap, gapsOfRight);
 
-      pattern_2[gap - offsetP2 - 1].highlight(...side_note);
       pattern_2[gap - offsetP2].highlight(...filler_note);
-      pattern_2[gap - offsetP2 + 1].highlight(...filler_note);
-      pattern_2[gap - offsetP2 + 2].highlight(...side_note);
-
-      pattern_1[gap - offsetP1 - 1].highlight(...side_note);
-      pattern_1[gap - offsetP1 + 0].highlight(...side_note);
-      pattern_1[gap - offsetP1 + 1].highlight(...side_note);
     }
   }
 
@@ -133,14 +122,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       let offsetP1 = gapOffset(gap, gapsOfLeft);
       let offsetP2 = gapOffset(gap, gapsOfRight);
 
-      pattern_1[gap - offsetP1 - 1].highlight(...side_note);
-      pattern_1[gap - offsetP1 - 0].highlight(...filler_note);
-      pattern_1[gap - offsetP1 + 1].highlight(...filler_note);
-      pattern_1[gap - offsetP1 + 2].highlight(...side_note);
-
-      pattern_2[gap - offsetP2 - 1].highlight(...side_note);
-      pattern_2[gap - offsetP2 - 0].highlight(...side_note);
-      pattern_2[gap - offsetP2 + 1].highlight(...side_note);
+      pattern_1[gap - offsetP1].highlight(...filler_note);
     }
   }
 
