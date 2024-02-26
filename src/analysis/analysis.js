@@ -49,7 +49,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
   // Define the scores for the Needleman-Wunsch algorithm
   const MATCH = 10;
   const MISMATCH = -1;
-  const GAP = -2;
+  const GAP = -1;
   const GAP_SYMBOL = '<span style=color:red>GAP</span>';
 
   let pattern_1_loc = location_septenary_mapping(pattern_1);
