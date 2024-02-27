@@ -70,7 +70,14 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       result[0][i] = `<span style="color: blue">${result[0][i]}</span>`;
       result[1][i] = `<span style="color: blue">${result[1][i]}</span>`;
     }
+    else if (result[0][i] == GAP_SYMBOL) {
+      result[1][i] = `<span style="color: red">${result[1][i]}</span>`;
+    }
+    else if (result[1][i] == GAP_SYMBOL) {
+      result[0][i] = `<span style="color: red">${result[0][i]}</span>`;
+    }
   }
+
 
   document.getElementById("cross-comparison-1").innerHTML = "LEFT : " + result[0].join(" ");
   document.getElementById("cross-comparison-2").innerHTML = "RIGHT: " + result[1].join(" ");
