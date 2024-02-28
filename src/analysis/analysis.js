@@ -101,7 +101,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
     }
   }
 
-/*  const spotlightMismatch = () => {
+  const spotlightMismatch = () => {
     // Spotlight the mismatched contours by putting a box around the notes
     for (let mismatch_index of mismatch) {
       let offsetP1 = gapOffset(mismatch_index, gapsOfLeft);
@@ -110,7 +110,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
       pattern_1[mismatch_index + 1 - offsetP1].spotlight(...mismatch_box);
       pattern_2[mismatch_index + 1 - offsetP2].spotlight(...mismatch_box);
     }
-  }*/
+  }
 
   // NOTE: issue occurs when gap is at index 0 or last index
   const highlightRightFillers = () => {
@@ -134,7 +134,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
   }
 
   if (mode.includes("mismatch")) {
-    highlightMismatch();
+    spotlightMismatch();
   }
   if (mode.includes("right")) {
     highlightRightFillers();
