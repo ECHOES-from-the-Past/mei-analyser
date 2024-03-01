@@ -27,9 +27,9 @@ export async function loadMEIFile(filePath, order) {
  */
 export async function drawMEIContent(meiContent, order) {
   let databasePath = "";
-  if(env === "development") {
+  if (env === "development") {
     databasePath = "../../GABCtoMEI/MEI_outfiles/";
-  } else if(env === "production") {
+  } else if (env === "production") {
     databasePath = "./database/";
   }
 
@@ -79,7 +79,7 @@ export async function drawMEIContent(meiContent, order) {
  * - an optional negative `-` sign
  * - a single digit
  * @param {FormData} searchPattern 
- * @returns {Array<Number>} an array of type number from user's input
+ * @returns {Number[]} an array of type number from user's input
  */
 export function parseSearchPattern(searchPattern) {
   return searchPattern.match(/-?\d/g).map(Number);
@@ -97,15 +97,12 @@ export function clearHighlights() {
 }
 
 /**
- * 
- * @param {Array<NeumeComponentAQ> | Array<NeumeComponentSQ>} found_pattern An array of type NeumeComponentAQ or NeumeComponentSQ
+ * Highlighting a pattern of neume components on the screen
+ * @param {NeumeComponentAQ[] | NeumeComponentSQ[]} pattern an array of type NeumeComponentAQ or NeumeComponentSQ
  */
-export function highlight_pattern(found_pattern) {
-  // highlight the search found
-  if (found_pattern.length != 0) {
-    for (const nc of found_pattern) {
-      nc.highlight();
-      // nc.spotlight();
-    }
+export function highlightPattern(pattern) {
+  for (const nc of pattern) {
+    nc.highlight();
+    // nc.spotlight();
   }
 }

@@ -5,9 +5,8 @@ import {
   clearHighlights,
 } from './utility/utils.js';
 import {
-  highlight_contour_AQ,
-  highlight_contour_SQ,
-  displayChantMode
+  displayChantMode,
+  highlightContourPattern
 } from './search/search.js';
 import {
   pattern_analysis
@@ -15,6 +14,7 @@ import {
 import {
   Chant
 } from './utility/components.js';
+
 const env = import.meta.env.MODE;
 console.debug(`Current environment: ${env}`);
 
@@ -103,7 +103,7 @@ function performSearch() {
   localStorage.setItem("search-query", search_bar_input);
 
   // Parse search pattern into an array of number
-  const search_pattern = parseSearchPattern(search_bar_input);
+  const searchPattern = parseSearchPattern(search_bar_input);
 
   const leftFileContent = sessionStorage.getItem("mei-content-1");
   const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
@@ -115,30 +115,22 @@ function performSearch() {
   sessionStorage.setItem('chant-test', JSON.stringify(leftChant));
 
   if (search_option == "contour") {
-    process_contour(leftChant, search_pattern, 'left');
-    process_contour(rightChant, search_pattern, 'right');
+    contourPatternSearch(leftChant, searchPattern, 'left');
+    contourPatternSearch(rightChant, searchPattern, 'right');
   }
 }
 
 /**
  * Process the contour search pattern for both left and right slots
  * @param {Chant} chant the Chant object
- * @param {Number[]} search_pattern 
+ * @param {Number[]} searchPattern 
  * @param {Number} slot 
  */
-function process_contour(chant, search_pattern, slot) {
-  let pattern_count = 0;
-  const chantType = chant.getAnnotationType();
-  const chantNCs = chant.getNeumeComponents();
+function contourPatternSearch(chant, searchPattern, slot) {
+  let patternCount = highlightContourPattern(chant, searchPattern);
 
-  if (chantType == "aquitanian") {
-    pattern_count = highlight_contour_AQ(chantNCs, search_pattern);
-  } else if (chantType == "square") {
-    pattern_count = highlight_contour_SQ(chantNCs, search_pattern);
-  }
-
-  document.getElementById("chant-type-" + slot).innerHTML = chantType;
-  document.getElementById("pattern-count-" + slot).innerHTML = pattern_count;
+  document.getElementById("chant-type-" + slot).innerHTML = chant.getNotationType();
+  document.getElementById("pattern-count-" + slot).innerHTML = patternCount;
 }
 
 /**

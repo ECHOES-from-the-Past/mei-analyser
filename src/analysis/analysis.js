@@ -5,7 +5,7 @@ import { needlemanWunsch_nc } from "./needleman-wunsch.js";
 function location_septenary_mapping(NeumeComponentPattern) {
   let pattern_location = [];
   if (NeumeComponentPattern[0] instanceof NeumeComponentAQ) {
-    pattern_location = NeumeComponentPattern.map((e) => e.get_loc());
+    pattern_location = NeumeComponentPattern.map((e) => e.getLoc());
   } else if (NeumeComponentPattern[0] instanceof NeumeComponentSQ) {
     pattern_location = NeumeComponentPattern.map((e) => e.septenary());
   }

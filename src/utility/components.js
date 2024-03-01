@@ -5,8 +5,8 @@
 export class NeumeComponent {
   /**
    * Constructor of a Neume Component.
-   * @param {String} id (required) the @xml:id attribute of the neume component 
-   * @param {*} tilt (optional) the tilt direction of the neume component (e.g., "s", "n")
+   * @param {String} id (required) the `@xml:id` attribute of the neume component 
+   * @param {*} tilt (optional) the tilt direction of the neume component (e.g., "s", "ne")
    * @param {*} ornamental (optional) the ornamental shape of the component
    * 
    */
@@ -95,9 +95,9 @@ export class NeumeComponent {
 export class NeumeComponentSQ extends NeumeComponent {
   /**
    * Constructor of a Neume Component for Square notation.
-   * @param {String} id (required field)
-   * @param {*} tilt
-   * @param {*} ornamental
+   * @param {String} id (required) the `@xml:id` attribute of the neume component
+   * @param {*} tilt (optional) the tilt direction of the neume component (e.g., "s", "ne")
+   * @param {*} ornamental (optional) the ornamental shape of the component
    * @param {String} pname pitch name of the note. (e.g. "d")
    * @param {Number} oct octave of the note. (e.g. 8)
    */
@@ -131,9 +131,9 @@ export class NeumeComponentSQ extends NeumeComponent {
 export class NeumeComponentAQ extends NeumeComponent {
   /**
    * Constructor of a Neume Component for Aquitanian notation.
-   * @param {String} id 
-   * @param {*} tilt 
-   * @param {*} ornamental
+   * @param {String} id (required) the `@xml:id` attribute of the neume component 
+   * @param {*} tilt (optional) the tilt direction of the neume component (e.g., "s", "ne")
+   * @param {*} ornamental (optional) the ornamental shape of the component
    * @param {Number} loc location of the note relative to the staff
    */
   constructor(id, tilt, ornamental, loc) {
@@ -141,7 +141,7 @@ export class NeumeComponentAQ extends NeumeComponent {
     this.loc = loc;
   }
 
-  get_loc() {
+  getLoc() {
     return Number(this.loc);
   }
 }
@@ -222,7 +222,8 @@ export class Chant {
   /**
    * Parse the MEI Content to extract the mode of the chant. This only works for Aquitanian notation.
    * 
-   * See: https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8
+   * See: https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8 for Aquitanian mode calculation
+   * and https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode calculation
    * @returns {Number} the mode of the chant
    */
   getMode() {
