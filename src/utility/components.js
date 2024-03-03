@@ -172,6 +172,7 @@ export class Chant {
     this.notationType = this.parseMEIContentForNotationType();
     /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
+    this.mode = this.obtainMode();
   }
 
   /**
@@ -236,7 +237,7 @@ export class Chant {
    * and https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode calculation
    * @returns {Number} the mode of the chant
    */
-  getMode() {
+  obtainMode() {
     if (this.getNotationType() === "square") {
       return `¯\\_(ツ)_/¯`;
     }
@@ -246,7 +247,7 @@ export class Chant {
     const lastNote = this.neumeComponents[this.neumeComponents.length - 1];
     // Checking every `nc` with `@tilt == 'se'`
     const allWithSETilt = this.neumeComponents.filter((nc) => nc.getTilt() === 'se');
-    let allWithSETiltLoc = allWithSETilt.map((nc) => nc.get_loc());
+    let allWithSETiltLoc = allWithSETilt.map((nc) => nc.getLoc());
 
     const neg1pos3 = allWithSETiltLoc.filter((loc) => {
       loc != -1 || loc != 3
@@ -267,7 +268,7 @@ export class Chant {
       loc != -2 || loc != 1
     }).length == 0;
 
-    if (lastNote.get_loc() == -2) {
+    if (lastNote.getLoc() == -2) {
       if (neg1pos3) {
         mode = 1;
       } else if (neg2pos2) {
@@ -279,7 +280,7 @@ export class Chant {
       } else {
         mode = -1;
       }
-    } else if (lastNote.get_loc() == 0) {
+    } else if (lastNote.getLoc() == 0) {
       if (neg1pos3) {
         mode = 6;
       } else if (neg2pos1) {
@@ -291,7 +292,7 @@ export class Chant {
       } else {
         mode = -1;
       }
-    } else if (lastNote.get_loc() == -1) {
+    } else if (lastNote.getLoc() == -1) {
       if (neg1pos3) {
         mode = 4;
       } else {
@@ -315,5 +316,9 @@ export class Chant {
 
   getNeumeComponents() {
     return this.neumeComponents;
+  }
+
+  getMode() {
+    return Number(this.mode);
   }
 }

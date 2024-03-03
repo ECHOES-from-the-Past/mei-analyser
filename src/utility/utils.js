@@ -87,13 +87,12 @@ export function drawSVGFromMEIContent(meiContent) {
     // Setting options for the toolkit
     let zoom = 80;
     verovioToolkit.setOptions({
-      pageWidth: document.body.clientWidth * 50 / zoom,
+      pageWidth: document.body.clientWidth * 60 / zoom,
       adjustPageHeight: true,
       shrinkToFit: true,
       scale: zoom,
       footer: "none",
     });
-    console.log(meiContent);
     verovioToolkit.loadData(meiContent);
     svg = verovioToolkit.renderToSVG(1);
 
