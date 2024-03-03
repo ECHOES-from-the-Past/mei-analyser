@@ -161,37 +161,3 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
 
 // import database from '../database/database.json';
 
-// const chantMenuLeft = document.getElementById('database-chant-left');
-// const chantMenuRight = document.getElementById('database-chant-right');
-
-// chantMenuLeft.innerHTML = database.map((e) => {
-//   return `<option value=${e}>${e}</option>`;
-// }).join('');
-
-// chantMenuRight.innerHTML = database.map((e) => {
-//   return `<option value=${e}>${e}</option>`;
-// }).join('');
-
-// async function loadFromDatabase(fileName, order) {
-//   let rootPath = "";
-//   if (env === "development") {
-//     rootPath = "../../GABCtoMEI/MEI_outfiles/";
-//   } else if (env === "production") {
-//     rootPath = "./database/";
-//   }
-
-//   sessionStorage.setItem('database-chant-' + order, fileName);
-
-//   const filePath = rootPath + fileName;
-//   let MEIFileContentString = await loadMEIFile(filePath, order);
-//   let chant = new Chant(MEIFileContentString, filePath);
-//   drawMEIContent(MEIFileContentString, order);
-//   displayChantMode(chant, order);
-// }
-
-// chantMenuLeft.addEventListener('change', () => {
-//   loadFromDatabase(chantMenuLeft.value, 1);
-// });
-// chantMenuRight.addEventListener('change', () => {
-//   loadFromDatabase(chantMenuRight.value, 2)
-// });

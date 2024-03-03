@@ -3,18 +3,25 @@ import database from '../database/database.json';
 
 const env = import.meta.env.MODE; // 'development' or 'production'
 
+/** @type {String} root path to the database folder based on the environment */
+let databasePath = "";
+if (env === "development") {
+  databasePath = "../../GABCtoMEI/MEI_outfiles/";
+} else if (env === "production") {
+  databasePath = "./database/";
+}
+
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
- * @param {MEI_filePath} filePath link to the MEI (.mei) file to be rendered
+ * @param {FileName} fileName link to the MEI (.mei) file to be rendered
  * @returns {MEIContent} the content of the MEI file
  */
-export async function loadMEIFile(filePath) {
+export async function loadMEIFile(fileName) {
   let MEIContent;
-  await fetch(filePath)
+  await fetch(fileName)
     .then((response) => response.text())
     .then((mei) => {
       MEIContent = mei;
-      localStorage.setItem("mei-content", MEIContent);
     })
   return MEIContent;
 }
@@ -25,13 +32,6 @@ export async function loadMEIFile(filePath) {
  * @param {Number} order 1 for left position, 2 for right position
  */
 export async function drawMEIContent(meiContent, order) {
-  let databasePath = "";
-  if (env === "development") {
-    databasePath = "../../GABCtoMEI/MEI_outfiles/";
-  } else if (env === "production") {
-    databasePath = "./database/";
-  }
-
   if (meiContent == null) {
     // In case the MEI content is not loaded (e.g., on first load of the page), load the sample MEI content
     const sampleAquitanianChant = databasePath + database[0];
@@ -77,9 +77,11 @@ export async function drawMEIContent(meiContent, order) {
  * @param {MEI_FileContent} meiContent file content of the MEI file
  * @returns {SVGElement} SVG content of the MEI file
  */
-export function drawMEIContentToElement(meiContent) {
-  // This line initializes the Verovio toolkit
+export function drawSVGFromMEIContent(meiContent) {
   try {
+    /** @type {SVGElement} */
+    let svg;
+    // This line initializes the Verovio toolkit
     let verovioToolkit = new verovio.toolkit();
 
     // Setting options for the toolkit
@@ -91,11 +93,11 @@ export function drawMEIContentToElement(meiContent) {
       scale: zoom,
       footer: "none",
     });
-
+    console.log(meiContent);
     verovioToolkit.loadData(meiContent);
-    let svg = verovioToolkit.renderToSVG(1);
-    return svg;
+    svg = verovioToolkit.renderToSVG(1);
 
+    return svg;
   } catch (error) {
     console.error(error);
     console.log("Please reload the page and try again.");
@@ -134,4 +136,38 @@ export function highlightPattern(pattern) {
     nc.highlight();
     // nc.spotlight();
   }
+}
+
+/** Persistance functions for the project */
+
+/**
+ * Persist a piece of data to the browser's local storage.
+ * @param {String} key
+ * @param {String} value
+ */
+export function persist(key, value) {
+  value = JSON.stringify(value);
+  localStorage.setItem(key, value);
+}
+
+/**
+ * Retrieve a piece of data from the browser's local storage, given a key.
+ * The syntax being used is `localStorage.getItem(key)`.
+ * @param {String} key
+ */
+export function retrieve(key) {
+  return JSON.parse(localStorage.getItem(key));
+}
+
+export function clearStorage() {
+  localStorage.clear();
+}
+
+/**
+ * 
+ * @param {String} key 
+ * @returns true if the key exists in the local storage, false otherwise
+ */
+export function checkPersistanceExists(key) {
+  return localStorage.getItem(key) !== null;
 }
