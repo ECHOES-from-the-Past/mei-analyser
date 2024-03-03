@@ -1,23 +1,22 @@
 import { NeumeComponentAQ, NeumeComponentSQ } from './components.js';
-import database from '../search/database.json';
+import database from '../database/database.json';
 
 const env = import.meta.env.MODE; // 'development' or 'production'
 
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
  * @param {MEI_filePath} filePath link to the MEI (.mei) file to be rendered
- * @param {Number} order the number
+ * @returns {MEIContent} the content of the MEI file
  */
-export async function loadMEIFile(filePath, order) {
-  let mei_content;
+export async function loadMEIFile(filePath) {
+  let MEIContent;
   await fetch(filePath)
     .then((response) => response.text())
     .then((mei) => {
-      sessionStorage.setItem("mei-content-" + order, mei);
-      sessionStorage.setItem("mei-file-path-" + order, filePath);
-      mei_content = mei;
+      MEIContent = mei;
+      localStorage.setItem("mei-content", MEIContent);
     })
-  return mei_content;
+  return MEIContent;
 }
 
 /**
@@ -66,6 +65,36 @@ export async function drawMEIContent(meiContent, order) {
     // Get the div element to render the MEI content and set the innerHTML to the SVG content
     const meifile = document.getElementById("mei-file-" + order);
     meifile.innerHTML = svg;
+
+  } catch (error) {
+    console.error(error);
+    console.log("Please reload the page and try again.");
+  }
+}
+
+/**
+ * Draw the MEI content to the screen on a specific slot/order (1: left, 2: right)
+ * @param {MEI_FileContent} meiContent file content of the MEI file
+ * @returns {SVGElement} SVG content of the MEI file
+ */
+export function drawMEIContentToElement(meiContent) {
+  // This line initializes the Verovio toolkit
+  try {
+    let verovioToolkit = new verovio.toolkit();
+
+    // Setting options for the toolkit
+    let zoom = 80;
+    verovioToolkit.setOptions({
+      pageWidth: document.body.clientWidth * 50 / zoom,
+      adjustPageHeight: true,
+      shrinkToFit: true,
+      scale: zoom,
+      footer: "none",
+    });
+
+    verovioToolkit.loadData(meiContent);
+    let svg = verovioToolkit.renderToSVG(1);
+    return svg;
 
   } catch (error) {
     console.error(error);

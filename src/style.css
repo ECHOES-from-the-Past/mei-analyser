@@ -9,6 +9,9 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  /* Reference for the attribute below: https://youtu.be/cH8VbLM1958 */
+  min-width: 0;
+
   /* Colour scheme */
   --button: hsl(81, 90%, 15%);
   --button-hover: hsla(80, 64%, 12%, 0.667);
@@ -30,6 +33,7 @@
   --mismatch-stroke-box: hsla(240, 100%, 50%, 0.4);
 }
 
+/* Default button styles */
 button {
   border: 0px;
   border-radius: 8px;
@@ -45,6 +49,28 @@ button {
 
 button:hover {
   background-color: var(--button-hover);
+}
+
+/* Custom button styles */
+#devMode-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 0.5em 1em;
+  margin: 0.5em;
+  background-color: hsl(12, 100%, 72%);
+  color: hsl(0, 100%, 19%);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+#devMode-btn:hover {
+  background-color: hsl(12, 100%, 62%);
+}
+
+#devMode-btn:active {
+  background-color: hsl(12, 100%, 52%);
 }
 
 p {
@@ -72,7 +98,7 @@ g {
 }
 
 .panel {
-  padding: 0 2em 0;
+  padding: 0 1em 0;
 }
 
 .pattern-count {
@@ -106,4 +132,8 @@ g {
   border-radius: 8px;
   text-align: justify;
   /* pointer-events: none; */
+}
+
+#search-flex {
+  display: flex;
 }

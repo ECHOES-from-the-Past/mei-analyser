@@ -1,19 +1,21 @@
 {
   "name": "mei-analyser",
   "private": true,
-  "version": "0.1.6-dev",
+  "version": "0.1.7-dev",
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "docs": "jsdoc --destination ./dist/docs --readme README.md -r src",
     "database": "mkdir ./dist/database && cp -r ./GABCtoMEI/MEI_outfiles/* ./dist/database",
-    "build": "vite build --base=/mei-analyser/ && npm run docs && npm run database",
+    "build": "vite build --base=/mei-analyser/ && npm run database",
     "preview": "vite preview --base=/mei-analyser/",
     "updateDatabaseList": "node src/search/updateDatabase.cjs",
     "test": "node src/analysis/test-algorithm.js"
   },
   "devDependencies": {
-    "jsdoc": "^4.0.2",
     "vite": "^5.0.8"
+  },
+  "dependencies": {
+    "@alpinejs/persist": "^3.13.5",
+    "alpinejs": "^3.13.5"
   }
 }
