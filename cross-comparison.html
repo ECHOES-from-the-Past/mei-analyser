@@ -1,0 +1,76 @@
+<!-- Analysis panel -->
+<div class="panel">
+    <h1>Similarity Analysis</h1>
+    <input type="radio" id="mismatch-analysis" name="analysis-mode" value="mismatch" checked>
+    <label for="mismatch-analysis"> Contour mismatches (blue) </label>
+    <br>
+    <input type="radio" id="gap-left" name="analysis-mode" value="gaps-left">
+    <label for="gap-left"> Contour gaps (red fillers on left chant) </label>
+    <br>
+    <input type="radio" id="gap-right" name="analysis-mode" value="gaps-right">
+    <label for="gap-right"> Contour gaps (red fillers on right chant) </label>
+    <br>
+    <input type="radio" id="gap-mismatch-left" name="analysis-mode" value="gaps-mismatch-left">
+    <label for="gap-mismatch-left"> Contour gaps and mismatches (red fillers on left chant) </label>
+    <br>
+    <input type="radio" id="gap-mismatch-right" name="analysis-mode" value="gaps-mismatch-right">
+    <label for="gap-mismatch-right"> Contour gaps and mismatches (red fillers on right chant) </label>
+    <br>
+    <br>
+    <button type="button" id="cross-comparison-btn">
+        Analyse
+    </button>
+    <br>
+</div>
+
+<div id="dev-view" x-data="{ devView: false }">
+    <br>
+    <button x-on:click="devView = ! devView"> Developer view </button>
+
+    <!-- Displaying the cross comparison results -->
+    <div id="cross-comparison-result" x-show="devView">
+        <p id="cross-comparison-1"></p>
+        <p id="cross-comparison-2"></p>
+    </div>
+</div>
+<div id="mei-grid">
+    <!-- File/Database selection part -->
+    <div id="mei-file-select">
+        <div>
+            <label for="database-chant-left">Choose a chant from database:</label>
+            <select class="database-select" name="database-chant-left" id="database-chant-left">
+                <option value="placeholder">Select a chant for left slot</option>
+            </select>
+        </div>
+        <div>
+            <label for="database-chant-right">Choose a chant from database:</label>
+            <select class="database-select" name="database-chant-right" id="database-chant-right">
+                <option value="placeholder">Select a chant for the right slot</option>
+            </select>
+        </div>
+    </div>
+    <!-- File upload section -->
+    <div id="mei-file-select">
+        <p>or upload to left slot:
+            <span>
+                <input type='file' class="file-upload-box" id='file-input-1' />
+            </span>
+        </p>
+
+        <p>or upload to right slot:
+            <span>
+                <input type='file' class="file-upload-box" id='file-input-2' />
+            </span>
+        </p>
+    </div>
+
+    <!-- Display of the chants -->
+    <div id="mei-display">
+        <div class="mei-file" id="mei-file-1">
+        </div>
+        <div class="mei-file" id="mei-file-2">
+        </div>
+    </div>
+</div>
+
+<script src="/src/cross-comparison/cross-comparison.js" type="module"></script>

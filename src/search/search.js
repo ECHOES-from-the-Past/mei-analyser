@@ -167,3 +167,17 @@ export function displayChantMode(chant, slot) {
 /**
  * Search for pitch/melodic pattern + mode (combining search functions)
  */
+
+
+/**
+ * Process the contour search pattern for both left and right slots
+ * @param {Chant} chant the Chant object
+ * @param {Number[]} searchPattern 
+ * @param {Number} slot 
+ */
+function contourPatternSearch(chant, searchPattern, slot) {
+  let patternCount = highlightContourPattern(chant, searchPattern);
+
+  document.getElementById("chant-type-" + slot).innerHTML = chant.getNotationType();
+  document.getElementById("pattern-count-" + slot).innerHTML = patternCount;
+}

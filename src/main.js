@@ -3,70 +3,73 @@ import {
   drawMEIContent,
   parseSearchPattern,
   clearHighlights,
+  drawMEIContentToElement
 } from './utility/utils.js';
-import {
-  displayChantMode,
-  highlightContourPattern
-} from './search/search.js';
+
 import {
   pattern_analysis
-} from './analysis/analysis.js';
+} from './cross-comparison/cross-comparison.js';
 import {
   Chant
 } from './utility/components.js';
 
+import database from './database/database.json';
+import Alpine from 'alpinejs';
+import persist from '@alpinejs/persist';
+
+/**
+ * Obtain the current development or production environment
+ * from Vite's `import.meta.env` object
+ */
 const env = import.meta.env.MODE;
 console.debug(`Current environment: ${env}`);
+let rootPath = "";
+if (env === "development") {
+  rootPath = "../../GABCtoMEI/MEI_outfiles/";
+} else if (env === "production") {
+  rootPath = "./database/";
+}
 
+document.addEventListener('alpine:init', () => {
+  // Load database files
+  Alpine.store('database', () => ({
+    database: database,
+    viewDatabase: Alpine.$persist(false).as('viewDatabase'),
+    toggleView() {
+      this.viewDatabase = !this.viewDatabase;
+    },
+    async displayChant(fileName) {
+      const meifile = await loadMEIFile(rootPath + fileName, 1);
+      const svg = drawMEIContentToElement(meifile);
+      localStorage.setItem('chant-slot', JSON.stringify(svg));
+      document.querySelector('#chant-slot').innerHTML = svg;
+    }
+  }));
+});
+
+/** Wait until Alpine is loaded with the DOM before adding event listeners */
+document.addEventListener('alpine:initialized', async () => {
+  console.debug('Alpine.js has been initialized. Adding the event listeners');
+  document.getElementById('search-btn').addEventListener("click", performSearch);
+
+  const prevChantSlot = localStorage.getItem('chant-slot');
+  if (localStorage.getItem('chant-slot') !== null) {
+    document.querySelector('#chant-slot').innerHTML = JSON.parse(prevChantSlot);
+  }
+});
+
+
+function tempFunc() {
+  console.log('tempFunc');
+}
 /**
  * Load predefined files when DOM is loaded
  */
-document.onreadystatechange = function () {
-  if (document.readyState === 'complete') {
-    loadContent();
-  }
-}
-
-function loadContent() {
-  const prev_search_choice = localStorage.getItem("search-choice");
-  const radio_checkbox = document.getElementsByName("search-option");
-  for (let e of radio_checkbox) {
-    if (e.value == prev_search_choice) {
-      e.checked = true;
-    }
-  }
-  const prev_search = localStorage.getItem("search-query");
-  document.getElementById("search-bar").value = prev_search;
-
-  const prev_analysis_mode = localStorage.getItem("analysis-mode");
-  const analysis_radio_checkbox = document.getElementsByName("analysis-mode");
-  for (let e of analysis_radio_checkbox) {
-    if (e.value == prev_analysis_mode) {
-      e.checked = true;
-    }
-  }
-
-  // Load previous files. The value will be `null` if there's no previous file
-  const prevFilePathLeft = sessionStorage.getItem('database-chant-1');
-  const prevFilePathRight = sessionStorage.getItem('database-chant-2');
-
-  document.getElementById('database-chant-left').value = prevFilePathLeft;
-  document.getElementById('database-chant-right').value = prevFilePathRight;
-
-  drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-  drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
-
-  const leftFileContent = sessionStorage.getItem("mei-content-1");
-  const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
-  const leftChant = new Chant(leftFileContent, leftChantFilePath);
-
-  const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
-  const rightFileContent = sessionStorage.getItem("mei-content-2");
-  const rightChant = new Chant(rightFileContent, rightChantFilePath);
-
-  displayChantMode(leftChant, 1);
-  displayChantMode(rightChant, 2);
-}
+// document.onreadystatechange = function () {
+//   if (document.readyState === 'complete') {
+//     loadContent();
+//   }
+// }
 
 /**
  * Dynamically redraw the MEI content when the window is resized
@@ -75,23 +78,46 @@ function loadContent() {
 let timeOutFunctionId;
 window.onresize = function () {
   clearTimeout(timeOutFunctionId);
-
+  console.log('Resizing...');
   timeOutFunctionId = setTimeout(() => {
     drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
     drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
   }, 100);
 }
 
+function loadContent() {
+  // Load previous files. The value will be `null` if there's no previous file
+  // const prevFilePathLeft = sessionStorage.getItem('database-chant-1');
+  // const prevFilePathRight = sessionStorage.getItem('database-chant-2');
+
+  // document.getElementById('database-chant-left').value = prevFilePathLeft;
+  // document.getElementById('database-chant-right').value = prevFilePathRight;
+
+  // drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+  // drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+
+  // const leftFileContent = sessionStorage.getItem("mei-content-1");
+  // const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
+  // const leftChant = new Chant(leftFileContent, leftChantFilePath);
+
+  // const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
+  // const rightFileContent = sessionStorage.getItem("mei-content-2");
+  // const rightChant = new Chant(rightFileContent, rightChantFilePath);
+
+  // displayChantMode(leftChant, 1);
+  // displayChantMode(rightChant, 2);
+}
+
 /**
  * ----------------------- SEARCH -----------------------
  * Event listener for the "Search" button for pattern search
  */
-document.getElementById('search-btn').addEventListener("click", performSearch);
+// document.getElementById('search-btn').addEventListener("click", performSearch);
 
 /**
  * Perform highlighting when user clicks on "Search" button
  */
-function performSearch() {
+export function performSearch() {
   clearHighlights();
   const form = document.querySelector("#search-form");
   const form_data = new FormData(form);
@@ -120,18 +146,7 @@ function performSearch() {
   }
 }
 
-/**
- * Process the contour search pattern for both left and right slots
- * @param {Chant} chant the Chant object
- * @param {Number[]} searchPattern 
- * @param {Number} slot 
- */
-function contourPatternSearch(chant, searchPattern, slot) {
-  let patternCount = highlightContourPattern(chant, searchPattern);
 
-  document.getElementById("chant-type-" + slot).innerHTML = chant.getNotationType();
-  document.getElementById("pattern-count-" + slot).innerHTML = patternCount;
-}
 
 /**
  * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
@@ -150,69 +165,32 @@ async function upload_file(slot) {
 /**
  * Event listener for the "Upload" button, LEFT slot
  */
-document.getElementById('file-input-1').addEventListener("change", () => { upload_file(1) });
+// document.getElementById('file-input-1').addEventListener("change", () => { upload_file(1) });
 
 /**
  * Event listener for the "Upload" button, RIGHT slot
  */
-document.getElementById('file-input-2').addEventListener("change", () => { upload_file(2) });
+// document.getElementById('file-input-2').addEventListener("change", () => { upload_file(2) });
 
 /**
  * ----------------------- ANALYSIS -----------------------
  * Event listener for the "Analyse" button for cross-comparison functionality
  */
-document.getElementById('cross-comparison-btn').addEventListener("click", () => {
-  clearHighlights();
-  const leftFileContent = sessionStorage.getItem("mei-content-1");
-  const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
-  const leftChant = new Chant(leftFileContent, leftChantFilePath);
+// document.getElementById('cross-comparison-btn').addEventListener("click", () => {
+//   clearHighlights();
+//   const leftFileContent = sessionStorage.getItem("mei-content-1");
+//   const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
+//   const leftChant = new Chant(leftFileContent, leftChantFilePath);
 
-  const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
-  const rightFileContent = sessionStorage.getItem("mei-content-2");
-  const rightChant = new Chant(rightFileContent, rightChantFilePath);
+//   const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
+//   const rightFileContent = sessionStorage.getItem("mei-content-2");
+//   const rightChant = new Chant(rightFileContent, rightChantFilePath);
 
-  const leftChantNCList = leftChant.getNeumeComponents();
-  const rightChantNCList = rightChant.getNeumeComponents();
+//   const leftChantNCList = leftChant.getNeumeComponents();
+//   const rightChantNCList = rightChant.getNeumeComponents();
 
-  const analysis_mode = document.querySelector('input[name="analysis-mode"]:checked').value;
-  pattern_analysis(leftChantNCList, rightChantNCList, analysis_mode);
+//   const analysis_mode = document.querySelector('input[name="analysis-mode"]:checked').value;
+//   pattern_analysis(leftChantNCList, rightChantNCList, analysis_mode);
 
-  localStorage.setItem("analysis-mode", analysis_mode);
-});
-
-import database from './search/database.json';
-
-const chantMenuLeft = document.getElementById('database-chant-left');
-const chantMenuRight = document.getElementById('database-chant-right');
-
-chantMenuLeft.innerHTML = database.map((e) => {
-  return `<option value=${e}>${e}</option>`;
-}).join('');
-
-chantMenuRight.innerHTML = database.map((e) => {
-  return `<option value=${e}>${e}</option>`;
-}).join('');
-
-async function loadFromDatabase(fileName, order) {
-  let rootPath = "";
-  if (env === "development") {
-    rootPath = "../../GABCtoMEI/MEI_outfiles/";
-  } else if (env === "production") {
-    rootPath = "./database/";
-  }
-
-  sessionStorage.setItem('database-chant-' + order, fileName);
-
-  const filePath = rootPath + fileName;
-  let MEIFileContentString = await loadMEIFile(filePath, order);
-  let chant = new Chant(MEIFileContentString, filePath);
-  drawMEIContent(MEIFileContentString, order);
-  displayChantMode(chant, order);
-}
-
-chantMenuLeft.addEventListener('change', () => {
-  loadFromDatabase(chantMenuLeft.value, 1);
-});
-chantMenuRight.addEventListener('change', () => {
-  loadFromDatabase(chantMenuRight.value, 2)
-});
+//   localStorage.setItem("analysis-mode", analysis_mode);
+// });

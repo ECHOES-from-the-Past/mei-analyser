@@ -7,131 +7,133 @@
     href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎶</text></svg>">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="src/style.css" />
+  <!-- Adding the scripts to be used for the webpage -->
+  <script defer src="https://www.verovio.org/javascript/develop/verovio-toolkit-wasm.js"></script>
+  <script type="module" src="./src/main.js"></script>
   <title> MEI Analyser </title>
 </head>
 
+<script type="module">
+  import Alpine from 'alpinejs';
+  import persist from '@alpinejs/persist';
+  window.Alpine = Alpine;
+  Alpine.plugin(persist);
+  Alpine.start();
+</script>
+
 <body>
-  <script src="https://www.verovio.org/javascript/develop/verovio-toolkit-wasm.js" defer></script>
-  <script type="module" src="src/main.js"></script>
+  <div x-data="{
+    searchMode: $persist(true).as('searchMode'),
+    devMode: $persist(false).as('devMode'),
+    }">
+    <button @click="searchMode = true">
+      Search
+    </button>
 
-  <div id="top-elements">
-    <!-- Search panel -->
-    <div class="panel">
-      <h1> Pattern Search </h1>
-      <form id="search-form">
-        <input type="radio" id="aquitanian-pattern" name="search-option" value="pattern">
-        <label for="aquitanian-pattern"> Pitch Pattern (pitch-based) </label>
-        <br>
-        <input type="radio" id="aquitanian-contour" name="search-option" value="contour">
-        <label for="aquitanian-contour"> Contour (melodic intervals) </label>
-        <br>
-        <input type="text" name="search-bar" id="search-bar" placeholder="e.g., 1 2 1">
+    <button @click="searchMode = false">
+      Cross Comparison
+    </button>
 
-        <button type="button" id="search-btn">Search</button> <br>
-      </form>
-      <p>Pattern(s) count: </p>
-      <ul>
-        <li>
-          Left (type: <span id="chant-type-left">?</span>) - <span class="pattern-count" id="pattern-count-left"></span>
-        </li>
-        <li>
-          Right (type: <span id="chant-type-right">?</span>) - <span class="pattern-count"
-            id="pattern-count-right"></span>
-        </li>
-      </ul>
-    
-      <!-- Checkboxes for ornamental shapes -->
-      <p>Ornamental shapes</p>
-      <input type="checkbox" id="liquescent-checkbox" name="ornament-1" value="liquescent" checked>
-      <label for="ornament-1"> Liquescent </label>
-      <input type="checkbox" id="quilisma-checkbox" name="ornament-2" value="quilisma">
-      <label for="ornament-2"> Quilisma </label>
-      <input type="checkbox" id="oriscus-checkbox" name="ornament-3" value="oriscus">
-      <label for="ornament-3"> Oriscus </label>
-      <button type="button" id="ornament-btn" style="margin-left: 12px;">Search</button>
-      <br>
-      <!-- Displaying modes of chants -->
-      <p>Chant Mode (only Aquitanian)</p>
-      <ul>
-        <li>Left: <span id="chant-mode-1"> ~ </span></li>
-        <li>Right: <span id="chant-mode-2"> ~ </span></li>
-      </ul>
-      <p>View <a href="./docs/index.html">code documentation</a></p>
 
+    <a href="https://github.com/ECHOES-from-the-Past/mei-analyser/wiki" rel="external" target="_blank">
+      <button> Project Wiki </button>
+    </a>
+
+    <button id="devMode-btn" @click="devMode = !devMode">
+      Dev Mode
+    </button>
+
+    <!-- Start of user interface -->
+    <div id="user-interface">
+      <template x-if="searchMode">
+        <!-- Start of search panel -->
+        <div id="search-flex">
+          <div id="search-panel" class="panel" x-data="{
+              search: $persist('').as('searchQuery'), 
+              choice: $persist('pitch').as('choiceRadio'),
+              ornamentShape: $persist(['liquescent']).as('ornamentShape')
+              }">
+            <h1> Search Panel </h1>
+            <label for="search-query"> Query: </label>
+            <input id="search-query" x-model="search" placeholder="E.g.: 1 2 -1">
+            <br>
+            <input id="pattern-radio" type="radio" value="pitch" x-model="choice" checked>
+            <label for="pattern-radio"> Pitch Pattern (pitch-based) </label>
+            <br>
+            <input id="contour-radio" type="radio" value="contour" x-model="choice">
+            <label for="contour-radio"> Contour (melodic intervals) </label>
+            <br>
+            <button id="search-btn"> Search</button>
+            <br>
+            <p> Highlight ornamental figures </p>
+            <input type="checkbox" id="liquescent-checkbox" x-model="ornamentShape" value="liquescent">
+            <label for="ornament-1"> Liquescent </label>
+            <input type="checkbox" id="quilisma-checkbox" x-model="ornamentShape" value="quilisma">
+            <label for="ornament-2"> Quilisma </label>
+            <input type="checkbox" id="oriscus-checkbox" x-model="ornamentShape" value="oriscus">
+            <label for="ornament-3"> Oriscus </label>
+            <!-- Display search query when Dev Mode is enabled -->
+            <template x-if="devMode">
+              <div>
+                <p> Search choice: <span x-text="choice"></span> </p>
+                <p> Search query: <span x-text="search"></span> </p>
+                <p> Ornamental shape: <span x-text="ornamentShape"></span></p>
+              </div>
+            </template>
+
+            <!-- Displaying list of chants -->
+            <div id="chant-list" x-data:class="$store.database">
+              <h2> Chant List </h2>
+              <button @click="toggleView"> view database </button>
+              <div x-show="viewDatabase">
+                <template x-for="chant in database">
+                  <li x-text="chant" @click="displayChant(chant)"></li>
+                </template>
+              </div>
+              </ul>
+            </div>
+
+          </div>
+          <!-- Displaying the chants -->
+          <div id="chant-display">
+            <h2> Chant Display </h2>
+            <div id="chant-slot" class="chant">
+              <!-- Chant SVG goes here -->
+            </div>
+          </div>
+          <!-- end of search panel -->
+        </div>
+      </template>
+
+      <template x-if="!searchMode">
+        <!-- Start of cross comparison panel -->
+        <div id="cross-comparison-panel" class="panel">
+          <h1> Cross comparison panel </h1>
+          <input type="radio" id="mismatch-analysis" name="analysis-mode" value="mismatch" checked>
+          <label for="mismatch-analysis"> Contour mismatches (blue) </label>
+          <br>
+          <input type="radio" id="gap-left" name="analysis-mode" value="gaps-left">
+          <label for="gap-left"> Contour gaps (red fillers on left chant) </label>
+          <br>
+          <input type="radio" id="gap-right" name="analysis-mode" value="gaps-right">
+          <label for="gap-right"> Contour gaps (red fillers on right chant) </label>
+          <br>
+          <input type="radio" id="gap-mismatch-left" name="analysis-mode" value="gaps-mismatch-left">
+          <label for="gap-mismatch-left"> Contour gaps and mismatches (red fillers on left chant) </label>
+          <br>
+          <input type="radio" id="gap-mismatch-right" name="analysis-mode" value="gaps-mismatch-right">
+          <label for="gap-mismatch-right"> Contour gaps and mismatches (red fillers on right chant) </label>
+          <br>
+          <br>
+          <button type="button" id="cross-comparison-btn">
+            Analyse
+          </button>
+          <br>
+        </div>
+        <!-- End of cross comparison panel -->
+      </template>
     </div>
-
-    <!-- Cross-comparison Analysis Section -->
-
-    <div id="cross-comparison-analysis">
-      <!-- Analysis panel -->
-      <div class="panel">
-        <h1>Similarity Analysis</h1>
-        <input type="radio" id="mismatch-analysis" name="analysis-mode" value="mismatch" checked>
-        <label for="mismatch-analysis"> Contour mismatches (blue) </label>
-        <br>
-        <input type="radio" id="gap-left" name="analysis-mode" value="gaps-left">
-        <label for="gap-left"> Contour gaps (red fillers on left chant) </label>
-        <br>
-        <input type="radio" id="gap-right" name="analysis-mode" value="gaps-right">
-        <label for="gap-right"> Contour gaps (red fillers on right chant) </label>
-        <br>
-        <input type="radio" id="gap-mismatch-left" name="analysis-mode" value="gaps-mismatch-left">
-        <label for="gap-mismatch-left"> Contour gaps and mismatches (red fillers on left chant) </label>
-        <br>
-        <input type="radio" id="gap-mismatch-right" name="analysis-mode" value="gaps-mismatch-right">
-        <label for="gap-mismatch-right"> Contour gaps and mismatches (red fillers on right chant) </label>
-        <br>
-        <br>
-        <button type="button" id="cross-comparison-btn">
-          Analyse
-        </button>
-        <br>
-      </div>
-    </div>
-  </div>
-  <!-- Displaying the cross comparison results -->
-  <div id="cross-comparison-result">
-    <p id="cross-comparison-1"></p>
-    <p id="cross-comparison-2"></p>
-  </div>
-
-  <div id="mei-grid">
-    <!-- File/Database selection part -->
-    <div id="mei-file-select">
-      <div>
-        <label for="database-chant-left">Choose a chant from database:</label>
-        <select class="database-select" name="database-chant-left" id="database-chant-left">
-          <option value="placeholder">Select a chant for left slot</option>
-        </select>
-      </div>
-      <div>
-        <label for="database-chant-right">Choose a chant from database:</label>
-        <select class="database-select" name="database-chant-right" id="database-chant-right">
-        </select>
-      </div>
-    </div>
-    <!-- File upload section -->
-    <div id="mei-file-select">
-      <p>or upload to left slot:
-        <span>
-          <input type='file' class="file-upload-box" id='file-input-1' />
-        </span>
-      </p>
-
-      <p>or upload to right slot:
-        <span>
-          <input type='file' class="file-upload-box" id='file-input-2' />
-        </span>
-      </p>
-    </div>
-
-    <!-- Display of the chants -->
-    <div id="mei-display">
-      <div class="mei-file" id="mei-file-1">
-      </div>
-      <div class="mei-file" id="mei-file-2">
-      </div>
-    </div>
+    <!-- End of user interface -->
   </div>
 </body>
 
