@@ -1,7 +1,7 @@
 # MEI Analyser
 - A tool to analyse MEI files, highlighting sections and comparing them to other MEI files.
 - Part of the research project **ECHOES from the Past: Unveiling a Lost Soundscape**
-- Built with **Vite**, **Verovio**, and **Alpine.js**.
+- Built with **Vite**, **VanillaJS**, **Verovio**.
 
 # Usage
 - The tool is available at: https://echoes-from-the-past.github.io/mei-analyser/

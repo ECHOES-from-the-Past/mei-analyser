@@ -134,7 +134,7 @@ g {
   /* pointer-events: none; */
 }
 
-#search-panel {
+#search-panel-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
 }
