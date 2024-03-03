@@ -172,6 +172,7 @@ export class Chant {
     this.notationType = this.parseMEIContentForNotationType();
     /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
+    this.mode = this.obtainMode();
   }
 
   /**
@@ -236,7 +237,7 @@ export class Chant {
    * and https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode calculation
    * @returns {Number} the mode of the chant
    */
-  getMode() {
+  obtainMode() {
     if (this.getNotationType() === "square") {
       return `¯\\_(ツ)_/¯`;
     }
@@ -315,5 +316,9 @@ export class Chant {
 
   getNeumeComponents() {
     return this.neumeComponents;
+  }
+
+  getMode() {
+    return Number(this.mode);
   }
 }

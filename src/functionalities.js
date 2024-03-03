@@ -1,25 +1,15 @@
 import database from './database/database.json';
 import { Chant } from './utility/components.js';
+import {
+  pitchRadio,
+  contourRadio,
+  searchQuery,
+  databaseList,
+  chantSVG,
+  chantInfo
+} from './DOMelements.mjs';
 import { drawSVGFromMEIContent, loadMEIFile, persist, retrieve } from './utility/utils.js';
 
-/* -------------- DOM ELEMENTS -------------- */
-/** @type {HTMLInputElement} */
-export const pitchRadio = document.getElementById('pitch-radio');
-
-/** @type {HTMLInputElement} */
-export const contourRadio = document.getElementById('contour-radio');
-
-/** @type {HTMLInputElement} */
-export const searchQuery = document.getElementById('search-query');
-
-/** @type {HTMLButtonElement} */
-export const viewDatabaseButton = document.getElementById('view-database-btn');
-
-/** @type {ListItem} */
-export const databaseList = document.getElementById('database-list');
-
-/** @type {HTMLDivElement} */
-export const chantSVG = document.getElementById('chant-svg');
 /**
  * Obtain the current development or production environment
  * from Vite's `import.meta.env` object
@@ -62,20 +52,43 @@ export async function viewDatabase() {
     let li = document.createElement('li');
     li.textContent = chant.fileName;
     li.style.cursor = "pointer";
+    li.style.padding = "0.3em 0";
+    li.addEventListener("mouseover", () => {
+      li.style.backgroundColor = "var(--background-hover)";
+    });
+    li.addEventListener("mouseout", () => {
+      li.style.backgroundColor = "white";
+    });
     li.addEventListener("click", () => {
+      chantSVG.style.boxShadow = "0 0 2px 3px #888";
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
+      printChantInformation(chant);
     });
 
     databaseList.appendChild(li);
   }
 }
 
-/** @type {HTMLElement} */
-const chantMenuLeft = document.getElementById('database-chant-left');
-
-/** @type {HTMLElement} */
-const chantMenuRight = document.getElementById('database-chant-right');
-
+/**
+ * 
+ * @param {Chant} chant the chant which information is to be extracted and printed
+ */
+function printChantInformation(chant) {
+  chantInfo.innerHTML = '';
+  let title = document.createElement('h3');
+  title.textContent = "Chant Information";
+  chantInfo.appendChild(title);
+  let info = {
+    "File Name": chant.fileName,
+    "Notation Type": chant.notationType,
+    "Mode": chant.mode,
+  };
+  for(let k in info) {
+    let p = document.createElement('p');
+    p.innerHTML = `<b>${k}</b>: ${info[k]}`;
+    chantInfo.appendChild(p);
+  }
+}
 
 /**
  * ----------------------- SEARCH -----------------------
@@ -95,30 +108,6 @@ export function performSearch() {
   }
 }
 
-
-/**
- * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
- * @param {Number} slot either 1 or 2
- */
-async function upload_file(slot) {
-  clearHighlights();
-  const uploaded_file = document.getElementById('file-input-' + slot).files[0];
-  const objectURL = URL.createObjectURL(uploaded_file);
-
-  const newContent = await loadMEIFile(objectURL, slot);
-  drawMEIContent(newContent, slot);
-  URL.revokeObjectURL(upload_file);
-}
-
-/**
- * Event listener for the "Upload" button, LEFT slot
- */
-// document.getElementById('file-input-1').addEventListener("change", () => { upload_file(1) });
-
-/**
- * Event listener for the "Upload" button, RIGHT slot
- */
-// document.getElementById('file-input-2').addEventListener("change", () => { upload_file(2) });
 
 /**
  * ----------------------- ANALYSIS -----------------------

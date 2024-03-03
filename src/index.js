@@ -1,5 +1,23 @@
-import { loadPersistedSearchOptions, loadDatabaseToChant, searchQuery, pitchRadio, contourRadio, viewDatabaseButton, viewDatabase } from './functionalities.js';
-import { checkPersistanceExists, persist } from './utility/utils.js';
+import {
+    loadPersistedSearchOptions, 
+    loadDatabaseToChant, 
+    viewDatabase,
+} from './functionalities.js';
+import {
+    pitchRadio, 
+    contourRadio, 
+    searchQuery, 
+    viewDatabaseButton, 
+    fileInputLeft,
+    fileInputRight,
+    searchModeButton,
+    crossComparisonModeButton,
+    refreshDatabaseButton,
+    devModeButton
+} from './DOMelements.mjs';
+import { 
+    checkPersistanceExists, 
+    persist } from './utility/utils.js';
 
 /** --------------- WINDOW and DOM level functions --------------- */
 /**
@@ -30,17 +48,17 @@ document.onreadystatechange = function () {
 }
 
 /* --------------- TOP BUTTON Event Listeners --------------- */
-document.getElementById('search-mode-btn').addEventListener("click", () => {
+searchModeButton.addEventListener("click", () => {
     document.getElementById('search-panel').hidden = false;
     document.getElementById('cross-comparison-panel').hidden = true;
 });
 
-document.getElementById('cross-comparison-mode-btn').addEventListener("click", () => {
+crossComparisonModeButton.addEventListener("click", () => {
     document.getElementById('search-panel').hidden = true;
     document.getElementById('cross-comparison-panel').hidden = false;
 });
 
-document.getElementById('refresh-database-btn').addEventListener("click", () => {
+refreshDatabaseButton.addEventListener("click", () => {
     loadDatabaseToChant();
     alert("Database refreshed!");
 });
@@ -49,7 +67,7 @@ document.getElementById('refresh-database-btn').addEventListener("click", () => 
  * Every element with class="devMode" is hidden by default.
  * When the devMode button is clicked, it will be toggled to true.
  */
-document.getElementById('devMode-btn').addEventListener("click", () => {
+devModeButton.addEventListener("click", () => {
     document.querySelectorAll('.devMode').forEach((element) => {
         element.hidden = !element.hidden;
     });
@@ -70,4 +88,27 @@ searchQuery.addEventListener("input", () => {
 
 viewDatabaseButton.addEventListener("click", () => {
     viewDatabase();
+});
+
+/* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */
+/**
+ * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
+ * @param {Number} slot either 1 or 2
+ */
+async function uploadFile(slot) {
+    clearHighlights();
+    const uploaded_file = document.getElementById('file-input-' + slot).files[0];
+    const objectURL = URL.createObjectURL(uploaded_file);
+
+    const newContent = await loadMEIFile(objectURL, slot);
+    drawMEIContent(newContent, slot);
+    URL.revokeObjectURL(uploaded_file);
+}
+
+fileInputLeft.addEventListener("change", () => {
+    uploadFile(1);
+});
+
+fileInputRight.addEventListener("change", () => {
+    uploadFile(2);
 });
