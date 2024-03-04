@@ -234,29 +234,26 @@ export class Chant {
     let mode;
     // Checking last note
     const lastNote = this.neumeComponents[this.neumeComponents.length - 1];
-    // Checking every `nc` with `@tilt == 'se'`
+    // Finding all rhombus shapes by checking every `nc` for a `@tilt = se`
     const allWithSETilt = this.neumeComponents.filter((nc) => nc.getTilt() === 'se');
     let allWithSETiltLoc = allWithSETilt.map((nc) => nc.getLoc());
 
-    const neg1pos3 = allWithSETiltLoc.filter((loc) => {
-      loc != -1 || loc != 3
-    }).length == 0;
-    const neg2pos2 = allWithSETiltLoc.filter((loc) => {
-      loc != -2 || loc != 2
-    }).length == 0;
-    const neg3pos1 = allWithSETiltLoc.filter((loc) => {
-      loc != -3 || loc != 1
-    }).length == 0;
-    const zeropos3 = allWithSETiltLoc.filter((loc) => {
-      loc != 0 || loc != 3
-    }).length == 0;
-    const zeroneg3pos4 = allWithSETiltLoc.filter((loc) => {
-      loc != 0 || loc != -3 || loc != 4
-    }).length == 0;
-    const neg2pos1 = allWithSETiltLoc.filter((loc) => {
-      loc != -2 || loc != 1
-    }).length == 0;
+    console.log(allWithSETiltLoc);
 
+    // Checking the @loc value of all rhombus shapes to help determining the mode of the Aquitanian chant
+    // Example with "neg1pos3"
+    // - The False value of neg1pos3 indicates that there is at least one rhombus that is not located on either -1 or +3
+    // - The True value of neg1pos3 indicates that there are no other rhombuses other than the ones located at -1 or +3
+    const neg1pos3 = allWithSETiltLoc.filter((loc) => (loc != -1 && loc != 3)).length == 0;
+    const neg2pos2 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 2)).length == 0;
+    const neg3pos1 = allWithSETiltLoc.filter((loc) => (loc != -3 && loc != 1)).length == 0;
+    const zeropos3 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != 3)).length == 0;
+    const zeroneg3pos4 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != -3 && loc != 4)).length == 0;
+    const neg2pos1 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 1)).length == 0;
+
+    console.log("neg1pos3", "neg2pos1", "neg2pos2", "neg3pos1", "zeropos3", "zeroneg3pos4");
+    console.log(neg1pos3, neg2pos1, neg2pos2, neg3pos1, zeropos3, zeroneg3pos4);
+    console.log(lastNote.getLoc());
     if (lastNote.getLoc() == -2) {
       if (neg1pos3) {
         mode = 1;
