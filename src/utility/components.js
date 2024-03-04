@@ -250,7 +250,7 @@ export class Chant {
     const neg2pos1 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 1)).length == 0;
 
     if (lastNote.getLoc() == -2) {
-      if (allWithSETiltLoc.length == 0) {
+      if (allWithSETiltLoc.length <= 1) {
         mode = -1;
       } else if (neg1pos3) {
         mode = 1;
@@ -264,7 +264,7 @@ export class Chant {
         mode = -1;
       }
     } else if (lastNote.getLoc() == 0) {
-      if (allWithSETiltLoc.length == 0) {
+      if (allWithSETiltLoc.length <= 1) {
         mode = -1;
       } else if (neg1pos3) {
         mode = 6;
@@ -278,7 +278,7 @@ export class Chant {
         mode = -1;
       }
     } else if (lastNote.getLoc() == -1) {
-      if (allWithSETiltLoc.length == 0) {
+      if (allWithSETiltLoc.length <= 1) {
         mode = -1;
       } else if (neg1pos3) {
         mode = 4;
