@@ -238,8 +238,6 @@ export class Chant {
     const allWithSETilt = this.neumeComponents.filter((nc) => nc.getTilt() === 'se');
     let allWithSETiltLoc = allWithSETilt.map((nc) => nc.getLoc());
 
-    console.log(allWithSETiltLoc);
-
     // Checking the @loc value of all rhombus shapes to help determining the mode of the Aquitanian chant
     // Example with "neg1pos3"
     // - The False value of neg1pos3 indicates that there is at least one rhombus that is not located on either -1 or +3
@@ -251,9 +249,6 @@ export class Chant {
     const zeroneg3pos4 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != -3 && loc != 4)).length == 0;
     const neg2pos1 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 1)).length == 0;
 
-    console.log("neg1pos3", "neg2pos1", "neg2pos2", "neg3pos1", "zeropos3", "zeroneg3pos4");
-    console.log(neg1pos3, neg2pos1, neg2pos2, neg3pos1, zeropos3, zeroneg3pos4);
-    console.log(lastNote.getLoc());
     if (lastNote.getLoc() == -2) {
       if (allWithSETiltLoc.length == 0) {
         mode = -1;
