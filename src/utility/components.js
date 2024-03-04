@@ -255,7 +255,9 @@ export class Chant {
     console.log(neg1pos3, neg2pos1, neg2pos2, neg3pos1, zeropos3, zeroneg3pos4);
     console.log(lastNote.getLoc());
     if (lastNote.getLoc() == -2) {
-      if (neg1pos3) {
+      if (allWithSETiltLoc.length == 0) {
+        mode = -1;
+      } else if (neg1pos3) {
         mode = 1;
       } else if (neg2pos2) {
         mode = 3;
@@ -267,7 +269,9 @@ export class Chant {
         mode = -1;
       }
     } else if (lastNote.getLoc() == 0) {
-      if (neg1pos3) {
+      if (allWithSETiltLoc.length == 0) {
+        mode = -1;
+      } else if (neg1pos3) {
         mode = 6;
       } else if (neg2pos1) {
         mode = 2;
@@ -279,7 +283,9 @@ export class Chant {
         mode = -1;
       }
     } else if (lastNote.getLoc() == -1) {
-      if (neg1pos3) {
+      if (allWithSETiltLoc.length == 0) {
+        mode = -1;
+      } else if (neg1pos3) {
         mode = 4;
       } else {
         mode = -1;
