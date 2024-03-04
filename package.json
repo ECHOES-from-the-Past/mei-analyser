@@ -1,8 +1,8 @@
 {
   "name": "mei-analyser",
-  "private": true,
-  "version": "0.1.7-dev",
+  "version": "0.2.0-dev",
   "type": "module",
+  "private": true,
   "scripts": {
     "dev": "vite",
     "database": "mkdir ./dist/database && cp -r ./GABCtoMEI/MEI_outfiles/* ./dist/database",
@@ -13,9 +13,5 @@
   },
   "devDependencies": {
     "vite": "^5.0.8"
-  },
-  "dependencies": {
-    "@alpinejs/persist": "^3.13.5",
-    "alpinejs": "^3.13.5"
   }
 }
