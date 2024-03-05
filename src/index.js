@@ -13,7 +13,8 @@ import {
     searchModeButton,
     crossComparisonModeButton,
     refreshDatabaseButton,
-    devModeButton
+    devModeButton,
+    databaseList
 } from './DOMelements.mjs';
 import { 
     checkPersistanceExists, 
@@ -58,8 +59,8 @@ crossComparisonModeButton.addEventListener("click", () => {
     document.getElementById('cross-comparison-panel').hidden = false;
 });
 
-refreshDatabaseButton.addEventListener("click", () => {
-    loadDatabaseToChant();
+refreshDatabaseButton.addEventListener("click", async () => {
+    await loadDatabaseToChant();
     alert("Database refreshed!");
 });
 
@@ -86,14 +87,23 @@ searchQuery.addEventListener("input", () => {
     persist('searchQuery', searchQuery.value);
 });
 
+/* --------------- DATABASE PANEL PERSISTANCE --------------- */
+let databaseIsOpen = false;
 viewDatabaseButton.addEventListener("click", () => {
-    viewDatabase();
+    if (databaseIsOpen === false) {
+        viewDatabaseButton.textContent = "Close Database";
+        viewDatabase();
+    } else {
+        databaseList.innerHTML = '';
+        viewDatabaseButton.textContent = "View Database";
+    }
+    databaseIsOpen = !databaseIsOpen;
 });
 
 /* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */
 /**
  * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
- * @param {Number} slot either 1 or 2
+ * @param {number} slot either 1 or 2
  */
 async function uploadFile(slot) {
     clearHighlights();

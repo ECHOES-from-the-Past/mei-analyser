@@ -28,10 +28,10 @@ export async function loadDatabaseToChant() {
     const filePath = rootPath + filename;
     let MEIFileContentString = await loadMEIFile(filePath);
     let chant = new Chant(MEIFileContentString, filePath);
-    console.debug(chant);
     chantList.push(chant);
   }
   persist('chantList', chantList);
+  console.log('Corpus successfully loaded to browser memory.');
 }
 
 export function loadPersistedSearchOptions() {
@@ -51,6 +51,7 @@ export async function viewDatabase() {
   for (let chant of chantList) {
     let li = document.createElement('li');
     li.textContent = chant.fileName;
+    li.style.wordBreak = "break-word";
     li.style.cursor = "pointer";
     li.style.padding = "0.3em 0";
     li.addEventListener("mouseover", () => {
@@ -60,11 +61,14 @@ export async function viewDatabase() {
       li.style.backgroundColor = "white";
     });
     li.addEventListener("click", () => {
+      // Scroll to the top of the page, smoothly
+      window.scrollTo({top: 0, behavior: "smooth" });
+      // Set the box for the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
+      // Display the chant information (file name, notation type, mode, etc.)
       printChantInformation(chant);
     });
-
     databaseList.appendChild(li);
   }
 }

@@ -168,8 +168,9 @@ export class Chant {
     /** @type {XMLDocument} */
     this.meiParsedContent = htmldoc.children[0];
 
-    /** @type {String} */
+    /** @type {string} */
     this.notationType = this.parseMEIContentForNotationType();
+
     /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
     this.mode = this.obtainMode();
@@ -218,7 +219,7 @@ export class Chant {
 
   /**
    * Parse the MEI Content to extract the notation type
-   * @returns {String} the notation type of the chant (either "aquitanian" or "square")
+   * @returns {string} the notation type of the chant (either "aquitanian" or "square")
    */
   parseMEIContentForNotationType() {
     const staffDef = this.meiParsedContent.querySelector('staffDef');
