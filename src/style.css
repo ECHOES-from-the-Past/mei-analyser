@@ -158,3 +158,8 @@ g {
 #database-list {
   margin-right: 2em;
 }
+
+#database-list {
+  list-style-type: none;
+  padding: 0.5em;
+}

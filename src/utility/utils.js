@@ -13,22 +13,23 @@ if (env === "development") {
 
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
- * @param {FileName} fileName link to the MEI (.mei) file to be rendered
- * @returns {MEIContent} the content of the MEI file
+ * @param {string} fileName link to the MEI (.mei) file to be rendered
+ * @returns the content of the MEI file
  */
 export async function loadMEIFile(fileName) {
-  let MEIContent;
-  await fetch(fileName)
+  return await fetch(fileName)
     .then((response) => response.text())
-    .then((mei) => {
-      MEIContent = mei;
+    .then((meiContent) => {
+      return meiContent;
     })
-  return MEIContent;
+    .catch((error) => {
+      console.error(`Error: ${error}`);
+    });
 }
 
 /**
  * Draw the MEI content to the screen on a specific slot/order (1: left, 2: right)
- * @param {MEI_FileContent} meiContent file content of the MEI file
+ * @param {string} meiContent file content of the MEI file
  * @param {Number} order 1 for left position, 2 for right position
  */
 export async function drawMEIContent(meiContent, order) {
@@ -108,8 +109,8 @@ export function drawSVGFromMEIContent(meiContent) {
  * Regex pattern: `/-?\d/g`
  * - an optional negative `-` sign
  * - a single digit
- * @param {FormData} searchPattern 
- * @returns {Number[]} an array of type number from user's input
+ * @param {string} searchPattern 
+ * @returns {number[]} an array of type number from user's input
  */
 export function parseSearchPattern(searchPattern) {
   return searchPattern.match(/-?\d/g).map(Number);
@@ -119,7 +120,9 @@ export function clearHighlights() {
   const allNeumeComponents = document.querySelectorAll("g.nc");
   // Clear all highlighted neume components
   allNeumeComponents.forEach(element => {
+    // @ts-ignore
     element.style.fill = 'black';
+    // @ts-ignore
     element.style.strokeWidth = '0px';
   });
   // Clear all spotlight rectangles
@@ -155,6 +158,7 @@ export function persist(key, value) {
  * @param {String} key
  */
 export function retrieve(key) {
+  // @ts-ignore
   return JSON.parse(localStorage.getItem(key));
 }
 
