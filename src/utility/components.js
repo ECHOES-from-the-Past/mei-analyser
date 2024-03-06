@@ -246,31 +246,25 @@ export class Chant {
     let mode;
     // Checking last note
     const lastNote = this.neumeComponents[this.neumeComponents.length - 1];
-    // Checking every `nc` with `@tilt == 'se'`
+    // Finding all rhombus shapes by checking every `nc` for a `@tilt = se`
     const allWithSETilt = this.neumeComponents.filter((nc) => nc.getTilt() === 'se');
     let allWithSETiltLoc = allWithSETilt.map((nc) => nc.getLoc());
 
-    const neg1pos3 = allWithSETiltLoc.filter((loc) => {
-      loc != -1 || loc != 3
-    }).length == 0;
-    const neg2pos2 = allWithSETiltLoc.filter((loc) => {
-      loc != -2 || loc != 2
-    }).length == 0;
-    const neg3pos1 = allWithSETiltLoc.filter((loc) => {
-      loc != -3 || loc != 1
-    }).length == 0;
-    const zeropos3 = allWithSETiltLoc.filter((loc) => {
-      loc != 0 || loc != 3
-    }).length == 0;
-    const zeroneg3pos4 = allWithSETiltLoc.filter((loc) => {
-      loc != 0 || loc != -3 || loc != 4
-    }).length == 0;
-    const neg2pos1 = allWithSETiltLoc.filter((loc) => {
-      loc != -2 || loc != 1
-    }).length == 0;
+    // Checking the @loc value of all rhombus shapes to help determining the mode of the Aquitanian chant
+    // Example with "neg1pos3"
+    // - The False value of neg1pos3 indicates that there is at least one rhombus that is not located on either -1 or +3
+    // - The True value of neg1pos3 indicates that there are no other rhombuses other than the ones located at -1 or +3
+    const neg1pos3 = allWithSETiltLoc.filter((loc) => (loc != -1 && loc != 3)).length == 0;
+    const neg2pos2 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 2)).length == 0;
+    const neg3pos1 = allWithSETiltLoc.filter((loc) => (loc != -3 && loc != 1)).length == 0;
+    const zeropos3 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != 3)).length == 0;
+    const zeroneg3pos4 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != -3 && loc != 4)).length == 0;
+    const neg2pos1 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 1)).length == 0;
 
     if (lastNote.getLoc() == -2) {
-      if (neg1pos3) {
+      if (allWithSETiltLoc.length <= 1) {
+        mode = -1;
+      } else if (neg1pos3) {
         mode = 1;
       } else if (neg2pos2) {
         mode = 3;
@@ -282,7 +276,9 @@ export class Chant {
         mode = -1;
       }
     } else if (lastNote.getLoc() == 0) {
-      if (neg1pos3) {
+      if (allWithSETiltLoc.length <= 1) {
+        mode = -1;
+      } else if (neg1pos3) {
         mode = 6;
       } else if (neg2pos1) {
         mode = 2;
@@ -294,7 +290,9 @@ export class Chant {
         mode = -1;
       }
     } else if (lastNote.getLoc() == -1) {
-      if (neg1pos3) {
+      if (allWithSETiltLoc.length <= 1) {
+        mode = -1;
+      } else if (neg1pos3) {
         mode = 4;
       } else {
         mode = -1;
