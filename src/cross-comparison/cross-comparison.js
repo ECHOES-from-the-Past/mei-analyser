@@ -157,3 +157,7 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
     highlightLeftFillers();
   }
 }
+
+
+// import database from '../database/database.json';
+

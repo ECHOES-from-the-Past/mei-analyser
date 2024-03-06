@@ -1,3 +1,5 @@
+import { loadMEIFile } from "./utils";
+
 /**
  * An "abstract" class for a Neume Component (`<nc>`).
  * All Neume Components has an id and an optional tilt field.
@@ -149,19 +151,29 @@ export class NeumeComponentAQ extends NeumeComponent {
 export class Chant {
   /**
    * Constructing a Chant object from a .mei file content
-   * @param {String} MEIFileContent The content of the .mei file
+   * @param {MEI_Content} meiContent The content of the .mei file
    * @param {String} filePath the path of the .mei file
    */
-  constructor(MEIFileContent, filePath) {
+  constructor(meiContent, filePath) {
     // Parse the XML .mei file to mutable JS type
     let parser = new DOMParser();
-    let htmldoc = parser.parseFromString(MEIFileContent, "text/xml");
+    let htmldoc = parser.parseFromString(meiContent, "text/xml");
 
-    // Getting the content of the MEI file
-    this.meiContent = htmldoc.children[0];
+    /** @type {String} */
     this.filePath = filePath; // could be null, but shouldn't be
+    /** @type {String} */
+    this.fileName = filePath.split('/').pop();
+    this.meiContent = meiContent;
+    // Getting the content of the MEI file
+    /** @type {XMLDocument} */
+    this.meiParsedContent = htmldoc.children[0];
+
+    /** @type {string} */
     this.notationType = this.parseMEIContentForNotationType();
+
+    /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
+    this.mode = this.obtainMode();
   }
 
   /**
@@ -169,7 +181,7 @@ export class Chant {
    * @returns {NeumeComponentAQ[] | NeumeComponentSQ[]} an array of NeumeComponent
    */
   parseMEIforNeumeComponents() {
-    const allSyllables = this.meiContent.querySelectorAll('syllable');
+    const allSyllables = this.meiParsedContent.querySelectorAll('syllable');
 
     let ncArray = [];
     // Iterate through every syllable of the chant
@@ -207,10 +219,10 @@ export class Chant {
 
   /**
    * Parse the MEI Content to extract the notation type
-   * @returns {String} the notation type of the chant (either "aquitanian" or "square")
+   * @returns {string} the notation type of the chant (either "aquitanian" or "square")
    */
   parseMEIContentForNotationType() {
-    const staffDef = this.meiContent.querySelector('staffDef');
+    const staffDef = this.meiParsedContent.querySelector('staffDef');
     const lines = staffDef.attributes.getNamedItem('lines').value;
     if (lines > 1) {
       return "square";
@@ -226,7 +238,7 @@ export class Chant {
    * and https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode calculation
    * @returns {Number} the mode of the chant
    */
-  getMode() {
+  obtainMode() {
     if (this.getNotationType() === "square") {
       return `¯\\_(ツ)_/¯`;
     }
@@ -289,12 +301,12 @@ export class Chant {
     return mode;
   }
 
-  getFileName() {
+  getFilePath() {
     return this.filePath;
   }
 
   getContent() {
-    return this.meiContent;
+    return this.meiParsedContent;
   }
 
   getNotationType() {
@@ -303,5 +315,9 @@ export class Chant {
 
   getNeumeComponents() {
     return this.neumeComponents;
+  }
+
+  getMode() {
+    return Number(this.mode);
   }
 }

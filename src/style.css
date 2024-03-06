@@ -9,9 +9,14 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 
+  /* Reference for the attribute below: https://youtu.be/cH8VbLM1958 */
+  min-width: 0;
+
   /* Colour scheme */
-  --button: hsl(81, 90%, 15%);
-  --button-hover: hsla(80, 64%, 12%, 0.667);
+  --button: hsl(170, 100%, 16%);
+  --button-hover: hsla(182, 100%, 20%, 0.753);
+  --background: hsl(0, 0%, 100%);
+  --background-hover: hsla(147, 100%, 83%, 0.377);
 
   /* Default highlighting colours */
   --highlight-fill: hsla(276, 69%, 52%, 0.6);
@@ -30,6 +35,7 @@
   --mismatch-stroke-box: hsla(240, 100%, 50%, 0.4);
 }
 
+/* Default button styles */
 button {
   border: 0px;
   border-radius: 8px;
@@ -40,11 +46,47 @@ button {
   font-family: inherit;
   background-color: var(--button);
   cursor: pointer;
-  transition: background-color 0.25s;
+  transition: background-color 0.2s;
 }
 
 button:hover {
   background-color: var(--button-hover);
+}
+
+button:active {
+  background-color: var(--button);
+}
+
+button>a {
+  color: white;
+  text-decoration: none;
+}
+
+#navbar {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.3em;
+  align-items: center;
+  background-color: white;
+  color: white;
+}
+
+/* Custom button styles */
+#devMode-btn {
+  position: absolute; 
+  right: 0;
+  background-color: hsl(12, 100%, 72%);
+  color: hsl(0, 0%, 0%);
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+#devMode-btn:hover {
+  background-color: hsl(12, 100%, 62%);
+}
+
+#devMode-btn:active {
+  background-color: hsl(12, 100%, 52%);
 }
 
 p {
@@ -57,6 +99,15 @@ ul {
 
 g {
   fill: hsl(0, 0%, 0%);
+}
+
+.section {
+  /* border: 1px solid hsl(0, 0%, 0%); */
+  border-radius: 12px;
+  padding: 1em;
+  margin: 1em 0;
+  box-shadow: 1px 1px 4px hsl(0, 0%, 0%);
+  height: fit-content;
 }
 
 #top-elements {
@@ -72,7 +123,7 @@ g {
 }
 
 .panel {
-  padding: 0 2em 0;
+  padding: 0 1em 0;
 }
 
 .pattern-count {
@@ -97,7 +148,7 @@ g {
   margin: 0.5em;
 }
 
-.database-select {
+.database-select, select {
   width: 85%;
   font-size: medium;
   padding: 0.7em;
@@ -105,5 +156,19 @@ g {
   border: 1px solid #ccc;
   border-radius: 8px;
   text-align: justify;
-  /* pointer-events: none; */
+}
+
+#search-panel-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.2em;
+}
+
+#database-list {
+  margin-right: 2em;
+}
+
+#database-list {
+  list-style-type: none;
+  padding: 0.5em;
 }
