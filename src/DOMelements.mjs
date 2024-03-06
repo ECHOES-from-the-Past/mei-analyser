@@ -22,12 +22,18 @@ export const contourRadio = document.getElementById('contour-radio');
 /** @type {HTMLInputElement} */
 export const searchQuery = document.getElementById('search-query');
 
+/** @type {HTMLButtonElement} */
+export const searchButton = document.getElementById('search-btn');
+
 /* Database-related */
 /** @type {HTMLButtonElement} */
 export const viewDatabaseButton = document.getElementById('view-database-btn');
 
 /** @type {ListItem} */
 export const databaseList = document.getElementById('database-list');
+
+/** @type {HTMLDivElement} */
+export const searchResultDiv = document.getElementById('search-result');
 
 /* Chant display */
 /** @type {HTMLDivElement} */

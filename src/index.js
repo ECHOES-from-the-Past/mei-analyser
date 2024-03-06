@@ -2,6 +2,7 @@ import {
     loadPersistedSearchOptions, 
     loadDatabaseToChant, 
     viewDatabase,
+    showSearchResult,
 } from './functionalities.js';
 import {
     pitchRadio, 
@@ -14,11 +15,14 @@ import {
     crossComparisonModeButton,
     refreshDatabaseButton,
     devModeButton,
-    databaseList
+    databaseList,
+    searchButton
 } from './DOMelements.mjs';
 import { 
     checkPersistanceExists, 
-    persist } from './utility/utils.js';
+    persist,
+    retrieve
+} from './utility/utils.js';
 
 /** --------------- WINDOW and DOM level functions --------------- */
 /**
@@ -98,6 +102,16 @@ viewDatabaseButton.addEventListener("click", () => {
         viewDatabaseButton.textContent = "View Database";
     }
     databaseIsOpen = !databaseIsOpen;
+});
+
+searchButton.addEventListener("click", () => {
+    let chantList = retrieve('chantList');
+    // perform search logic here
+    // for example
+    // perfr
+    let resultChantList = chantList.filter(chant => chant.fileName.includes("AQUIT"));
+    // display the result
+    showSearchResult(resultChantList);
 });
 
 /* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */

@@ -6,7 +6,8 @@ import {
   searchQuery,
   databaseList,
   chantSVG,
-  chantInfo
+  chantInfo,
+  searchResultDiv
 } from './DOMelements.mjs';
 import { drawSVGFromMEIContent, loadMEIFile, persist, retrieve } from './utility/utils.js';
 
@@ -44,6 +45,11 @@ export function loadPersistedSearchOptions() {
   searchQuery.value = retrieve('searchQuery');
 }
 
+/**
+ * @async
+ * @listens viewDatabaseButton
+ * Displaying the database as a list of chants on the screen
+ */
 export async function viewDatabase() {
   /** @type {Chant[]} */
   const chantList = retrieve('chantList');
@@ -98,18 +104,53 @@ function printChantInformation(chant) {
  * ----------------------- SEARCH -----------------------
  * Event listener for the "Search" button for pattern search
  */
-// document.getElementById('search-btn').addEventListener("click", performSearch);
+
 
 /**
  * Perform highlighting when user clicks on "Search" button
  */
 export function performSearch() {
-  clearHighlights();
+  let allChants = retrieve('chantList');
+  let searchQuery = retrieve('searchQuery');
+  let searchMode = retrieve('patternSearchMode');
 
-  if (search_option == "contour") {
-    contourPatternSearch(leftChant, searchPattern, 'left');
-    contourPatternSearch(rightChant, searchPattern, 'right');
+  let resultChantList = [];
+  // resultChantList = allChants.filter(cha?
+  return resultChantList;
+}
+
+/**
+ * Show the search result on the screen
+ * @param {Chant[]} resultChantList list of chants that match the search query
+ */
+export function showSearchResult(resultChantList) {
+  searchResultDiv.innerHTML = '';
+
+  const title = document.createElement('h2');
+  title.textContent = "Search Results:";
+  /** @type {HTMLSelectElement} */
+  let dropdownMenu = document.createElement('select');
+  
+  for (let chant of resultChantList) {
+    /** @type {HTMLOptionElement} */
+    let option = document.createElement('option');
+    option.textContent = chant.fileName;
+    dropdownMenu.appendChild(option);
   }
+
+
+  // Listen to user's selection on the dropdown menu
+  dropdownMenu.addEventListener("change", () => {
+    let chant = resultChantList[dropdownMenu.selectedIndex];
+    // Set the box for the chant
+    chantSVG.style.boxShadow = "0 0 2px 3px #888";
+    chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
+    // Display the chant information (file name, notation type, mode, etc.)
+    printChantInformation(chant);
+  });
+
+  searchResultDiv.appendChild(title);
+  searchResultDiv.appendChild(dropdownMenu);
 }
 
 
