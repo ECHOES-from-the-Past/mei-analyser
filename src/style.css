@@ -101,6 +101,15 @@ g {
   fill: hsl(0, 0%, 0%);
 }
 
+.section {
+  /* border: 1px solid hsl(0, 0%, 0%); */
+  border-radius: 12px;
+  padding: 1em;
+  margin: 1em 0;
+  box-shadow: 1px 1px 4px hsl(0, 0%, 0%);
+  height: fit-content;
+}
+
 #top-elements {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -139,7 +148,7 @@ g {
   margin: 0.5em;
 }
 
-.database-select {
+.database-select, select {
   width: 85%;
   font-size: medium;
   padding: 0.7em;
@@ -147,12 +156,12 @@ g {
   border: 1px solid #ccc;
   border-radius: 8px;
   text-align: justify;
-  /* pointer-events: none; */
 }
 
 #search-panel-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
+  gap: 1.2em;
 }
 
 #database-list {
