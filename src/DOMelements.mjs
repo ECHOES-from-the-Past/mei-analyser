@@ -37,7 +37,11 @@ export const searchResultDiv = document.getElementById('search-result');
 
 /* Chant display */
 /** @type {HTMLDivElement} */
+export const chantDisplay = document.getElementById('chant-display');
+
+/** @type {HTMLDivElement} */
 export const chantInfo = document.getElementById('chant-info');
+
 /** @type {HTMLDivElement} */
 export const chantSVG = document.getElementById('chant-svg');
 

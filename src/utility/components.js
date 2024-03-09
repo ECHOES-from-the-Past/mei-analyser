@@ -173,7 +173,15 @@ export class Chant {
 
     /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
+
+    /** @type {number} */
     this.mode = this.obtainMode();
+
+    /** 
+     * @type {string} 
+     * @description the URL of the file on the PEM (Portuguese Early Music) database
+    */
+    this.pemDatabaseUrl = this.obtainDatabaseUrl();
   }
 
   /**
@@ -234,16 +242,25 @@ export class Chant {
   /**
    * Parse the MEI Content to extract the mode of the chant. This only works for Aquitanian notation.
    * 
-   * See: https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8 for Aquitanian mode calculation
+   * See: 
    * and https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode calculation
    * @returns {Number} the mode of the chant
    */
   obtainMode() {
     if (this.getNotationType() === "square") {
-      return `¯\\_(ツ)_/¯`;
+      return this.calculateSquareMode();
+    } else if(this.getNotationType() === "aquitanian") {
+      return this.calculateAquitanianMode();
     }
+  }
 
-    let mode;
+  /**
+   * Calculate the mode of the Aquitanian chant.
+   * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8 for Aquitanian mode detection
+   * @returns {Number} the mode of the chant
+   */
+  calculateAquitanianMode() {
+    let mode = -1;
     // Checking last note
     const lastNote = this.neumeComponents[this.neumeComponents.length - 1];
     // Finding all rhombus shapes by checking every `nc` for a `@tilt = se`
@@ -261,44 +278,56 @@ export class Chant {
     const zeroneg3pos4 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != -3 && loc != 4)).length == 0;
     const neg2pos1 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 1)).length == 0;
 
-    if (lastNote.getLoc() == -2) {
-      if (allWithSETiltLoc.length <= 1) {
-        mode = -1;
-      } else if (neg1pos3) {
-        mode = 1;
-      } else if (neg2pos2) {
-        mode = 3;
-      } else if (neg3pos1) {
-        mode = 5;
-      } else if (zeropos3) {
-        mode = 7;
-      } else {
-        mode = -1;
-      }
-    } else if (lastNote.getLoc() == 0) {
-      if (allWithSETiltLoc.length <= 1) {
-        mode = -1;
-      } else if (neg1pos3) {
-        mode = 6;
-      } else if (neg2pos1) {
-        mode = 2;
-      } else if (zeroneg3pos4) {
-        mode = 4;
-      } else if (neg2pos2) {
-        mode = 8;
-      } else {
-        mode = -1;
-      }
-    } else if (lastNote.getLoc() == -1) {
-      if (allWithSETiltLoc.length <= 1) {
-        mode = -1;
-      } else if (neg1pos3) {
-        mode = 4;
-      } else {
-        mode = -1;
-      }
+    if (allWithSETiltLoc.length <= 1) {
+      mode = -1;
+      return mode;
     }
+
+    let lastNoteLoc = lastNote.getLoc();
+    if (lastNoteLoc == -2 && neg1pos3) {
+      mode = 1;
+    } else if (lastNoteLoc == -2 && neg2pos2) {
+      mode = 3;
+    } else if (lastNoteLoc == -2 && neg3pos1) {
+      mode = 5;
+    } else if (lastNoteLoc == -2 && zeropos3) {
+      mode = 7;
+    } else if (lastNoteLoc == 0 && neg1pos3) {
+      mode = 6;
+    } else if (lastNoteLoc == 0 && neg2pos1) {
+      mode = 2;
+    } else if (lastNoteLoc == 0 && zeroneg3pos4) {
+      mode = 4;
+    } else if (lastNoteLoc == 0 && neg2pos2) {
+      mode = 8;
+    } else if (lastNoteLoc == -1 && neg1pos3) {
+      mode = 4;
+    } else {
+      mode = -1;
+    }
+
     return mode;
+  }
+
+  /**
+   * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode detection
+   */
+  calculateSquareMode() {
+    let mode = -1;
+    // do something
+    return mode;
+  }
+
+  /**
+   * Obtain the URL of the file on the PEM (Portuguese database)
+   * @returns {string} the URL of the file on the PEM
+   */
+  obtainDatabaseUrl() {
+    const fileManifestation = this.meiParsedContent.querySelector('manifestation');
+    const itemTargetTypeURL = fileManifestation.querySelector("item[targettype='url']");
+    const url = itemTargetTypeURL.attributes.getNamedItem("target").value;
+    console.log(url);
+    return url;
   }
 
   getFilePath() {
