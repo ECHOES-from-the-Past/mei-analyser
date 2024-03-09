@@ -178,3 +178,21 @@ h1, h2 {
   margin: 0 0 0.5rem 0;
   padding: 0 0;
 }
+
+#result-table {
+  width: 100%;
+}
+
+#result-table>thead>th {
+  text-align: center;
+  background-color: var(--button);
+  color: white;
+  padding: 0.8rem;
+  font-size: 1.2rem;
+}
+
+#result-table>tbody>tr>td, #result-table>tbody>tr>a {
+  text-align: center;
+  padding: 0.5rem;
+  border: 1px solid hsla(101, 70%, 16%, 0.678);
+}
