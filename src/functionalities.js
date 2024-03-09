@@ -114,8 +114,7 @@ export function performSearch() {
   let searchQuery = retrieve('searchQuery');
   let searchMode = retrieve('patternSearchMode');
 
-  let resultChantList = [];
-  // resultChantList = allChants.filter(cha?
+  let resultChantList = allChants.filter(chant => chant.fileName.includes("AQUIT"));
   return resultChantList;
 }
 
@@ -125,32 +124,62 @@ export function performSearch() {
  */
 export function showSearchResult(resultChantList) {
   searchResultDiv.innerHTML = '';
-
   const title = document.createElement('h2');
-  title.textContent = "Search Results:";
-  /** @type {HTMLSelectElement} */
-  let dropdownMenu = document.createElement('select');
+
+  title.textContent = "Search Results";
+  /** @type {HTMLTableElement} */
+  let resultTable = document.createElement('table');
   
-  for (let chant of resultChantList) {
-    /** @type {HTMLOptionElement} */
-    let option = document.createElement('option');
-    option.textContent = chant.fileName;
-    dropdownMenu.appendChild(option);
+  // Create the head row of the table: "File Name" -- "Notation Type" -- "Mode"
+  const tableHeadRows = ["File Name", "Notation Type", "Mode"];
+  let headRow = document.createElement('thead');
+  for (let headRowElement of tableHeadRows) {
+    let th = document.createElement('th');
+    th.textContent = headRowElement;
+    th.scope = "col";
+    headRow.appendChild(th);
+    resultTable.appendChild(headRow);
   }
 
+  // Create the body of the table
+  let tbody = document.createElement('tbody');
+  
+  const createTD = (textContent) => {
+    let td = document.createElement('td');
+    td.textContent = textContent;
+    return td;
+  }
 
-  // Listen to user's selection on the dropdown menu
-  dropdownMenu.addEventListener("change", () => {
-    let chant = resultChantList[dropdownMenu.selectedIndex];
-    // Set the box for the chant
-    chantSVG.style.boxShadow = "0 0 2px 3px #888";
-    chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
-    // Display the chant information (file name, notation type, mode, etc.)
-    printChantInformation(chant);
-  });
+  for (let chant of resultChantList) {
+    // create a result row for each chant
+    let resultRow = document.createElement('tr');
+    // add the file name of the chant to row cell
+    let td1 = createTD(chant.fileName);
+    let td2 = createTD(chant.notationType);
+    let td3 = createTD(chant.mode);
+
+    resultRow.appendChild(td1);
+    resultRow.appendChild(td2);
+    resultRow.appendChild(td3);
+
+    tbody.appendChild(resultRow);
+  }
+  resultTable.appendChild(tbody);
+
+
+  // // Listen to user's selection on the dropdown menu
+  // resultTable.addEventListener("change", () => {
+  //   let chant = resultChantList[resultTable.selectedIndex];
+  //   // Set the box for the chant
+  //   chantSVG.style.boxShadow = "0 0 2px 3px #888";
+  //   chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
+  //   // Display the chant information (file name, notation type, mode, etc.)
+  //   printChantInformation(chant);
+  // });
 
   searchResultDiv.appendChild(title);
-  searchResultDiv.appendChild(dropdownMenu);
+  searchResultDiv.appendChild(resultTable);
+  console.log(resultTable);
 }
 
 
