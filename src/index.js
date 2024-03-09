@@ -3,6 +3,7 @@ import {
     loadDatabaseToChant, 
     viewDatabase,
     showSearchResult,
+    performSearch,
 } from './functionalities.js';
 import {
     pitchRadio, 
@@ -109,7 +110,7 @@ searchButton.addEventListener("click", () => {
     // perform search logic here
     // for example
     // perfr
-    let resultChantList = chantList.filter(chant => chant.fileName.includes("AQUIT"));
+    let resultChantList = performSearch();
     // display the result
     showSearchResult(resultChantList);
 });
