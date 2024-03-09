@@ -8,7 +8,10 @@
  */
 const fs = require('fs');
 
-let allMEIfiles = fs.readdirSync('GABCtoMEI/MEI_outfiles', { recursive: true });
+const MEI_DIRECTORY = 'GABCtoMEI/MEI_outfiles';
+const DATABASE_JSON = 'src/database/database.json';
+
+let allMEIfiles = fs.readdirSync(MEI_DIRECTORY, { recursive: true });
 console.log(allMEIfiles);
 
 // Filter out only MEI files
@@ -23,9 +26,4 @@ while (i < allMEIfiles.length) {
 console.log(allMEIfiles);
 
 // Write all files/folder to database.json (a JSON list)
-fs.writeFileSync('src/search/database.json', JSON.stringify(allMEIfiles), 'utf8');
-
-// Check if the database is written correctly
-const database = require('./database.json');
-console.log('Database table:')
-console.table(database);
+fs.writeFileSync(DATABASE_JSON, JSON.stringify(allMEIfiles), 'utf8');
