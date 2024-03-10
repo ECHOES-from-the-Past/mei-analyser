@@ -320,7 +320,17 @@ export class Chant {
     const lastNotePitch = this.neumeComponents[this.neumeComponents.length - 1].getPitch();
 
     // 2nd condition: pitch range
+    // Get the neume component with the lowest and highest septenary value
+    const sortedNeumeComponents = this.neumeComponents.sort((a, b) => a.septenary() - b.septenary());
+    const lowestPitch = sortedNeumeComponents[0];
+    const highestPitch = sortedNeumeComponents[sortedNeumeComponents.length - 1];
+    const maxPitchDistance = highestPitch.septenary() - lowestPitch.septenary();
+    console.log(lowestPitch, highestPitch);
 
+    const octaveDistance = maxPitchDistance <= 7;
+    const pitchRange = (lowest, highest) => {
+      return octaveDistance && (lowestPitch.getPitch() === lowest || highestPitch.getPitch() === highest);
+    };
 
     // 3rd condition: Most frequent/repeated pitch
     /** @type {string[]} array of all pitches in the chant */
@@ -347,21 +357,21 @@ export class Chant {
     // Combine the 3 conditions to determine the mode
     let mode = -1; // default 'undefined' mode
 
-    if (lastNotePitch === 'd' && mostRepeatedPitch === 'a') {
+    if (lastNotePitch === 'd' && pitchRange('d', 'd') && mostRepeatedPitch === 'a') {
       mode = 1;
-    } else if (lastNotePitch === 'd ' && mostRepeatedPitch === 'f') {
+    } else if (lastNotePitch === 'd ' && pitchRange('a', 'a') && mostRepeatedPitch === 'f') {
       mode = 2;
-    } else if (lastNotePitch === 'e' && (mostRepeatedPitch === 'c' || mostRepeatedPitch === 'b')) {
+    } else if (lastNotePitch === 'e' && pitchRange('e', 'e')  && (mostRepeatedPitch === 'c' || mostRepeatedPitch === 'b')) {
       mode = 3;
-    } else if (lastNotePitch === 'e' && mostRepeatedPitch === 'a') {
+    } else if (lastNotePitch === 'e' && pitchRange('b', 'b')  && mostRepeatedPitch === 'a') {
       mode = 4;
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'd') {
+    } else if (lastNotePitch === 'f' && pitchRange('f', 'f')  && mostRepeatedPitch === 'd') {
       mode = 5;
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'c') {
+    } else if (lastNotePitch === 'f' && pitchRange('c', 'c')  && mostRepeatedPitch === 'c') {
       mode = 6;
-    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'd') {
+    } else if (lastNotePitch === 'g' && pitchRange('g', 'g')  && mostRepeatedPitch === 'd') {
       mode = 7;
-    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'c') {
+    } else if (lastNotePitch === 'g' && pitchRange('d', 'd')  && mostRepeatedPitch === 'c') {
       mode = 8;
     }
     return mode;

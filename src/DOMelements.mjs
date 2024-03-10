@@ -25,6 +25,13 @@ export const contourRadio = document.getElementById('contour-radio');
 
 /**
  * @type {HTMLInputElement}
+ * Checkboxes for aquitanian and square notation search
+ */
+export const aquitanianCheckbox = document.getElementById('aquitanian-checkbox');
+export const squareCheckbox = document.getElementById('square-checkbox');
+
+/**
+ * @type {HTMLInputElement}
  * @description The checkboxes for liquescent, quilisma, and oriscus (ornamental shapes)
  */
 export const liquescentCheckbox = document.getElementById('liquescent-checkbox');
