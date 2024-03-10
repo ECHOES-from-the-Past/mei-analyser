@@ -118,11 +118,11 @@ export class NeumeComponentSQ extends NeumeComponent {
     return Number(sq_pitch.indexOf(this.pname)) + Number(this.oct) * 7;
   }
 
-  get_pname() {
+  getPitch() {
     return this.pname;
   }
 
-  get_oct() {
+  getOctave() {
     return Number(this.oct);
   }
 }
@@ -244,11 +244,14 @@ export class Chant {
    * @returns {Number} the mode of the chant
    */
   obtainMode() {
+    let mode;
     if (this.getNotationType() === "square") {
-      return this.calculateSquareMode();
-    } else if(this.getNotationType() === "aquitanian") {
-      return this.calculateAquitanianMode();
+      mode = this.calculateSquareMode();
+    } else if (this.getNotationType() === "aquitanian") {
+      mode = this.calculateAquitanianMode();
     }
+
+    return mode == -1 ? undefined : mode;
   }
 
   /**
@@ -310,8 +313,57 @@ export class Chant {
    * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode detection
    */
   calculateSquareMode() {
-    let mode = -1;
-    // do something
+    /** 
+     * 1st condtion: the last note's pitch of the Square notation chant 
+     * @type {NeumeComponentSQ}
+    */
+    const lastNotePitch = this.neumeComponents[this.neumeComponents.length - 1].getPitch();
+
+    // 2nd condition: pitch range
+
+
+    // 3rd condition: Most frequent/repeated pitch
+    /** @type {string[]} array of all pitches in the chant */
+    const pitchFrequency = this.neumeComponents.map((nc) => nc.getPitch())
+    let counts = {};
+    // Count the frequency of each note
+    pitchFrequency.forEach((note) => {
+      if (counts[note] === undefined) {
+        counts[note] = 1;
+      } else {
+        counts[note] += 1;
+      }
+    });
+    // Find the most frequent note from the counts object (the key with the highest value)
+    let mostRepeatedPitch = ''; // the most frequent note
+    let maxValue = 0;
+    for (let key in counts) {
+      if (counts[key] > maxValue) {
+        maxValue = counts[key];
+        mostRepeatedPitch = key;
+      }
+    }
+
+    // Combine the 3 conditions to determine the mode
+    let mode = -1; // default 'undefined' mode
+
+    if (lastNotePitch === 'd' && mostRepeatedPitch === 'a') {
+      mode = 1;
+    } else if (lastNotePitch === 'd ' && mostRepeatedPitch === 'f') {
+      mode = 2;
+    } else if (lastNotePitch === 'e' && (mostRepeatedPitch === 'c' || mostRepeatedPitch === 'b')) {
+      mode = 3;
+    } else if (lastNotePitch === 'e' && mostRepeatedPitch === 'a') {
+      mode = 4;
+    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'd') {
+      mode = 5;
+    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'c') {
+      mode = 6;
+    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'd') {
+      mode = 7;
+    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'c') {
+      mode = 8;
+    }
     return mode;
   }
 
@@ -323,7 +375,6 @@ export class Chant {
     const fileManifestation = this.meiParsedContent.querySelector('manifestation');
     const itemTargetTypeURL = fileManifestation.querySelector("item[targettype='url']");
     const url = itemTargetTypeURL.attributes.getNamedItem("target").value;
-    console.log(url);
     return url;
   }
 

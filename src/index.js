@@ -21,13 +21,15 @@ import {
     liquescentCheckbox,
     quilismaCheckbox,
     oriscusCheckbox,
-    devOrnamentalShapes
+    devOrnamentalShapes,
+    refreshDatabaseWarning
 } from './DOMelements.mjs';
 import {
     checkPersistanceExists,
     persist,
     retrieve
 } from './utility/utils.js';
+import pjson from '../package.json';
 
 /** --------------- WINDOW and DOM level functions --------------- */
 /**
@@ -50,9 +52,16 @@ window.onresize = () => {
  */
 document.onreadystatechange = function () {
     if (document.readyState === 'complete') {
+        console.debug(`Saved version: ${retrieve('version')} \nNewest version: ${pjson.version}`);
+        
+        if(checkPersistanceExists('version') && retrieve('version') != pjson.version) {
+            refreshDatabaseWarning.hidden = false;
+        }
+
         loadPersistedSearchOptions();
-        if (!checkPersistanceExists('chantList')) {
+        if (!checkPersistanceExists('chantList') || !checkPersistanceExists('version')) {
             loadDatabaseToChant();
+            persist("version", pjson.version);
         }
     }
 }
@@ -71,6 +80,8 @@ crossComparisonModeButton.addEventListener("click", () => {
 refreshDatabaseButton.addEventListener("click", async () => {
     await loadDatabaseToChant();
     alert("Database refreshed!");
+    persist("version", pjson.version);
+    refreshDatabaseWarning.hidden = true;
 });
 
 /**
