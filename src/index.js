@@ -2,13 +2,8 @@ import {
     loadPersistedSearchOptions,
     loadDatabaseToChant,
     viewDatabase,
-    showSearchResult,
-    performSearch,
 } from './functionalities.js';
 import {
-    pitchRadio,
-    contourRadio,
-    searchQueryInput,
     viewDatabaseButton,
     fileInputLeft,
     fileInputRight,
@@ -31,6 +26,10 @@ import {
     persist,
     retrieve
 } from './utility/utils.js';
+import {
+    performSearch,
+    showSearchResult
+} from './search/search.js';
 import pjson from '../package.json';
 
 /** --------------- WINDOW and DOM level functions --------------- */

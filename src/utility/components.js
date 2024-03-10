@@ -1,5 +1,3 @@
-import { loadMEIFile } from "./utils";
-
 /**
  * An "abstract" class for a Neume Component (`<nc>`).
  * All Neume Components has an id and an optional tilt field.
@@ -244,20 +242,26 @@ export class Chant {
    * @returns {Number} the mode of the chant
    */
   obtainMode() {
-    let mode;
     if (this.getNotationType() === "square") {
-      mode = this.calculateSquareMode();
+      let [mode, squareRating] = this.calculateSquareMode();
+      if (mode == -1) {
+        return undefined;
+      }
+      if (squareRating < 1) {
+        return `${mode} (${squareRating * 100}%)`;
+      }
+      return `${mode}`;
     } else if (this.getNotationType() === "aquitanian") {
-      mode = this.calculateAquitanianMode();
+      let mode = this.calculateAquitanianMode();
+      return mode == -1 ? undefined : mode;
     }
-
-    return mode == -1 ? undefined : mode;
+    return undefined;
   }
 
   /**
    * Helper function to calculate the mode of the Aquitanian chant.
    * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8 for Aquitanian mode detection
-   * @returns {Number} the mode of the chant
+   * @returns {number} the mode of the chant. If the mode is not found, return -1
    */
   calculateAquitanianMode() {
     let mode = -1;
@@ -311,6 +315,7 @@ export class Chant {
 
   /**
    * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode detection
+   * @returns {[number, pitchRangeRate]} the mode of the chant. If the mode is not found, return -1.
    */
   calculateSquareMode() {
     /** 
@@ -319,17 +324,33 @@ export class Chant {
     */
     const lastNotePitch = this.neumeComponents[this.neumeComponents.length - 1].getPitch();
 
-    // 2nd condition: pitch range
-    // Get the neume component with the lowest and highest septenary value
-    const sortedNeumeComponents = this.neumeComponents.sort((a, b) => a.septenary() - b.septenary());
-    const lowestPitch = sortedNeumeComponents[0];
-    const highestPitch = sortedNeumeComponents[sortedNeumeComponents.length - 1];
-    const maxPitchDistance = highestPitch.septenary() - lowestPitch.septenary();
+    /**
+     * 2nd condition: pitch range
+     * If the pitch range is within an octave, it's 100% (`1`) sure that the chant is in that mode.
+     * Otherwise, the rate is calculated as the number of notes within the predefined range divided by the total number of notes.
+     * Equation: rate = (number of notes within the predetermined range) / (total number of notes)
+     * Example: if pitch range is "D-D", all notes are expected to be within the range of D2 to D3.
+     * To use: `pitchRange('d', 'd')`
+     * @param {string} lowerPitch the lower bound of the pitch range
+     * @param {string} upperPitch the upper bound of the pitch range
+     * @returns {number} the rate of the pitches within the range
+     * */
+    let pitchRangeRate = (lowerPitch, upperPitch) => {
+      const sortedNeumeComponents = this.neumeComponents.sort((a, b) => a.septenary() - b.septenary())
+      const lowerOctave = sortedNeumeComponents[0].getOctave();
+      let upperOctave = sortedNeumeComponents[sortedNeumeComponents.length - 1].getOctave();
+      if (upperOctave === lowerOctave) {
+        upperOctave += 1;
+      }
+      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', lowerPitch, lowerOctave).septenary();
+      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', upperPitch, upperOctave).septenary();
+      const ncSeptenary = sortedNeumeComponents.map((nc) => nc.septenary());
 
-    const octaveDistance = maxPitchDistance <= 7;
-    const pitchRange = (lowest, highest) => {
-      return octaveDistance && (lowestPitch.getPitch() === lowest || highestPitch.getPitch() === highest);
-    };
+      const totalNotes = ncSeptenary.length;
+      const totalNotesInRange = ncSeptenary.filter((septenaryValue) => septenaryValue >= lowerBoundNCSeptenary && septenaryValue <= upperBoundNCSeptenary).length;
+
+      return Number(totalNotesInRange / totalNotes).toFixed(2);
+    }
 
     // 3rd condition: Most frequent/repeated pitch
     /** @type {string[]} array of all pitches in the chant */
@@ -354,26 +375,35 @@ export class Chant {
     }
 
     // Combine the 3 conditions to determine the mode
-    let mode = -1; // default 'undefined' mode
+    let mode = -1; // default undefined mode
+    let rating = 0; // default undefined rating
 
-    if (lastNotePitch === 'd' && pitchRange('d', 'd') && mostRepeatedPitch === 'a') {
+    if (lastNotePitch === 'd' && mostRepeatedPitch === 'a') {
       mode = 1;
-    } else if (lastNotePitch === 'd ' && pitchRange('a', 'a') && mostRepeatedPitch === 'f') {
+      rating = pitchRangeRate('d', 'd');
+    } else if (lastNotePitch === 'd ' && mostRepeatedPitch === 'f') {
       mode = 2;
-    } else if (lastNotePitch === 'e' && pitchRange('e', 'e')  && (mostRepeatedPitch === 'c' || mostRepeatedPitch === 'b')) {
+      rating = pitchRangeRate('a', 'a');
+    } else if (lastNotePitch === 'e' && (mostRepeatedPitch === 'c' || mostRepeatedPitch === 'b')) {
       mode = 3;
-    } else if (lastNotePitch === 'e' && pitchRange('b', 'b')  && mostRepeatedPitch === 'a') {
+      rating = pitchRangeRate('e', 'e');
+    } else if (lastNotePitch === 'e' && mostRepeatedPitch === 'a') {
       mode = 4;
-    } else if (lastNotePitch === 'f' && pitchRange('f', 'f')  && mostRepeatedPitch === 'd') {
+      rating = pitchRangeRate('b', 'b');
+    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'd') {
       mode = 5;
-    } else if (lastNotePitch === 'f' && pitchRange('c', 'c')  && mostRepeatedPitch === 'c') {
+      rating = pitchRangeRate('f', 'f');
+    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'c') {
       mode = 6;
-    } else if (lastNotePitch === 'g' && pitchRange('g', 'g')  && mostRepeatedPitch === 'd') {
+      rating = pitchRangeRate('c', 'c');
+    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'd') {
       mode = 7;
-    } else if (lastNotePitch === 'g' && pitchRange('d', 'd')  && mostRepeatedPitch === 'c') {
+      rating = pitchRangeRate('g', 'g');
+    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'c') {
       mode = 8;
+      rating = pitchRangeRate('d', 'd');
     }
-    return mode;
+    return [mode, rating];
   }
 
   /**

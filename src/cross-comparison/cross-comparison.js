@@ -158,6 +158,25 @@ export function pattern_analysis(pattern_1, pattern_2, mode = "mismatch") {
   }
 }
 
+/**
+ * ----------------------- ANALYSIS -----------------------
+ * Event listener for the "Analyse" button for cross-comparison functionality
+ */
+// document.getElementById('cross-comparison-btn').addEventListener("click", () => {
+//   clearHighlights();
+//   const leftFileContent = sessionStorage.getItem("mei-content-1");
+//   const leftChantFilePath = sessionStorage.getItem("mei-file-path-1");
+//   const leftChant = new Chant(leftFileContent, leftChantFilePath);
 
-// import database from '../database/database.json';
+//   const rightChantFilePath = sessionStorage.getItem("mei-file-path-2");
+//   const rightFileContent = sessionStorage.getItem("mei-content-2");
+//   const rightChant = new Chant(rightFileContent, rightChantFilePath);
 
+//   const leftChantNCList = leftChant.getNeumeComponents();
+//   const rightChantNCList = rightChant.getNeumeComponents();
+
+//   const analysis_mode = document.querySelector('input[name="analysis-mode"]:checked').value;
+//   pattern_analysis(leftChantNCList, rightChantNCList, analysis_mode);
+
+//   localStorage.setItem("analysis-mode", analysis_mode);
+// });
