@@ -1,14 +1,17 @@
 import database from './database/database.json';
-import { Chant } from './utility/components.js';
+import { Chant, NeumeComponent } from './utility/components.js';
 import {
   pitchRadio,
   contourRadio,
-  searchQuery,
+  searchQueryInput,
   databaseList,
   chantSVG,
   chantInfo,
   searchResultDiv,
-  chantDisplay
+  chantDisplay,
+  liquescentCheckbox,
+  quilismaCheckbox,
+  oriscusCheckbox
 } from './DOMelements.mjs';
 import { drawSVGFromMEIContent, loadMEIFile, persist, retrieve } from './utility/utils.js';
 
@@ -37,13 +40,17 @@ export async function loadDatabaseToChant() {
 }
 
 export function loadPersistedSearchOptions() {
-  if (retrieve('patternSearchMode') == null) {
-    persist('patternSearchMode', 'pitch');
-  }
+  // if (retrieve('patternSearchMode') == null) {
+  //   persist('patternSearchMode', 'pitch');
+  // }
 
-  retrieve('patternSearchMode') == 'pitch' ? pitchRadio.checked = true : contourRadio.checked = true;
+  // retrieve('patternSearchMode') == 'pitch' ? pitchRadio.checked = true : contourRadio.checked = true;
 
-  searchQuery.value = retrieve('searchQuery');
+  // searchQueryInput.value = retrieve('searchQuery');
+
+  liquescentCheckbox.checked = retrieve('liquescentCheckbox');
+  quilismaCheckbox.checked = retrieve('quilismaCheckbox');
+  oriscusCheckbox.checked = retrieve('oriscusCheckbox');
 }
 
 /**
@@ -69,7 +76,7 @@ export async function viewDatabase() {
     });
     li.addEventListener("click", () => {
       // Scroll to the chant view of the page, smoothly
-      chantDisplay.scrollIntoView({behavior: "smooth"});
+      chantDisplay.scrollIntoView({ behavior: "smooth" });
       // Set the box for the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
@@ -95,7 +102,7 @@ function printChantInformation(chant) {
     "Mode": chant.mode,
     "PEM Database URL": chant.pemDatabaseUrl
   };
-  for(let k in info) {
+  for (let k in info) {
     let p = document.createElement('p');
     p.innerHTML = `<b>${k}</b>: ${info[k]}`;
     chantInfo.appendChild(p);
@@ -107,16 +114,49 @@ function printChantInformation(chant) {
  * Event listener for the "Search" button for pattern search
  */
 
+function searchByOrnamentalShapes() {
+  /**
+   * Options for the ornamental search
+   * @type {{liquescent: boolean, quilisma: boolean, oriscus: boolean}}
+  */
+  let options = {
+    "liquescent": liquescentCheckbox.checked,
+    "quilisma": quilismaCheckbox.checked,
+    "oriscus": oriscusCheckbox.checked
+  }
+  /** @type {Chant[]} */
+  let allChants = retrieve('chantList');
+
+  // If all the options are unchecked, return all the chants
+  if (options.liquescent == false
+    && options.quilisma == false
+    && options.oriscus == false) {
+    return allChants;
+  };
+
+  // filter the chants based on the options
+  let resultChantList = allChants.filter(chant => {
+    /** @type {NeumeComponent[]} */
+    let neumeComponents = chant.neumeComponents;
+
+    for (let neume of neumeComponents) {
+      if (neume.ornamental != null) {
+        if (options.liquescent && neume.ornamental.type == "liquescent") return true;
+        if (options.quilisma && neume.ornamental.type == "quilisma") return true;
+        if (options.oriscus && neume.ornamental.type == "oriscus") return true;
+      }
+    }
+    return false;
+  });
+
+  return resultChantList;
+}
 
 /**
  * Perform highlighting when user clicks on "Search" button
  */
 export function performSearch() {
-  let allChants = retrieve('chantList');
-  let searchQuery = retrieve('searchQuery');
-  let searchMode = retrieve('patternSearchMode');
-
-  let resultChantList = allChants.filter(chant => chant.fileName.includes("SQUARE"));
+  let resultChantList = searchByOrnamentalShapes();
   return resultChantList;
 }
 
@@ -146,7 +186,7 @@ export function showSearchResult(resultChantList) {
   /**
    * Create the body of the table
    * @type {HTMLTableBodyElement}
-  */ 
+  */
   let tbody = document.createElement('tbody');
 
   const createTD = (textContent) => {
@@ -167,7 +207,7 @@ export function showSearchResult(resultChantList) {
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
       // Display the chant information (file name, notation type, mode, etc.)
       printChantInformation(chant);
-      chantDisplay.scrollIntoView({behavior: "smooth"});
+      chantDisplay.scrollIntoView({ behavior: "smooth" });
     });
     td1.style.cursor = "pointer";
 
@@ -182,7 +222,7 @@ export function showSearchResult(resultChantList) {
     td4link.rel = "noopener noreferrer";
 
     let td4 = createTD();
-    td4.appendChild(td4link);    
+    td4.appendChild(td4link);
 
     resultRow.appendChild(td1);
     resultRow.appendChild(td2);

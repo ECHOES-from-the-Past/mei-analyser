@@ -36,6 +36,34 @@
   --mismatch-stroke-box: hsla(240, 100%, 50%, 0.4);
 }
 
+/* Navbar, the top elements div */
+#navbar {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.3rem;
+  align-items: center;
+  background-color: white;
+  color: white;
+}
+
+/* Custom button styles */
+#devMode-btn {
+  position: absolute; 
+  right: 0;
+  background-color: hsl(12, 100%, 72%);
+  color: hsl(0, 0%, 0%);
+  cursor: pointer;
+  transition: background-color 0.25s;
+}
+
+#devMode-btn:hover {
+  background-color: hsl(12, 100%, 62%);
+}
+
+#devMode-btn:active {
+  background-color: hsl(12, 100%, 52%);
+}
+
 /* Default button styles */
 button {
   border: 0px;
@@ -63,31 +91,9 @@ button>a {
   text-decoration: none;
 }
 
-#navbar {
-  display: flex;
-  justify-content: flex-start;
-  gap: 0.3rem;
-  align-items: center;
-  background-color: white;
-  color: white;
-}
-
-/* Custom button styles */
-#devMode-btn {
-  position: absolute; 
-  right: 0;
-  background-color: hsl(12, 100%, 72%);
-  color: hsl(0, 0%, 0%);
-  cursor: pointer;
-  transition: background-color 0.25s;
-}
-
-#devMode-btn:hover {
-  background-color: hsl(12, 100%, 62%);
-}
-
-#devMode-btn:active {
-  background-color: hsl(12, 100%, 52%);
+h1, h2 {
+  margin: 0 0 0.5rem 0;
+  padding: 0 0;
 }
 
 p {
@@ -149,7 +155,8 @@ g {
   margin: 0.5em;
 }
 
-.database-select, select {
+/* For dropdown lists */
+select {
   width: 85%;
   font-size: medium;
   padding: 0.7rem;
@@ -159,6 +166,8 @@ g {
   text-align: justify;
 }
 
+
+/* Styling for the search panel */
 #search-panel-grid {
   display: grid;
   grid-template-columns: 1fr 2fr;
@@ -172,11 +181,6 @@ g {
 #database-list {
   list-style-type: none;
   padding: 0.5rem;
-}
-
-h1, h2 {
-  margin: 0 0 0.5rem 0;
-  padding: 0 0;
 }
 
 #result-table {

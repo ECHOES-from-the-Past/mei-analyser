@@ -240,10 +240,7 @@ export class Chant {
   }
 
   /**
-   * Parse the MEI Content to extract the mode of the chant. This only works for Aquitanian notation.
-   * 
-   * See: 
-   * and https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode calculation
+   * Parse the MEI Content to extract the mode of the chant. This only works for Aquitanian notation.   * 
    * @returns {Number} the mode of the chant
    */
   obtainMode() {
@@ -255,7 +252,7 @@ export class Chant {
   }
 
   /**
-   * Calculate the mode of the Aquitanian chant.
+   * Helper function to calculate the mode of the Aquitanian chant.
    * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8 for Aquitanian mode detection
    * @returns {Number} the mode of the chant
    */
@@ -286,23 +283,23 @@ export class Chant {
     let lastNoteLoc = lastNote.getLoc();
     if (lastNoteLoc == -2 && neg1pos3) {
       mode = 1;
-    } else if (lastNoteLoc == -2 && neg2pos2) {
-      mode = 3;
-    } else if (lastNoteLoc == -2 && neg3pos1) {
-      mode = 5;
-    } else if (lastNoteLoc == -2 && zeropos3) {
-      mode = 7;
-    } else if (lastNoteLoc == 0 && neg1pos3) {
-      mode = 6;
     } else if (lastNoteLoc == 0 && neg2pos1) {
       mode = 2;
+    } else if (lastNoteLoc == -2 && neg2pos2) {
+      mode = 3;
     } else if (lastNoteLoc == 0 && zeroneg3pos4) {
       mode = 4;
-    } else if (lastNoteLoc == 0 && neg2pos2) {
-      mode = 8;
     } else if (lastNoteLoc == -1 && neg1pos3) {
       mode = 4;
-    } else {
+    } else if (lastNoteLoc == -2 && neg3pos1) {
+      mode = 5;
+    } else if (lastNoteLoc == 0 && neg1pos3) {
+      mode = 6;
+    } else if (lastNoteLoc == -2 && zeropos3) {
+      mode = 7;
+    } else if (lastNoteLoc == 0 && neg2pos2) {
+      mode = 8;
+    } else { // if all conditions fails
       mode = -1;
     }
 

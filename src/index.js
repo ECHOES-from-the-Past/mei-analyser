@@ -1,15 +1,15 @@
 import {
-    loadPersistedSearchOptions, 
-    loadDatabaseToChant, 
+    loadPersistedSearchOptions,
+    loadDatabaseToChant,
     viewDatabase,
     showSearchResult,
     performSearch,
 } from './functionalities.js';
 import {
-    pitchRadio, 
-    contourRadio, 
-    searchQuery, 
-    viewDatabaseButton, 
+    pitchRadio,
+    contourRadio,
+    searchQueryInput,
+    viewDatabaseButton,
     fileInputLeft,
     fileInputRight,
     searchModeButton,
@@ -17,10 +17,14 @@ import {
     refreshDatabaseButton,
     devModeButton,
     databaseList,
-    searchButton
+    searchButton,
+    liquescentCheckbox,
+    quilismaCheckbox,
+    oriscusCheckbox,
+    devOrnamentalShapes
 } from './DOMelements.mjs';
-import { 
-    checkPersistanceExists, 
+import {
+    checkPersistanceExists,
     persist,
     retrieve
 } from './utility/utils.js';
@@ -80,16 +84,28 @@ devModeButton.addEventListener("click", () => {
 });
 
 /* --------------- SEARCH PANEL PERSISTANCE --------------- */
-pitchRadio.addEventListener("change", () => {
-    persist('patternSearchMode', 'pitch');
+// pitchRadio.addEventListener("change", () => {
+//     persist('patternSearchMode', 'pitch');
+// });
+
+// contourRadio.addEventListener("change", () => {
+//     persist('patternSearchMode', 'contour');
+// });
+
+// searchQueryInput.addEventListener("input", () => {
+//     persist('searchQuery', searchQueryInput.value);
+// });
+
+liquescentCheckbox.addEventListener("change", () => {
+    persist('liquescentCheckbox', liquescentCheckbox.checked);
 });
 
-contourRadio.addEventListener("change", () => {
-    persist('patternSearchMode', 'contour');
+quilismaCheckbox.addEventListener("change", () => {
+    persist('quilismaCheckbox', quilismaCheckbox.checked);
 });
 
-searchQuery.addEventListener("input", () => {
-    persist('searchQuery', searchQuery.value);
+oriscusCheckbox.addEventListener("change", () => {
+    persist('oriscusCheckbox', oriscusCheckbox.checked);
 });
 
 /* --------------- DATABASE PANEL PERSISTANCE --------------- */
@@ -136,4 +152,14 @@ fileInputLeft.addEventListener("change", () => {
 
 fileInputRight.addEventListener("change", () => {
     uploadFile(2);
+});
+
+/* --------------- DEV MODE --------------- */
+"load, change".split(", ").forEach((event) => {
+    window.addEventListener(event, () => {
+        let liquescentIsChecked = liquescentCheckbox.checked ? "liquescent" : "";
+        let quilismaIsChecked = quilismaCheckbox.checked ? "quilisma" : "";
+        let oriscusIsChecked = oriscusCheckbox.checked ? "oriscus" : "";
+        devOrnamentalShapes.textContent = [liquescentIsChecked, quilismaIsChecked, oriscusIsChecked].join(" ");
+    })
 });
