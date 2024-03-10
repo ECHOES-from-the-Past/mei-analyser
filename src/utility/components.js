@@ -325,7 +325,6 @@ export class Chant {
     const lowestPitch = sortedNeumeComponents[0];
     const highestPitch = sortedNeumeComponents[sortedNeumeComponents.length - 1];
     const maxPitchDistance = highestPitch.septenary() - lowestPitch.septenary();
-    console.log(lowestPitch, highestPitch);
 
     const octaveDistance = maxPitchDistance <= 7;
     const pitchRange = (lowest, highest) => {
