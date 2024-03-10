@@ -11,7 +11,9 @@ import {
   chantDisplay,
   liquescentCheckbox,
   quilismaCheckbox,
-  oriscusCheckbox
+  oriscusCheckbox,
+  aquitanianCheckbox,
+  squareCheckbox
 } from './DOMelements.mjs';
 import { drawSVGFromMEIContent, loadMEIFile, persist, retrieve } from './utility/utils.js';
 
@@ -47,6 +49,8 @@ export function loadPersistedSearchOptions() {
   // retrieve('patternSearchMode') == 'pitch' ? pitchRadio.checked = true : contourRadio.checked = true;
 
   // searchQueryInput.value = retrieve('searchQuery');
+  aquitanianCheckbox.checked = retrieve('aquitanianCheckbox') === null ? true : retrieve('aquitanianCheckbox');
+  squareCheckbox.checked = retrieve('squareCheckbox');
 
   liquescentCheckbox.checked = retrieve('liquescentCheckbox');
   quilismaCheckbox.checked = retrieve('quilismaCheckbox');
@@ -114,23 +118,19 @@ function printChantInformation(chant) {
  * Event listener for the "Search" button for pattern search
  */
 
-function searchByOrnamentalShapes() {
-  /**
-   * Options for the ornamental search
-   * @type {{liquescent: boolean, quilisma: boolean, oriscus: boolean}}
-  */
-  let options = {
-    "liquescent": liquescentCheckbox.checked,
-    "quilisma": quilismaCheckbox.checked,
-    "oriscus": oriscusCheckbox.checked
-  }
+/**
+ * Search by ornamental shapes (liquescent, quilisma, oriscus)
+ * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
+ * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
+ */
+function searchByOrnamentalShapes(ornamentalOptions) {
   /** @type {Chant[]} */
   let allChants = retrieve('chantList');
 
   // If all the options are unchecked, return all the chants
-  if (options.liquescent == false
-    && options.quilisma == false
-    && options.oriscus == false) {
+  if (ornamentalOptions.liquescent == false
+    && ornamentalOptions.quilisma == false
+    && ornamentalOptions.oriscus == false) {
     return allChants;
   };
 
@@ -141,9 +141,9 @@ function searchByOrnamentalShapes() {
 
     for (let neume of neumeComponents) {
       if (neume.ornamental != null) {
-        if (options.liquescent && neume.ornamental.type == "liquescent") return true;
-        if (options.quilisma && neume.ornamental.type == "quilisma") return true;
-        if (options.oriscus && neume.ornamental.type == "oriscus") return true;
+        if (ornamentalOptions.liquescent && neume.ornamental.type == "liquescent") return true;
+        if (ornamentalOptions.quilisma && neume.ornamental.type == "quilisma") return true;
+        if (ornamentalOptions.oriscus && neume.ornamental.type == "oriscus") return true;
       }
     }
     return false;
@@ -156,7 +156,27 @@ function searchByOrnamentalShapes() {
  * Perform highlighting when user clicks on "Search" button
  */
 export function performSearch() {
-  let resultChantList = searchByOrnamentalShapes();
+  let notationTypeOptions = {
+    "aquitanian": aquitanianCheckbox.checked,
+    "square": squareCheckbox.checked
+  }
+  /**
+   * Options for the ornamental search
+   * @type {{liquescent: boolean, quilisma: boolean, oriscus: boolean}}
+  */
+  let ornamentalOptions = {
+    "liquescent": liquescentCheckbox.checked,
+    "quilisma": quilismaCheckbox.checked,
+    "oriscus": oriscusCheckbox.checked
+  }
+
+  let resultChantList = searchByOrnamentalShapes(ornamentalOptions);
+  resultChantList = resultChantList.filter(chant => {
+    if (notationTypeOptions.aquitanian && chant.notationType == "aquitanian") return true;
+    if (notationTypeOptions.square && chant.notationType == "square") return true;
+    return false;
+  });
+
   return resultChantList;
 }
 

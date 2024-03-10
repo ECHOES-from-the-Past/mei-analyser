@@ -22,7 +22,9 @@ import {
     quilismaCheckbox,
     oriscusCheckbox,
     devOrnamentalShapes,
-    refreshDatabaseWarning
+    refreshDatabaseWarning,
+    aquitanianCheckbox,
+    squareCheckbox
 } from './DOMelements.mjs';
 import {
     checkPersistanceExists,
@@ -106,6 +108,13 @@ devModeButton.addEventListener("click", () => {
 // searchQueryInput.addEventListener("input", () => {
 //     persist('searchQuery', searchQueryInput.value);
 // });
+aquitanianCheckbox.addEventListener("change", () => {
+    persist('aquitanianCheckbox', aquitanianCheckbox.checked);
+});
+
+squareCheckbox.addEventListener("change", () => {
+    persist('squareCheckbox', squareCheckbox.checked);
+});
 
 liquescentCheckbox.addEventListener("change", () => {
     persist('liquescentCheckbox', liquescentCheckbox.checked);
