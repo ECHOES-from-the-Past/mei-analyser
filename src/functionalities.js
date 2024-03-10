@@ -127,27 +127,48 @@ function searchByOrnamentalShapes(ornamentalOptions) {
   /** @type {Chant[]} */
   let allChants = retrieve('chantList');
 
-  // If all the options are unchecked, return all the chants
-  if (ornamentalOptions.liquescent == false
-    && ornamentalOptions.quilisma == false
-    && ornamentalOptions.oriscus == false) {
-    return allChants;
-  };
-
-  // filter the chants based on the options
-  let resultChantList = allChants.filter(chant => {
+  /**
+   * Check if a chant has a specific ornamental shape.
+   * This only check for the first occurrence of the ornamental shape in the chant
+   * and does not care for the location of the ornamental shape in the chant.
+   * @param {Chant} chant the chant to be checked
+   * @param {string} ornamentalType the type of ornamental shape to be checked
+   * @returns {boolean} `true` if the chant has the ornamental shape, `false` otherwise
+   */
+  const hasOrnamental = (chant, ornamentalType) => {
     /** @type {NeumeComponent[]} */
     let neumeComponents = chant.neumeComponents;
-
     for (let neume of neumeComponents) {
-      if (neume.ornamental != null) {
-        if (ornamentalOptions.liquescent && neume.ornamental.type == "liquescent") return true;
-        if (ornamentalOptions.quilisma && neume.ornamental.type == "quilisma") return true;
-        if (ornamentalOptions.oriscus && neume.ornamental.type == "oriscus") return true;
-      }
+      if (neume.ornamental != null && neume.ornamental.type == ornamentalType) return true;
     }
     return false;
-  });
+  }
+
+  /**
+   * Filter the chants based on the options.
+   * If all the options are unchecked (`false`), return all the chants
+   * @type {Chant[]} resulting list of chants after filtering
+   */
+  let resultChantList = allChants;
+
+  // first filter for the liquescent option
+  if (ornamentalOptions.liquescent) {
+    resultChantList = resultChantList.filter(chant => {
+      if (hasOrnamental(chant, "liquescent")) return true;
+    });
+  }
+  // then filter for the quilisma option
+  if (ornamentalOptions.quilisma) {
+    resultChantList = resultChantList.filter(chant => {
+      if (hasOrnamental(chant, "quilisma")) return true;
+    });
+  }
+  // then filter for the oriscus option
+  if (ornamentalOptions.oriscus) {
+    resultChantList = resultChantList.filter(chant => {
+      if (hasOrnamental(chant, "oriscus")) return true;
+    });
+  }
 
   return resultChantList;
 }
