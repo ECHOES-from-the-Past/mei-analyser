@@ -175,16 +175,13 @@ select {
 }
 
 #database-list {
-  margin-right: 2rem;
-}
-
-#database-list {
   list-style-type: none;
-  padding: 0.5rem;
+  padding: 0.2rem;
 }
 
 #result-table {
   width: 100%;
+  word-break: normal;
 }
 
 #result-table>thead>th {

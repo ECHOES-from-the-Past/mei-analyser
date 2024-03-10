@@ -1,4 +1,4 @@
-/* --------------- TOP BUTTONS --------------- */
+/* --------------- TOP/NAVBAR ELEMENTS --------------- */
 /** @type {HTMLButtonElement} */
 export const searchModeButton = document.getElementById('search-mode-btn');
 
@@ -8,8 +8,12 @@ export const crossComparisonModeButton = document.getElementById('cross-comparis
 /** @type {HTMLButtonElement} */
 export const refreshDatabaseButton = document.getElementById('refresh-database-btn');
 
+/** @type {HTMLSpanElement} */
+export const refreshDatabaseWarning = document.getElementById('refresh-database-warning');
+
 /** @type {HTMLButtonElement} */
 export const devModeButton = document.getElementById('devMode-btn');
+
 
 /* -------------- DOM ELEMENTS -------------- */
 /* Search-related */
