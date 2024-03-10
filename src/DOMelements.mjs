@@ -19,8 +19,16 @@ export const pitchRadio = document.getElementById('pitch-radio');
 /** @type {HTMLInputElement} */
 export const contourRadio = document.getElementById('contour-radio');
 
+/**
+ * @type {HTMLInputElement}
+ * @description The checkboxes for liquescent, quilisma, and oriscus (ornamental shapes)
+ */
+export const liquescentCheckbox = document.getElementById('liquescent-checkbox');
+export const quilismaCheckbox = document.getElementById('quilisma-checkbox');
+export const oriscusCheckbox = document.getElementById('oriscus-checkbox');
+
 /** @type {HTMLInputElement} */
-export const searchQuery = document.getElementById('search-query');
+export const searchQueryInput = document.getElementById('search-query');
 
 /** @type {HTMLButtonElement} */
 export const searchButton = document.getElementById('search-btn');
@@ -56,3 +64,7 @@ export const fileInputLeft = document.getElementById('file-input-left');
 
 /** @type {HTMLInputElement} */
 export const fileInputRight = document.getElementById('file-input-right');
+
+/* ---------------------------- DEV MODE ---------------------------- */
+/** @type {HTMLSpanElement} */
+export const devOrnamentalShapes = document.getElementById('dev-ornamental-shapes');
