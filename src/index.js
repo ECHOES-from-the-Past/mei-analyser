@@ -56,8 +56,8 @@ window.onresize = () => {
 document.onreadystatechange = function () {
     if (document.readyState === 'complete') {
         console.debug(`Saved version: ${retrieve('version')} \nNewest version: ${pjson.version}`);
-        
-        if(checkPersistanceExists('version') && retrieve('version') != pjson.version) {
+
+        if (checkPersistanceExists('version') && retrieve('version') != pjson.version) {
             refreshDatabaseWarning.hidden = false;
         }
 
@@ -66,6 +66,16 @@ document.onreadystatechange = function () {
             loadDatabaseToChant();
             persist("version", pjson.version);
         }
+
+        /* --------------- DEV MODE --------------- */
+        "load, change".split(", ").forEach((event) => {
+            window.addEventListener(event, () => {
+                let liquescentIsChecked = liquescentCheckbox.checked ? "liquescent" : "";
+                let quilismaIsChecked = quilismaCheckbox.checked ? "quilisma" : "";
+                let oriscusIsChecked = oriscusCheckbox.checked ? "oriscus" : "";
+                devOrnamentalShapes.textContent = [liquescentIsChecked, quilismaIsChecked, oriscusIsChecked].join(" ");
+            })
+        });
     }
 }
 
@@ -82,7 +92,7 @@ crossComparisonModeButton.addEventListener("click", () => {
 
 refreshDatabaseButton.addEventListener("click", async () => {
     await loadDatabaseToChant();
-    if(databaseIsOpen) constructDatabaseList();
+    if (databaseIsOpen) constructDatabaseList();
     alert("Database refreshed!");
     persist("version", pjson.version);
     refreshDatabaseWarning.hidden = true;
@@ -169,14 +179,4 @@ fileInputLeft.addEventListener("change", () => {
 
 fileInputRight.addEventListener("change", () => {
     uploadFile(2);
-});
-
-/* --------------- DEV MODE --------------- */
-"load, change".split(", ").forEach((event) => {
-    window.addEventListener(event, () => {
-        let liquescentIsChecked = liquescentCheckbox.checked ? "liquescent" : "";
-        let quilismaIsChecked = quilismaCheckbox.checked ? "quilisma" : "";
-        let oriscusIsChecked = oriscusCheckbox.checked ? "oriscus" : "";
-        devOrnamentalShapes.textContent = [liquescentIsChecked, quilismaIsChecked, oriscusIsChecked].join(" ");
-    })
 });
