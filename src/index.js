@@ -1,7 +1,7 @@
 import {
     loadPersistedSearchOptions,
     loadDatabaseToChant,
-    viewDatabase,
+    constructDatabaseList,
 } from './functionalities.js';
 import {
     viewDatabaseButton,
@@ -31,6 +31,8 @@ import {
     showSearchResult
 } from './search/search.js';
 import pjson from '../package.json';
+
+let databaseIsOpen = false;
 
 /** --------------- WINDOW and DOM level functions --------------- */
 /**
@@ -80,6 +82,7 @@ crossComparisonModeButton.addEventListener("click", () => {
 
 refreshDatabaseButton.addEventListener("click", async () => {
     await loadDatabaseToChant();
+    if(databaseIsOpen) constructDatabaseList();
     alert("Database refreshed!");
     persist("version", pjson.version);
     refreshDatabaseWarning.hidden = true;
@@ -128,11 +131,10 @@ oriscusCheckbox.addEventListener("change", () => {
 });
 
 /* --------------- DATABASE PANEL PERSISTANCE --------------- */
-let databaseIsOpen = false;
 viewDatabaseButton.addEventListener("click", () => {
     if (databaseIsOpen === false) {
         viewDatabaseButton.textContent = "Close Database";
-        viewDatabase();
+        constructDatabaseList();
     } else {
         databaseList.innerHTML = '';
         viewDatabaseButton.textContent = "View Database";
@@ -141,12 +143,8 @@ viewDatabaseButton.addEventListener("click", () => {
 });
 
 searchButton.addEventListener("click", () => {
-    let chantList = retrieve('chantList');
-    // perform search logic here
-    // for example
-    // perfr
+    // Perform search and display the result
     let resultChantList = performSearch();
-    // display the result
     showSearchResult(resultChantList);
 });
 

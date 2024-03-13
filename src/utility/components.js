@@ -248,7 +248,7 @@ export class Chant {
         return undefined;
       }
       if (squareRating < 1) {
-        return `${mode} (${squareRating * 100}%)`;
+        return `${mode} - ${Number(squareRating * 100).toFixed(2)}% of notes in range`;
       }
       return `${mode}`;
     } else if (this.getNotationType() === "aquitanian") {
@@ -349,7 +349,7 @@ export class Chant {
       const totalNotes = ncSeptenary.length;
       const totalNotesInRange = ncSeptenary.filter((septenaryValue) => septenaryValue >= lowerBoundNCSeptenary && septenaryValue <= upperBoundNCSeptenary).length;
 
-      return Number(totalNotesInRange / totalNotes).toFixed(2);
+      return totalNotesInRange / totalNotes;
     }
 
     // 3rd condition: Most frequent/repeated pitch
