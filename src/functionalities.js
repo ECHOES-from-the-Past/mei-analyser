@@ -43,7 +43,7 @@ export function loadPersistedSearchOptions() {
  * @listens viewDatabaseButton
  * Displaying the database as a list of chants on the screen
  */
-export async function viewDatabase() {
+export async function constructDatabaseList() {
   /** @type {Chant[]} */
   const chantList = retrieve('chantList');
   databaseList.innerHTML = '';
