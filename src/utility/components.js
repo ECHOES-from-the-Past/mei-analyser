@@ -1,3 +1,5 @@
+import { env } from "./utils";
+
 /**
  * An "abstract" class for a Neume Component (`<nc>`).
  * All Neume Components has an id and an optional tilt field.
@@ -402,6 +404,10 @@ export class Chant {
     } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'c') {
       mode = 8;
       rating = pitchRangeRate('d', 'd');
+    }
+
+    if (env == 'development') {
+      console.debug(`Mode ${mode} on ${this.fileName}.\nLast note: ${lastNotePitch}\nMost repeated: ${mostRepeatedPitch}\nRating: ${rating}`);
     }
     return [mode, rating];
   }
