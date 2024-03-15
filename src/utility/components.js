@@ -392,10 +392,10 @@ export class Chant {
     } else if (lastNotePitch === 'e' && mostRepeatedPitch === 'a') {
       mode = 4;
       rating = pitchRangeRate('b', 'b');
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'd') {
+    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'c') {
       mode = 5;
       rating = pitchRangeRate('f', 'f');
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'c') {
+    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'a') {
       mode = 6;
       rating = pitchRangeRate('c', 'c');
     } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'd') {
@@ -407,7 +407,7 @@ export class Chant {
     }
 
     if (env == 'development') {
-      console.debug(`Mode ${mode} on ${this.fileName}.\nLast note: ${lastNotePitch}\nMost repeated: ${mostRepeatedPitch}\nRating: ${rating}`);
+      console.debug(`Mode ${mode} on ${this.fileName}.\nLast note: ${lastNotePitch}\nMost repeated: ${mostRepeatedPitch}\nPitch frequency: ${JSON.stringify(counts)}\nRating: ${rating}`);
     }
     return [mode, rating];
   }
