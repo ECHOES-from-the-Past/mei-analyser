@@ -106,7 +106,7 @@ export function showSearchResult(resultChantList) {
   resultTable.id = "result-table"; // for CSS styling
 
   // Create the head row of the table: "File Name" -- "Notation Type" -- "Mode"
-  const tableHeadRows = ["Title", "Notation", "Mode", "Source", "PEM Database URL", "File Name"];
+  const tableHeadRows = ["Title", "Music Script", "Mode", "Source", "PEM Database URL", "File Name"];
   let headRow = document.createElement('thead');
   for (let headRowElement of tableHeadRows) {
     let th = document.createElement('th');
