@@ -106,7 +106,7 @@ export function showSearchResult(resultChantList) {
   resultTable.id = "result-table"; // for CSS styling
 
   // Create the head row of the table: "File Name" -- "Notation Type" -- "Mode"
-  const tableHeadRows = ["File Name", "Notation", "Mode", "PEM Database URL"];
+  const tableHeadRows = ["Title", "Notation", "Mode", "Source", "PEM Database URL", "File Name"];
   let headRow = document.createElement('thead');
   for (let headRowElement of tableHeadRows) {
     let th = document.createElement('th');
@@ -134,8 +134,8 @@ export function showSearchResult(resultChantList) {
     // create a result row for each chant
     let resultRow = document.createElement('tr');
     // add the file name of the chant to row cell
-    let td1 = createTD(chant.fileName);
-    td1.addEventListener("click", () => {
+    let tdFileName = createTD(chant.fileName);
+    tdFileName.addEventListener("click", () => {
       // Set the box for the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
@@ -143,10 +143,10 @@ export function showSearchResult(resultChantList) {
       printChantInformation(chant);
       chantDisplay.scrollIntoView({ behavior: "smooth" });
     });
-    td1.style.cursor = "pointer";
+    tdFileName.style.cursor = "pointer";
 
-    let td2 = createTD(chant.notationType);
-    let td3 = createTD(chant.mode);
+    let tdNotationType = createTD(chant.notationType);
+    let tdMode = createTD(chant.mode);
 
     /** @type {HTMLAnchorElement} */
     let td4link = document.createElement('a');
@@ -155,13 +155,20 @@ export function showSearchResult(resultChantList) {
     td4link.target = "_blank";
     td4link.rel = "noopener noreferrer";
 
-    let td4 = createTD();
-    td4.appendChild(td4link);
+    let tdPEMLink = createTD();
+    tdPEMLink.appendChild(td4link);
 
-    resultRow.appendChild(td1);
-    resultRow.appendChild(td2);
-    resultRow.appendChild(td3);
-    resultRow.appendChild(td4);
+    let tdSource = createTD(chant.source);
+    
+    let tdTitle = createTD(chant.title);
+
+    // In order: title, notation type, mode, source, PEM database URL, file name
+    resultRow.appendChild(tdTitle);
+    resultRow.appendChild(tdNotationType);
+    resultRow.appendChild(tdMode);
+    resultRow.appendChild(tdSource);
+    resultRow.appendChild(tdPEMLink);
+    resultRow.appendChild(tdFileName);
 
     tbody.appendChild(resultRow);
   }
