@@ -383,7 +383,7 @@ export class Chant {
     if (lastNotePitch === 'd' && mostRepeatedPitch === 'a') {
       mode = 1;
       rating = pitchRangeRate('d', 'd');
-    } else if (lastNotePitch === 'd ' && mostRepeatedPitch === 'f') {
+    } else if (lastNotePitch === 'd' && mostRepeatedPitch === 'f') {
       mode = 2;
       rating = pitchRangeRate('a', 'a');
     } else if (lastNotePitch === 'e' && (mostRepeatedPitch === 'c' || mostRepeatedPitch === 'b')) {
