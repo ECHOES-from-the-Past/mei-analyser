@@ -4,7 +4,7 @@ import {
 } from '../DOMelements.mjs';
 import database from '../database/database.json';
 
-const env = import.meta.env.MODE; // 'development' or 'production'
+export const env = import.meta.env.MODE; // 'development' or 'production'
 
 /** @type {String} root path to the database folder based on the environment */
 let databasePath = "";

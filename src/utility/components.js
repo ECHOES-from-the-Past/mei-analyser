@@ -1,3 +1,5 @@
+import { env } from "./utils";
+
 /**
  * An "abstract" class for a Neume Component (`<nc>`).
  * All Neume Components has an id and an optional tilt field.
@@ -398,7 +400,7 @@ export class Chant {
     if (lastNotePitch === 'd' && mostRepeatedPitch === 'a') {
       mode = 1;
       rating = pitchRangeRate('d', 'd');
-    } else if (lastNotePitch === 'd ' && mostRepeatedPitch === 'f') {
+    } else if (lastNotePitch === 'd' && mostRepeatedPitch === 'f') {
       mode = 2;
       rating = pitchRangeRate('a', 'a');
     } else if (lastNotePitch === 'e' && (mostRepeatedPitch === 'c' || mostRepeatedPitch === 'b')) {
@@ -407,10 +409,10 @@ export class Chant {
     } else if (lastNotePitch === 'e' && mostRepeatedPitch === 'a') {
       mode = 4;
       rating = pitchRangeRate('b', 'b');
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'd') {
+    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'c') {
       mode = 5;
       rating = pitchRangeRate('f', 'f');
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'c') {
+    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'a') {
       mode = 6;
       rating = pitchRangeRate('c', 'c');
     } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'd') {
@@ -419,6 +421,10 @@ export class Chant {
     } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'c') {
       mode = 8;
       rating = pitchRangeRate('d', 'd');
+    }
+
+    if (env == 'development') {
+      console.debug(`Mode ${mode} on ${this.fileName}.\nLast note: ${lastNotePitch}\nMost repeated: ${mostRepeatedPitch}\nPitch frequency: ${JSON.stringify(counts)}\nRating: ${rating}`);
     }
     return [mode, rating];
   }

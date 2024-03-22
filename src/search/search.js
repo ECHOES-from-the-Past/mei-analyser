@@ -123,9 +123,9 @@ export function showSearchResult(resultChantList) {
   */
   let tbody = document.createElement('tbody');
 
-  const createTD = (textContent) => {
+  const createTD = (content) => {
     let td = document.createElement('td');
-    td.textContent = textContent;
+    td.textContent = content;
     td.style.fontSize = "1rem";
     return td;
   }
