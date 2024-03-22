@@ -146,6 +146,19 @@ export class NeumeComponentAQ extends NeumeComponent {
   }
 }
 
+/**
+ * @typedef {Object} Chant
+ * @property {string} filePath the path of the .mei file
+ * @property {string} fileName the name of the .mei file
+ * @property {string} meiContent the XML content of the .mei file as a string
+ * @property {XMLDocument} meiParsedContent the parsed XML content of the .mei file
+ * @property {string} notationType the notation type of the chant (either "aquitanian" or "square")
+ * @property {NeumeComponentAQ[] | NeumeComponentSQ[]} neumeComponents an array of NeumeComponent belongs to the chant
+ * @property {string | number} mode the mode of the chant and/or extra information about the mode
+ * @property {string} pemDatabaseUrl hyperlink address to the Portuguese Early Music database
+ * 
+ */
+
 export class Chant {
   /**
    * Constructing a Chant object from a .mei file content
@@ -180,6 +193,10 @@ export class Chant {
      * @description the URL of the file on the PEM (Portuguese Early Music) database
     */
     this.pemDatabaseUrl = this.obtainDatabaseUrl();
+
+    this.title = this.obtainTitle();
+    
+    this.source = this.obtainSource();
   }
 
   /**
@@ -415,6 +432,18 @@ export class Chant {
     const itemTargetTypeURL = fileManifestation.querySelector("item[targettype='url']");
     const url = itemTargetTypeURL.attributes.getNamedItem("target").value;
     return url;
+  }
+
+  obtainTitle() {
+    const fileDescription = this.meiParsedContent.querySelector('fileDesc');
+    const title = fileDescription.querySelector('title').innerHTML;
+    return title;
+  }
+
+  obtainSource() {
+    const fileManifestation = this.meiParsedContent.querySelector('manifestation');
+    const source = fileManifestation.querySelector('identifier').innerHTML;
+    return source;
   }
 
   getFilePath() {

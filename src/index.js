@@ -19,7 +19,9 @@ import {
     devOrnamentalShapes,
     refreshDatabaseWarning,
     aquitanianCheckbox,
-    squareCheckbox
+    squareCheckbox,
+    chantInfo,
+    chantSVG
 } from './DOMelements.mjs';
 import {
     checkPersistanceExists,
@@ -153,6 +155,10 @@ viewDatabaseButton.addEventListener("click", () => {
 });
 
 searchButton.addEventListener("click", () => {
+    // Clear the display when performing a new search
+    chantInfo.innerHTML = "<p><i>Chant information will display here</i></p>";
+    chantSVG.innerHTML = "<p><i> Click on the chant's file name to display </i></p>";
+
     // Perform search and display the result
     let resultChantList = performSearch();
     showSearchResult(resultChantList);
