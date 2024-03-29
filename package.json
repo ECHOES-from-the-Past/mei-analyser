@@ -7,8 +7,7 @@
   "private": true,
   "scripts": {
     "dev": "vite",
-    "database": "mkdir ./dist/database && cp -r ./GABCtoMEI/MEI_outfiles/* ./dist/database",
-    "build": "vite build --base=/mei-analyser/ && npm run database",
+    "build": "vite build --base=/mei-analyser/",
     "preview": "vite preview --base=/mei-analyser/",
     "updateDatabaseList": "node src/database/updateDatabase.cjs",
     "test": "node src/analysis/test-algorithm.js"
