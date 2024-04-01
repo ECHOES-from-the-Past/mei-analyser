@@ -10,7 +10,6 @@ import {
     searchModeButton,
     crossComparisonModeButton,
     refreshDatabaseButton,
-    devModeButton,
     databaseList,
     searchButton,
     liquescentCheckbox,
@@ -96,16 +95,6 @@ refreshDatabaseButton.addEventListener("click", async () => {
     alert("Database refreshed!");
     persist("version", pjson.version);
     refreshDatabaseWarning.hidden = true;
-});
-
-/**
- * Every element with class="devMode" is hidden by default.
- * When the devMode button is clicked, it will be toggled to true.
- */
-devModeButton.addEventListener("click", () => {
-    document.querySelectorAll('.devMode').forEach((element) => {
-        element.hidden = !element.hidden;
-    });
 });
 
 /* --------------- SEARCH PANEL PERSISTANCE --------------- */

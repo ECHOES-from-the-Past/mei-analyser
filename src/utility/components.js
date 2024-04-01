@@ -148,6 +148,18 @@ export class NeumeComponentAQ extends NeumeComponent {
   }
 }
 
+/**
+ * @typedef {Object} Chant
+ * @property {String} filePath the path of the .mei file
+ * @property {String} fileName the name of the .mei file
+ * @property {String} meiContent the content of the .mei file
+ * @property {XMLDocument} meiParsedContent the parsed content of the .mei file
+ * @property {String} notationType the notation type of the chant (either "aquitanian" or "square")
+ * @property {NeumeComponentAQ[] | NeumeComponentSQ[]} neumeComponents an array of NeumeComponent
+ * @property {number | string} mode the mode of the chant
+ * @property {string} modeDescription an explaination of the mode detection
+ * @property {string} pemDatabaseUrl the URL of the file on the PEM (Portuguese Early Music) database
+ */
 export class Chant {
   /**
    * Constructing a Chant object from a .mei file content
@@ -174,8 +186,17 @@ export class Chant {
     /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
 
-    /** @type {number} */
+    /** 
+     * @type {number | string} the mode of the chant
+     * * For Aquitanian: the mode of the chant
+     * * For Square: the mode of the chant and a percentage of the mode certainty
+     */
     this.mode = this.obtainMode();
+
+    /**
+     * @type {string} an explaination of the mode detection
+     */
+    this.modeDescription = "Description of the mode";
 
     /** 
      * @type {string} 

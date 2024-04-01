@@ -11,10 +11,6 @@ export const refreshDatabaseButton = document.getElementById('refresh-database-b
 /** @type {HTMLSpanElement} */
 export const refreshDatabaseWarning = document.getElementById('refresh-database-warning');
 
-/** @type {HTMLButtonElement} */
-export const devModeButton = document.getElementById('devMode-btn');
-
-
 /* -------------- DOM ELEMENTS -------------- */
 /* Search-related */
 /** @type {HTMLInputElement} */

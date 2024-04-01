@@ -49,7 +49,7 @@ export async function constructDatabaseList() {
   databaseList.innerHTML = '';
   for (let chant of chantList) {
     let li = document.createElement('li');
-    li.textContent = chant.fileName;
+    li.textContent = chant.title;
     li.style.wordBreak = "break-word";
     li.style.cursor = "pointer";
     li.style.padding = "0.3em 0";
