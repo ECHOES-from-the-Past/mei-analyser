@@ -148,20 +148,22 @@ export class NeumeComponentAQ extends NeumeComponent {
   }
 }
 
-/**
- * @typedef {Object} Chant
- * @property {String} filePath the path of the .mei file
- * @property {String} fileName the name of the .mei file
- * @property {String} meiContent the content of the .mei file
+
+
+/** 
+ * @type {Object}
+ * @property {string} filePath the path of the .mei file
+ * @property {string} fileName the name of the .mei file
+ * @property {string} meiContent the content of the .mei file
  * @property {XMLDocument} meiParsedContent the parsed content of the .mei file
- * @property {String} notationType the notation type of the chant (either "aquitanian" or "square")
+ * @property {string} notationType the notation type of the chant (either "aquitanian" or "square")
  * @property {NeumeComponentAQ[] | NeumeComponentSQ[]} neumeComponents an array of NeumeComponent
- * @property {number | string} mode the mode of the chant
+ * @property {number} mode the mode of the chant
  * @property {string} modeDescription an explaination of the mode detection
- * @property {string} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
+ * @property {string[]} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
  * @property {string} title the title of the chant
  * @property {string} source the source of the chant
- */
+*/
 export class Chant {
   /**
    * Constructing a Chant object from a .mei file content
@@ -189,15 +191,13 @@ export class Chant {
     this.neumeComponents = this.parseMEIforNeumeComponents();
 
     /** 
-     * @type {number | string} the mode of the chant
-     * * For Aquitanian: the mode of the chant
-     * * For Square: the mode of the chant and a percentage of the mode certainty
+     * @type {number} the mode of the chant. It has to be a number for sorting purposes.
+     * - For Aquitanian: the mode of the chant
+     * - For Square: the mode of the chant and a percentage of the mode certainty
      */
     this.mode = this.obtainMode();
 
-    /**
-     * @type {string} an explaination of the mode detection
-     */
+    /** @type {string} an explaination of the mode detection */
     this.modeDescription = "Description of the mode";
 
     /** 
@@ -348,14 +348,122 @@ export class Chant {
    * @returns {[number, pitchRangeRate]} the mode of the chant. If the mode is not found, return -1.
    */
   calculateSquareMode() {
+    // Combine the 3 conditions to determine the mode
+    let mode = -1;    // default undefined mode
+    let rating = 0;   // default undefined rating
+    let modeDescription = '';
+
     /** 
-     * 1st condtion: the last note's pitch of the Square notation chant 
+     * 1st condtion (34%): FINALIS - the last note's pitch of the Square notation chant
      * @type {NeumeComponentSQ}
-    */
-    const lastNotePitch = this.neumeComponents[this.neumeComponents.length - 1].getPitch();
+     */
+    const finalisPitch = this.neumeComponents[this.neumeComponents.length - 1].getPitch();
+    modeDescription += `Finalis pitch is '${finalisPitch}'.\n`;
+
+    let authenticMode = -1, plagalMode = -1;
+    let authenticRepercussio = '', plagalRepercussio = '';
+
+    if (finalisPitch === 'd') {
+      authenticMode = 1;
+      authenticRepercussio = 'a';
+      plagalMode = 2;
+      plagalRepercussio = 'F';
+    } else if (finalisPitch === 'e') {
+      authenticMode = 3;
+      authenticRepercussio = 'c'; // or 'b'
+      plagalMode = 4;
+      plagalRepercussio = 'a';
+    } else if (finalisPitch === 'f') {
+      authenticMode = 5;
+      authenticRepercussio = 'c';
+      plagalMode = 6;
+      plagalRepercussio = 'a';
+    } else if (finalisPitch === 'g') {
+      authenticMode = 7;
+      authenticRepercussio = 'd';
+      plagalMode = 8;
+      plagalRepercussio = 'c';
+    } else {
+      modeDescription += `Unable to detect the exact mode based on finalis.\n`;
+      return [mode, rating];
+    }
 
     /**
-     * 2nd condition: pitch range
+     * 2nd condition (33%): REPERCUSSIO - Most repeated note
+     */
+
+    /** @type {string[]} array of all pitches in the chant */
+    const pitchFrequency = this.neumeComponents.map((nc) => nc.getPitch())
+    let counts = {};
+    // Count the frequency of each note
+    pitchFrequency.forEach((note) => {
+      if (counts[note] === undefined) {
+        counts[note] = 1;
+      } else {
+        counts[note] += 1;
+      }
+    });
+
+    // sort the counts dictionary by the keys
+    let sortedCounts = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+
+    /**  If one of the two expected repercussio notes is the most repeated note: 33% */
+    if (sortedCounts[0] === authenticRepercussio) {
+      mode = authenticMode;
+      rating += 0.33;
+      modeDescription += `Most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times).\n`;
+    } else if (sortedCounts[0] === plagalRepercussio) {
+      mode = plagalMode;
+      rating += 0.33;
+      modeDescription += `Most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times).\n`;
+    } else if (sortedCounts[0] === finalisPitch) {
+      /** If one of the two expected repercussio notes is the second most repeated note after the finalis: 25% */
+      if (sortedCounts[1] === authenticRepercussio) {
+        mode = authenticMode;
+        rating += 0.25;
+        modeDescription += `Second most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times) after the finalis.\n`;
+      } else if (sortedCounts[1] === plagalRepercussio) {
+        mode = plagalMode;
+        rating += 0.25;
+        modeDescription += `Second most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times) after the finalis.\n`;
+      }
+    } else {
+      /** If one of the two expected repercussio notes is the second most repeated note after a note other than the finalis: 17% */
+      if (sortedCounts[1] === authenticRepercussio) {
+        mode = authenticMode;
+        rating += 0.17;
+        modeDescription += `Second most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times) after a non-finalis '${sortedCounts[0]}' (${counts[sortedCounts[0]]} times).\n`;
+      } else if (sortedCounts[1] === plagalRepercussio) {
+        mode = plagalMode
+        rating += 0.17;
+        modeDescription += `Second most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times) after non-finalis '${sortedCounts[0]}' (${counts[sortedCounts[0]]} times).\n`;
+      } else if (sortedCounts[2] === authenticRepercussio) {
+        /** If one of the two expected repercussio notes is the third most repeated note: 12% */
+        mode = authenticMode;
+        rating += 0.12;
+        modeDescription += `Third most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times).\n`;
+      } else if (sortedCounts[2] === plagalRepercussio) {
+        mode = plagalMode;
+        rating += 0.12;
+        modeDescription += `Third most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times).\n`;
+      } else if (sortedCounts[3] === authenticRepercussio) {
+        /** If one of the two expected repercussio notes is the fourth most repeated note: 6% */
+        mode = authenticMode;
+        rating += 0.06;
+        modeDescription += `Fourth most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times).\n`;
+      }
+      else {
+        modeDescription += `No expected repercussio note is repeated more than 3 times.\n`;
+      }
+    }
+    if (env == 'development' && mode != -1) {
+      const modeType = mode % 2 === 0 ? 'Plagal' : 'Authentic';
+      console.log(sortedCounts);
+      console.log(modeDescription);
+      console.log(`Rating after repercussio: ${rating} with current mode detected: ${mode} (${modeType})`);
+    }
+    /**
+     * 3rd condition: AMBITUS - Range of the notes
      * If the pitch range is within an octave, it's 100% (`1`) sure that the chant is in that mode.
      * Otherwise, the rate is calculated as the number of notes within the predefined range divided by the total number of notes.
      * Equation: rate = (number of notes within the predetermined range) / (total number of notes)
@@ -382,61 +490,10 @@ export class Chant {
       return totalNotesInRange / totalNotes;
     }
 
-    // 3rd condition: Most frequent/repeated pitch
-    /** @type {string[]} array of all pitches in the chant */
-    const pitchFrequency = this.neumeComponents.map((nc) => nc.getPitch())
-    let counts = {};
-    // Count the frequency of each note
-    pitchFrequency.forEach((note) => {
-      if (counts[note] === undefined) {
-        counts[note] = 1;
-      } else {
-        counts[note] += 1;
-      }
-    });
-    // Find the most frequent note from the counts object (the key with the highest value)
-    let mostRepeatedPitch = ''; // the most frequent note
-    let maxValue = 0;
-    for (let key in counts) {
-      if (counts[key] > maxValue) {
-        maxValue = counts[key];
-        mostRepeatedPitch = key;
-      }
-    }
 
-    // Combine the 3 conditions to determine the mode
-    let mode = -1; // default undefined mode
-    let rating = 0; // default undefined rating
-
-    if (lastNotePitch === 'd' && mostRepeatedPitch === 'a') {
-      mode = 1;
-      rating = pitchRangeRate('d', 'd');
-    } else if (lastNotePitch === 'd' && mostRepeatedPitch === 'f') {
-      mode = 2;
-      rating = pitchRangeRate('a', 'a');
-    } else if (lastNotePitch === 'e' && (mostRepeatedPitch === 'c' || mostRepeatedPitch === 'b')) {
-      mode = 3;
-      rating = pitchRangeRate('e', 'e');
-    } else if (lastNotePitch === 'e' && mostRepeatedPitch === 'a') {
-      mode = 4;
-      rating = pitchRangeRate('b', 'b');
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'c') {
-      mode = 5;
-      rating = pitchRangeRate('f', 'f');
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'a') {
-      mode = 6;
-      rating = pitchRangeRate('c', 'c');
-    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'd') {
-      mode = 7;
-      rating = pitchRangeRate('g', 'g');
-    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'c') {
-      mode = 8;
-      rating = pitchRangeRate('d', 'd');
-    }
-
-    if (env == 'development') {
-      console.debug(`Mode ${mode} on ${this.fileName}.\nLast note: ${lastNotePitch}\nMost repeated: ${mostRepeatedPitch}\nPitch frequency: ${JSON.stringify(counts)}\nRating: ${rating}`);
-    }
+    // if (env == 'development') {
+    //   console.log(`Mode ${mode} on ${this.fileName}.\nLast note: ${finalisPitch}\nPitch frequency: ${JSON.stringify(counts)}\nRating: ${rating}`);
+    // }
     return [mode, rating];
   }
 
