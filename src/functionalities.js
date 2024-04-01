@@ -49,7 +49,8 @@ export async function constructDatabaseList() {
   databaseList.innerHTML = '';
   for (let chant of chantList) {
     let li = document.createElement('li');
-    li.textContent = chant.title;
+    // Let the options contains the title and the notation type of the chant
+    li.textContent = chant.title + " (" + chant.notationType + ")";
     li.style.wordBreak = "break-word";
     li.style.cursor = "pointer";
     li.style.padding = "0.3em 0";

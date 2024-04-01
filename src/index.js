@@ -15,7 +15,6 @@ import {
     liquescentCheckbox,
     quilismaCheckbox,
     oriscusCheckbox,
-    devOrnamentalShapes,
     refreshDatabaseWarning,
     aquitanianCheckbox,
     squareCheckbox,
@@ -71,10 +70,6 @@ document.onreadystatechange = function () {
         /* --------------- DEV MODE --------------- */
         "load, change".split(", ").forEach((event) => {
             window.addEventListener(event, () => {
-                let liquescentIsChecked = liquescentCheckbox.checked ? "liquescent" : "";
-                let quilismaIsChecked = quilismaCheckbox.checked ? "quilisma" : "";
-                let oriscusIsChecked = oriscusCheckbox.checked ? "oriscus" : "";
-                devOrnamentalShapes.textContent = [liquescentIsChecked, quilismaIsChecked, oriscusIsChecked].join(" ");
             })
         });
     }

@@ -2,7 +2,7 @@ import { Chant, NeumeComponent } from "../utility/components.js";
 import { retrieve, drawSVGFromMEIContent, printChantInformation } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
-  aquitanianCheckbox, squareCheckbox, 
+  aquitanianCheckbox, squareCheckbox,
   searchResultDiv,
   chantSVG, chantDisplay
 } from "../DOMelements.mjs";
@@ -106,7 +106,7 @@ export function showSearchResult(resultChantList) {
   resultTable.id = "result-table"; // for CSS styling
 
   // Create the head row of the table: "File Name" -- "Notation Type" -- "Mode"
-  const tableHeadRows = ["Title", "Music Script", "Mode", "Source", "PEM Database URL", "File Name"];
+  const tableHeadRows = ["Title", "Music Script", "Mode", "Source", "PEM Database", "File Name"];
   let headRow = document.createElement('thead');
   for (let headRowElement of tableHeadRows) {
     let th = document.createElement('th');
@@ -149,22 +149,27 @@ export function showSearchResult(resultChantList) {
     let tdMode = createTD(chant.mode);
 
     /** @type {HTMLAnchorElement} */
-    let td4link = document.createElement('a');
-    td4link.href = chant.pemDatabaseUrl;
-    td4link.textContent = chant.pemDatabaseUrl;
-    td4link.target = "_blank";
-    td4link.rel = "noopener noreferrer";
+    let td4link = document.createElement('p');
+    console.log(chant.pemDatabaseUrls);
+    for(let pemUrl of chant.pemDatabaseUrls) {
+      let a = document.createElement('a');
+      a.href = pemUrl;
+      a.innerText = pemUrl.split("/").pop() + "\n";
+      a.target = "_blank";
+      a.style.textDecoration = "underline";
+      td4link.appendChild(a);
+    }
 
     let tdPEMLink = createTD();
     tdPEMLink.appendChild(td4link);
 
     let tdSource = createTD(chant.source);
-    
+
     let tdTitle = createTD(chant.title);
 
     // In order: title, notation type, mode, source, PEM database URL, file name
     resultRow.appendChild(tdTitle);
-    resultRow.appendChild(tdNotationType);
+    resultRow.appendChild(tdNotationType); // Music script
     resultRow.appendChild(tdMode);
     resultRow.appendChild(tdSource);
     resultRow.appendChild(tdPEMLink);

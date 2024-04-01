@@ -158,7 +158,9 @@ export class NeumeComponentAQ extends NeumeComponent {
  * @property {NeumeComponentAQ[] | NeumeComponentSQ[]} neumeComponents an array of NeumeComponent
  * @property {number | string} mode the mode of the chant
  * @property {string} modeDescription an explaination of the mode detection
- * @property {string} pemDatabaseUrl the URL of the file on the PEM (Portuguese Early Music) database
+ * @property {string} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
+ * @property {string} title the title of the chant
+ * @property {string} source the source of the chant
  */
 export class Chant {
   /**
@@ -199,13 +201,14 @@ export class Chant {
     this.modeDescription = "Description of the mode";
 
     /** 
-     * @type {string} 
-     * @description the URL of the file on the PEM (Portuguese Early Music) database
+     * @type {string[]}
+     * @description the URL of the file on the PEM (Portuguese Early Music) database.
+     * Some chants have multiple URLs, so it's an array of URLs.
     */
-    this.pemDatabaseUrl = this.obtainDatabaseUrl();
+    this.pemDatabaseUrls = this.obtainDatabaseUrls();
 
     this.title = this.obtainTitle();
-    
+
     this.source = this.obtainSource();
   }
 
@@ -439,12 +442,13 @@ export class Chant {
 
   /**
    * Obtain the URL of the file on the PEM (Portuguese database)
-   * @returns {string} the URL of the file on the PEM
+   * @returns {string[]} the URL of the file on the PEM
    */
-  obtainDatabaseUrl() {
+  obtainDatabaseUrls() {
     const fileManifestation = this.meiParsedContent.querySelector('manifestation');
     const itemTargetTypeURL = fileManifestation.querySelector("item[targettype='url']");
-    const url = itemTargetTypeURL.attributes.getNamedItem("target").value;
+    const urls = itemTargetTypeURL.attributes.getNamedItem("target").value;
+    const url = urls.split('and');
     return url;
   }
 
