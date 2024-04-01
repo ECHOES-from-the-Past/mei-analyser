@@ -18,7 +18,7 @@ import { drawSVGFromMEIContent, loadMEIFile, printChantInformation, persist, ret
  */
 const env = import.meta.env.MODE;
 console.debug(`Current environment: ${env}`);
-const rootPath = env === "development" ? "../../GABCtoMEI/MEI_outfiles/" : "./database/";
+const rootPath = "https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoMEI/main/MEI_outfiles/";
 
 /* ----------------------- Persistence Layer ----------------------- */
 export function loadPersistedSearchOptions() {

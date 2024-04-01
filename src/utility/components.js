@@ -203,6 +203,10 @@ export class Chant {
      * @description the URL of the file on the PEM (Portuguese Early Music) database
     */
     this.pemDatabaseUrl = this.obtainDatabaseUrl();
+
+    this.title = this.obtainTitle();
+    
+    this.source = this.obtainSource();
   }
 
   /**
@@ -442,6 +446,18 @@ export class Chant {
     const itemTargetTypeURL = fileManifestation.querySelector("item[targettype='url']");
     const url = itemTargetTypeURL.attributes.getNamedItem("target").value;
     return url;
+  }
+
+  obtainTitle() {
+    const fileDescription = this.meiParsedContent.querySelector('fileDesc');
+    const title = fileDescription.querySelector('title').innerHTML;
+    return title;
+  }
+
+  obtainSource() {
+    const fileManifestation = this.meiParsedContent.querySelector('manifestation');
+    const source = fileManifestation.querySelector('identifier').innerHTML;
+    return source;
   }
 
   getFilePath() {

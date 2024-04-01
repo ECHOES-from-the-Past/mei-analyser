@@ -16,48 +16,47 @@
 </head>
 
 <body>
-  <div>
-    <div id="navbar">
-      <button id="search-mode-btn">
-        Search
-      </button>
+  <div id="navbar">
+    <button id="search-mode-btn">
+      Search
+    </button>
 
-      <button id="cross-comparison-mode-btn">
-        Cross Comparison
-      </button>
+    <button id="cross-comparison-mode-btn">
+      Cross Comparison
+    </button>
 
-      <button>
-        <a href="https://github.com/ECHOES-from-the-Past/mei-analyser/wiki" rel="external" target="_blank">
-          Project Wiki
-        </a>
-      </button>
+    <button>
+      <a href="https://github.com/ECHOES-from-the-Past/mei-analyser/wiki" rel="external" target="_blank">
+        Project Wiki
+      </a>
+    </button>
 
-      <button id="refresh-database-btn">
-        Refresh Database
-      </button>
+    <button id="refresh-database-btn">
+      Refresh Database
+    </button>
 
       <span style="color:red" id='refresh-database-warning' hidden>
         Please refresh the database!
       </span>
     </div>
 
-    <!-- Start of user interface -->
-    <div id="user-interface">
-      <!-- Start of search panel -->
-      <div id="search-panel" class="panel">
-        <div id="search-panel-grid">
-          <!-- Start of leftside search panel -->
-          <div id="search-panel-leftside">
-            <div class="section">
+  <!-- Start of user interface -->
+  <div id="user-interface">
+    <!-- Start of search panel -->
+    <div id="search-panel" class="panel">
+      <div id="search-panel-grid">
+        <!-- Start of leftside search panel -->
+        <div id="search-panel-leftside">
+          <div class="section">
 
-              <h1> Search Panel </h1>
-              <!-- <input id="pitch-radio" name="pattern-radio" type="radio" value="pitch" checked>
+            <h1> Search Panel </h1>
+            <!-- <input id="pitch-radio" name="pattern-radio" type="radio" value="pitch" checked>
               <label for="pitch-radio"> Pitch Pattern (pitch-based) </label>
               <br> -->
-              <!-- <input id="contour-radio" name="pattern-radio" type="radio" value="contour">
+            <!-- <input id="contour-radio" name="pattern-radio" type="radio" value="contour">
               <label for="contour-radio"> Contour (melodic intervals) </label>
               <br> -->
-              <!-- <label for="search-query"> Query: </label>
+            <!-- <label for="search-query"> Query: </label>
               <input id="search-query" placeholder="e.g.: 1 2 -1"> -->
               <p> Search for chant with the following notation types: </p>
               <input type="checkbox" id="aquitanian-checkbox" value="aquitanian-checkbox" checked>
@@ -76,115 +75,114 @@
               <button id="search-btn"> Search</button>
             </div>
 
-            <div id="chant-list database" class="section">
-              <h2> Database </h2>
-              <button id="view-database-btn"> View database </button>
-              <div>
-                <ul id="database-list">
-                  <!-- Chant list goes here -->
-                </ul>
-              </div>
-            </div>
-
-          </div>
-          <!-- End of leftside search panel -->
-          <!-- Start of rightside search panel -->
-          <div id="search-panel-rightside">
-            <div class="section">
-              <h1> Search Results </h1>
-              <div id="search-result">
-                <p> <i>Search results will display here</i></p>
-
-                <!-- Search results -->
-              </div>
-            </div>
-            <div id="chant-display" class="section">
-              <h2> Chant Display </h2>
-              <div id="chant-info">
-                <p> <i>Chant information will display here</i></p>
-                <!-- Chant information goes here -->
-              </div>
-              <div id="chant-svg">
-                <p><i>Chant visual will appear here</i></p>
-                <!-- Chant SVG goes here -->
-              </div>
-            </div>
-            <!-- End of rightside search panel -->
-          </div>
-          <!--  -->
-        </div>
-        <!-- End of search-panel-grid -->
-      </div>
-      <!-- end of search panel -->
-
-
-      <!-- Start of cross comparison panel -->
-      <div id="cross-comparison-panel" class="panel" hidden>
-        <h1> Cross comparison panel </h1>
-        <input type="radio" id="mismatch-analysis" name="analysis-mode" value="mismatch" checked>
-        <label for="mismatch-analysis"> Contour mismatches (blue) </label>
-        <br>
-        <input type="radio" id="gap-left" name="analysis-mode" value="gaps-left">
-        <label for="gap-left"> Contour gaps (red fillers on left chant) </label>
-        <br>
-        <input type="radio" id="gap-right" name="analysis-mode" value="gaps-right">
-        <label for="gap-right"> Contour gaps (red fillers on right chant) </label>
-        <br>
-        <input type="radio" id="gap-mismatch-left" name="analysis-mode" value="gaps-mismatch-left">
-        <label for="gap-mismatch-left"> Contour gaps and mismatches (red fillers on left chant) </label>
-        <br>
-        <input type="radio" id="gap-mismatch-right" name="analysis-mode" value="gaps-mismatch-right">
-        <label for="gap-mismatch-right"> Contour gaps and mismatches (red fillers on right chant) </label>
-        <br>
-        <br>
-        <button type="button" id="cross-comparison-btn">
-          Analyse
-        </button>
-        <br>
-        <div id="mei-grid">
-          <!-- File/Database selection part -->
-          <div id="mei-file-select">
+          <div id="chant-list database" class="section">
+            <h2> Database </h2>
+            <button id="view-database-btn"> View database </button>
             <div>
-              <label for="database-chant-left">Choose a chant from database:</label>
-              <select class="database-select" name="database-chant-left" id="database-chant-left">
-                <option value="placeholder">Select a chant for left slot</option>
-              </select>
+              <ul id="database-list">
+                <!-- Chant list goes here -->
+              </ul>
             </div>
-            <div>
-              <label for="database-chant-right">Choose a chant from database:</label>
-              <select class="database-select" name="database-chant-right" id="database-chant-right">
-                <option value="placeholder">Select a chant for the right slot</option>
-              </select>
-            </div>
-          </div>
-          <!-- File upload section -->
-          <div id="mei-file-select">
-            <p>or upload to left slot:
-              <span>
-                <input type='file' class="file-upload-box" id='file-input-left' />
-              </span>
-            </p>
-
-            <p>or upload to right slot:
-              <span>
-                <input type='file' class="file-upload-box" id='file-input-right' />
-              </span>
-            </p>
           </div>
 
-          <!-- Display of the chants -->
-          <div id="mei-display">
-            <div class="mei-file" id="mei-file-1">
-            </div>
-            <div class="mei-file" id="mei-file-2">
-            </div>
-          </div>
         </div>
+        <!-- End of leftside search panel -->
+        <!-- Start of rightside search panel -->
+        <div id="search-panel-rightside">
+          <div class="section">
+            <h1> Search Results </h1>
+            <div id="search-result">
+              <p> <i>Search results will display here</i></p>
+
+              <!-- Search results -->
+            </div>
+          </div>
+          <div id="chant-display" class="section">
+            <h2> Chant Display </h2>
+            <div id="chant-info">
+              <p>Chant information will display here</p>
+              <!-- Chant information goes here -->
+            </div>
+            <div id="chant-svg">
+              <p>Chant visual will appear here</p>
+              <!-- Chant SVG goes here -->
+            </div>
+          </div>
+          <!-- End of rightside search panel -->
+        </div>
+        <!--  -->
       </div>
-      <!-- End of cross comparison panel -->
+      <!-- End of search-panel-grid -->
     </div>
-    <!-- End of user interface -->
+    <!-- end of search panel -->
+
+
+    <!-- Start of cross comparison panel -->
+    <div id="cross-comparison-panel" class="panel" hidden>
+      <h1> Cross comparison panel </h1>
+      <input type="radio" id="mismatch-analysis" name="analysis-mode" value="mismatch" checked>
+      <label for="mismatch-analysis"> Contour mismatches (blue) </label>
+      <br>
+      <input type="radio" id="gap-left" name="analysis-mode" value="gaps-left">
+      <label for="gap-left"> Contour gaps (red fillers on left chant) </label>
+      <br>
+      <input type="radio" id="gap-right" name="analysis-mode" value="gaps-right">
+      <label for="gap-right"> Contour gaps (red fillers on right chant) </label>
+      <br>
+      <input type="radio" id="gap-mismatch-left" name="analysis-mode" value="gaps-mismatch-left">
+      <label for="gap-mismatch-left"> Contour gaps and mismatches (red fillers on left chant) </label>
+      <br>
+      <input type="radio" id="gap-mismatch-right" name="analysis-mode" value="gaps-mismatch-right">
+      <label for="gap-mismatch-right"> Contour gaps and mismatches (red fillers on right chant) </label>
+      <br>
+      <br>
+      <button type="button" id="cross-comparison-btn">
+        Analyse
+      </button>
+      <br>
+      <div id="mei-grid">
+        <!-- File/Database selection part -->
+        <div id="mei-file-select">
+          <div>
+            <label for="database-chant-left">Choose a chant from database:</label>
+            <select class="database-select" name="database-chant-left" id="database-chant-left">
+              <option value="placeholder">Select a chant for left slot</option>
+            </select>
+          </div>
+          <div>
+            <label for="database-chant-right">Choose a chant from database:</label>
+            <select class="database-select" name="database-chant-right" id="database-chant-right">
+              <option value="placeholder">Select a chant for the right slot</option>
+            </select>
+          </div>
+        </div>
+        <!-- File upload section -->
+        <div id="mei-file-select">
+          <p>or upload to left slot:
+            <span>
+              <input type='file' class="file-upload-box" id='file-input-left' />
+            </span>
+          </p>
+
+          <p>or upload to right slot:
+            <span>
+              <input type='file' class="file-upload-box" id='file-input-right' />
+            </span>
+          </p>
+        </div>
+
+        <!-- Display of the chants -->
+        <div id="mei-display">
+          <div class="mei-file" id="mei-file-1">
+          </div>
+          <div class="mei-file" id="mei-file-2">
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- End of cross comparison panel -->
   </div>
+  <!-- End of user interface -->
 </body>
 
 </html>
