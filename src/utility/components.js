@@ -190,15 +190,18 @@ export class Chant {
     /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
 
-    /** 
-     * @type {number} the mode of the chant. It has to be a number for sorting purposes.
-     * - For Aquitanian: the mode of the chant
-     * - For Square: the mode of the chant and a percentage of the mode certainty
-     */
-    this.mode = this.obtainMode();
+    if (this.getNotationType() === "square") {
+      let [sqMode, sqRating, modeDescription] = this.calculateSquareMode();
+      this.mode = sqMode == -1 ? undefined : sqMode;
+      this.modeCertainty =  Number(sqRating).toFixed(4) * 100;
 
-    /** @type {string} an explaination of the mode detection */
-    this.modeDescription = "Description of the mode";
+      /** @type {string} an explaination of the mode detection only availble for Square notation */
+      this.modeDescription = modeDescription;
+    } else if (this.getNotationType() === "aquitanian") {
+      let mode = this.calculateAquitanianMode();
+      this.mode = mode == -1 ? undefined : mode;
+      this.modeCertainty = mode == -1 ? undefined : 100;
+    }
 
     /** 
      * @type {string[]}
@@ -265,27 +268,6 @@ export class Chant {
     } else {
       return "aquitanian";
     }
-  }
-
-  /**
-   * Parse the MEI Content to extract the mode of the chant. This only works for Aquitanian notation.   * 
-   * @returns {Number} the mode of the chant
-   */
-  obtainMode() {
-    if (this.getNotationType() === "square") {
-      let [mode, squareRating] = this.calculateSquareMode();
-      if (mode == -1) {
-        return undefined;
-      }
-      if (squareRating < 1) {
-        return `${mode} - ${Number(squareRating * 100).toFixed(2)}% of notes in range`;
-      }
-      return `${mode}`;
-    } else if (this.getNotationType() === "aquitanian") {
-      let mode = this.calculateAquitanianMode();
-      return mode == -1 ? undefined : mode;
-    }
-    return undefined;
   }
 
   /**
@@ -364,34 +346,36 @@ export class Chant {
     let authenticRepercussio = '', plagalRepercussio = '';
 
     if (finalisPitch === 'd') {
+      rating += 0.34;
       authenticMode = 1;
       authenticRepercussio = 'a';
       plagalMode = 2;
       plagalRepercussio = 'F';
     } else if (finalisPitch === 'e') {
+      rating += 0.34;
       authenticMode = 3;
       authenticRepercussio = 'c'; // or 'b'
       plagalMode = 4;
       plagalRepercussio = 'a';
     } else if (finalisPitch === 'f') {
+      rating += 0.34;
       authenticMode = 5;
       authenticRepercussio = 'c';
       plagalMode = 6;
       plagalRepercussio = 'a';
     } else if (finalisPitch === 'g') {
+      rating += 0.34;
       authenticMode = 7;
       authenticRepercussio = 'd';
       plagalMode = 8;
       plagalRepercussio = 'c';
     } else {
       modeDescription += `Unable to detect the exact mode based on finalis.\n`;
-      return [mode, rating];
     }
 
     /**
      * 2nd condition (33%): REPERCUSSIO - Most repeated note
      */
-
     /** @type {string[]} array of all pitches in the chant */
     const pitchFrequency = this.neumeComponents.map((nc) => nc.getPitch())
     let counts = {};
@@ -451,8 +435,7 @@ export class Chant {
         mode = authenticMode;
         rating += 0.06;
         modeDescription += `Fourth most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times).\n`;
-      }
-      else {
+      } else {
         modeDescription += `No expected repercussio note is repeated more than 3 times.\n`;
       }
     }
@@ -462,26 +445,25 @@ export class Chant {
       console.log(modeDescription);
       console.log(`Rating after repercussio: ${rating} with current mode detected: ${mode} (${modeType})`);
     }
+
     /**
      * 3rd condition: AMBITUS - Range of the notes
-     * If the pitch range is within an octave, it's 100% (`1`) sure that the chant is in that mode.
-     * Otherwise, the rate is calculated as the number of notes within the predefined range divided by the total number of notes.
+     * The mode is calculated as the number of notes within the predefined range divided by the total number of notes.
      * Equation: rate = (number of notes within the predetermined range) / (total number of notes)
      * Example: if pitch range is "D-D", all notes are expected to be within the range of D2 to D3.
-     * To use: `pitchRange('d', 'd')`
-     * @param {string} lowerPitch the lower bound of the pitch range
-     * @param {string} upperPitch the upper bound of the pitch range
+     * @param {string} pitch the lower bound of the pitch range
      * @returns {number} the rate of the pitches within the range
-     * */
-    let pitchRangeRate = (lowerPitch, upperPitch) => {
+     * @usage pitchRange('d')
+     */
+    let pitchRangeRate = (pitch) => {
       const sortedNeumeComponents = this.neumeComponents.sort((a, b) => a.septenary() - b.septenary())
       const lowerOctave = sortedNeumeComponents[0].getOctave();
       let upperOctave = sortedNeumeComponents[sortedNeumeComponents.length - 1].getOctave();
       if (upperOctave === lowerOctave) {
         upperOctave += 1;
       }
-      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', lowerPitch, lowerOctave).septenary();
-      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', upperPitch, upperOctave).septenary();
+      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, lowerOctave).septenary();
+      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, upperOctave).septenary();
       const ncSeptenary = sortedNeumeComponents.map((nc) => nc.septenary());
 
       const totalNotes = ncSeptenary.length;
@@ -489,12 +471,45 @@ export class Chant {
 
       return totalNotesInRange / totalNotes;
     }
+    let modeFromAmbitus = -1;
+    let ratingFromAmbitus = 0, ratingAuthentic = 0, ratingPlagal = 0;
+    if (finalisPitch === 'd') {
+      ratingAuthentic = pitchRangeRate('d');
+      ratingPlagal = pitchRangeRate('a');
+    } else if (finalisPitch === 'e') {
+      ratingAuthentic = pitchRangeRate('e');
+      ratingPlagal = pitchRangeRate('b');
+    } else if (finalisPitch === 'f') {
+      ratingAuthentic = pitchRangeRate('f');
+      ratingPlagal = pitchRangeRate('c');
+    } else if (finalisPitch === 'g') {
+      ratingAuthentic = pitchRangeRate('g');
+      ratingPlagal = pitchRangeRate('d');
+    } else {
+      modeDescription += `Unable to detect the exact mode based on ambitus.\n`;
+    }
 
+    if (ratingAuthentic > ratingPlagal) {
+      modeFromAmbitus = authenticMode;
+      ratingFromAmbitus = ratingAuthentic;
+    } else {
+      modeFromAmbitus = plagalMode;
+      ratingFromAmbitus = ratingPlagal;
+    }
 
-    // if (env == 'development') {
-    //   console.log(`Mode ${mode} on ${this.fileName}.\nLast note: ${finalisPitch}\nPitch frequency: ${JSON.stringify(counts)}\nRating: ${rating}`);
-    // }
-    return [mode, rating];
+    if (modeFromAmbitus == mode) {
+      rating += 0.33;
+    } else {
+      rating += 0.17;
+      modeDescription += `Ambitus rating: ${ratingFromAmbitus}.\n`;
+    }
+    if (env == 'development') {
+      console.log(`Mode detected from ambitus: ${modeFromAmbitus} with rating ${ratingFromAmbitus}`);
+      // console.log(`Mode ${mode} on ${this.fileName}.\nLast note: ${finalisPitch}\nPitch frequency: ${JSON.stringify(counts)}\nRating: ${rating}`);
+      console.log(`Rating after ambitus: ${rating}`);
+      console.log(modeDescription);
+    }
+    return [mode, rating, modeDescription];
   }
 
   /**

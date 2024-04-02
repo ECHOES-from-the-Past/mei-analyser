@@ -146,12 +146,18 @@ export function showSearchResult(resultChantList) {
     tdFileName.style.cursor = "pointer";
 
     let tdNotationType = createTD(chant.notationType);
-    let tdMode = createTD(chant.mode);
+    let tdMode;
+    if (chant.mode != undefined) {
+      tdMode = createTD(`${chant.mode} (${chant.modeCertainty}%)`);
+    } else {
+      tdMode = createTD("undetected");
+      tdMode.style.color = "red";
+    }
 
     /** @type {HTMLAnchorElement} */
     let td4link = document.createElement('p');
-    console.log(chant.pemDatabaseUrls);
-    for(let pemUrl of chant.pemDatabaseUrls) {
+
+    for (let pemUrl of chant.pemDatabaseUrls) {
       let a = document.createElement('a');
       a.href = pemUrl;
       a.innerText = pemUrl.split("/").pop() + "\n";

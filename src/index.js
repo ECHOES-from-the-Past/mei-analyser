@@ -87,11 +87,10 @@ crossComparisonModeButton.addEventListener("click", () => {
 });
 
 refreshDatabaseButton.addEventListener("click", async () => {
+    refreshDatabaseWarning.hidden = true;
     await loadDatabaseToChant();
     if (databaseIsOpen) constructDatabaseList();
-    alert("Database refreshed!");
     persist("version", pjson.version);
-    refreshDatabaseWarning.hidden = true;
 });
 
 /* --------------- SEARCH PANEL PERSISTANCE --------------- */
@@ -140,8 +139,9 @@ viewDatabaseButton.addEventListener("click", () => {
 
 searchButton.addEventListener("click", () => {
     // Clear the display when performing a new search
-    chantInfo.innerHTML = "<p><i>Chant information will display here</i></p>";
-    chantSVG.innerHTML = "<p><i> Click on the chant's file name to display </i></p>";
+    chantInfo.innerHTML = "<p> Chant information will display here </p>";
+    chantSVG.innerHTML = "<p> Click on the chant's file name to display </p>";
+    chantSVG.style = ""; // clear the border styling of the chant SVG
 
     // Perform search and display the result
     let resultChantList = performSearch();
