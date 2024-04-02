@@ -11,6 +11,9 @@ export const refreshDatabaseButton = document.getElementById('refresh-database-b
 /** @type {HTMLSpanElement} */
 export const refreshDatabaseWarning = document.getElementById('refresh-database-warning');
 
+/** @type {HTMLElement} */
+export const refreshIndicator = document.getElementById('refresh-indicator');
+
 /* -------------- DOM ELEMENTS -------------- */
 /* Search-related */
 /** @type {HTMLInputElement} */

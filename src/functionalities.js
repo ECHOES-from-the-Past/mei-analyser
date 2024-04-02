@@ -8,7 +8,8 @@ import {
   quilismaCheckbox,
   oriscusCheckbox,
   aquitanianCheckbox,
-  squareCheckbox
+  squareCheckbox,
+  refreshIndicator
 } from './DOMelements.mjs';
 import { drawSVGFromMEIContent, loadMEIFile, printChantInformation, persist, retrieve } from './utility/utils.js';
 
@@ -76,8 +77,10 @@ export async function constructDatabaseList() {
 export async function loadDatabaseToChant() {
   /** @type {Chant[]} A list of all the chants in the database */
   let chantList = [];
-  // console.debug(database);
-  console.log('Loading the entire corpus to browser memory...')
+
+  // display the indicator
+  refreshIndicator.textContent = "Loading the database...";
+  refreshIndicator.hidden = false;
 
   for (let filename of database) {
     const filePath = rootPath + filename;
@@ -86,5 +89,9 @@ export async function loadDatabaseToChant() {
     chantList.push(chant);
   }
   persist('chantList', chantList);
-  console.log('Corpus successfully loaded to browser memory.');
+
+  refreshIndicator.textContent = "Database refresh successfully!";
+  // sleep for 2 seconds
+  await new Promise(resolve => setTimeout(resolve, 2000));
+  refreshIndicator.hidden = true;
 }

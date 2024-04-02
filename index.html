@@ -35,10 +35,12 @@
       Refresh Database
     </button>
 
-      <span style="color:red" id='refresh-database-warning' hidden>
-        Please refresh the database!
-      </span>
-    </div>
+    <span style="color:red" id='refresh-database-warning' hidden>
+      Please refresh the database!
+    </span>
+
+    <span style="color:green; font:bold" id="refresh-indicator" hidden></span>
+  </div>
 
   <!-- Start of user interface -->
   <div id="user-interface">
@@ -58,22 +60,22 @@
               <br> -->
             <!-- <label for="search-query"> Query: </label>
               <input id="search-query" placeholder="e.g.: 1 2 -1"> -->
-              <p> Search for chant with the following notation types: </p>
-              <input type="checkbox" id="aquitanian-checkbox" value="aquitanian-checkbox" checked>
-              <label for="aquitanian-checkbox"> Aquitanian </label>
-              <input type="checkbox" id="square-checkbox" value="square-checkbox">
-              <label for="square-checkbox"> Square </label>
-              <p> Search for chants that has ornamental figure(s): <br> (No selection will display all chants) </p>
-              <input type="checkbox" id="liquescent-checkbox" value="liquescent">
-              <label for="liquescent-checkbox"> Liquescent </label>
-              <input type="checkbox" id="quilisma-checkbox" value="quilisma">
-              <label for="quilisma-checkbox"> Quilisma </label>
-              <input type="checkbox" id="oriscus-checkbox" value="oriscus">
-              <label for="oriscus-checkbox"> Oriscus </label>
-              <br>
-              <br>
-              <button id="search-btn"> Search</button>
-            </div>
+            <p> Search for chant with the following notation types: </p>
+            <input type="checkbox" id="aquitanian-checkbox" value="aquitanian-checkbox" checked>
+            <label for="aquitanian-checkbox"> Aquitanian </label>
+            <input type="checkbox" id="square-checkbox" value="square-checkbox">
+            <label for="square-checkbox"> Square </label>
+            <p> Search for chants that has ornamental figure(s): <br> (No selection will display all chants) </p>
+            <input type="checkbox" id="liquescent-checkbox" value="liquescent">
+            <label for="liquescent-checkbox"> Liquescent </label>
+            <input type="checkbox" id="quilisma-checkbox" value="quilisma">
+            <label for="quilisma-checkbox"> Quilisma </label>
+            <input type="checkbox" id="oriscus-checkbox" value="oriscus">
+            <label for="oriscus-checkbox"> Oriscus </label>
+            <br>
+            <br>
+            <button id="search-btn"> Search</button>
+          </div>
 
           <div id="chant-list database" class="section">
             <h2> Database </h2>
