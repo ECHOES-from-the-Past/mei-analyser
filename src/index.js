@@ -16,7 +16,8 @@ import {
     chantInfo,
     chantSVG,
     chantDisplay,
-    refreshIndicator
+    refreshIndicator,
+    searchResultDiv
 } from './DOMelements.mjs';
 import {
     drawSVGFromMEIContent, loadMEIFile,
@@ -101,6 +102,7 @@ async function loadDatabaseToChant() {
     // display the indicator
     refreshIndicator.textContent = "Loading the database...";
     refreshIndicator.hidden = false;
+    searchResultDiv.innerHTML = '<p> Search results will display here. </p>';
 
     for (let filename of database) {
         const filePath = rootPath + filename;

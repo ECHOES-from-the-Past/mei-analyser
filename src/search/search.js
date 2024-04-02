@@ -207,9 +207,6 @@ export function showSearchResult(resultChantList) {
  */
 function printChantInformation(chant) {
   chantInfo.innerHTML = '';
-  let title = document.createElement('h3');
-  title.textContent = "Chant Information";
-  chantInfo.appendChild(title);
 
   let info = {
     "Title": chant.title,

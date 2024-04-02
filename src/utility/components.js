@@ -476,7 +476,7 @@ export class Chant {
       return totalNotesInRange / totalNotes;
     }
     let modeFromAmbitus = -1;
-    let ratingFromAmbitus = 0, ratingAuthentic = 0, ratingPlagal = 0;
+    let ratingAuthentic = 0, ratingPlagal = 0;
     if (finalisPitch === 'd') {
       ratingAuthentic = pitchRangeRate('d');
       ratingPlagal = pitchRangeRate('a');
@@ -495,22 +495,21 @@ export class Chant {
 
     if (ratingAuthentic > ratingPlagal) {
       modeFromAmbitus = authenticMode;
-      ratingFromAmbitus = ratingAuthentic;
+      modeDescription += `Ambitus suggests authentic mode '${modeFromAmbitus}' with ${Number(ratingAuthentic).toFixed(4)*100}% of notes in range.\n`;
     } else {
       modeFromAmbitus = plagalMode;
-      ratingFromAmbitus = ratingPlagal;
+      modeDescription += `Ambitus suggests plagal mode '${modeFromAmbitus}' with ${Number(ratingPlagal).toFixed(4)*100}% of notes in range.\n`;
     }
 
     if (modeFromAmbitus == mode) {
       rating += 0.33;
+      modeDescription += `Mode detected from ambitus ('${modeFromAmbitus}') is the same as mode detected from finalis and repercussio ('${mode == -1 ? "undetected" : mode}').\n`;
     } else {
       rating += 0.17;
-      modeDescription += `Ambitus rating: ${ratingFromAmbitus}.\n`;
+      modeDescription += `Mode detected from ambitus ('${modeFromAmbitus}') is different from mode detected from finalis and repercussio ('${mode == -1 ? "undetected" : mode}').\n`;
     }
+
     if (env == 'development') {
-      console.log(`Mode detected from ambitus: ${modeFromAmbitus} with rating ${ratingFromAmbitus}`);
-      // console.log(`Mode ${mode} on ${this.fileName}.\nLast note: ${finalisPitch}\nPitch frequency: ${JSON.stringify(counts)}\nRating: ${rating}`);
-      console.log(`Rating after ambitus: ${rating}`);
       console.log(modeDescription);
     }
     rating = Number(rating).toFixed(3);
