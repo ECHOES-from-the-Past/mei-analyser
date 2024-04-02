@@ -1,3 +1,5 @@
+import { env } from "./utils";
+
 /**
  * An "abstract" class for a Neume Component (`<nc>`).
  * All Neume Components has an id and an optional tilt field.
@@ -146,19 +148,22 @@ export class NeumeComponentAQ extends NeumeComponent {
   }
 }
 
-/**
- * @typedef {Object} Chant
+
+
+/** 
+ * @type {Object}
  * @property {string} filePath the path of the .mei file
  * @property {string} fileName the name of the .mei file
- * @property {string} meiContent the XML content of the .mei file as a string
- * @property {XMLDocument} meiParsedContent the parsed XML content of the .mei file
+ * @property {string} meiContent the content of the .mei file
+ * @property {XMLDocument} meiParsedContent the parsed content of the .mei file
  * @property {string} notationType the notation type of the chant (either "aquitanian" or "square")
- * @property {NeumeComponentAQ[] | NeumeComponentSQ[]} neumeComponents an array of NeumeComponent belongs to the chant
- * @property {string | number} mode the mode of the chant and/or extra information about the mode
- * @property {string} pemDatabaseUrl hyperlink address to the Portuguese Early Music database
- * 
- */
-
+ * @property {NeumeComponentAQ[] | NeumeComponentSQ[]} neumeComponents an array of NeumeComponent
+ * @property {number} mode the mode of the chant
+ * @property {string} modeDescription an explaination of the mode detection
+ * @property {string[]} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
+ * @property {string} title the title of the chant
+ * @property {string} source the source of the chant
+*/
 export class Chant {
   /**
    * Constructing a Chant object from a .mei file content
@@ -185,17 +190,28 @@ export class Chant {
     /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
 
-    /** @type {number} */
-    this.mode = this.obtainMode();
+    if (this.getNotationType() === "square") {
+      let [sqMode, sqRating, modeDescription] = this.calculateSquareMode();
+      this.mode = sqMode == -1 ? undefined : sqMode;
+      this.modeCertainty =  sqRating * 100;
+
+      /** @type {string} an explaination of the mode detection only availble for Square notation */
+      this.modeDescription = modeDescription;
+    } else if (this.getNotationType() === "aquitanian") {
+      let mode = this.calculateAquitanianMode();
+      this.mode = mode == -1 ? undefined : mode;
+      this.modeCertainty = mode == -1 ? undefined : 100;
+    }
 
     /** 
-     * @type {string} 
-     * @description the URL of the file on the PEM (Portuguese Early Music) database
+     * @type {string[]}
+     * @description the URL of the file on the PEM (Portuguese Early Music) database.
+     * Some chants have multiple URLs, so it's an array of URLs.
     */
-    this.pemDatabaseUrl = this.obtainDatabaseUrl();
+    this.pemDatabaseUrls = this.obtainDatabaseUrls();
 
     this.title = this.obtainTitle();
-    
+
     this.source = this.obtainSource();
   }
 
@@ -255,27 +271,6 @@ export class Chant {
   }
 
   /**
-   * Parse the MEI Content to extract the mode of the chant. This only works for Aquitanian notation.   * 
-   * @returns {Number} the mode of the chant
-   */
-  obtainMode() {
-    if (this.getNotationType() === "square") {
-      let [mode, squareRating] = this.calculateSquareMode();
-      if (mode == -1) {
-        return undefined;
-      }
-      if (squareRating < 1) {
-        return `${mode} - ${Number(squareRating * 100).toFixed(2)}% of notes in range`;
-      }
-      return `${mode}`;
-    } else if (this.getNotationType() === "aquitanian") {
-      let mode = this.calculateAquitanianMode();
-      return mode == -1 ? undefined : mode;
-    }
-    return undefined;
-  }
-
-  /**
    * Helper function to calculate the mode of the Aquitanian chant.
    * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8 for Aquitanian mode detection
    * @returns {number} the mode of the chant. If the mode is not found, return -1
@@ -332,44 +327,55 @@ export class Chant {
 
   /**
    * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode detection
-   * @returns {[number, pitchRangeRate]} the mode of the chant. If the mode is not found, return -1.
+   * @returns {[number, number, number]} the mode of the chant. If the mode is not found, return -1.
    */
   calculateSquareMode() {
+    // Combine the 3 conditions to determine the mode
+    let mode = -1;    // default undefined mode
+    let rating = 0;   // default undefined rating
+    let modeDescription = '';
+
     /** 
-     * 1st condtion: the last note's pitch of the Square notation chant 
+     * 1st condtion (34%): FINALIS - the last note's pitch of the Square notation chant
      * @type {NeumeComponentSQ}
-    */
-    const lastNotePitch = this.neumeComponents[this.neumeComponents.length - 1].getPitch();
+     */
+    const finalisPitch = this.neumeComponents[this.neumeComponents.length - 1].getPitch();
+    modeDescription += `Finalis pitch is '${finalisPitch}'.\n`;
 
-    /**
-     * 2nd condition: pitch range
-     * If the pitch range is within an octave, it's 100% (`1`) sure that the chant is in that mode.
-     * Otherwise, the rate is calculated as the number of notes within the predefined range divided by the total number of notes.
-     * Equation: rate = (number of notes within the predetermined range) / (total number of notes)
-     * Example: if pitch range is "D-D", all notes are expected to be within the range of D2 to D3.
-     * To use: `pitchRange('d', 'd')`
-     * @param {string} lowerPitch the lower bound of the pitch range
-     * @param {string} upperPitch the upper bound of the pitch range
-     * @returns {number} the rate of the pitches within the range
-     * */
-    let pitchRangeRate = (lowerPitch, upperPitch) => {
-      const sortedNeumeComponents = this.neumeComponents.sort((a, b) => a.septenary() - b.septenary())
-      const lowerOctave = sortedNeumeComponents[0].getOctave();
-      let upperOctave = sortedNeumeComponents[sortedNeumeComponents.length - 1].getOctave();
-      if (upperOctave === lowerOctave) {
-        upperOctave += 1;
-      }
-      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', lowerPitch, lowerOctave).septenary();
-      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', upperPitch, upperOctave).septenary();
-      const ncSeptenary = sortedNeumeComponents.map((nc) => nc.septenary());
+    let authenticMode = -1, plagalMode = -1;
+    let authenticRepercussio = '', plagalRepercussio = '';
 
-      const totalNotes = ncSeptenary.length;
-      const totalNotesInRange = ncSeptenary.filter((septenaryValue) => septenaryValue >= lowerBoundNCSeptenary && septenaryValue <= upperBoundNCSeptenary).length;
-
-      return totalNotesInRange / totalNotes;
+    if (finalisPitch === 'd') {
+      rating += 0.34;
+      authenticMode = 1;
+      authenticRepercussio = 'a';
+      plagalMode = 2;
+      plagalRepercussio = 'f';
+    } else if (finalisPitch === 'e') {
+      rating += 0.34;
+      authenticMode = 3;
+      authenticRepercussio = 'c'; // or 'b'
+      plagalMode = 4;
+      plagalRepercussio = 'a';
+    } else if (finalisPitch === 'f') {
+      rating += 0.34;
+      authenticMode = 5;
+      authenticRepercussio = 'c';
+      plagalMode = 6;
+      plagalRepercussio = 'a';
+    } else if (finalisPitch === 'g') {
+      rating += 0.34;
+      authenticMode = 7;
+      authenticRepercussio = 'd';
+      plagalMode = 8;
+      plagalRepercussio = 'c';
+    } else {
+      modeDescription += `Unable to detect the exact mode based on finalis.\n`;
     }
 
-    // 3rd condition: Most frequent/repeated pitch
+    /**
+     * 2nd condition (33%): REPERCUSSIO - Most repeated note
+     */
     /** @type {string[]} array of all pitches in the chant */
     const pitchFrequency = this.neumeComponents.map((nc) => nc.getPitch())
     let counts = {};
@@ -381,56 +387,144 @@ export class Chant {
         counts[note] += 1;
       }
     });
-    // Find the most frequent note from the counts object (the key with the highest value)
-    let mostRepeatedPitch = ''; // the most frequent note
-    let maxValue = 0;
-    for (let key in counts) {
-      if (counts[key] > maxValue) {
-        maxValue = counts[key];
-        mostRepeatedPitch = key;
+
+    // sort the counts dictionary by the keys
+    let sortedCounts = Object.keys(counts).sort((a, b) => counts[b] - counts[a]);
+
+    /**  If one of the two expected repercussio notes is the most repeated note: 33% */
+    if (sortedCounts[0] === authenticRepercussio) {
+      mode = authenticMode;
+      rating += 0.33;
+      modeDescription += `Authentic repercussio detected, the most repeated pitch is ${authenticRepercussio} (${counts[authenticRepercussio]} times).\n`;
+    } else if (sortedCounts[0] === plagalRepercussio) {
+      mode = plagalMode;
+      rating += 0.33;
+      modeDescription += `Plagal repercussio detected, the most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times).\n`;
+    } else if (sortedCounts[0] === finalisPitch) {
+      /** If one of the two expected repercussio notes is the second most repeated note after the finalis: 25% */
+      if (sortedCounts[1] === authenticRepercussio) {
+        mode = authenticMode;
+        rating += 0.25;
+        modeDescription += `Authentic repercussio detected, the second most repeated pitch is ${authenticRepercussio} (${counts[authenticRepercussio]} times) after the finalis.\n`;
+      } else if (sortedCounts[1] === plagalRepercussio) {
+        mode = plagalMode;
+        rating += 0.25;
+        modeDescription += `Plagal repercussio detected, the second most repeated pitch is ${plagalRepercussio} (${counts[plagalRepercussio]} times) after the finalis.\n`;
+      }
+    } else {
+      /** If one of the two expected repercussio notes is the second most repeated note after a note other than the finalis: 17% */
+      if (sortedCounts[1] === authenticRepercussio) {
+        mode = authenticMode;
+        rating += 0.17;
+        modeDescription += `Authentic repercussio detected, with the second most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times) after a non-finalis '${sortedCounts[0]}' (${counts[sortedCounts[0]]} times).\n`;
+      } else if (sortedCounts[1] === plagalRepercussio) {
+        mode = plagalMode
+        rating += 0.17;
+        modeDescription += `Plagal repercussio detected, the second most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times) after non-finalis '${sortedCounts[0]}' (${counts[sortedCounts[0]]} times).\n`;
+      } else if (sortedCounts[2] === authenticRepercussio) {
+        /** If one of the two expected repercussio notes is the third most repeated note: 12% */
+        mode = authenticMode;
+        rating += 0.12;
+        modeDescription += `Plagal repercussio detected, the third most repeated note is '${authenticRepercussio}' (${counts[authenticRepercussio]} times).\n`;
+      } else if (sortedCounts[2] === plagalRepercussio) {
+        mode = plagalMode;
+        rating += 0.12;
+        modeDescription += `Plagal repercussio detected, the third most repeated note is '${plagalRepercussio}' (${counts[plagalRepercussio]} times).\n`;
+      } else if (sortedCounts[3] === authenticRepercussio) {
+        /** If one of the two expected repercussio notes is the fourth most repeated note: 6% */
+        mode = authenticMode;
+        rating += 0.06;
+        modeDescription += `Authentic repercussio detected, with the fourth most repeated note is '${authenticRepercussio}' (${counts[authenticRepercussio]} times).\n`;
+      } else if (sortedCounts[3] === plagalRepercussio) {
+        mode = plagalMode;
+        rating += 0.06;
+        modeDescription += `Plagal repercussio detected, the fourth most repeated note is '${plagalRepercussio}' (${counts[plagalRepercussio]} times).\n`;
+      } else {
+        modeDescription += `No expected repercussio note is repeated more than 3 times.\n`;
       }
     }
-
-    // Combine the 3 conditions to determine the mode
-    let mode = -1; // default undefined mode
-    let rating = 0; // default undefined rating
-
-    if (lastNotePitch === 'd' && mostRepeatedPitch === 'a') {
-      mode = 1;
-      rating = pitchRangeRate('d', 'd');
-    } else if (lastNotePitch === 'd ' && mostRepeatedPitch === 'f') {
-      mode = 2;
-      rating = pitchRangeRate('a', 'a');
-    } else if (lastNotePitch === 'e' && (mostRepeatedPitch === 'c' || mostRepeatedPitch === 'b')) {
-      mode = 3;
-      rating = pitchRangeRate('e', 'e');
-    } else if (lastNotePitch === 'e' && mostRepeatedPitch === 'a') {
-      mode = 4;
-      rating = pitchRangeRate('b', 'b');
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'd') {
-      mode = 5;
-      rating = pitchRangeRate('f', 'f');
-    } else if (lastNotePitch === 'f' && mostRepeatedPitch === 'c') {
-      mode = 6;
-      rating = pitchRangeRate('c', 'c');
-    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'd') {
-      mode = 7;
-      rating = pitchRangeRate('g', 'g');
-    } else if (lastNotePitch === 'g' && mostRepeatedPitch === 'c') {
-      mode = 8;
-      rating = pitchRangeRate('d', 'd');
+    if (env == 'development' && mode != -1) {
+      const modeType = mode % 2 === 0 ? 'Plagal' : 'Authentic';
+      console.log(sortedCounts);
+      console.log(modeDescription);
+      console.log(`Rating after repercussio: ${rating} with current mode detected: ${mode} (${modeType})`);
     }
-    return [mode, rating];
+
+    /**
+     * 3rd condition: AMBITUS - Range of the notes
+     * The mode is calculated as the number of notes within the predefined range divided by the total number of notes.
+     * Equation: rate = (number of notes within the predetermined range) / (total number of notes)
+     * Example: if pitch range is "D-D", all notes are expected to be within the range of D2 to D3.
+     * @param {string} pitch the lower bound of the pitch range
+     * @returns {number} the rate of the pitches within the range
+     * @usage pitchRange('d')
+     */
+    let pitchRangeRate = (pitch) => {
+      const sortedNeumeComponents = this.neumeComponents.sort((a, b) => a.septenary() - b.septenary())
+      const lowerOctave = sortedNeumeComponents[0].getOctave();
+      let upperOctave = sortedNeumeComponents[sortedNeumeComponents.length - 1].getOctave();
+      if (upperOctave === lowerOctave) {
+        upperOctave += 1;
+      }
+      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, lowerOctave).septenary();
+      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, upperOctave).septenary();
+      const ncSeptenary = sortedNeumeComponents.map((nc) => nc.septenary());
+
+      const totalNotes = ncSeptenary.length;
+      const totalNotesInRange = ncSeptenary.filter((septenaryValue) => septenaryValue >= lowerBoundNCSeptenary && septenaryValue <= upperBoundNCSeptenary).length;
+
+      return totalNotesInRange / totalNotes;
+    }
+    let modeFromAmbitus = -1;
+    let ratingAuthentic = 0, ratingPlagal = 0;
+    if (finalisPitch === 'd') {
+      ratingAuthentic = pitchRangeRate('d');
+      ratingPlagal = pitchRangeRate('a');
+    } else if (finalisPitch === 'e') {
+      ratingAuthentic = pitchRangeRate('e');
+      ratingPlagal = pitchRangeRate('b');
+    } else if (finalisPitch === 'f') {
+      ratingAuthentic = pitchRangeRate('f');
+      ratingPlagal = pitchRangeRate('c');
+    } else if (finalisPitch === 'g') {
+      ratingAuthentic = pitchRangeRate('g');
+      ratingPlagal = pitchRangeRate('d');
+    } else {
+      modeDescription += `Unable to detect the exact mode based on ambitus.\n`;
+    }
+
+    if (ratingAuthentic > ratingPlagal) {
+      modeFromAmbitus = authenticMode;
+      modeDescription += `Ambitus suggests authentic mode '${modeFromAmbitus}' with ${Number(ratingAuthentic).toFixed(4)*100}% of notes in range.\n`;
+    } else {
+      modeFromAmbitus = plagalMode;
+      modeDescription += `Ambitus suggests plagal mode '${modeFromAmbitus}' with ${Number(ratingPlagal).toFixed(4)*100}% of notes in range.\n`;
+    }
+
+    if (modeFromAmbitus == mode) {
+      rating += 0.33;
+      modeDescription += `Mode detected from ambitus ('${modeFromAmbitus}') is the same as mode detected from finalis and repercussio ('${mode == -1 ? "undetected" : mode}').\n`;
+    } else {
+      rating += 0.17;
+      modeDescription += `Mode detected from ambitus ('${modeFromAmbitus}') is different from mode detected from finalis and repercussio ('${mode == -1 ? "undetected" : mode}').\n`;
+    }
+
+    if (env == 'development') {
+      console.log(modeDescription);
+    }
+    rating = Number(rating).toFixed(3);
+    return [mode, rating, modeDescription];
   }
 
   /**
    * Obtain the URL of the file on the PEM (Portuguese database)
-   * @returns {string} the URL of the file on the PEM
+   * @returns {string[]} the URL of the file on the PEM
    */
-  obtainDatabaseUrl() {
+  obtainDatabaseUrls() {
     const fileManifestation = this.meiParsedContent.querySelector('manifestation');
     const itemTargetTypeURL = fileManifestation.querySelector("item[targettype='url']");
-    const url = itemTargetTypeURL.attributes.getNamedItem("target").value;
+    const urls = itemTargetTypeURL.attributes.getNamedItem("target").value;
+    const url = urls.split('and');
     return url;
   }
 

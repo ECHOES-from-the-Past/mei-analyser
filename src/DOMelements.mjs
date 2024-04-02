@@ -11,9 +11,8 @@ export const refreshDatabaseButton = document.getElementById('refresh-database-b
 /** @type {HTMLSpanElement} */
 export const refreshDatabaseWarning = document.getElementById('refresh-database-warning');
 
-/** @type {HTMLButtonElement} */
-export const devModeButton = document.getElementById('devMode-btn');
-
+/** @type {HTMLElement} */
+export const refreshIndicator = document.getElementById('refresh-indicator');
 
 /* -------------- DOM ELEMENTS -------------- */
 /* Search-related */
@@ -75,7 +74,3 @@ export const fileInputLeft = document.getElementById('file-input-left');
 
 /** @type {HTMLInputElement} */
 export const fileInputRight = document.getElementById('file-input-right');
-
-/* ---------------------------- DEV MODE ---------------------------- */
-/** @type {HTMLSpanElement} */
-export const devOrnamentalShapes = document.getElementById('dev-ornamental-shapes');

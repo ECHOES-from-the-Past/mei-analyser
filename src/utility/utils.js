@@ -1,10 +1,7 @@
 import { NeumeComponentAQ, NeumeComponentSQ } from './components.js';
-import {
-  chantInfo
-} from '../DOMelements.mjs';
 import database from '../database/database.json';
 
-const env = import.meta.env.MODE; // 'development' or 'production'
+export const env = import.meta.env.MODE; // 'development' or 'production'
 
 /** @type {String} root path to the database folder based on the environment */
 let databasePath = "";
@@ -176,26 +173,4 @@ export function clearStorage() {
  */
 export function checkPersistanceExists(key) {
   return localStorage.getItem(key) !== null;
-}
-
-/**
- * 
- * @param {Chant} chant the chant which information is to be extracted and printed
- */
-export function printChantInformation(chant) {
-  chantInfo.innerHTML = '';
-  let title = document.createElement('h3');
-  title.textContent = "Chant Information";
-  chantInfo.appendChild(title);
-  let info = {
-    "File Name": chant.fileName,
-    "Notation Type": chant.notationType,
-    "Mode": chant.mode,
-    "PEM Database URL": chant.pemDatabaseUrl
-  };
-  for (let k in info) {
-    let p = document.createElement('p');
-    p.innerHTML = `<b>${k}</b>: ${info[k]}`;
-    chantInfo.appendChild(p);
-  }
 }
