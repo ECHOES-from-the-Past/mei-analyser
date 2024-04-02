@@ -1,10 +1,9 @@
 import { Chant, NeumeComponent } from "../utility/components.js";
-import { retrieve, drawSVGFromMEIContent, printChantInformation } from "../utility/utils.js";
+import { retrieve, drawSVGFromMEIContent } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
-  searchResultDiv,
-  chantSVG, chantDisplay
+  searchResultDiv, chantInfo, chantSVG, chantDisplay
 } from "../DOMelements.mjs";
 
 /**
@@ -200,4 +199,47 @@ export function showSearchResult(resultChantList) {
 
   // Append the table to the search-result div
   searchResultDiv.appendChild(resultTable);
+}
+
+/**
+ * Display the chant's information to the screen
+ * @param {Chant} chant the chant which information is to be extracted and printed
+ */
+function printChantInformation(chant) {
+  chantInfo.innerHTML = '';
+  let title = document.createElement('h3');
+  title.textContent = "Chant Information";
+  chantInfo.appendChild(title);
+
+  let info = {
+    "Title": chant.title,
+    "Source": chant.source,
+    "Music script": chant.notationType,
+    "Mode": chant.mode == undefined ? "Undetected" : chant.mode,
+    "Mode Certainty": chant.modeCertainty == undefined ? "-" : chant.modeCertainty + "%",
+    "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription,
+    "File Name": chant.fileName,
+    "PEM Database URL": chant.pemDatabaseUrls,
+  };
+
+  for (let k in info) {
+    let p = document.createElement('p');
+    if (k == "PEM Database URL") {
+      p.innerHTML = `<b>${k}</b>: `;
+      for (let url of info[k]) {
+        let a = document.createElement('a');
+        a.href = url;
+        a.target = "_blank";
+        a.innerText = url;
+        p.appendChild(a);
+        // Add "or" if it is not the last URL
+        if (info[k].indexOf(url) != info[k].length - 1) {
+          p.innerHTML += " or ";
+        }
+      }
+    } else {
+      p.innerHTML = `<b>${k}</b>: ${info[k]}`;
+    }
+    chantInfo.appendChild(p);
+  }
 }

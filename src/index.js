@@ -19,7 +19,7 @@ import {
     refreshIndicator
 } from './DOMelements.mjs';
 import {
-    drawSVGFromMEIContent, loadMEIFile, printChantInformation, 
+    drawSVGFromMEIContent, loadMEIFile,
     checkPersistanceExists, persist, retrieve
 } from './utility/utils.js';
 import {

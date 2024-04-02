@@ -193,7 +193,7 @@ export class Chant {
     if (this.getNotationType() === "square") {
       let [sqMode, sqRating, modeDescription] = this.calculateSquareMode();
       this.mode = sqMode == -1 ? undefined : sqMode;
-      this.modeCertainty =  Number(sqRating).toFixed(4) * 100;
+      this.modeCertainty =  sqRating * 100;
 
       /** @type {string} an explaination of the mode detection only availble for Square notation */
       this.modeDescription = modeDescription;
@@ -327,7 +327,7 @@ export class Chant {
 
   /**
    * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode detection
-   * @returns {[number, pitchRangeRate]} the mode of the chant. If the mode is not found, return -1.
+   * @returns {[number, number, number]} the mode of the chant. If the mode is not found, return -1.
    */
   calculateSquareMode() {
     // Combine the 3 conditions to determine the mode
@@ -350,7 +350,7 @@ export class Chant {
       authenticMode = 1;
       authenticRepercussio = 'a';
       plagalMode = 2;
-      plagalRepercussio = 'F';
+      plagalRepercussio = 'f';
     } else if (finalisPitch === 'e') {
       rating += 0.34;
       authenticMode = 3;
@@ -395,46 +395,50 @@ export class Chant {
     if (sortedCounts[0] === authenticRepercussio) {
       mode = authenticMode;
       rating += 0.33;
-      modeDescription += `Most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times).\n`;
+      modeDescription += `Authentic repercussio detected, the most repeated pitch is ${authenticRepercussio} (${counts[authenticRepercussio]} times).\n`;
     } else if (sortedCounts[0] === plagalRepercussio) {
       mode = plagalMode;
       rating += 0.33;
-      modeDescription += `Most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times).\n`;
+      modeDescription += `Plagal repercussio detected, the most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times).\n`;
     } else if (sortedCounts[0] === finalisPitch) {
       /** If one of the two expected repercussio notes is the second most repeated note after the finalis: 25% */
       if (sortedCounts[1] === authenticRepercussio) {
         mode = authenticMode;
         rating += 0.25;
-        modeDescription += `Second most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times) after the finalis.\n`;
+        modeDescription += `Authentic repercussio detected, the second most repeated pitch is ${authenticRepercussio} (${counts[authenticRepercussio]} times) after the finalis.\n`;
       } else if (sortedCounts[1] === plagalRepercussio) {
         mode = plagalMode;
         rating += 0.25;
-        modeDescription += `Second most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times) after the finalis.\n`;
+        modeDescription += `Plagal repercussio detected, the second most repeated pitch is ${plagalRepercussio} (${counts[plagalRepercussio]} times) after the finalis.\n`;
       }
     } else {
       /** If one of the two expected repercussio notes is the second most repeated note after a note other than the finalis: 17% */
       if (sortedCounts[1] === authenticRepercussio) {
         mode = authenticMode;
         rating += 0.17;
-        modeDescription += `Second most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times) after a non-finalis '${sortedCounts[0]}' (${counts[sortedCounts[0]]} times).\n`;
+        modeDescription += `Authentic repercussio detected, with the second most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times) after a non-finalis '${sortedCounts[0]}' (${counts[sortedCounts[0]]} times).\n`;
       } else if (sortedCounts[1] === plagalRepercussio) {
         mode = plagalMode
         rating += 0.17;
-        modeDescription += `Second most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times) after non-finalis '${sortedCounts[0]}' (${counts[sortedCounts[0]]} times).\n`;
+        modeDescription += `Plagal repercussio detected, the second most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times) after non-finalis '${sortedCounts[0]}' (${counts[sortedCounts[0]]} times).\n`;
       } else if (sortedCounts[2] === authenticRepercussio) {
         /** If one of the two expected repercussio notes is the third most repeated note: 12% */
         mode = authenticMode;
         rating += 0.12;
-        modeDescription += `Third most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times).\n`;
+        modeDescription += `Plagal repercussio detected, the third most repeated note is '${authenticRepercussio}' (${counts[authenticRepercussio]} times).\n`;
       } else if (sortedCounts[2] === plagalRepercussio) {
         mode = plagalMode;
         rating += 0.12;
-        modeDescription += `Third most repeated note is ${plagalRepercussio} (${counts[plagalRepercussio]} times).\n`;
+        modeDescription += `Plagal repercussio detected, the third most repeated note is '${plagalRepercussio}' (${counts[plagalRepercussio]} times).\n`;
       } else if (sortedCounts[3] === authenticRepercussio) {
         /** If one of the two expected repercussio notes is the fourth most repeated note: 6% */
         mode = authenticMode;
         rating += 0.06;
-        modeDescription += `Fourth most repeated note is ${authenticRepercussio} (${counts[authenticRepercussio]} times).\n`;
+        modeDescription += `Authentic repercussio detected, with the fourth most repeated note is '${authenticRepercussio}' (${counts[authenticRepercussio]} times).\n`;
+      } else if (sortedCounts[3] === plagalRepercussio) {
+        mode = plagalMode;
+        rating += 0.06;
+        modeDescription += `Plagal repercussio detected, the fourth most repeated note is '${plagalRepercussio}' (${counts[plagalRepercussio]} times).\n`;
       } else {
         modeDescription += `No expected repercussio note is repeated more than 3 times.\n`;
       }
@@ -509,7 +513,7 @@ export class Chant {
       console.log(`Rating after ambitus: ${rating}`);
       console.log(modeDescription);
     }
-
+    rating = Number(rating).toFixed(3);
     return [mode, rating, modeDescription];
   }
 
