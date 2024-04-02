@@ -197,3 +197,8 @@ select {
   padding: 0.5rem;
   border: 1px solid hsla(101, 70%, 16%, 0.678);
 }
+
+input[type="checkbox"]:hover, label:hover {
+  cursor: pointer;
+  background-color: var(--background-hover);
+}

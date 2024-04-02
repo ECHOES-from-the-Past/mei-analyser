@@ -509,6 +509,7 @@ export class Chant {
       console.log(`Rating after ambitus: ${rating}`);
       console.log(modeDescription);
     }
+
     return [mode, rating, modeDescription];
   }
 

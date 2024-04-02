@@ -16,10 +16,7 @@ import {
  * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
  * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
  */
-function searchByOrnamentalShapes(ornamentalOptions) {
-  /** @type {Chant[]} */
-  let allChants = retrieve('chantList');
-
+function searchByOrnamentalShapes(chantList, ornamentalOptions) {
   /**
    * Check if a chant has a specific ornamental shape.
    * This only check for the first occurrence of the ornamental shape in the chant
@@ -42,7 +39,7 @@ function searchByOrnamentalShapes(ornamentalOptions) {
    * If all the options are unchecked (`false`), return all the chants
    * @type {Chant[]} resulting list of chants after filtering
    */
-  let resultChantList = allChants;
+  let resultChantList = chantList;
 
   // first filter for the liquescent option
   if (ornamentalOptions.liquescent) {
@@ -70,10 +67,21 @@ function searchByOrnamentalShapes(ornamentalOptions) {
  * Perform highlighting when user clicks on "Search" button
  */
 export function performSearch() {
+  /** Retrieving the locally stored list of chants */
+  let resultChantList = retrieve('chantList');
+
+  /* First layer of filtering: Notation type */
   let notationTypeOptions = {
     "aquitanian": aquitanianCheckbox.checked,
     "square": squareCheckbox.checked
   }
+  resultChantList = resultChantList.filter(chant => {
+    if (notationTypeOptions.aquitanian && chant.notationType == "aquitanian") return true;
+    if (notationTypeOptions.square && chant.notationType == "square") return true;
+    return false;
+  });
+
+  /* Second layer of filtering: Ornamental shapes */
   /**
    * Options for the ornamental search
    * @type {{liquescent: boolean, quilisma: boolean, oriscus: boolean}}
@@ -83,14 +91,9 @@ export function performSearch() {
     "quilisma": quilismaCheckbox.checked,
     "oriscus": oriscusCheckbox.checked
   }
+  resultChantList = searchByOrnamentalShapes(resultChantList, ornamentalOptions);
 
-  let resultChantList = searchByOrnamentalShapes(ornamentalOptions);
-  resultChantList = resultChantList.filter(chant => {
-    if (notationTypeOptions.aquitanian && chant.notationType == "aquitanian") return true;
-    if (notationTypeOptions.square && chant.notationType == "square") return true;
-    return false;
-  });
-
+  /* Return the result */
   return resultChantList;
 }
 
@@ -130,6 +133,16 @@ export function showSearchResult(resultChantList) {
     return td;
   }
 
+  const makeTDHoverable = (td) => {
+    td.style.cursor = "pointer";
+    td.addEventListener("mouseover", () => {
+      td.style.backgroundColor = "var(--background-hover)";
+    });
+    td.addEventListener("mouseout", () => {
+      td.style.backgroundColor = "white";
+    });
+  }
+
   for (let chant of resultChantList) {
     // create a result row for each chant
     let resultRow = document.createElement('tr');
@@ -143,7 +156,7 @@ export function showSearchResult(resultChantList) {
       printChantInformation(chant);
       chantDisplay.scrollIntoView({ behavior: "smooth" });
     });
-    tdFileName.style.cursor = "pointer";
+    makeTDHoverable(tdFileName);
 
     let tdNotationType = createTD(chant.notationType);
     let tdMode;
