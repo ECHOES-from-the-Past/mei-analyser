@@ -107,8 +107,8 @@ export function showSearchResult(resultChantList) {
   let resultTable = document.createElement('table');
   resultTable.id = "result-table"; // for CSS styling
 
-  // Create the head row of the table: "File Name" -- "Notation Type" -- "Mode"
-  const tableHeadRows = ["Title", "Music Script", "Mode", "Source", "PEM Database", "File Name"];
+  // Create the head row of the table
+  const tableHeadRows = ["Title", "Music Script", "Mode", "Text", "Source", "Links"];
   let headRow = document.createElement('thead');
   for (let headRowElement of tableHeadRows) {
     let th = document.createElement('th');
@@ -132,22 +132,13 @@ export function showSearchResult(resultChantList) {
     return td;
   }
 
-  const makeTDHoverable = (td) => {
-    td.style.cursor = "pointer";
-    td.addEventListener("mouseover", () => {
-      td.style.backgroundColor = "var(--background-hover)";
-    });
-    td.addEventListener("mouseout", () => {
-      td.style.backgroundColor = "white";
-    });
-  }
-
   for (let chant of resultChantList) {
     // create a result row for each chant
     let resultRow = document.createElement('tr');
     // add the file name of the chant to row cell
-    let tdFileName = createTD(chant.fileName);
-    tdFileName.addEventListener("click", () => {
+    let displayChantBtn = document.createElement('button');
+    displayChantBtn.textContent = "Display Chant";
+    displayChantBtn.addEventListener("click", () => {
       // Set the box for the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
@@ -155,31 +146,39 @@ export function showSearchResult(resultChantList) {
       printChantInformation(chant);
       chantDisplay.scrollIntoView({ behavior: "smooth" });
     });
-    makeTDHoverable(tdFileName);
 
     let tdNotationType = createTD(chant.notationType);
     let tdMode;
     if (chant.mode != undefined) {
-      tdMode = createTD(`${chant.mode} (${chant.modeCertainty}%)`);
+      tdMode = createTD(`${chant.mode} (${chant.modeCertainty.toFixed(1)}%)`);
     } else {
       tdMode = createTD("undetected");
       tdMode.style.color = "red";
     }
 
     /** @type {HTMLAnchorElement} */
-    let td4link = document.createElement('p');
+    let pemLink = document.createElement('button');
 
     for (let pemUrl of chant.pemDatabaseUrls) {
       let a = document.createElement('a');
       a.href = pemUrl;
-      a.innerText = pemUrl.split("/").pop() + "\n";
+      a.innerText = "PEM - " + pemUrl.split("/").pop() + "\n";
       a.target = "_blank";
-      a.style.textDecoration = "underline";
-      td4link.appendChild(a);
+      a.style.textDecoration = "none";
+      pemLink.appendChild(a);
     }
 
-    let tdPEMLink = createTD();
-    tdPEMLink.appendChild(td4link);
+    let tdLinks = createTD();
+    
+    tdLinks.style.display = "flex";
+    tdLinks.style.flexDirection = "row";
+    tdLinks.style.alignItems = "center";
+    tdLinks.style.justifyContent = "center";
+    tdLinks.style.gap = "0.5rem";
+    tdLinks.style.fontSize = "1rem";
+
+    tdLinks.appendChild(pemLink);
+    tdLinks.appendChild(displayChantBtn);
 
     let tdSource = createTD(chant.source);
 
@@ -189,10 +188,9 @@ export function showSearchResult(resultChantList) {
     resultRow.appendChild(tdTitle);
     resultRow.appendChild(tdNotationType); // Music script
     resultRow.appendChild(tdMode);
+    resultRow.appendChild(createTD("Syllables info goes here"));
     resultRow.appendChild(tdSource);
-    resultRow.appendChild(tdPEMLink);
-    resultRow.appendChild(tdFileName);
-
+    resultRow.appendChild(tdLinks);
     tbody.appendChild(resultRow);
   }
   resultTable.appendChild(tbody);
