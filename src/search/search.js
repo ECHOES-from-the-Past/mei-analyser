@@ -5,6 +5,7 @@ import {
   aquitanianCheckbox, squareCheckbox,
   searchResultDiv, chantInfo, chantSVG, chantDisplay
 } from "../DOMelements.mjs";
+import database from "../database/database.json";
 
 /**
  * ----------------------- SEARCH -----------------------
@@ -132,12 +133,18 @@ export function showSearchResult(resultChantList) {
     return td;
   }
 
+  /** Regular expression to match the file name format
+   * - Pattern: 3 digits, an underscore, a letter, and 2 digits
+   * - Example: 092_F26
+   * @type {RegExp}
+   * */
+  const fileNameRegex = /\d{3}_\w{1}\d{2}/;
   for (let chant of resultChantList) {
     // create a result row for each chant
     let resultRow = document.createElement('tr');
     // add the file name of the chant to row cell
     let displayChantBtn = document.createElement('button');
-    displayChantBtn.textContent = "Display Chant";
+    displayChantBtn.textContent = "Display Chant " + chant.fileName.match(fileNameRegex);
     displayChantBtn.addEventListener("click", () => {
       // Set the box for the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
@@ -157,15 +164,20 @@ export function showSearchResult(resultChantList) {
     }
 
     /** @type {HTMLAnchorElement} */
-    let pemLink = document.createElement('button');
+    let pemLinkDiv = document.createElement('div');
 
     for (let pemUrl of chant.pemDatabaseUrls) {
+      let linkButton = document.createElement('button');
       let a = document.createElement('a');
       a.href = pemUrl;
-      a.innerText = "PEM - " + pemUrl.split("/").pop() + "\n";
       a.target = "_blank";
       a.style.textDecoration = "none";
-      pemLink.appendChild(a);
+      // Wrap a button with the link
+      a.appendChild(linkButton);
+      linkButton.innerText = "PEM - " + pemUrl.split("/").pop();
+      linkButton.style.width = "8.64rem";
+      // Add the linked button to the div
+      pemLinkDiv.appendChild(a);
     }
 
     let tdLinks = createTD();
@@ -177,7 +189,7 @@ export function showSearchResult(resultChantList) {
     tdLinks.style.gap = "0.5rem";
     tdLinks.style.fontSize = "1rem";
 
-    tdLinks.appendChild(pemLink);
+    tdLinks.appendChild(pemLinkDiv);
     tdLinks.appendChild(displayChantBtn);
 
     let tdSource = createTD(chant.source);
@@ -213,13 +225,13 @@ function printChantInformation(chant) {
     "Mode": chant.mode == undefined ? "Undetected" : chant.mode,
     "Mode Certainty": chant.modeCertainty == undefined ? "-" : chant.modeCertainty + "%",
     "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription,
-    "File Name": chant.fileName,
+    "MEI File": chant.fileName,
     "PEM Database URL": chant.pemDatabaseUrls,
   };
 
   for (let k in info) {
     let p = document.createElement('p');
-    if (k == "PEM Database URL") {
+    if (k == "PEM Database URL") { // Special rendering for PEM Database URL
       p.innerHTML = `<b>${k}</b>: `;
       for (let url of info[k]) {
         let a = document.createElement('a');
@@ -232,7 +244,17 @@ function printChantInformation(chant) {
           p.innerHTML += " or ";
         }
       }
-    } else {
+    } else if (k == "MEI File") { // Links to the GitHub MEI files
+      p.innerHTML = `<b>${k}</b>: `;
+      const rootGABCtoMEI = 'https://github.com/ECHOES-from-the-Past/GABCtoMEI/blob/main/MEI_outfiles/';
+      let file = database.find(c => c.includes(info[k]));
+      let a = document.createElement('a');
+      a.href = rootGABCtoMEI + file;
+      a.target = "_blank";
+      a.innerText = `${chant.fileName} (GitHub)`;
+      p.appendChild(a);
+      console.log(a.href);
+    } else {  // Default rendering
       p.innerHTML = `<b>${k}</b>: ${info[k]}`;
     }
     chantInfo.appendChild(p);
