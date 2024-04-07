@@ -16,7 +16,7 @@ import database from "../database/database.json";
  * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
  * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
  */
-function searchByOrnamentalShapes(chantList, ornamentalOptions) {
+function filterByOrnamentalShapes(chantList, ornamentalOptions) {
   /**
    * Check if a chant has a specific ornamental shape.
    * This only check for the first occurrence of the ornamental shape in the chant
@@ -29,6 +29,7 @@ function searchByOrnamentalShapes(chantList, ornamentalOptions) {
     /** @type {NeumeComponent[]} */
     let neumeComponents = chant.neumeComponents;
     for (let neume of neumeComponents) {
+      // TODO: Get the syllables from here
       if (neume.ornamental != null && neume.ornamental.type == ornamentalType) return true;
     }
     return false;
@@ -91,7 +92,7 @@ export function performSearch() {
     "quilisma": quilismaCheckbox.checked,
     "oriscus": oriscusCheckbox.checked
   }
-  resultChantList = searchByOrnamentalShapes(resultChantList, ornamentalOptions);
+  resultChantList = filterByOrnamentalShapes(resultChantList, ornamentalOptions);
 
   /* Return the result */
   return resultChantList;
@@ -146,7 +147,7 @@ export function showSearchResult(resultChantList) {
     let displayChantBtn = document.createElement('button');
     displayChantBtn.textContent = "Display Chant " + chant.fileName.match(fileNameRegex);
     displayChantBtn.addEventListener("click", () => {
-      // Set the box for the chant
+      // Set the box for the chant and draw the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
       // Display the chant information (file name, notation type, mode, etc.)
@@ -164,7 +165,7 @@ export function showSearchResult(resultChantList) {
     }
 
     /** @type {HTMLAnchorElement} */
-    let pemLinkDiv = document.createElement('div');
+    let pemLinkBtnDiv = document.createElement('div');
 
     for (let pemUrl of chant.pemDatabaseUrls) {
       let linkButton = document.createElement('button');
@@ -177,19 +178,12 @@ export function showSearchResult(resultChantList) {
       linkButton.innerText = "PEM - " + pemUrl.split("/").pop();
       linkButton.style.width = "8.64rem";
       // Add the linked button to the div
-      pemLinkDiv.appendChild(a);
+      pemLinkBtnDiv.appendChild(a);
     }
 
     let tdLinks = createTD();
-    
-    tdLinks.style.display = "flex";
-    tdLinks.style.flexDirection = "row";
-    tdLinks.style.alignItems = "center";
-    tdLinks.style.justifyContent = "center";
-    tdLinks.style.gap = "0.5rem";
-    tdLinks.style.fontSize = "1rem";
-
-    tdLinks.appendChild(pemLinkDiv);
+    tdLinks.style = "display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1rem;";
+    tdLinks.appendChild(pemLinkBtnDiv);
     tdLinks.appendChild(displayChantBtn);
 
     let tdSource = createTD(chant.source);
@@ -253,7 +247,6 @@ function printChantInformation(chant) {
       a.target = "_blank";
       a.innerText = `${chant.fileName} (GitHub)`;
       p.appendChild(a);
-      console.log(a.href);
     } else {  // Default rendering
       p.innerHTML = `<b>${k}</b>: ${info[k]}`;
     }
