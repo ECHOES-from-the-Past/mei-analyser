@@ -1,4 +1,4 @@
-import { Chant, NeumeComponent } from "../utility/components.js";
+import { Chant, NeumeComponent, Syllable, SyllableWord } from "../utility/components.js";
 import { retrieve, drawSVGFromMEIContent } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
@@ -12,29 +12,31 @@ import database from "../database/database.json";
  */
 
 /**
+ * HELPER FUNCTION
+ * Check if a chant has a specific ornamental shape.
+ * This only check for the first occurrence of the ornamental shape in the chant
+ * and does not care for the location of the ornamental shape in the chant.
+ * @param {Chant} chant the chant to be checked
+ * @param {string} ornamentalType the type of ornamental shape to be checked
+ * @returns {boolean} `true` if the chant has the ornamental shape, `false` otherwise
+ */
+function hasOrnamental(chant, ornamentalType) {
+  /** @type {NeumeComponent[]} */
+  let neumeComponents = chant.neumeComponents;
+  for (let neume of neumeComponents) {
+    // TODO: Get the syllables from here
+    if (neume.ornamental != null && neume.ornamental.type == ornamentalType) return true;
+  }
+  return false;
+}
+
+/**
  * Search by ornamental shapes (liquescent, quilisma, oriscus)
+ * @param {Chant[]} chantList list of chants to be filtered
  * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
  * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
  */
 function filterByOrnamentalShapes(chantList, ornamentalOptions) {
-  /**
-   * Check if a chant has a specific ornamental shape.
-   * This only check for the first occurrence of the ornamental shape in the chant
-   * and does not care for the location of the ornamental shape in the chant.
-   * @param {Chant} chant the chant to be checked
-   * @param {string} ornamentalType the type of ornamental shape to be checked
-   * @returns {boolean} `true` if the chant has the ornamental shape, `false` otherwise
-   */
-  const hasOrnamental = (chant, ornamentalType) => {
-    /** @type {NeumeComponent[]} */
-    let neumeComponents = chant.neumeComponents;
-    for (let neume of neumeComponents) {
-      // TODO: Get the syllables from here
-      if (neume.ornamental != null && neume.ornamental.type == ornamentalType) return true;
-    }
-    return false;
-  }
-
   /**
    * Filter the chants based on the options.
    * If all the options are unchecked (`false`), return all the chants
@@ -64,8 +66,59 @@ function filterByOrnamentalShapes(chantList, ornamentalOptions) {
   return resultChantList;
 }
 
+function getOrnamentalSyllables(chant, ornamentalType) {
+  let syllableList = [];
+  /** @type {Syllable[]} */
+  let syllables = chant.syllables;
+  for (let i = 0; i < syllables.length; i++) {
+    /** @type {Syllable} */
+    let syllable_i = syllables[i];
+    for (let j = 0; j < syllable_i.neumeComponents.length; j++) {
+      let neume = syllable_i.neumeComponents[j];
+      if (neume.ornamental != null && neume.ornamental.type == ornamentalType) {
+        syllableList.push(syllable_i.syllableWord);
+      }
+    }
+  }
+  return syllableList;
+}
+
+/**
+ * Obtain the syllables that contain the ornamental shapes
+ * @param {Chant[]} chantList list of chants to be filtered
+ * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
+ * @returns {{"liquescent": string[], "quilisma": string[], "oriscus": string[]}} list of syllables that contain the ornamental shapes
+ */
+export function obtainSyllables(chantList, ornamentalOptions) {
+  let liquescentSyllables = [];
+  let quilismaSyllables = [];
+  let oriscusSyllables = [];
+  for (let chant of chantList) {
+    if (ornamentalOptions.liquescent) {
+      liquescentSyllables.push(getOrnamentalSyllables(chant, "liquescent"));
+    }
+
+    if (ornamentalOptions.quilisma) {
+      quilismaSyllables.push(getOrnamentalSyllables(chant, "quilisma"));
+    }
+
+    if (ornamentalOptions.oriscus) {
+      oriscusSyllables.push(getOrnamentalSyllables(chant, "oriscus"));
+    }
+  }
+
+  const syllablesLists = {
+    "liquescent": liquescentSyllables,
+    "quilisma": quilismaSyllables,
+    "oriscus": oriscusSyllables
+  }
+
+  return syllablesLists;
+}
+
 /**
  * Perform highlighting when user clicks on "Search" button
+ * @return {{"chant": Chant[], "syllables": {"liquescent": string[], "quilisma": string[], "oriscus": string[]}}} list of chants that match the search query
  */
 export function performSearch() {
   /** Retrieving the locally stored list of chants */
@@ -76,6 +129,7 @@ export function performSearch() {
     "aquitanian": aquitanianCheckbox.checked,
     "square": squareCheckbox.checked
   }
+
   resultChantList = resultChantList.filter(chant => {
     if (notationTypeOptions.aquitanian && chant.notationType == "aquitanian") return true;
     if (notationTypeOptions.square && chant.notationType == "square") return true;
@@ -92,17 +146,20 @@ export function performSearch() {
     "quilisma": quilismaCheckbox.checked,
     "oriscus": oriscusCheckbox.checked
   }
+
   resultChantList = filterByOrnamentalShapes(resultChantList, ornamentalOptions);
+  let syllableList = obtainSyllables(resultChantList, ornamentalOptions);
 
   /* Return the result */
-  return resultChantList;
+  return [resultChantList, syllableList];
 }
 
 /**
  * Show the search result on the screen
  * @param {Chant[]} resultChantList list of chants that match the search query
+ * @param {{"liquescent": string[], "quilisma": string[], "oriscus": string[]}} syllablesList list of syllables that contain the ornamental shapes
  */
-export function showSearchResult(resultChantList) {
+export function showSearchResult(resultChantList, syllablesList) {
   searchResultDiv.innerHTML = '';
 
   /** @type {HTMLTableElement} */
@@ -164,6 +221,34 @@ export function showSearchResult(resultChantList) {
       tdMode.style.color = "red";
     }
 
+    // TODO
+    let syllablesInChant = [];
+    let syllableP = document.createElement('p');
+    for (let ornamental in syllablesList) {
+      if (syllablesList[ornamental].length == 0) continue;
+
+      let ornamentalSentenceSpanElement = document.createElement('span');
+      ornamentalSentenceSpanElement.id = ornamental + "-sentence"; // for CSS styling
+      let ornamentalSentence = ornamental + ": ";
+      let ornamentalWords = [];
+
+      /** @type {SyllableWord[]} List of Syllable Words in the corresponding index of the current chant */
+      const listOfWords = syllablesList[ornamental][resultChantList.indexOf(chant)];
+
+      for (let word of listOfWords) {
+        ornamentalWords.push(word.text);
+      }
+
+      ornamentalSentence += ornamentalWords.join(", ");
+      ornamentalSentenceSpanElement.innerText = ornamentalSentence;
+      syllablesInChant.push(ornamentalSentenceSpanElement);
+      syllablesInChant.push(document.createElement('br'));
+    }
+    syllableP.append(...syllablesInChant);
+
+    let tdSyllables = createTD();
+    tdSyllables.appendChild(syllableP);
+
     /** @type {HTMLAnchorElement} */
     let pemLinkBtnDiv = document.createElement('div');
 
@@ -194,7 +279,7 @@ export function showSearchResult(resultChantList) {
     resultRow.appendChild(tdTitle);
     resultRow.appendChild(tdNotationType); // Music script
     resultRow.appendChild(tdMode);
-    resultRow.appendChild(createTD("Syllables info goes here"));
+    resultRow.appendChild(tdSyllables);
     resultRow.appendChild(tdSource);
     resultRow.appendChild(tdLinks);
     tbody.appendChild(resultRow);

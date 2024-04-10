@@ -149,9 +149,9 @@ export class NeumeComponentAQ extends NeumeComponent {
 }
 
 
-export class SyllableText {
+export class SyllableWord {
   /**
-   * Constructor of a SyllableText object.
+   * Constructor of a SyllableWord object.
    * @param {String} id the `@xml:id` attribute of the syllable
    * @param {String} text the text of the syllable
    * @param {String} position the position of the syllable
@@ -189,12 +189,12 @@ export class Syllable {
   /**
    * Constructor of a Syllable object.
    * @param {String} id the `@xml:id` attribute of the syllable
-   * @param {SyllableText} syllableText the text of the syllable
+   * @param {SyllableWord} syllableWord the text of the syllable
    * @param {NeumeComponent[]} neumeComponents an array of NeumeComponent
    */
-  constructor(id, syllableText, neumeComponents) {
+  constructor(id, syllableWord, neumeComponents) {
     this.id = id;
-    this.text = syllableText;
+    this.syllableWord = syllableWord;
     this.neumeComponents = neumeComponents;
   }
 
@@ -317,11 +317,11 @@ export class Chant {
 
     for (let syllable of allSyllables) {
       const syl = syllable.querySelector('syl');
-      const sylTextId = syl.attributes.getNamedItem("xml:id").value;
-      const sylText = syl.textContent;
-      const sylPosition = syl.attributes.getNamedItem("wordpos").value;
+      const sylWordId = syl.attributes.getNamedItem("xml:id").value;
+      const sylWordText = syl.textContent;
+      const sylWordPosition = syl.attributes.getNamedItem("wordpos").value;
       // Creating a SyllableText object
-      const syllableTextObject = new SyllableText(sylTextId, sylText, sylPosition);
+      const syllableWordObject = new SyllableWord(sylWordId, sylWordText, sylWordPosition);
 
       // Getting all the neume components enclosed in the syllable
       const ncList = syllable.querySelectorAll('nc');
@@ -352,9 +352,8 @@ export class Chant {
       }
       // Creating a Syllable object
       const id = syllable.attributes.getNamedItem("xml:id").value;
-      const syllableObj = new Syllable(id, syllableTextObject, neumeComponents);
+      const syllableObj = new Syllable(id, syllableWordObject, neumeComponents);
       syllableArray.push(syllableObj);
-      console.log(syllableObj);
     }
     return syllableArray;
   }

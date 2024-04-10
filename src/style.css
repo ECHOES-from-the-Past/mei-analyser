@@ -19,6 +19,11 @@
   --background: hsl(0, 0%, 100%);
   --background-hover: hsla(147, 100%, 83%, 0.377);
 
+  /* Ornamental colours */
+  --liquescent-text: hsl(226, 100%, 26%);
+  --quilisma-text: hsl(194, 100%, 16%);
+  --oriscus-text: hsl(318, 92%, 21%);
+
   /* Default highlighting colours */
   --highlight-fill: hsla(276, 69%, 52%, 0.6);
   --highlight-stroke: hsl(276, 69%, 52%);
@@ -196,9 +201,22 @@ select {
   text-align: center;
   padding: 0.5rem;
   border: 1px solid hsla(101, 70%, 16%, 0.678);
+  height: inherit;
 }
 
 input[type="checkbox"]:hover, label:hover {
   cursor: pointer;
   background-color: var(--background-hover);
+}
+
+#liquescent-sentence {
+  color: var(--liquescent-text);
+}
+
+#quilisma-sentence {
+  color: var(--quilisma-text);
+}
+
+#oriscus-sentence {
+  color: var(--oriscus-text);
 }
