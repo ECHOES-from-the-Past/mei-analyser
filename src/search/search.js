@@ -191,6 +191,13 @@ export function showSearchResult(resultChantList, syllablesList) {
     return td;
   }
 
+  const createTDHTML = (content) => {
+    let td = document.createElement('td');
+    td.innerHTML = content;
+    td.style.fontSize = "1rem";
+    return td;
+  }
+
   /** Regular expression to match the file name format
    * - Pattern: 3 digits, an underscore, a letter, and 2 digits
    * - Example: 092_F26
@@ -200,17 +207,6 @@ export function showSearchResult(resultChantList, syllablesList) {
   for (let chant of resultChantList) {
     // create a result row for each chant
     let resultRow = document.createElement('tr');
-    // add the file name of the chant to row cell
-    let displayChantBtn = document.createElement('button');
-    displayChantBtn.textContent = "Display Chant " + chant.fileName.match(fileNameRegex);
-    displayChantBtn.addEventListener("click", () => {
-      // Set the box for the chant and draw the chant
-      chantSVG.style.boxShadow = "0 0 2px 3px #888";
-      chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
-      // Display the chant information (file name, notation type, mode, etc.)
-      printChantInformation(chant);
-      chantDisplay.scrollIntoView({ behavior: "smooth" });
-    });
 
     let tdNotationType = createTD(chant.notationType);
     let tdMode;
@@ -221,33 +217,39 @@ export function showSearchResult(resultChantList, syllablesList) {
       tdMode.style.color = "red";
     }
 
-    // TODO
-    let syllablesInChant = [];
-    let syllableP = document.createElement('p');
-    for (let ornamental in syllablesList) {
-      if (syllablesList[ornamental].length == 0) continue;
-
-      let ornamentalSentenceSpanElement = document.createElement('span');
-      ornamentalSentenceSpanElement.id = ornamental + "-sentence"; // for CSS styling
-      let ornamentalSentence = ornamental + ": ";
-      let ornamentalWords = [];
-
-      /** @type {SyllableWord[]} List of Syllable Words in the corresponding index of the current chant */
-      const listOfWords = syllablesList[ornamental][resultChantList.indexOf(chant)];
-
-      for (let word of listOfWords) {
-        ornamentalWords.push(word.text);
+    let tdSyllablesContent = [];
+    for (let syllable of chant.syllables) {
+      // Extract the syllable word and its position from each syllable
+      let word = syllable.syllableWord.text;
+      let position = syllable.syllableWord.position;
+      let ornamentalNC;
+      for (let nc of syllable.neumeComponents) {
+        if (nc.ornamental != null) {
+          ornamentalNC = nc.ornamental.type;
+          break;
+        }
       }
 
-      ornamentalSentence += ornamentalWords.join(", ");
-      ornamentalSentenceSpanElement.innerText = ornamentalSentence;
-      syllablesInChant.push(ornamentalSentenceSpanElement);
-      syllablesInChant.push(document.createElement('br'));
+      // Construct the text for the syllables
+      if (ornamentalNC != null) {
+        const wordWrapper = document.createElement('span');
+        wordWrapper.id = ornamentalNC + "-word"; // for CSS styling
+        wordWrapper.innerText = word;
+        // if (ornamentalNC != null && ornamentalNC != "unclear") console.log(wordWrapper);
+        word = wordWrapper.outerHTML;
+      }
+      if (position == "s" || position == "i") {
+        // standard syllable
+        // initial syllable
+        tdSyllablesContent.push(word);
+      } else if (position == "m" || position == "t") {
+        // medial syllable, add to the last syllable
+        // terminal syllable, add to the last syllable
+        tdSyllablesContent[tdSyllablesContent.length - 1] += word;
+      }
     }
-    syllableP.append(...syllablesInChant);
+    let tdSyllables = createTDHTML(tdSyllablesContent.join(" "));
 
-    let tdSyllables = createTD();
-    tdSyllables.appendChild(syllableP);
 
     /** @type {HTMLAnchorElement} */
     let pemLinkBtnDiv = document.createElement('div');
@@ -265,6 +267,18 @@ export function showSearchResult(resultChantList, syllablesList) {
       // Add the linked button to the div
       pemLinkBtnDiv.appendChild(a);
     }
+
+    // add the file name of the chant to row cell
+    let displayChantBtn = document.createElement('button');
+    displayChantBtn.textContent = "Display Chant " + chant.fileName.match(fileNameRegex);
+    displayChantBtn.addEventListener("click", () => {
+      // Set the box for the chant and draw the chant
+      chantSVG.style.boxShadow = "0 0 2px 3px #888";
+      chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
+      // Display the chant information (file name, notation type, mode, etc.)
+      printChantInformation(chant);
+      chantDisplay.scrollIntoView({ behavior: "smooth" });
+    });
 
     let tdLinks = createTD();
     tdLinks.style = "display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1rem;";
