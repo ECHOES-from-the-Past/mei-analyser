@@ -2,7 +2,7 @@
   "name": "mei-analyser",
   "version": "0.2.4",
   "devDependencies": {
-    "vite": "^5.0.8"
+    "vite": ">=5.2.6"
   },
   "private": true,
   "scripts": {
