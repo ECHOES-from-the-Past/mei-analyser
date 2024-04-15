@@ -149,16 +149,69 @@ export class NeumeComponentAQ extends NeumeComponent {
 }
 
 
+export class SyllableWord {
+  /**
+   * Constructor of a SyllableWord object.
+   * @param {String} id the `@xml:id` attribute of the syllable
+   * @param {String} text the text of the syllable
+   * @param {String} position the position of the syllable
+   * 
+   * Note for the position:
+   * - 'i' for initial
+   * - 'm' for medial
+   * - 't' for terminal
+   * - 's' for single/standalone
+   */
+  constructor(id, text, position) {
+    this.id = id;
+    this.text = text;
+    this.position = position;
+  }
+
+  getId() {
+    return this.id;
+  }
+
+  getText() {
+    return this.text;
+  }
+}
+
+/**
+ * A class for a Syllable object.
+ * Each syllable is composed of an array of NeumeComponents
+ * and a syllable text. They also has an unique id.
+ * @property {String} id the `@xml:id` attribute of the syllable
+ * @property {SyllableText} text the text of the syllable
+ * @property {NeumeComponent[]} neumeComponents an array of NeumeComponent
+ */
+export class Syllable {
+  /**
+   * Constructor of a Syllable object.
+   * @param {String} id the `@xml:id` attribute of the syllable
+   * @param {SyllableWord} syllableWord the text of the syllable
+   * @param {NeumeComponent[]} neumeComponents an array of NeumeComponent
+   */
+  constructor(id, syllableWord, neumeComponents) {
+    this.id = id;
+    this.syllableWord = syllableWord;
+    this.neumeComponents = neumeComponents;
+  }
+
+  getId() {
+    return this.id;
+  }
+}
 
 /** 
- * @type {Object}
  * @property {string} filePath the path of the .mei file
  * @property {string} fileName the name of the .mei file
  * @property {string} meiContent the content of the .mei file
- * @property {XMLDocument} meiParsedContent the parsed content of the .mei file
+ * @property {XMLDocument} meiParsedContent the parsed content of the .mei file. This is only useful in chant creation
  * @property {string} notationType the notation type of the chant (either "aquitanian" or "square")
  * @property {NeumeComponentAQ[] | NeumeComponentSQ[]} neumeComponents an array of NeumeComponent
  * @property {number} mode the mode of the chant
+ * @property {number} modeCertainty the certainty of the mode detection
  * @property {string} modeDescription an explaination of the mode detection
  * @property {string[]} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
  * @property {string} title the title of the chant
@@ -187,13 +240,15 @@ export class Chant {
     /** @type {string} */
     this.notationType = this.parseMEIContentForNotationType();
 
+    this.syllables = this.parseMeiForSyllables();
+
     /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
 
     if (this.getNotationType() === "square") {
       let [sqMode, sqRating, modeDescription] = this.calculateSquareMode();
       this.mode = sqMode == -1 ? undefined : sqMode;
-      this.modeCertainty =  sqRating * 100;
+      this.modeCertainty = sqRating * 100;
 
       /** @type {string} an explaination of the mode detection only availble for Square notation */
       this.modeDescription = modeDescription;
@@ -254,6 +309,53 @@ export class Chant {
       }
     }
     return ncArray;
+  }
+
+  parseMeiForSyllables() {
+    const allSyllables = this.meiParsedContent.querySelectorAll('syllable');
+    let syllableArray = [];
+
+    for (let syllable of allSyllables) {
+      const syl = syllable.querySelector('syl');
+      const sylWordId = syl.attributes.getNamedItem("xml:id").value;
+      const sylWordText = syl.textContent;
+      const sylWordPosition = syl.attributes.getNamedItem("wordpos").value;
+      // Creating a SyllableText object
+      const syllableWordObject = new SyllableWord(sylWordId, sylWordText, sylWordPosition);
+
+      // Getting all the neume components enclosed in the syllable
+      const ncList = syllable.querySelectorAll('nc');
+      let neumeComponents = [];
+      for (const nc of ncList) {
+        const ncId = nc.attributes.getNamedItem("xml:id").value;
+        let ncTilt = nc.attributes.getNamedItem('tilt');
+        ncTilt = ncTilt != null ? ncTilt.value : null;
+        const ncOrnamental = nc.children.length > 0 ? {
+          "type": nc.children[0].nodeName,
+          "id": nc.children[0].attributes.getNamedItem("xml:id").value
+        } : null;
+
+        if (this.notationType === "square") {
+          // Getting all the necessary attributes of NeumeComponentSQ
+          const pitch = nc.attributes.getNamedItem("pname").value;
+          const octave = nc.attributes.getNamedItem("oct").value;
+
+          const nc_SQ = new NeumeComponentSQ(ncId, ncTilt, ncOrnamental, pitch, octave);
+          neumeComponents.push(nc_SQ);
+        } else if (this.notationType === "aquitanian") {
+          // Getting the necessary attribute of NeumeComponentAQ
+          const loc = nc.attributes.getNamedItem("loc").value;
+
+          const nc_AQ = new NeumeComponentAQ(ncId, ncTilt, ncOrnamental, loc);
+          neumeComponents.push(nc_AQ);
+        }
+      }
+      // Creating a Syllable object
+      const id = syllable.attributes.getNamedItem("xml:id").value;
+      const syllableObj = new Syllable(id, syllableWordObject, neumeComponents);
+      syllableArray.push(syllableObj);
+    }
+    return syllableArray;
   }
 
   /**
@@ -495,10 +597,10 @@ export class Chant {
 
     if (ratingAuthentic > ratingPlagal) {
       modeFromAmbitus = authenticMode;
-      modeDescription += `Ambitus suggests authentic mode '${modeFromAmbitus}' with ${Number(ratingAuthentic).toFixed(4)*100}% of notes in range.\n`;
+      modeDescription += `Ambitus suggests authentic mode '${modeFromAmbitus}' with ${Number(ratingAuthentic).toFixed(4) * 100}% of notes in range.\n`;
     } else {
       modeFromAmbitus = plagalMode;
-      modeDescription += `Ambitus suggests plagal mode '${modeFromAmbitus}' with ${Number(ratingPlagal).toFixed(4)*100}% of notes in range.\n`;
+      modeDescription += `Ambitus suggests plagal mode '${modeFromAmbitus}' with ${Number(ratingPlagal).toFixed(4) * 100}% of notes in range.\n`;
     }
 
     if (modeFromAmbitus == mode) {
@@ -542,10 +644,6 @@ export class Chant {
 
   getFilePath() {
     return this.filePath;
-  }
-
-  getContent() {
-    return this.meiParsedContent;
   }
 
   getNotationType() {

@@ -225,8 +225,8 @@ searchButton.addEventListener("click", () => {
     chantSVG.style = ""; // clear the border styling of the chant SVG
 
     // Perform search and display the result
-    let resultChantList = performSearch();
-    showSearchResult(resultChantList);
+    let searchResults = performSearch();
+    showSearchResult(searchResults);
 });
 
 /* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */
