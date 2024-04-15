@@ -24,7 +24,6 @@ import {
     checkPersistanceExists, persist, retrieve
 } from './utility/utils.js';
 import {
-    obtainSyllables,
     performSearch, showSearchResult
 } from './search/search.js';
 
@@ -226,9 +225,8 @@ searchButton.addEventListener("click", () => {
     chantSVG.style = ""; // clear the border styling of the chant SVG
 
     // Perform search and display the result
-    let [searchResults, syllableLists] = performSearch();
-    console.log(syllableLists);
-    showSearchResult(searchResults, syllableLists);
+    let searchResults = performSearch();
+    showSearchResult(searchResults);
 });
 
 /* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */

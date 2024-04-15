@@ -89,7 +89,7 @@ function getOrnamentalSyllables(chant, ornamentalType) {
  * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
  * @returns {{"liquescent": string[], "quilisma": string[], "oriscus": string[]}} list of syllables that contain the ornamental shapes
  */
-export function obtainSyllables(chantList, ornamentalOptions) {
+function obtainSyllables(chantList, ornamentalOptions) {
   let liquescentSyllables = [];
   let quilismaSyllables = [];
   let oriscusSyllables = [];
@@ -118,7 +118,7 @@ export function obtainSyllables(chantList, ornamentalOptions) {
 
 /**
  * Perform highlighting when user clicks on "Search" button
- * @return {{"chant": Chant[], "syllables": {"liquescent": string[], "quilisma": string[], "oriscus": string[]}}} list of chants that match the search query
+ * @return {"chant": Chant[]} list of chants that match the search query
  */
 export function performSearch() {
   /** Retrieving the locally stored list of chants */
@@ -148,10 +148,9 @@ export function performSearch() {
   }
 
   resultChantList = filterByOrnamentalShapes(resultChantList, ornamentalOptions);
-  let syllableList = obtainSyllables(resultChantList, ornamentalOptions);
 
   /* Return the result */
-  return [resultChantList, syllableList];
+  return resultChantList;
 }
 
 /**
@@ -159,7 +158,7 @@ export function performSearch() {
  * @param {Chant[]} resultChantList list of chants that match the search query
  * @param {{"liquescent": string[], "quilisma": string[], "oriscus": string[]}} syllablesList list of syllables that contain the ornamental shapes
  */
-export function showSearchResult(resultChantList, syllablesList) {
+export function showSearchResult(resultChantList) {
   searchResultDiv.innerHTML = '';
 
   /** @type {HTMLTableElement} */
@@ -184,19 +183,6 @@ export function showSearchResult(resultChantList, syllablesList) {
   */
   let tbody = document.createElement('tbody');
 
-  const createTD = (content) => {
-    let td = document.createElement('td');
-    td.textContent = content;
-    td.style.fontSize = "1rem";
-    return td;
-  }
-
-  const createTDHTML = (content) => {
-    let td = document.createElement('td');
-    td.innerHTML = content;
-    td.style.fontSize = "1rem";
-    return td;
-  }
 
   /** Regular expression to match the file name format
    * - Pattern: 3 digits, an underscore, a letter, and 2 digits
@@ -208,12 +194,12 @@ export function showSearchResult(resultChantList, syllablesList) {
     // create a result row for each chant
     let resultRow = document.createElement('tr');
 
-    let tdNotationType = createTD(chant.notationType);
+    let tdNotationType = createTableCell(chant.notationType);
     let tdMode;
     if (chant.mode != undefined) {
-      tdMode = createTD(`${chant.mode} (${chant.modeCertainty.toFixed(1)}%)`);
+      tdMode = createTableCell(`${chant.mode} (${chant.modeCertainty.toFixed(1)}%)`);
     } else {
-      tdMode = createTD("undetected");
+      tdMode = createTableCell("undetected");
       tdMode.style.color = "red";
     }
 
@@ -235,7 +221,6 @@ export function showSearchResult(resultChantList, syllablesList) {
         const wordWrapper = document.createElement('span');
         wordWrapper.id = ornamentalNC + "-word"; // for CSS styling
         wordWrapper.innerText = word;
-        // if (ornamentalNC != null && ornamentalNC != "unclear") console.log(wordWrapper);
         word = wordWrapper.outerHTML;
       }
       if (position == "s" || position == "i") {
@@ -248,7 +233,7 @@ export function showSearchResult(resultChantList, syllablesList) {
         tdSyllablesContent[tdSyllablesContent.length - 1] += word;
       }
     }
-    let tdSyllables = createTDHTML(tdSyllablesContent.join(" "));
+    let tdSyllables = createTableCellHTML(tdSyllablesContent.join(" "));
 
 
     /** @type {HTMLAnchorElement} */
@@ -280,14 +265,17 @@ export function showSearchResult(resultChantList, syllablesList) {
       chantDisplay.scrollIntoView({ behavior: "smooth" });
     });
 
-    let tdLinks = createTD();
-    tdLinks.style = "display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1rem;";
-    tdLinks.appendChild(pemLinkBtnDiv);
-    tdLinks.appendChild(displayChantBtn);
+    let tdLinks = createTableCell();
+    let tdLinksDiv = document.createElement('div');
 
-    let tdSource = createTD(chant.source);
+    tdLinksDiv.style = "display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1rem;";
+    tdLinksDiv.appendChild(pemLinkBtnDiv);
+    tdLinksDiv.appendChild(displayChantBtn);
+    tdLinks.appendChild(tdLinksDiv);
 
-    let tdTitle = createTD(chant.title);
+    let tdSource = createTableCell(chant.source);
+
+    let tdTitle = createTableCell(chant.title);
 
     // In order: title, notation type, mode, source, PEM database URL, file name
     resultRow.appendChild(tdTitle);
@@ -351,4 +339,16 @@ function printChantInformation(chant) {
     }
     chantInfo.appendChild(p);
   }
+}
+
+function createTableCell(content) {
+  let td = document.createElement('td');
+  td.textContent = content;
+  return td;
+}
+
+function createTableCellHTML(content) {
+  let td = document.createElement('td');
+  td.innerHTML = content;
+  return td;
 }
