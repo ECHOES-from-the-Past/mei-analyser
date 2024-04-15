@@ -593,7 +593,6 @@ export class Chant {
       console.log(modeDescription);
     }
 
-    rating = Number(rating).toFixed(2);
     return [mode, rating, modeDescription];
   }
 
