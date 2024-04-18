@@ -214,7 +214,7 @@ function printChantInformation(chant) {
     "Music script": chant.notationType,
     "Mode": chant.mode == undefined ? "Undetected" : chant.mode,
     "Mode Certainty": chant.modeCertainty == undefined ? "-" : chant.modeCertainty + "%",
-    "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription,
+    "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription.replaceAll("\n", "<br>"),
     "File Name": chant.fileName,
     "PEM Database URL": chant.pemDatabaseUrls,
   };
