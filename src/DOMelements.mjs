@@ -8,9 +8,6 @@ export const crossComparisonModeButton = document.getElementById('cross-comparis
 /** @type {HTMLButtonElement} */
 export const refreshDatabaseButton = document.getElementById('refresh-database-btn');
 
-/** @type {HTMLSpanElement} */
-export const refreshDatabaseWarning = document.getElementById('refresh-database-warning');
-
 /** @type {HTMLElement} */
 export const refreshIndicator = document.getElementById('refresh-indicator');
 

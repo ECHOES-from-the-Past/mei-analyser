@@ -16,8 +16,16 @@
   /* Colour scheme */
   --button: hsl(170, 100%, 16%);
   --button-hover: hsla(182, 100%, 20%, 0.753);
+  --button-active: hsl(170, 100%, 12%);
+  --button-disabled: hsla(172, 38%, 16%, 0.288);
   --background: hsl(0, 0%, 100%);
   --background-hover: hsla(147, 100%, 83%, 0.377);
+
+  /* Ornamental colours */
+  --liquescent-text: hsl(216, 100%, 41%);
+  --quilisma-text: hsl(54, 100%, 36%);
+  --oriscus-text: hsl(318, 100%, 36%);
+  --unclear-text: hsl(0, 10%, 59%);
 
   /* Default highlighting colours */
   --highlight-fill: hsla(276, 69%, 52%, 0.6);
@@ -83,7 +91,12 @@ button:hover {
 }
 
 button:active {
-  background-color: var(--button);
+  background-color: var(--button-active);
+}
+
+button:disabled {
+  background-color: var(--button-disabled);
+  cursor: not-allowed;
 }
 
 button>a {
@@ -196,9 +209,33 @@ select {
   text-align: center;
   padding: 0.5rem;
   border: 1px solid hsla(101, 70%, 16%, 0.678);
+  height: inherit;
 }
 
 input[type="checkbox"]:hover, label:hover {
   cursor: pointer;
   background-color: var(--background-hover);
+}
+
+#liquescent-word {
+  color: var(--liquescent-text);
+  font-weight: bold;
+  text-decoration: underline solid;
+}
+
+#quilisma-word {
+  color: var(--quilisma-text);
+  font-weight: bold;
+  text-decoration: underline wavy;
+}
+
+#oriscus-word {
+  color: var(--oriscus-text);
+  font-weight: bold;
+  text-decoration: underline dashed;
+}
+
+#unclear-word {
+  color: var(--unclear-text);
+  text-decoration: underline dotted;
 }

@@ -10,7 +10,6 @@ import {
     liquescentCheckbox,
     quilismaCheckbox,
     oriscusCheckbox,
-    refreshDatabaseWarning,
     aquitanianCheckbox,
     squareCheckbox,
     chantInfo,
@@ -27,7 +26,6 @@ import {
     performSearch, showSearchResult
 } from './search/search.js';
 
-import pjson from '../package.json';
 import database from './database/database.json';
 
 import { Chant } from './utility/components.js';
@@ -102,7 +100,12 @@ async function loadDatabaseToChant() {
     // display the indicator
     refreshIndicator.textContent = "Loading the database...";
     refreshIndicator.hidden = false;
+
+    // Clear the search result display
     searchResultDiv.innerHTML = '<p> Search results will display here. </p>';
+
+    // Disable the search button
+    searchButton.disabled = true;
 
     for (let filename of database) {
         const filePath = rootPath + filename;
@@ -113,6 +116,9 @@ async function loadDatabaseToChant() {
     persist('chantList', chantList);
 
     refreshIndicator.textContent = "Database refresh successfully!";
+
+    // Enable the search button
+    searchButton.disabled = false;
     // sleep for 2 seconds
     await new Promise(resolve => setTimeout(resolve, 2000));
     refreshIndicator.hidden = true;
@@ -139,20 +145,9 @@ window.onresize = () => {
 /**
  * Load predefined files when DOM is loaded
 */
-document.onreadystatechange = () => {
+document.onreadystatechange = async () => {
     if (document.readyState === "complete") {
-        loadPersistedSearchOptions();
-
-        console.log(`Saved version: ${retrieve('version')} \nNewest version: ${pjson.version}`);
-
-        if (checkPersistanceExists('version') && retrieve('version') != pjson.version) {
-            refreshDatabaseWarning.hidden = false;
-        }
-
-        if (!checkPersistanceExists('chantList') || !checkPersistanceExists('version')) {
-            loadDatabaseToChant();
-            persist("version", pjson.version);
-        }
+        await Promise.all([loadDatabaseToChant(), loadPersistedSearchOptions()]);
     }
 }
 
@@ -168,10 +163,8 @@ crossComparisonModeButton.addEventListener("click", () => {
 });
 
 refreshDatabaseButton.addEventListener("click", async () => {
-    refreshDatabaseWarning.hidden = true;
     await loadDatabaseToChant();
     if (databaseIsOpen) constructDatabaseList();
-    persist("version", pjson.version);
 });
 
 /* --------------- SEARCH PANEL PERSISTANCE --------------- */
@@ -225,8 +218,8 @@ searchButton.addEventListener("click", () => {
     chantSVG.style = ""; // clear the border styling of the chant SVG
 
     // Perform search and display the result
-    let resultChantList = performSearch();
-    showSearchResult(resultChantList);
+    let searchResults = performSearch();
+    showSearchResult(searchResults);
 });
 
 /* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */
