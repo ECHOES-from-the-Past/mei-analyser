@@ -15,7 +15,7 @@ import {
     chantInfo,
     chantSVG,
     chantDisplay,
-    refreshIndicator,
+    refreshStatus,
     searchResultDiv,
     clientVersion,
     refreshWheel
@@ -184,8 +184,8 @@ async function loadDatabaseToLocalStorage() {
     .then(json => json.version);
 
     // display the indicator
-    refreshIndicator.textContent = `Updating client from version ${retrieve('version')} to ${remoteDatabaseVersion}`;
-    refreshIndicator.hidden = false;
+    refreshStatus.textContent = `Updating client from version ${retrieve('version')} to ${remoteDatabaseVersion}`;
+    refreshStatus.hidden = false;
     refreshWheel.hidden = false;
 
     // Clear the search result display
@@ -193,24 +193,29 @@ async function loadDatabaseToLocalStorage() {
 
     // Disable the search button
     searchButton.disabled = true;
-
-    for (let filename of database) {
-        const filePath = rootPath + filename;
-        let MEIFileContentString = await loadMEIFile(filePath);
-        let chant = new Chant(MEIFileContentString, filePath);
-        chantList.push(chant);
+    try {
+        for (let filename of database) {
+            const filePath = rootPath + filename;
+            let MEIFileContentString = await loadMEIFile(filePath);
+            let chant = new Chant(MEIFileContentString, filePath);
+            chantList.push(chant);
+        }
+        persist('chantList', chantList);
+        persist('version', remoteDatabaseVersion);
+    } catch (error) {
+        refreshStatus.textContent = "Error loading database!";
+        refreshWheel.hidden = true;
+        return;
     }
-    persist('chantList', chantList);
 
-    refreshIndicator.textContent = "Database refresh successfully!";
+    refreshStatus.textContent = "Database refresh successfully!";
     refreshWheel.hidden = true;
-    persist('version', remoteDatabaseVersion);
 
     // Enable the search button
     searchButton.disabled = false;
     // sleep for 2 seconds
     await new Promise(resolve => setTimeout(resolve, 2000));
-    refreshIndicator.hidden = true;
+    refreshStatus.hidden = true;
 }
 
 /* --------------- SEARCH PANEL PERSISTANCE --------------- */
