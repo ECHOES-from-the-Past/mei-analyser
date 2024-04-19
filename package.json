@@ -1,6 +1,6 @@
 {
   "name": "mei-analyser",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "devDependencies": {
     "vite": ">=5.2.6"
   },

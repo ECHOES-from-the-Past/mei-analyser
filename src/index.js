@@ -107,14 +107,14 @@ document.onreadystatechange = () => {
 */
 document.addEventListener("DOMContentLoaded", async () => {
     const packageJSON = await fetch("https://raw.githubusercontent.com/ECHOES-from-the-Past/mei-analyser/main/package.json")
-    .then(response => response.json());
+        .then(response => response.json());
 
     loadPersistedSearchOptions();
     let remoteVersion = packageJSON.version;
     let localVersion = retrieve('version');
     console.log(`Newest version: ${remoteVersion}, Local version: ${localVersion}`);
 
-    if(localVersion === null || localVersion !== remoteVersion) {
+    if (localVersion === null || localVersion !== remoteVersion) {
         await loadDatabaseToLocalStorage();
         localVersion = remoteVersion;
     }
@@ -180,8 +180,8 @@ async function loadDatabaseToLocalStorage() {
     /** @type {Chant[]} A list of all the chants in the database */
     let chantList = [];
     const remoteDatabaseVersion = await fetch("https://raw.githubusercontent.com/ECHOES-from-the-Past/mei-analyser/main/package.json")
-    .then(response => response.json())
-    .then(json => json.version);
+        .then(response => response.json())
+        .then(json => json.version);
 
     // display the indicator
     refreshStatus.textContent = `Updating client from version ${retrieve('version')} to ${remoteDatabaseVersion}`;
