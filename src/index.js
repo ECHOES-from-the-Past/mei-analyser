@@ -203,7 +203,8 @@ async function loadDatabaseToLocalStorage() {
         persist('chantList', chantList);
         persist('version', remoteDatabaseVersion);
     } catch (error) {
-        refreshStatus.textContent = "Error loading database!";
+        refreshStatus.textContent = "Error loading database! Please reload the page or report the issue to the developer.";
+        localStorage.removeItem('chantList');
         refreshWheel.hidden = true;
         return;
     }
