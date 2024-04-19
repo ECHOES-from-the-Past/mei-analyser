@@ -27,6 +27,9 @@
   --oriscus-text: hsl(318, 100%, 36%);
   --unclear-text: hsl(0, 10%, 59%);
 
+  --melisma-text: hsl(0, 100%, 16%);
+  --melisma-background: hsla(138, 100%, 58%, 0.466);
+
   /* Default highlighting colours */
   --highlight-fill: hsla(276, 69%, 52%, 0.6);
   --highlight-stroke: hsl(276, 69%, 52%);
@@ -240,25 +243,31 @@ input[type="checkbox"]:hover, label:hover {
   background-color: var(--background-hover);
 }
 
-#liquescent-word {
+.liquescent-word {
   color: var(--liquescent-text);
   font-weight: bold;
   text-decoration: underline solid;
 }
 
-#quilisma-word {
+.quilisma-word {
   color: var(--quilisma-text);
   font-weight: bold;
   text-decoration: underline wavy;
 }
 
-#oriscus-word {
+.oriscus-word {
   color: var(--oriscus-text);
   font-weight: bold;
   text-decoration: underline dashed;
 }
 
-#unclear-word {
+.unclear-word {
   color: var(--unclear-text);
   text-decoration: underline dotted;
+}
+
+.melisma-word {
+  background-color: var(--melisma-background);
+  /* color: var(--melisma-text); */
+  font-weight: bold;
 }

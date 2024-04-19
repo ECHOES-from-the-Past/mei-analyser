@@ -215,14 +215,23 @@ export function showSearchResult(resultChantList) {
           break;
         }
       }
+      const wordWrapper = document.createElement('span');
 
       // Construct the text for the syllables
       if (ornamentalNC != null) {
-        const wordWrapper = document.createElement('span');
-        wordWrapper.id = ornamentalNC + "-word"; // for CSS styling
-        wordWrapper.innerText = word;
+        wordWrapper.classList.add(ornamentalNC + "-word") // for CSS styling
+      }
+
+      // Detect melismas with 6+ neume components
+      if (syllable.neumeComponents.length >= 6) {
+        wordWrapper.classList.add("melisma-word");
+      }
+
+      wordWrapper.innerText = word;
+      if (wordWrapper.classList.length > 0) {
         word = wordWrapper.outerHTML;
       }
+
       if (position == "s" || position == "i") {
         // standard syllable
         // initial syllable
