@@ -11,6 +11,12 @@ export const refreshDatabaseButton = document.getElementById('refresh-database-b
 /** @type {HTMLElement} */
 export const refreshIndicator = document.getElementById('refresh-indicator');
 
+/** @type {HTMLDivElement} */
+export const refreshWheel = document.getElementById('refresh-wheel');
+
+/** @type {HTMLSpanElement} */
+export const clientVersion = document.getElementById('client-version');
+
 /* -------------- DOM ELEMENTS -------------- */
 /* Search-related */
 /** @type {HTMLInputElement} */

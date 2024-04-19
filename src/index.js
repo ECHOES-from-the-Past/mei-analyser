@@ -16,13 +16,16 @@ import {
     chantSVG,
     chantDisplay,
     refreshIndicator,
-    searchResultDiv
+    searchResultDiv,
+    clientVersion,
+    refreshWheel
 } from './DOMelements.mjs';
 import {
     drawSVGFromMEIContent, loadMEIFile,
     checkPersistanceExists, persist, retrieve
 } from './utility/utils.js';
 import {
+    clearSearchResultsAndInfo,
     performSearch, showSearchResult
 } from './search/search.js';
 
@@ -38,6 +41,7 @@ const env = import.meta.env.MODE;
 console.debug(`Current environment: ${env}`);
 const rootPath = "https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoMEI/main/MEI_outfiles/";
 
+
 /* ----------------------- Persistence Layer ----------------------- */
 function loadPersistedSearchOptions() {
     console.log("Loading persisted search options...");
@@ -49,13 +53,92 @@ function loadPersistedSearchOptions() {
 
     // searchQueryInput.value = retrieve('searchQuery');
     aquitanianCheckbox.checked = retrieve('aquitanianCheckbox') === null ? true : retrieve('aquitanianCheckbox');
-    // squareCheckbox.checked = retrieve('squareCheckbox');
-    squareCheckbox.checked = true;
+    squareCheckbox.checked = retrieve('squareCheckbox');
 
     liquescentCheckbox.checked = retrieve('liquescentCheckbox');
     quilismaCheckbox.checked = retrieve('quilismaCheckbox');
     oriscusCheckbox.checked = retrieve('oriscusCheckbox');
 }
+
+let databaseIsOpen = false;
+
+/** --------------- WINDOW and DOM level functions --------------- */
+/**
+ * Dynamically redraw the MEI content when the window is resized
+ * See: https://www.geeksforgeeks.org/how-to-wait-resize-end-event-and-then-perform-an-action-using-javascript/
+*/
+let timeOutFunctionId;
+window.onresize = () => {
+    clearTimeout(timeOutFunctionId);
+    console.log('Resizing...');
+    timeOutFunctionId = setTimeout(() => {
+        // drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
+        // drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
+        console.log('Resized!');
+    }, 500);
+}
+
+/*
+document.onreadystatechange = () => {
+    console.debug("Document ready state: " + document.readyState);
+    switch (document.readyState) {
+        case "loading": {
+            // create a loading screen
+            let loadingScreen = document.createElement('div');
+            loadingScreen.innerHTML = "<h1>Loading...</h1>";
+            loadingScreen.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);";
+            document.body.appendChild(loadingScreen);
+            break;
+        }
+        case "complete": {
+            // await Promise.all([loadDatabaseToChant(), loadPersistedSearchOptions()]);
+            loadPersistedSearchOptions();
+            let remoteVersion = packageJSON.version;
+            let localVersion = import.meta.env.VITE_APP_VERSION;
+            console.log(`Remote version: ${remoteVersion}, Local version: ${localVersion}`);
+            break;
+        }
+    }
+}
+*/
+
+/**
+* Load predefined files when DOM is loaded
+*/
+document.addEventListener("DOMContentLoaded", async () => {
+    const packageJSON = await fetch("https://raw.githubusercontent.com/ECHOES-from-the-Past/mei-analyser/main/package.json")
+    .then(response => response.json());
+
+    loadPersistedSearchOptions();
+    let remoteVersion = packageJSON.version;
+    let localVersion = retrieve('version');
+    console.log(`Newest version: ${remoteVersion}, Local version: ${localVersion}`);
+
+    if(localVersion === null || localVersion !== remoteVersion) {
+        await loadDatabaseToLocalStorage();
+        localVersion = remoteVersion;
+    }
+
+    // Display the client version
+    clientVersion.textContent = `Client version: ${localVersion} | Remote version: ${remoteVersion}`;
+});
+
+/* --------------- TOP BUTTON Event Listeners --------------- */
+searchModeButton.addEventListener("click", () => {
+    document.getElementById('search-panel').hidden = false;
+    document.getElementById('cross-comparison-panel').hidden = true;
+});
+
+crossComparisonModeButton.addEventListener("click", () => {
+    document.getElementById('search-panel').hidden = true;
+    document.getElementById('cross-comparison-panel').hidden = false;
+});
+
+refreshDatabaseButton.addEventListener("click", async () => {
+    clearSearchResultsAndInfo();
+    await loadDatabaseToLocalStorage();
+    if (databaseIsOpen) constructDatabaseList();
+});
 
 /* --------------------- DATABASE --------------------- */
 /**
@@ -93,13 +176,17 @@ async function constructDatabaseList() {
     }
 }
 
-async function loadDatabaseToChant() {
+async function loadDatabaseToLocalStorage() {
     /** @type {Chant[]} A list of all the chants in the database */
     let chantList = [];
+    const remoteDatabaseVersion = await fetch("https://raw.githubusercontent.com/ECHOES-from-the-Past/mei-analyser/main/package.json")
+    .then(response => response.json())
+    .then(json => json.version);
 
     // display the indicator
-    refreshIndicator.textContent = "Loading the database...";
+    refreshIndicator.textContent = `Updating client from version ${retrieve('version')} to ${remoteDatabaseVersion}`;
     refreshIndicator.hidden = false;
+    refreshWheel.hidden = false;
 
     // Clear the search result display
     searchResultDiv.innerHTML = '<p> Search results will display here. </p>';
@@ -116,6 +203,8 @@ async function loadDatabaseToChant() {
     persist('chantList', chantList);
 
     refreshIndicator.textContent = "Database refresh successfully!";
+    refreshWheel.hidden = true;
+    persist('version', remoteDatabaseVersion);
 
     // Enable the search button
     searchButton.disabled = false;
@@ -123,49 +212,6 @@ async function loadDatabaseToChant() {
     await new Promise(resolve => setTimeout(resolve, 2000));
     refreshIndicator.hidden = true;
 }
-
-let databaseIsOpen = false;
-
-/** --------------- WINDOW and DOM level functions --------------- */
-/**
- * Dynamically redraw the MEI content when the window is resized
- * See: https://www.geeksforgeeks.org/how-to-wait-resize-end-event-and-then-perform-an-action-using-javascript/
- */
-let timeOutFunctionId;
-window.onresize = () => {
-    clearTimeout(timeOutFunctionId);
-    console.log('Resizing...');
-    timeOutFunctionId = setTimeout(() => {
-        // drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-        // drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
-        console.log('Resized!');
-    }, 500);
-}
-
-/**
- * Load predefined files when DOM is loaded
-*/
-document.onreadystatechange = async () => {
-    if (document.readyState === "complete") {
-        await Promise.all([loadDatabaseToChant(), loadPersistedSearchOptions()]);
-    }
-}
-
-/* --------------- TOP BUTTON Event Listeners --------------- */
-searchModeButton.addEventListener("click", () => {
-    document.getElementById('search-panel').hidden = false;
-    document.getElementById('cross-comparison-panel').hidden = true;
-});
-
-crossComparisonModeButton.addEventListener("click", () => {
-    document.getElementById('search-panel').hidden = true;
-    document.getElementById('cross-comparison-panel').hidden = false;
-});
-
-refreshDatabaseButton.addEventListener("click", async () => {
-    await loadDatabaseToChant();
-    if (databaseIsOpen) constructDatabaseList();
-});
 
 /* --------------- SEARCH PANEL PERSISTANCE --------------- */
 // pitchRadio.addEventListener("change", () => {
@@ -212,10 +258,7 @@ viewDatabaseButton.addEventListener("click", () => {
 });
 
 searchButton.addEventListener("click", () => {
-    // Clear the display when performing a new search
-    chantInfo.innerHTML = "<p> Chant information will display here </p>";
-    chantSVG.innerHTML = "<p> Click on the chant's file name to display </p>";
-    chantSVG.style = ""; // clear the border styling of the chant SVG
+    clearSearchResultsAndInfo();
 
     // Perform search and display the result
     let searchResults = performSearch();
