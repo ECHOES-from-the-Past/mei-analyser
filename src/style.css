@@ -28,7 +28,7 @@
   --unclear-text: hsl(0, 10%, 59%);
 
   --melisma-text: hsl(0, 100%, 16%);
-  --melisma-background: hsla(138, 100%, 58%, 0.466);
+  --melisma-background: hsla(138, 86%, 52%, 0.445);
 
   /* Default highlighting colours */
   --highlight-fill: hsla(276, 69%, 52%, 0.6);
@@ -269,5 +269,4 @@ input[type="checkbox"]:hover, label:hover {
 .melisma-word {
   background-color: var(--melisma-background);
   /* color: var(--melisma-text); */
-  font-weight: bold;
 }
