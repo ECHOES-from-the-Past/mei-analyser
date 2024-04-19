@@ -9,7 +9,13 @@ export const crossComparisonModeButton = document.getElementById('cross-comparis
 export const refreshDatabaseButton = document.getElementById('refresh-database-btn');
 
 /** @type {HTMLElement} */
-export const refreshIndicator = document.getElementById('refresh-indicator');
+export const refreshStatus = document.getElementById('refresh-status');
+
+/** @type {HTMLDivElement} */
+export const refreshWheel = document.getElementById('refresh-wheel');
+
+/** @type {HTMLSpanElement} */
+export const clientVersion = document.getElementById('client-version');
 
 /* -------------- DOM ELEMENTS -------------- */
 /* Search-related */

@@ -352,3 +352,13 @@ function createTableCellHTML(content) {
   td.innerHTML = content;
   return td;
 }
+
+export function clearSearchResultsAndInfo() {
+  // Clear the search result display
+  searchResultDiv.innerHTML = '<p> Search results will display here. </p>';
+
+  // Clear the display when performing a new search
+  chantInfo.innerHTML = "<p> Chant information will display here </p>";
+  chantSVG.innerHTML = "<p> Click on the chant's file name to display </p>";
+  chantSVG.style = ""; // clear the border styling of the chant SVG
+}

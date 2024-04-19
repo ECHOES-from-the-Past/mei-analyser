@@ -10,7 +10,7 @@
   <!-- Adding the scripts to be used for the webpage -->
   <script defer src="https://www.verovio.org/javascript/develop/verovio-toolkit-wasm.js"></script>
 
-  <script type="module" src="./src/index.js"></script>
+  <script type="module" src="./src/index.js" defer></script>
   <title> MEI Analyser </title>
 </head>
 
@@ -31,10 +31,14 @@
     </a>
 
     <button id="refresh-database-btn">
-      Refresh Database
+      Update Database
     </button>
 
-    <span style="color:green; font:bold" id="refresh-indicator" hidden></span>
+    <div id="refresh-wheel" hidden></div>
+    <span style="color: var(--button-active); font:bold" id="refresh-status" hidden>
+    </span>
+
+    <span style="color: var(--button); margin-left: auto;" id="client-version"></span>
   </div>
 
   <!-- Start of user interface -->
