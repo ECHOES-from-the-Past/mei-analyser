@@ -735,7 +735,7 @@ export class Chant {
 
 
     if (env == 'development') {
-      console.log(modeDescription.outerHTML);
+      console.dirxml(modeDescription);
     }
 
     return [mode, rating, modeDescription.outerHTML];
