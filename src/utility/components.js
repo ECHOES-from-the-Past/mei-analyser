@@ -429,7 +429,42 @@ export class Chant {
 
   /**
    * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode detection
-   * @returns {[number, number, number]} the mode of the chant. If the mode is not found, return -1.
+   * Mode description template: (in HTML syntax)
+   * <ul>
+   *  <li> The finalis pitch is 'E', suggesting modes 3 and 4. </li>
+   *  <li> Regarding <b> repercussio </b>:
+   *    <ul>
+   *      <li>
+   *        For authentic mode (mode 3): 'C' and 'B' are not among the most repeated notes.
+   *        Therefore, there is a 0% probability of being in authentic mode.
+   *      </li>
+   *      <li>
+   *        For plagal mode (mode 4): 'A' is the second most repeated note (15 times) after a note other than the finalis 'E'.
+   *        Therefore, there is a 50% probability of being in plagal mode.
+   *      </li>
+   *      <li>
+   *        <b> Ambitus suggests plagal mode '4' with 94.87% of notes in range </b>
+   *      </li>
+   *    </ul>
+   *  </li>
+   *  <li> Regarding <b> ambitus </b>:
+   *    <ul>
+   *      <li>
+   *        For the authentic mode (mode 3): 92.31% of the notes are within the range 'E-E'
+   *      </li>
+   *      <li>
+   *        For the plagal mode (mode 4): 94.87% of the notes are within the range 'B-B'
+   *      </li>
+   *      <li>
+   *        <b> Ambitus suggests plagal mode '4' with 94.87% of notes in range </b>
+   *      </li>
+   *    </ul>
+   *  </li>
+   *  <li> <b> Authentic mode '3' has 46.15% rating | Plagal mode '4' has 72.44% raging </b> </li>
+   * </ul>
+   * 
+   * <p><b> Authentic mode '3' has 46.15% rating | Plagal mode '4' has 72.44% raging </b></p>
+   * @returns {[number, number, string]} the mode, the overall rating, and the descripion of the chant.
    */
   calculateSquareMode() {
     if (env == 'development') {
@@ -439,9 +474,7 @@ export class Chant {
     let mode = -1;    // default undefined mode
     let rating = 0;   // default undefined rating
 
-    let repercussioRating = 0;
-
-    let modeDescription = '';
+    let modeDescription = document.createElement('ul');
 
     /** 
      * 1st step: detecting the FINALIS - the last note's pitch of the Square notation chant
@@ -450,8 +483,6 @@ export class Chant {
     const finalisNC = this.neumeComponents[this.neumeComponents.length - 1];
 
     const finalisPitch = finalisNC.getPitch();
-    modeDescription += `Finalis pitch is '${finalisPitch.toUpperCase()}'.\n`;
-
     let authenticMode = -1, plagalMode = -1;
     let authenticRepercussioPitch = '', plagalRepercussioPitch = '';
 
@@ -475,13 +506,26 @@ export class Chant {
       authenticRepercussioPitch = 'd';
       plagalMode = 8;
       plagalRepercussioPitch = 'c';
-    } else {
-      modeDescription += `Unable to detect potential modes based on finalis '${finalisPitch}'.\n`;
     }
+
+    let finalisDescription = document.createElement('li');
+    if (authenticMode === -1 || plagalMode === -1) {
+      finalisDescription.innerHTML = `Unable to detect the exact mode based on the finalis pitch '${finalisPitch.toUpperCase()}'.`;
+    } else {
+      finalisDescription.innerHTML = `The <b> finalis </b> pitch is '${finalisPitch.toUpperCase()}', suggesting modes ${authenticMode} or ${plagalMode}.`;
+    }
+
+    modeDescription.appendChild(finalisDescription);
 
     /**
      * 2nd step: REPERCUSSIO - Most repeated note
      */
+    let repercussioIntroduction = document.createElement('li');
+    repercussioIntroduction.innerHTML = `Regarding <b>repercussio</b>:`;
+    modeDescription.appendChild(repercussioIntroduction);
+
+    let repercussioDesc = document.createElement('ul');
+
     let modeFromRepercussio = -1;
     /** @type {string[]} array of all pitches in the chant */
     const pitchFrequency = this.neumeComponents.map((nc) => nc.getPitch())
@@ -508,75 +552,85 @@ export class Chant {
      */
     let authenticRepercussioRating = 0, plagalRepercussioRating = 0;
 
+    /** @type {HTMLLIElement} authentic repercussio description */
+    let repercussioAuthDesc = document.createElement('li');
     /** Repercussio for Authentic mode */
     if (sortedCounts[0] === authenticRepercussioPitch) { // case (i)
       authenticRepercussioRating += 1;
-      modeDescription += `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the most repeated note (${counts[authenticRepercussioPitch]} times). `;
+      repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the most repeated note (${counts[authenticRepercussioPitch]} times). `;
     } else {
       if (sortedCounts[1] === authenticRepercussioPitch && sortedCounts[0] === finalisPitch) { // case (ii)
         authenticRepercussioRating += 0.75;
-        modeDescription += `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the second most repeated note (${counts[authenticRepercussioPitch]} times) `
-        modeDescription += `after finalis '${finalisPitch.toUpperCase()}'. `;
+        repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the second most repeated note (${counts[authenticRepercussioPitch]} times) `
+        repercussioAuthDesc.innerHTML += `after finalis '${finalisPitch.toUpperCase()}'. `;
       } else if (sortedCounts[1] === authenticRepercussioPitch && sortedCounts[0] !== finalisPitch) { // case (iii)
         authenticRepercussioRating += 0.5;
-        modeDescription += `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the second most repeated note (${counts[authenticRepercussioPitch]} times) `
-        modeDescription += `after a note other than finalis '${finalisPitch.toUpperCase()}'. `;
+        repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the second most repeated note (${counts[authenticRepercussioPitch]} times) `
+        repercussioAuthDesc.innerHTML += `after a note other than finalis '${finalisPitch.toUpperCase()}'. `;
       } else if (sortedCounts[2] === authenticRepercussioPitch) { // case (iv)
         authenticRepercussioRating += 0.25;
-        modeDescription += `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the third most repeated note (${counts[authenticRepercussioPitch]} times). `;
+        repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the third most repeated note (${counts[authenticRepercussioPitch]} times). `;
       } else if (sortedCounts[3] === authenticRepercussioPitch) { // case (v)
         authenticRepercussioRating += 0.125;
-        modeDescription += `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the fourth most repeated note (${counts[authenticRepercussioPitch]} times). `;
+        repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}' is the fourth most repeated note (${counts[authenticRepercussioPitch]} times). `;
       } else {
-        modeDescription += `Unable to detect authentic mode from repercussio. `;
+        repercussioAuthDesc.innerHTML = `Unable to detect authentic mode from repercussio. `;
       }
     }
-
-    modeDescription += `<b>${authenticRepercussioRating.toFixed(4) * 100}%</b> authentic repercussio rating.\n`
-
+    repercussioDesc.appendChild(repercussioAuthDesc);
 
     /** Repercussio for Plagal mode */
+    /** @type {HTMLLIElement} */
+    let repercussioPlagDesc = document.createElement('li');
     if (sortedCounts[0] === plagalRepercussioPitch) { // case (i)
       plagalRepercussioRating += 1;
-      modeDescription += `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is the most repeated note (${counts[plagalRepercussioPitch]} times). `;
+      repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is the most repeated note (${counts[plagalRepercussioPitch]} times). `;
     } else {
       if (sortedCounts[1] === plagalRepercussioPitch && sortedCounts[0] === finalisPitch) { // case (ii)
         plagalRepercussioRating += 0.75;
-        modeDescription += `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is the second most repeated note (${counts[plagalRepercussioPitch]} times) `;
-        modeDescription += `after finalis '${finalisPitch.toUpperCase()}'. `;
+        repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is the second most repeated note (${counts[plagalRepercussioPitch]} times) `;
+        repercussioPlagDesc.innerHTML += `after finalis '${finalisPitch.toUpperCase()}'. `;
       } else if (sortedCounts[1] === plagalRepercussioPitch && sortedCounts[0] !== finalisPitch) { // case (iii)
         plagalRepercussioRating += 0.5;
-        modeDescription += `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is the second most repeated note (${counts[plagalRepercussioPitch]} times) `
-        modeDescription += `after a note other than finalis '${finalisPitch.toUpperCase()}'. `;
+        repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is the second most repeated note (${counts[plagalRepercussioPitch]} times) `
+        repercussioPlagDesc.innerHTML += `after a note other than finalis '${finalisPitch.toUpperCase()}'. `;
       } else if (sortedCounts[2] === plagalRepercussioPitch) { // case (iv)
         plagalRepercussioRating += 0.25;
-        modeDescription += `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is the third most repeated note (${counts[plagalRepercussioPitch]} times). `;
+        repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is the third most repeated note (${counts[plagalRepercussioPitch]} times). `;
       } else if (sortedCounts[3] === plagalRepercussioPitch) { // case (v)
         plagalRepercussioRating += 0.125;
-        modeDescription += `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is  the fourth most repeated note (${counts[plagalRepercussioPitch]} times). `;
+        repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}' is  the fourth most repeated note (${counts[plagalRepercussioPitch]} times). `;
       } else {
-        modeDescription += `Unable to detect plagal mode from repercussio. `;
+        repercussioPlagDesc.innerHTML = `Unable to detect plagal mode from repercussio. `;
       }
     }
-
-    modeDescription += `<b>${plagalRepercussioRating.toFixed(4) * 100}%</b> plagal repercussio rating.\n`
+    repercussioDesc.appendChild(repercussioPlagDesc);
 
     // Calculate the final repercussio rating
+    let repercussioSuggestion = document.createElement('p');
     if (authenticRepercussioRating > plagalRepercussioRating) {
       modeFromRepercussio = authenticMode;
-      modeDescription += `<b> > Repercussio suggests authentic mode '${modeFromRepercussio}' with ${authenticRepercussioRating.toFixed(4) * 100}%.</b>\n`;
+      repercussioSuggestion.innerHTML = `<b> Repercussio suggests authentic mode '${modeFromRepercussio}' with ${authenticRepercussioRating.toFixed(4) * 100}% certainty.</b>`;
     } else {
       modeFromRepercussio = plagalMode;
-      modeDescription += `<b> > Repercussio suggests plagal mode '${modeFromRepercussio}' with ${plagalRepercussioRating.toFixed(4) * 100}%.</b>\n`;
+      repercussioSuggestion.innerHTML = `<b> Repercussio suggests plagal mode '${modeFromRepercussio}' with ${plagalRepercussioRating.toFixed(4) * 100}% certainty.</b>`;
     }
+    repercussioDesc.appendChild(repercussioSuggestion);
+
+    modeDescription.appendChild(repercussioDesc);
 
     /**
      * 3rd condition: AMBITUS - Range of the notes
      * The mode is calculated as the number of notes within the predefined range divided by the total number of notes.
      * Equation: rate = (number of notes within the predetermined range) / (total number of notes)
      * Example: if pitch range is "D-D", all notes are expected to be within the range of D2 to D3.
-     * 
-     * We expect in authentic mode for most notes to be above the ambitus). Therefore:
+     */
+    let ambitusIntroduction = document.createElement('li');
+    ambitusIntroduction.innerHTML = `Regarding <b>ambitus</b>:`;
+    modeDescription.appendChild(ambitusIntroduction);
+
+    let ambitusDesc = document.createElement('ul');
+    /** We expect in authentic mode for most notes to be above the ambitus). Therefore:
      * lower_octave = finalis_octave
      * upper_octave = finalis_octave + 1 
      * For plagal mode, the finalis is expected to be more in the middle, having some notes above the finalis and some notes below the finalis.
@@ -588,17 +642,18 @@ export class Chant {
      * @returns {number} the rate of the pitches within the range
      * @usage pitchRange('d')
      */
-    let pitchRangeRate = (modeType, pitch) => {
+
+    const pitchRangeRate = (modeType, pitch) => {
       const finalisOctave = this.neumeComponents[this.neumeComponents.length - 1].getOctave();
       let lowerOctaveBoundary, upperOctaveBoundary;
       if (modeType === 'authentic') {
         lowerOctaveBoundary = finalisOctave;
         upperOctaveBoundary = finalisOctave + 1;
-        modeDescription += `Authentic ambitus range is '${pitch.toUpperCase()}-${pitch.toUpperCase()}' (${pitch}${lowerOctaveBoundary}-${pitch}${upperOctaveBoundary}).\n`
+        // modeDescription += `Authentic ambitus range is '${pitch.toUpperCase()}-${pitch.toUpperCase()}' (${pitch}${lowerOctaveBoundary}-${pitch}${upperOctaveBoundary}).`
       } else if (modeType === 'plagal') {
         lowerOctaveBoundary = finalisOctave - 1;
         upperOctaveBoundary = finalisOctave;
-        modeDescription += `Plagal ambitus range is '${pitch.toUpperCase()}-${pitch.toUpperCase()}' (${pitch}${lowerOctaveBoundary}-${pitch}${upperOctaveBoundary}).\n`
+        // modeDescription += `Plagal ambitus range is '${pitch.toUpperCase()}-${pitch.toUpperCase()}' (${pitch}${lowerOctaveBoundary}-${pitch}${upperOctaveBoundary}).`
       } else {
         console.error('Invalid mode type');
         return -1;
@@ -631,27 +686,42 @@ export class Chant {
       ambitusAuthenticRange = 'g';
       ambitusPlagalRange = 'd';
     } else {
-      modeDescription += `Unable to detect the exact mode based on ambitus.\n`;
+      modeDescription += `Unable to detect the exact mode based on ambitus.`;
     }
 
     ambitusAuthenticRating = pitchRangeRate('authentic', ambitusAuthenticRange);
     ambitusPlagalRating = pitchRangeRate('plagal', ambitusPlagalRange);
 
+    let ambitusAuthDesc = document.createElement('li');
+    ambitusAuthDesc.innerHTML = `For the authentic mode (mode ${authenticMode}): ${Number(ambitusAuthenticRating).toFixed(4) * 100}% of the notes are within the range '${ambitusAuthenticRange.toUpperCase()}-${ambitusAuthenticRange.toUpperCase()}' (${ambitusAuthenticRange}${finalisNC.getOctave()}-${ambitusAuthenticRange}${finalisNC.getOctave() + 1}).`;
+    ambitusDesc.appendChild(ambitusAuthDesc);
+
+    let ambitusPlagDesc = document.createElement('li');
+    ambitusPlagDesc.innerHTML = `For the plagal mode (mode ${plagalMode}): ${Number(ambitusPlagalRating).toFixed(4) * 100}% of the notes are within the range '${ambitusPlagalRange.toUpperCase()}-${ambitusPlagalRange.toUpperCase()}' (${ambitusPlagalRange}${finalisNC.getOctave() - 1}-${ambitusPlagalRange}${finalisNC.getOctave()}).`;
+    ambitusDesc.appendChild(ambitusPlagDesc);
+
+    // Ambitus suggestion
+    let ambitusSuggestion = document.createElement('p');
+
     if (ambitusAuthenticRating > ambitusPlagalRating) {
       modeFromAmbitus = authenticMode;
-      modeDescription += `<b> > Ambitus suggests authentic mode '${modeFromAmbitus}' with ${Number(ambitusAuthenticRating).toFixed(4) * 100}% of notes in range over `;
-      modeDescription += `plagal mode rating of ${Number(ambitusPlagalRating).toFixed(4) * 100}% of notes in range </b>'.\n`;
+      ambitusSuggestion.innerHTML = `<b> Ambitus suggests authentic mode '${modeFromAmbitus}' with ${Number(ambitusAuthenticRating).toFixed(4) * 100}% of notes in range over plagal mode rating of ${Number(ambitusPlagalRating).toFixed(4) * 100}% of notes in range </b>'.`;
     } else {
       modeFromAmbitus = plagalMode;
-      modeDescription += `<b> > Ambitus suggests plagal mode '${modeFromAmbitus}' with ${Number(ambitusPlagalRating).toFixed(4) * 100}% of notes in range over `;
-      modeDescription += `authentic mode rating of ${Number(ambitusAuthenticRating).toFixed(4) * 100}% of notes in range </b>'.\n`;
+      ambitusSuggestion.innerHTML = `<b> Ambitus suggests plagal mode '${modeFromAmbitus}' with ${Number(ambitusPlagalRating).toFixed(4) * 100}% of notes in range over authentic mode rating of ${Number(ambitusAuthenticRating).toFixed(4) * 100}% of notes in range </b>'.`;
     }
 
-    // conclusion
+    ambitusDesc.appendChild(ambitusSuggestion);
+    modeDescription.appendChild(ambitusDesc);
+
+    // Conclusion
     let authenticRating = (authenticRepercussioRating + ambitusAuthenticRating) / 2;
     let plagalRating = (plagalRepercussioRating + ambitusPlagalRating) / 2;
-    modeDescription += `<b> >> Authentic mode '${authenticMode}' has ${authenticRating.toFixed(4) * 100}% rating | `;
-    modeDescription += `Plagal mode '${plagalMode}' has ${plagalRating.toFixed(4) * 100}% rating.</b>\n`;
+    let conclusion = document.createElement('p');
+    conclusion.innerHTML = `Authentic mode '${authenticMode}' has ${authenticRating.toFixed(4) * 100}% rating | `;
+    conclusion.innerHTML += `Plagal mode '${plagalMode}' has ${plagalRating.toFixed(4) * 100}% rating.`;
+
+    modeDescription.appendChild(conclusion);
 
     // Calculate the final mode and rating
     if (authenticRating > plagalRating) {
@@ -665,10 +735,10 @@ export class Chant {
 
 
     if (env == 'development') {
-      console.log(modeDescription);
+      console.log(modeDescription.outerHTML);
     }
 
-    return [mode, rating, modeDescription];
+    return [mode, rating, modeDescription.outerHTML];
   }
 
   /**

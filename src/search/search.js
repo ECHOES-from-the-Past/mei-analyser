@@ -305,12 +305,11 @@ function printChantInformation(chant) {
     "Music script": chant.notationType,
     "Mode": chant.mode == undefined ? "Undetected" : chant.mode,
     "Mode Certainty": chant.modeCertainty == undefined ? "-" : chant.modeCertainty.toFixed(2) + "%",
-    "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription.replaceAll("\n", "<br>"),
+    "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription,
     "MEI File": chant.fileName,
     "PEM Database URL": chant.pemDatabaseUrls,
   };
 
-  let ul = document.createElement('ul');
   for (let k in info) {
     let p = document.createElement('p');
     if (k == "PEM Database URL") { // Special rendering for PEM Database URL
@@ -339,11 +338,8 @@ function printChantInformation(chant) {
       p.innerHTML = `<b>${k}</b>: ${info[k]}`;
     }
 
-    let li = document.createElement('li');
-    li.appendChild(p);
-    ul.appendChild(li);
+    chantInfo.appendChild(p);
   }
-  chantInfo.appendChild(ul);
 }
 
 function createTableCell(content) {
