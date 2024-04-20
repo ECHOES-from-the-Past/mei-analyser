@@ -3,7 +3,8 @@ import { retrieve, drawSVGFromMEIContent } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
-  searchResultDiv, chantInfo, chantSVG, chantDisplay
+  searchResultDiv, chantInfo, chantSVG, chantDisplay,
+  melismaInput
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
 
@@ -223,7 +224,8 @@ export function showSearchResult(resultChantList) {
       }
 
       // Detect melismas with 6+ neume components
-      if (syllable.neumeComponents.length >= 6) {
+      let melismaMin = melismaInput.value;
+      if (syllable.neumeComponents.length >= melismaMin) {
         wordWrapper.classList.add("melisma-word");
       }
 
