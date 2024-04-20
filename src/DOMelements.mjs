@@ -43,6 +43,15 @@ export const oriscusCheckbox = document.getElementById('oriscus-checkbox');
 /** @type {HTMLInputElement} */
 export const searchQueryInput = document.getElementById('search-query');
 
+/** @type {HTMLInputElement} */
+export const melismaInput = document.getElementById('melisma-input');
+
+/** @type {HTMLSpanElement} */
+export const melismaIncrement = document.getElementById('melisma-increment');
+
+/** @type {HTMLSpanElement} */
+export const melismaDecrement = document.getElementById('melisma-decrement');
+
 /** @type {HTMLButtonElement} */
 export const searchButton = document.getElementById('search-btn');
 
