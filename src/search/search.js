@@ -3,7 +3,8 @@ import { retrieve, drawSVGFromMEIContent } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
-  searchResultDiv, chantInfo, chantSVG, chantDisplay
+  searchResultDiv, chantInfo, chantSVG, chantDisplay,
+  melismaInput
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
 
@@ -215,14 +216,24 @@ export function showSearchResult(resultChantList) {
           break;
         }
       }
+      const wordWrapper = document.createElement('span');
 
       // Construct the text for the syllables
       if (ornamentalNC != null) {
-        const wordWrapper = document.createElement('span');
-        wordWrapper.id = ornamentalNC + "-word"; // for CSS styling
-        wordWrapper.innerText = word;
+        wordWrapper.classList.add(ornamentalNC + "-word") // for CSS styling
+      }
+
+      // Detect melismas with 6+ neume components
+      let melismaMin = melismaInput.value;
+      if (syllable.neumeComponents.length >= melismaMin) {
+        wordWrapper.classList.add("melisma-word");
+      }
+
+      wordWrapper.innerText = word;
+      if (wordWrapper.classList.length > 0) {
         word = wordWrapper.outerHTML;
       }
+
       if (position == "s" || position == "i") {
         // standard syllable
         // initial syllable

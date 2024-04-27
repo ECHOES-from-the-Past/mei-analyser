@@ -18,7 +18,9 @@ import {
     refreshStatus,
     searchResultDiv,
     clientVersion,
-    refreshWheel
+    refreshWheel,
+    melismaIncrement, melismaDecrement,
+    melismaInput,
 } from './DOMelements.mjs';
 import {
     drawSVGFromMEIContent, loadMEIFile,
@@ -58,6 +60,8 @@ function loadPersistedSearchOptions() {
     liquescentCheckbox.checked = retrieve('liquescentCheckbox');
     quilismaCheckbox.checked = retrieve('quilismaCheckbox');
     oriscusCheckbox.checked = retrieve('oriscusCheckbox');
+
+    melismaInput.value = retrieve('melismaInput') === null ? 6 : retrieve('melismaInput');
 }
 
 let databaseIsOpen = false;
@@ -263,12 +267,23 @@ viewDatabaseButton.addEventListener("click", () => {
     databaseIsOpen = !databaseIsOpen;
 });
 
+/* --------------- SEARCH PANEL --------------- */
 searchButton.addEventListener("click", () => {
     clearSearchResultsAndInfo();
 
     // Perform search and display the result
     let searchResults = performSearch();
     showSearchResult(searchResults);
+});
+
+melismaIncrement.addEventListener("click", () => {
+    melismaInput.stepUp();
+    persist('melismaInput', melismaInput.value);
+});
+
+melismaDecrement.addEventListener("click", () => {
+    melismaInput.stepDown();
+    persist('melismaInput', melismaInput.value);
 });
 
 /* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */
