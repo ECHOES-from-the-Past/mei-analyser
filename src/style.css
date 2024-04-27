@@ -209,7 +209,7 @@ select {
 /* Styling for the search panel */
 #search-panel-grid {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 2.7fr;
   gap: 1.2rem;
 }
 

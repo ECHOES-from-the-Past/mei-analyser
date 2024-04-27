@@ -4,6 +4,7 @@ import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
+  modeCheckboxes, undetectedCheckbox
   melismaInput
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
@@ -67,6 +68,33 @@ function filterByOrnamentalShapes(chantList, ornamentalOptions) {
   return resultChantList;
 }
 
+/**
+ * Filter by modes
+ * @param {Chant[]} chantList list of chants to be filtered
+ * @param {HTMLInputElement[]} modeCheckboxes list of checkboxes for each mode
+ * @param {HTMLInputElement} undetectedCheckbox checkbox for undetected mode
+ * @returns {Chant[]} list of chants that has the selected modes. If no modes are selected, return all the chants.
+ */
+function filterByModes(chantList, modeCheckboxes, undetectedCheckbox) {
+  /** @type {Chant[]} resulting list of chants after filtering */
+  let resultChantList = [];
+
+  for (let i = 0; i < modeCheckboxes.length; i++) {
+    if (modeCheckboxes[i].checked) {
+      resultChantList.push(...chantList.filter(chant => {if (chant.mode == i + 1) return true;}));
+    }
+  }
+  
+  if (undetectedCheckbox.checked) {
+    resultChantList.push(...chantList.filter(chant => {if (chant.mode == undefined) return true;}));
+  }
+
+  return resultChantList;
+}
+
+
+
+/** @deprecated */
 function getOrnamentalSyllables(chant, ornamentalType) {
   let syllableList = [];
   /** @type {Syllable[]} */
@@ -85,6 +113,7 @@ function getOrnamentalSyllables(chant, ornamentalType) {
 }
 
 /**
+ * @deprecated
  * Obtain the syllables that contain the ornamental shapes
  * @param {Chant[]} chantList list of chants to be filtered
  * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
@@ -149,6 +178,9 @@ export function performSearch() {
   }
 
   resultChantList = filterByOrnamentalShapes(resultChantList, ornamentalOptions);
+
+  /* Third layer of filtering: Modes */
+  resultChantList = filterByModes(resultChantList, modeCheckboxes, undetectedCheckbox);
 
   /* Return the result */
   return resultChantList;

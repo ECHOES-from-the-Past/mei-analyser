@@ -1,24 +1,14 @@
 import {
     viewDatabaseButton,
-    fileInputLeft,
-    fileInputRight,
-    searchModeButton,
-    crossComparisonModeButton,
-    refreshDatabaseButton,
+    fileInputLeft, fileInputRight,
+    searchModeButton, crossComparisonModeButton,
+    refreshDatabaseButton, refreshStatus, clientVersion, refreshWheel,
     databaseList,
+    aquitanianCheckbox, squareCheckbox,
+    modeCheckboxes, allModeCheckbox, undetectedCheckbox,
+    liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
     searchButton,
-    liquescentCheckbox,
-    quilismaCheckbox,
-    oriscusCheckbox,
-    aquitanianCheckbox,
-    squareCheckbox,
-    chantInfo,
-    chantSVG,
-    chantDisplay,
-    refreshStatus,
-    searchResultDiv,
-    clientVersion,
-    refreshWheel,
+    searchResultDiv, chantSVG, chantDisplay, chantInfo,
     melismaIncrement, melismaDecrement,
     melismaInput,
 } from './DOMelements.mjs';
@@ -56,6 +46,13 @@ function loadPersistedSearchOptions() {
     // searchQueryInput.value = retrieve('searchQuery');
     aquitanianCheckbox.checked = retrieve('aquitanianCheckbox') === null ? true : retrieve('aquitanianCheckbox');
     squareCheckbox.checked = retrieve('squareCheckbox');
+
+    modeCheckboxes.forEach((checkbox, index) => {
+        checkbox.checked = retrieve(`mode${index + 1}Checkbox`);
+    });
+
+    allModeCheckbox.checked = retrieve('allModeCheckbox');
+    undetectedCheckbox.checked = retrieve('modeUndetectedCheckbox');
 
     liquescentCheckbox.checked = retrieve('liquescentCheckbox');
     quilismaCheckbox.checked = retrieve('quilismaCheckbox');
@@ -253,6 +250,24 @@ quilismaCheckbox.addEventListener("change", () => {
 
 oriscusCheckbox.addEventListener("change", () => {
     persist('oriscusCheckbox', oriscusCheckbox.checked);
+});
+
+modeCheckboxes.forEach((checkbox, index) => {
+    checkbox.addEventListener("change", () => {
+        persist(`mode${index + 1}Checkbox`, checkbox.checked);
+    });
+});
+
+allModeCheckbox.addEventListener("change", () => {
+    modeCheckboxes.forEach((checkbox, index) => {
+        checkbox.checked = allModeCheckbox.checked;
+        persist(`mode${index + 1}Checkbox`, checkbox.checked);
+        persist('allModeCheckbox', allModeCheckbox.checked);
+    });
+});
+
+undetectedCheckbox.addEventListener("change", () => {
+    persist('modeUndetectedCheckbox', undetectedCheckbox.checked);
 });
 
 /* --------------- DATABASE PANEL PERSISTANCE --------------- */

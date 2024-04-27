@@ -40,6 +40,28 @@ export const liquescentCheckbox = document.getElementById('liquescent-checkbox')
 export const quilismaCheckbox = document.getElementById('quilisma-checkbox');
 export const oriscusCheckbox = document.getElementById('oriscus-checkbox');
 
+/**
+ * @type {HTMLInputElement} 
+ * @description The checkboxes for each mode and the undetected mode
+ */
+const mode1Checkbox = document.getElementById('mode-1-checkbox');
+const mode2Checkbox = document.getElementById('mode-2-checkbox');
+const mode3Checkbox = document.getElementById('mode-3-checkbox');
+const mode4Checkbox = document.getElementById('mode-4-checkbox');
+const mode5Checkbox = document.getElementById('mode-5-checkbox');
+const mode6Checkbox = document.getElementById('mode-6-checkbox');
+const mode7Checkbox = document.getElementById('mode-7-checkbox');
+const mode8Checkbox = document.getElementById('mode-8-checkbox');
+
+/** @type {HTMLInputElement[]} */
+export const modeCheckboxes = [
+    mode1Checkbox, mode2Checkbox, mode3Checkbox, mode4Checkbox,
+    mode5Checkbox, mode6Checkbox, mode7Checkbox, mode8Checkbox,
+];
+
+export const undetectedCheckbox = document.getElementById('mode-undetected-checkbox');
+export const allModeCheckbox = document.getElementById('all-mode-checkbox');
+
 /** @type {HTMLInputElement} */
 export const searchQueryInput = document.getElementById('search-query');
 
