@@ -27,6 +27,9 @@
   --oriscus-text: hsl(318, 100%, 36%);
   --unclear-text: hsl(0, 10%, 59%);
 
+  --melisma-text: hsl(0, 100%, 16%);
+  --melisma-background: hsla(138, 86%, 52%, 0.445);
+
   /* Default highlighting colours */
   --highlight-fill: hsla(276, 69%, 52%, 0.6);
   --highlight-stroke: hsl(276, 69%, 52%);
@@ -240,25 +243,67 @@ input[type="checkbox"]:hover, label:hover {
   background-color: var(--background-hover);
 }
 
-#liquescent-word {
+.liquescent-word {
   color: var(--liquescent-text);
   font-weight: bold;
   text-decoration: underline solid;
 }
 
-#quilisma-word {
+.quilisma-word {
   color: var(--quilisma-text);
   font-weight: bold;
   text-decoration: underline wavy;
 }
 
-#oriscus-word {
+.oriscus-word {
   color: var(--oriscus-text);
   font-weight: bold;
   text-decoration: underline dashed;
 }
 
-#unclear-word {
+.unclear-word {
   color: var(--unclear-text);
   text-decoration: underline dotted;
+}
+
+.melisma-word {
+  background-color: var(--melisma-background);
+  /* color: var(--melisma-text); */
+}
+
+#melisma-input {
+  box-sizing: border-box;
+  border: 1px solid #ccc;
+  font-size: inherit;
+  text-align: center;
+  width: 2rem;
+  height: 2rem;
+}
+
+input[type=number]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+.melisma-arrow {
+  display: inline-block;
+  border: 1px solid var(--button-active);
+  box-shadow: 1px 2px var(--button);
+  border-radius: 0.5rem;
+  padding: 0.1rem 0.4rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: box-shadow 0.1s;
+}
+
+.melisma-arrow:hover {
+  box-shadow: 2px 3px 1px var(--button-hover);
+}
+
+.nonselectable-text {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

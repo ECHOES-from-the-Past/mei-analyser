@@ -16,21 +16,21 @@
 
 <body>
   <div id="navbar">
-    <button id="search-mode-btn">
-      Search
+    <button id="search-mode-btn" class="nonselectable-text">
+      Corpus Search
     </button>
 
-    <button id="cross-comparison-mode-btn">
+    <button id="cross-comparison-mode-btn" class="nonselectable-text">
       Cross Comparison
     </button>
 
     <a href="https://github.com/ECHOES-from-the-Past/mei-analyser/wiki" rel="external" target="_blank">
-      <button>
+      <button class="nonselectable-text">
         Project Wiki
       </button>
     </a>
 
-    <button id="refresh-database-btn">
+    <button id="refresh-database-btn" class="nonselectable-text">
       Update Database
     </button>
 
@@ -90,11 +90,16 @@
             <hr>
             <p> Search for chants that has ornamental figure(s): <br> (No selection will display all chants) </p>
             <input type="checkbox" id="liquescent-checkbox" value="liquescent">
-            <label for="liquescent-checkbox" id="liquescent-word"> Liquescent </label>
+            <label for="liquescent-checkbox" class="liquescent-word"> Liquescent </label>
             <input type="checkbox" id="quilisma-checkbox" value="quilisma">
-            <label for="quilisma-checkbox" id="quilisma-word"> Quilisma </label>
+            <label for="quilisma-checkbox" class="quilisma-word"> Quilisma </label>
             <input type="checkbox" id="oriscus-checkbox" value="oriscus">
-            <label for="oriscus-checkbox" id="oriscus-word"> Oriscus </label>
+            <label for="oriscus-checkbox" class="oriscus-word"> Oriscus </label>
+            <hr>
+            <label for="melisma-input" class="nonselectable-text melisma-word"> Melisma (#notes in a syllable) </label>
+            <input type="number" id="melisma-input" min="6" max="12" value="6" readonly>
+            <span class="melisma-arrow nonselectable-text" id="melisma-decrement"> &lt; </span>
+            <span class="melisma-arrow nonselectable-text" id="melisma-increment"> &gt; </span>
             <br>
             <br>
             <button id="search-btn"> Search</button>
@@ -102,7 +107,7 @@
 
           <div id="chant-list database" class="section">
             <h2> Database </h2>
-            <button id="view-database-btn"> View database </button>
+            <button id="view-database-btn" class="nonselectable-text"> View database </button>
             <div>
               <ul id="database-list">
                 <!-- Chant list goes here -->
