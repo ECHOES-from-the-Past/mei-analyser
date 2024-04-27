@@ -485,6 +485,7 @@ export class Chant {
     const finalisPitch = finalisNC.getPitch();
     let authenticMode = -1, plagalMode = -1;
     let authenticRepercussioPitch = '', plagalRepercussioPitch = '';
+    let mode3alternatives = false;
 
     if (finalisPitch === 'd') {
       authenticMode = 1;
@@ -492,6 +493,7 @@ export class Chant {
       plagalMode = 2;
       plagalRepercussioPitch = 'f';
     } else if (finalisPitch === 'e') {
+      mode3alternatives = true;
       authenticMode = 3;
       authenticRepercussioPitch = 'c'; // or 'b'
       plagalMode = 4;
@@ -555,65 +557,112 @@ export class Chant {
     /** @type {HTMLLIElement} authentic repercussio description */
     let repercussioAuthDesc = document.createElement('li');
     /** Repercussio for Authentic mode */
+    repercussioAuthDesc.innerHTML = `For the authentic mode (mode '${authenticMode}'): `;
+
     if (sortedCounts[0] === authenticRepercussioPitch) { // case (i)
       authenticRepercussioRating += 1;
-      repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}'\
-        is the most repeated note (${counts[authenticRepercussioPitch]} times). `;
+      repercussioAuthDesc.innerHTML += `'${authenticRepercussioPitch.toUpperCase()}' is the most repeated note (${counts[authenticRepercussioPitch]} times). `;
     } else {
       if (sortedCounts[1] === authenticRepercussioPitch && sortedCounts[0] === finalisPitch) { // case (ii)
         authenticRepercussioRating += 0.75;
-        repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}'\
-          is the second most repeated note (${counts[authenticRepercussioPitch]} times) `
+        repercussioAuthDesc.innerHTML += `'${authenticRepercussioPitch.toUpperCase()}' is the second most repeated note (${counts[authenticRepercussioPitch]} times) `
         repercussioAuthDesc.innerHTML += `after finalis '${finalisPitch.toUpperCase()}'. `;
       } else if (sortedCounts[1] === authenticRepercussioPitch && sortedCounts[0] !== finalisPitch) { // case (iii)
         authenticRepercussioRating += 0.5;
-        repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}'\
-          is the second most repeated note (${counts[authenticRepercussioPitch]} times) `
+        repercussioAuthDesc.innerHTML += `'${authenticRepercussioPitch.toUpperCase()}' is the second most repeated note (${counts[authenticRepercussioPitch]} times) `
         repercussioAuthDesc.innerHTML += `after a note other than finalis '${finalisPitch.toUpperCase()}'. `;
       } else if (sortedCounts[2] === authenticRepercussioPitch) { // case (iv)
         authenticRepercussioRating += 0.25;
-        repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}'\
-          is the third most repeated note (${counts[authenticRepercussioPitch]} times). `;
+        repercussioAuthDesc.innerHTML += `'${authenticRepercussioPitch.toUpperCase()}' is the third most repeated note (${counts[authenticRepercussioPitch]} times). `;
       } else if (sortedCounts[3] === authenticRepercussioPitch) { // case (v)
         authenticRepercussioRating += 0.125;
-        repercussioAuthDesc.innerHTML = `Authentic repercussio '${authenticRepercussioPitch.toUpperCase()}' of mode '${authenticMode}'\
-          is the fourth most repeated note (${counts[authenticRepercussioPitch]} times). `;
+        repercussioAuthDesc.innerHTML += `'${authenticRepercussioPitch.toUpperCase()}' is the fourth most repeated note (${counts[authenticRepercussioPitch]} times). `;
       } else {
-        repercussioAuthDesc.innerHTML = `Unable to detect authentic mode from repercussio. `;
+        repercussioAuthDesc.innerHTML += `${authenticRepercussioPitch.toUpperCase()} is not among the most repeated notes.`;
       }
     }
+
+
+    /* Check for mode 3 alternatives
+    *  If the finalis is 'E', mode 3 alternative is 'B'
+    */
+    if (mode3alternatives) {
+      let mode3alternativeDesc = document.createElement('li');
+      let alternativeAuthRepRating = 0;
+      mode3alternativeDesc.innerHTML = `Alternatively for authentic mode '3': `;
+      const alternativeAuthRepPitch = 'b';
+      if (sortedCounts[0] === alternativeAuthRepPitch) { // case (i)
+        alternativeAuthRepRating += 1;
+        mode3alternativeDesc.innerHTML += `'${alternativeAuthRepPitch.toUpperCase()}' is the most repeated note (${counts[alternativeAuthRepPitch]} times). `;
+      } else {
+        if (sortedCounts[1] === alternativeAuthRepPitch && sortedCounts[0] === finalisPitch) { // case (ii)
+          alternativeAuthRepRating += 0.75;
+          mode3alternativeDesc.innerHTML += `'${alternativeAuthRepPitch.toUpperCase()}' is the second most repeated note (${counts[alternativeAuthRepPitch]} times) `
+          mode3alternativeDesc.innerHTML += `after finalis '${finalisPitch.toUpperCase()}'. `;
+        } else if (sortedCounts[1] === alternativeAuthRepPitch && sortedCounts[0] !== finalisPitch) { // case (iii)
+          alternativeAuthRepRating += 0.5;
+          mode3alternativeDesc.innerHTML += `'${alternativeAuthRepPitch.toUpperCase()}' is the second most repeated note (${counts[alternativeAuthRepPitch]} times) `
+          mode3alternativeDesc.innerHTML += `after a note other than finalis '${finalisPitch.toUpperCase()}'. `;
+        } else if (sortedCounts[2] === alternativeAuthRepPitch) { // case (iv)
+          alternativeAuthRepRating += 0.25;
+          mode3alternativeDesc.innerHTML += `'${alternativeAuthRepPitch.toUpperCase()}' is the third most repeated note (${counts[alternativeAuthRepPitch]} times). `;
+        } else if (sortedCounts[3] === alternativeAuthRepPitch) { // case (v)
+          alternativeAuthRepRating += 0.125;
+          mode3alternativeDesc.innerHTML += `'${alternativeAuthRepPitch.toUpperCase()}' is the fourth most repeated note (${counts[alternativeAuthRepPitch]} times). `;
+        } else {
+          mode3alternativeDesc.innerHTML += `${alternativeAuthRepPitch.toUpperCase()} is not among the most repeated notes.`;
+        }
+      }
+      repercussioAuthDesc.appendChild(mode3alternativeDesc);
+
+      if (alternativeAuthRepRating > authenticRepercussioRating) {
+        authenticRepercussioRating = alternativeAuthRepRating;
+        authenticRepercussioPitch = alternativeAuthRepPitch;
+      }
+    }
+
+    // Conclude authentic repercussio:
+    repercussioAuthDesc.innerHTML += `Therefore, there is a <b>${authenticRepercussioRating.toFixed(4) * 100}%</b> probability of being in authentic mode.`;
+
+    // Conclude the repercussio description
     repercussioDesc.appendChild(repercussioAuthDesc);
 
     /** Repercussio for Plagal mode */
     /** @type {HTMLLIElement} */
     let repercussioPlagDesc = document.createElement('li');
+    repercussioPlagDesc.innerHTML = `For the plagal mode (mode '${plagalMode}'): `;
+
     if (sortedCounts[0] === plagalRepercussioPitch) { // case (i)
       plagalRepercussioRating += 1;
-      repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}'\
-        is the most repeated note (${counts[plagalRepercussioPitch]} times). `;
+      repercussioPlagDesc.innerHTML += `'${plagalRepercussioPitch.toUpperCase()}' is the most repeated note\
+        (${counts[plagalRepercussioPitch]} times). `;
     } else {
       if (sortedCounts[1] === plagalRepercussioPitch && sortedCounts[0] === finalisPitch) { // case (ii)
         plagalRepercussioRating += 0.75;
-        repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}'\
-          is the second most repeated note (${counts[plagalRepercussioPitch]} times) `;
+        repercussioPlagDesc.innerHTML += `'${plagalRepercussioPitch.toUpperCase()}' is the second most repeated note\
+          (${counts[plagalRepercussioPitch]} times) `;
         repercussioPlagDesc.innerHTML += `after finalis '${finalisPitch.toUpperCase()}'. `;
       } else if (sortedCounts[1] === plagalRepercussioPitch && sortedCounts[0] !== finalisPitch) { // case (iii)
         plagalRepercussioRating += 0.5;
-        repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}'\
-          is the second most repeated note (${counts[plagalRepercussioPitch]} times) `
+        repercussioPlagDesc.innerHTML += `'${plagalRepercussioPitch.toUpperCase()}' is the second most repeated note\
+          (${counts[plagalRepercussioPitch]} times) `
         repercussioPlagDesc.innerHTML += `after a note other than finalis '${finalisPitch.toUpperCase()}'. `;
       } else if (sortedCounts[2] === plagalRepercussioPitch) { // case (iv)
         plagalRepercussioRating += 0.25;
-        repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}'\
-          is the third most repeated note (${counts[plagalRepercussioPitch]} times). `;
+        repercussioPlagDesc.innerHTML += `'${plagalRepercussioPitch.toUpperCase()}' is the third most repeated note\
+          (${counts[plagalRepercussioPitch]} times). `;
       } else if (sortedCounts[3] === plagalRepercussioPitch) { // case (v)
         plagalRepercussioRating += 0.125;
-        repercussioPlagDesc.innerHTML = `Plagal repercussio '${plagalRepercussioPitch.toUpperCase()}' of mode '${plagalMode}'\
-          is  the fourth most repeated note (${counts[plagalRepercussioPitch]} times). `;
+        repercussioPlagDesc.innerHTML += `'${plagalRepercussioPitch.toUpperCase()}' is  the fourth most repeated note\
+          (${counts[plagalRepercussioPitch]} times). `;
       } else {
-        repercussioPlagDesc.innerHTML = `Unable to detect plagal mode from repercussio. `;
+        repercussioPlagDesc.innerHTML += `${plagalRepercussioPitch.toUpperCase()} is not among the most repeated notes.`;
       }
     }
+    // Conclude plagal repercussio:
+    repercussioPlagDesc.innerHTML += `Therefore, there is a <b>${plagalRepercussioRating.toFixed(4) * 100}%</b> probability of being in plagal mode.`;
+
+    // Conclude the repercussio description
     repercussioDesc.appendChild(repercussioPlagDesc);
 
     // Calculate the final repercussio rating
@@ -681,7 +730,7 @@ export class Chant {
       const totalNotes = ncSeptenary.length;
       const totalNotesInRange = ncSeptenary.filter((septenaryValue) => septenaryValue >= lowerBoundNCSeptenary && septenaryValue <= upperBoundNCSeptenary).length;
 
-      return totalNotesInRange / totalNotes;
+      return [totalNotesInRange / totalNotes, lowerOctaveBoundary, upperOctaveBoundary];
     }
 
     let modeFromAmbitus = -1;
@@ -703,19 +752,21 @@ export class Chant {
       modeDescription += `Unable to detect the exact mode based on ambitus.`;
     }
 
-    ambitusAuthenticRating = pitchRangeRate('authentic', ambitusAuthenticRange);
-    ambitusPlagalRating = pitchRangeRate('plagal', ambitusPlagalRange);
+    let lowerOctaveAuthentic, upperOctaveAuthentic;
+    let lowerOctavePlagal, upperOctavePlagal;
+    [ambitusAuthenticRating, lowerOctaveAuthentic, upperOctaveAuthentic] = pitchRangeRate('authentic', ambitusAuthenticRange);
+    [ambitusPlagalRating, lowerOctavePlagal, upperOctavePlagal] = pitchRangeRate('plagal', ambitusPlagalRange);
 
     let ambitusAuthDesc = document.createElement('li');
-    ambitusAuthDesc.innerHTML = `For the authentic mode (mode ${authenticMode}): ${Number(ambitusAuthenticRating).toFixed(4) * 100}% of the notes\
+    ambitusAuthDesc.innerHTML = `For the authentic mode (mode '${authenticMode}'): <b>${Number(ambitusAuthenticRating).toFixed(4) * 100}%</b> of the notes\
       are within the range '${ambitusAuthenticRange.toUpperCase()}-${ambitusAuthenticRange.toUpperCase()}'\
-      (${ambitusAuthenticRange.toUpperCase()}${finalisNC.getOctave()}-${ambitusAuthenticRange.toUpperCase()}${finalisNC.getOctave() + 1}).`;
+      (${ambitusAuthenticRange.toUpperCase()}${lowerOctaveAuthentic}-${ambitusAuthenticRange.toUpperCase()}${upperOctaveAuthentic}).`;
 
 
     let ambitusPlagDesc = document.createElement('li');
-    ambitusPlagDesc.innerHTML = `For the plagal mode (mode ${plagalMode}): ${Number(ambitusPlagalRating).toFixed(4) * 100}% of the notes\
-      are within the range'${ambitusPlagalRange.toUpperCase()}-${ambitusPlagalRange.toUpperCase()}'\
-      (${ambitusPlagalRange.toUpperCase()}${finalisNC.getOctave() - 1}-${ambitusPlagalRange.toUpperCase()}${finalisNC.getOctave()}).`;
+    ambitusPlagDesc.innerHTML = `For the plagal mode (mode '${plagalMode}'): <b>${Number(ambitusPlagalRating).toFixed(4) * 100}%</b> of the notes\
+      are within the range '${ambitusPlagalRange.toUpperCase()}-${ambitusPlagalRange.toUpperCase()}'\
+      (${ambitusPlagalRange.toUpperCase()}${lowerOctavePlagal}-${ambitusPlagalRange.toUpperCase()}${upperOctavePlagal}).`;
 
     ambitusDesc.appendChild(ambitusAuthDesc);
     ambitusDesc.appendChild(ambitusPlagDesc);
@@ -726,11 +777,11 @@ export class Chant {
     if (ambitusAuthenticRating > ambitusPlagalRating) {
       modeFromAmbitus = authenticMode;
       ambitusSuggestion.innerHTML = `<b> Ambitus suggests authentic mode '${modeFromAmbitus}' with ${Number(ambitusAuthenticRating).toFixed(4) * 100}%\
-        of notes in range over plagal mode rating of ${Number(ambitusPlagalRating).toFixed(4) * 100}% of notes in range </b>'.`;
+        certainty over plagal mode with ${Number(ambitusPlagalRating).toFixed(4) * 100}% certainty</b>.`;
     } else {
       modeFromAmbitus = plagalMode;
       ambitusSuggestion.innerHTML = `<b> Ambitus suggests plagal mode '${modeFromAmbitus}' with ${Number(ambitusPlagalRating).toFixed(4) * 100}%\
-        of notes in range over authentic mode rating of ${Number(ambitusAuthenticRating).toFixed(4) * 100}% of notes in range </b>'.`;
+        certainty over authentic mode with ${Number(ambitusAuthenticRating).toFixed(4) * 100}% certainty</b>.`;
     }
 
     ambitusDesc.appendChild(ambitusSuggestion);
