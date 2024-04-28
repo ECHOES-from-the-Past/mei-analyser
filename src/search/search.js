@@ -4,7 +4,7 @@ import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
-  modeCheckboxes, undetectedCheckbox
+  modeCheckboxes, undetectedCheckbox,
   melismaInput
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
