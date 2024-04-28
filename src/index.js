@@ -52,6 +52,9 @@ function loadPersistedSearchOptions() {
     });
 
     allModeCheckbox.checked = retrieve('allModeCheckbox');
+    if(retrieve("allModeCheckbox") === null) {
+        allModeCheckbox.click();
+    }
     undetectedCheckbox.checked = retrieve('modeUndetectedCheckbox');
 
     liquescentCheckbox.checked = retrieve('liquescentCheckbox');
