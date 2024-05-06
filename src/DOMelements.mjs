@@ -63,9 +63,6 @@ export const undetectedCheckbox = document.getElementById('mode-undetected-check
 export const allModeCheckbox = document.getElementById('all-mode-checkbox');
 
 /** @type {HTMLInputElement} */
-export const searchQueryInput = document.getElementById('search-query');
-
-/** @type {HTMLInputElement} */
 export const melismaInput = document.getElementById('melisma-input');
 
 /** @type {HTMLSpanElement} */
@@ -73,6 +70,9 @@ export const melismaIncrement = document.getElementById('melisma-increment');
 
 /** @type {HTMLSpanElement} */
 export const melismaDecrement = document.getElementById('melisma-decrement');
+
+/** @type {HTMLInputElement} */
+export const patternInputBox = document.getElementById('pattern-input-box');
 
 /** @type {HTMLButtonElement} */
 export const searchButton = document.getElementById('search-btn');

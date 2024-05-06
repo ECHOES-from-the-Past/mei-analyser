@@ -5,7 +5,8 @@ import {
   aquitanianCheckbox, squareCheckbox,
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
   modeCheckboxes, undetectedCheckbox,
-  melismaInput
+  melismaInput,
+  patternInputBox
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
 
@@ -144,6 +145,27 @@ function obtainSyllables(chantList, ornamentalOptions) {
   }
 
   return syllablesLists;
+}
+
+/**
+ * Using regular expression to process the user's input
+ * @param {string} searchPattern the search pattern inputted by the user
+ */
+function processSearchBox(searchPattern) {
+  const numericMelodyRegex = /d+/g
+  const alphabetMelodicRegex = /s{}+/g
+
+
+}
+
+/**
+ * 
+ * @param {string} searchPattern 
+ */
+function filterByMelodicPattern(searchPattern) {
+  const processedSearchPattern = processSearchBox(searchPattern);
+
+  return ;
 }
 
 /**

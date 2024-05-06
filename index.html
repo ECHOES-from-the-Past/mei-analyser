@@ -50,20 +50,14 @@
         <div id="search-panel-leftside">
           <div class="section">
             <h1> Search Panel </h1>
-            <!-- <input id="pitch-radio" name="pattern-radio" type="radio" value="pitch" checked>
-              <label for="pitch-radio"> Pitch Pattern (pitch-based) </label>
-              <br> -->
-            <!-- <input id="contour-radio" name="pattern-radio" type="radio" value="contour">
-              <label for="contour-radio"> Contour (melodic intervals) </label>
-              <br> -->
-            <!-- <label for="search-query"> Query: </label>
-              <input id="search-query" placeholder="e.g.: 1 2 -1"> -->
+            <!-- Search by music script (notation type) -->
             <p> Search for chant with the following music script: </p>
             <input type="checkbox" id="aquitanian-checkbox" value="aquitanian-checkbox" checked>
             <label for="aquitanian-checkbox"> Aquitanian </label>
             <input type="checkbox" id="square-checkbox" value="square-checkbox">
             <label for="square-checkbox"> Square </label>
             <hr>
+            <!-- Search/filter by mode -->
             <p> Filter by mode(s): </p>
             <input type="checkbox" id="mode-1-checkbox" value="mode-1">
             <label for="mode-1-checkbox"> Mode 1 </label>
@@ -88,6 +82,7 @@
             <input type="checkbox" id="mode-undetected-checkbox" value="undetected">
             <label for="mode-undetected-checkbox" style="color: red;"> Undetected </label>
             <hr>
+            <!-- Search/filter by ornamental figures -->
             <p> Search for chants that has ornamental figure(s): <br> (No selection will display all chants) </p>
             <input type="checkbox" id="liquescent-checkbox" value="liquescent">
             <label for="liquescent-checkbox" class="liquescent-word"> Liquescent </label>
@@ -96,13 +91,24 @@
             <input type="checkbox" id="oriscus-checkbox" value="oriscus">
             <label for="oriscus-checkbox" class="oriscus-word"> Oriscus </label>
             <hr>
-            <label for="melisma-input" class="nonselectable-text melisma-word"> Melisma(s) with at least </label> 
+            <!-- Search by melisma (melodic density) -->
+            <label for="melisma-input" class="nonselectable-text melisma-word"> Melisma(s) with at least </label>
             <input type="number" id="melisma-input" min="2" max="20" value="6" readonly>
             <label for="melisma-input" class="nonselectable-text melisma-word"> notes in a syllable </label>
             <div>
               <span class="melisma-arrow nonselectable-text" id="melisma-decrement"> &lt; </span>
               <span class="melisma-arrow nonselectable-text" id="melisma-increment"> &gt; </span>
             </div>
+            <hr>
+            <!-- Search by melodic pattern -->
+            <p> Search by melodic/contour pattern: </p>
+            <!-- <input id="pitch-radio" name="pattern-radio" type="radio" value="pitch" checked> -->
+            <!-- <label for="pitch-radio"> Pitch  </label> -->
+            <!-- <input id="contour-radio" name="pattern-radio" type="radio" value="contour"> -->
+            <!-- <label for="contour-radio"> Contour (melodic intervals) </label> -->
+            <!-- <label for="search-query"> Query </label> -->
+            <input type="text" id="pattern-input-box" placeholder="e.g.: 1 2 -1">
+            <hr>
             <br>
             <button id="search-btn"> Search</button>
           </div>
