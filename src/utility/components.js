@@ -791,8 +791,8 @@ export class Chant {
     let authenticRating = (authenticRepercussioRating + ambitusAuthenticRating) / 2;
     let plagalRating = (plagalRepercussioRating + ambitusPlagalRating) / 2;
     let conclusion = document.createElement('p');
-    conclusion.innerHTML = `Authentic mode '${authenticMode}' has ${authenticRating.toFixed(4) * 100}% rating | `;
-    conclusion.innerHTML += `Plagal mode '${plagalMode}' has ${plagalRating.toFixed(4) * 100}% rating.`;
+    conclusion.innerHTML = `<b><u> Authentic mode '${authenticMode}' has ${authenticRating.toFixed(4) * 100}% certainty |\
+                            Plagal mode '${plagalMode}' has ${plagalRating.toFixed(4) * 100}% certainty.</u></b>`;
 
     modeDescription.appendChild(conclusion);
 
