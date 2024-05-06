@@ -104,18 +104,6 @@ export function drawSVGFromMEIContent(meiContent) {
   }
 }
 
-/**
- * Parse user's input on the search bar via Regular Expression (Regex) to return an array of numbers.
- * Regex pattern: `/-?\d/g`
- * - an optional negative `-` sign
- * - a single digit
- * @param {string} searchPattern 
- * @returns {number[]} an array of type number from user's input
- */
-export function parseSearchPattern(searchPattern) {
-  return searchPattern.match(/-?\d/g).map(Number);
-}
-
 export function clearHighlights() {
   const allNeumeComponents = document.querySelectorAll("g.nc");
   // Clear all highlighted neume components

@@ -149,23 +149,21 @@ function obtainSyllables(chantList, ornamentalOptions) {
 
 /**
  * Using regular expression to process the user's input
- * @param {string} searchPattern the search pattern inputted by the user
- */
-function processSearchBox(searchPattern) {
-  const numericMelodyRegex = /d+/g
-  const alphabetMelodicRegex = /s{}+/g
-
-
-}
-
-/**
+ * (from the old parseSearchPattern function)
+ * Regex pattern: /-?\d/g
+ * - an optional negative `-` sign
+ * - a single digit
  * 
+ * Regex pattern: /[A-Ga-g]/g
+ * - all alphabetical letters in range A-G or a-g
  * @param {string} searchPattern 
+ * @param {string} searchMode
  */
-function filterByMelodicPattern(searchPattern) {
-  const processedSearchPattern = processSearchBox(searchPattern);
+function filterByMelodicPattern(searchPattern, searchMode) {
+  const numericMelodyRegex = /-?\d/g
+  const alphabetMelodicRegex = /[A-Ga-g]/g
 
-  return ;
+  return searchPattern.match().map(Number);
 }
 
 /**
