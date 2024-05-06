@@ -347,7 +347,7 @@ function printChantInformation(chant) {
     "Source": chant.source,
     "Music script": chant.notationType,
     "Mode": chant.mode == undefined ? "Undetected" : chant.mode,
-    "Mode Certainty": chant.modeCertainty == undefined ? "-" : chant.modeCertainty + "%",
+    "Mode Certainty": chant.modeCertainty == undefined ? "-" : chant.modeCertainty.toFixed(2) + "%",
     "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription,
     "MEI File": chant.fileName,
     "PEM Database URL": chant.pemDatabaseUrls,
@@ -380,6 +380,7 @@ function printChantInformation(chant) {
     } else {  // Default rendering
       p.innerHTML = `<b>${k}</b>: ${info[k]}`;
     }
+
     chantInfo.appendChild(p);
   }
 }
