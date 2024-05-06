@@ -578,7 +578,7 @@ export class Chant {
         authenticRepercussioRating += 0.125;
         repercussioAuthDesc.innerHTML += `'${authenticRepercussioPitch.toUpperCase()}' is the fourth most repeated note (${counts[authenticRepercussioPitch]} times). `;
       } else {
-        repercussioAuthDesc.innerHTML += `${authenticRepercussioPitch.toUpperCase()} is not among the most repeated notes.`;
+        repercussioAuthDesc.innerHTML += `'${authenticRepercussioPitch.toUpperCase()}' is not among the most repeated notes. `;
       }
     }
 
@@ -610,7 +610,7 @@ export class Chant {
           alternativeAuthRepRating += 0.125;
           mode3alternativeDesc.innerHTML += `'${alternativeAuthRepPitch.toUpperCase()}' is the fourth most repeated note (${counts[alternativeAuthRepPitch]} times). `;
         } else {
-          mode3alternativeDesc.innerHTML += `${alternativeAuthRepPitch.toUpperCase()} is not among the most repeated notes.`;
+          mode3alternativeDesc.innerHTML += `'${alternativeAuthRepPitch.toUpperCase()}' is not among the most repeated notes. `;
         }
       }
       repercussioAuthDesc.appendChild(mode3alternativeDesc);
@@ -656,7 +656,7 @@ export class Chant {
         repercussioPlagDesc.innerHTML += `'${plagalRepercussioPitch.toUpperCase()}' is  the fourth most repeated note\
           (${counts[plagalRepercussioPitch]} times). `;
       } else {
-        repercussioPlagDesc.innerHTML += `${plagalRepercussioPitch.toUpperCase()} is not among the most repeated notes.`;
+        repercussioPlagDesc.innerHTML += `'${plagalRepercussioPitch.toUpperCase()}' is not among the most repeated notes. `;
       }
     }
     // Conclude plagal repercussio:
