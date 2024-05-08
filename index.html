@@ -92,9 +92,11 @@
             <label for="oriscus-checkbox" class="oriscus-word"> Oriscus </label>
             <hr>
             <!-- Search by melisma (melodic density) -->
-            <label for="melisma-input" class="nonselectable-text melisma-word"> Melisma(s) with at least </label>
-            <input type="number" id="melisma-input" min="2" max="20" value="6" readonly>
-            <label for="melisma-input" class="nonselectable-text melisma-word"> notes in a syllable </label>
+            <p>
+              <span class="nonselectable-text melisma-word"> Melisma(s) with at least </span>
+              <input type="number" id="melisma-input" min="2" max="20" value="6" readonly>
+              <span class="nonselectable-text melisma-word"> notes in a syllable </span>
+            </p>
             <div>
               <span class="melisma-arrow nonselectable-text" id="melisma-decrement"> &lt; </span>
               <span class="melisma-arrow nonselectable-text" id="melisma-increment"> &gt; </span>
@@ -102,11 +104,15 @@
             <hr>
             <!-- Search by melodic pattern -->
             <p> Search by melodic/contour pattern: </p>
-            <!-- <input id="pitch-radio" name="pattern-radio" type="radio" value="pitch" checked> -->
-            <!-- <label for="pitch-radio"> Pitch  </label> -->
-            <!-- <input id="contour-radio" name="pattern-radio" type="radio" value="contour"> -->
-            <!-- <label for="contour-radio"> Contour (melodic intervals) </label> -->
-            <!-- <label for="search-query"> Query </label> -->
+            <input id="contour-radio" name="pattern-radio" type="radio" value="contour">
+            <label for="contour-radio"> Contour (melodic intervals) </label>
+            <br>
+            <input id="pitch-square-radio" name="pattern-radio" type="radio" value="pitch" checked>
+            <label for="pitch-square-radio"> Square Pitch (e.g., "a b E F") </label>
+            <br>
+            <input type="radio" name="pattern-radio" id="pitch-aquitanian-radio">
+            <label for="pitch-aquitanian-radio"> Aquitanian Pitch (e.g., "1 2 -1") </label>
+            <br>
             <input type="text" id="pattern-input-box" placeholder="e.g.: 1 2 -1">
             <hr>
             <br>

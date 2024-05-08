@@ -304,6 +304,12 @@ input[type=number]::-webkit-inner-spin-button {
   box-shadow: 2px 4px 4px var(--button-active);
 }
 
+input#pattern-input-box {
+  width: 20rem;
+  height: 1.2rem;
+  margin: 0.3rem 0;
+}
+
 .nonselectable-text {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
