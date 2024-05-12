@@ -310,6 +310,14 @@ input#pattern-input-box {
   margin: 0.3rem 0;
 }
 
+.tooltip-content {
+  display: none;
+  position: absolute;
+  width: 36%;
+  background-color: var(--background);
+  border: 1px solid var(--background-hover);
+}
+
 .nonselectable-text {
   -webkit-touch-callout: none;
   -webkit-user-select: none;

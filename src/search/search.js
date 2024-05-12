@@ -6,7 +6,7 @@ import {
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
   modeCheckboxes, undetectedCheckbox,
   melismaInput,
-  patternInputBox
+  contourRadio, absolutePitchRadio, indefinitePitchRadio, patternInputBox
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
 
@@ -156,8 +156,13 @@ function obtainSyllables(chantList, ornamentalOptions) {
  * 
  * Regex pattern: /[A-Ga-g]/g
  * - all alphabetical letters in range A-G or a-g
+ * 
+ * Search mode options:
+ * - `absolute-pitch` ~ Square pitch pattern (alphabetical value)
+ * - `indefinite-pitch` ~ Aquitanian pitch pattern (numerical value)
+ * - `contour` ~ Aquitanian/Square contour pattern (numerical)
  * @param {string} searchPattern 
- * @param {string} searchMode
+ * @param {string} searchMode 
  */
 function filterByMelodicPattern(searchPattern, searchMode) {
   const numericMelodyRegex = /-?\d/g
@@ -202,6 +207,18 @@ export function performSearch() {
   /* Third layer of filtering: Modes */
   resultChantList = filterByModes(resultChantList, modeCheckboxes, undetectedCheckbox);
 
+  let patternSearchOption = () => {
+    if(contourRadio.checked)
+      return contourRadio.value;
+    if(absolutePitchRadio.checked)
+      return absolutePitchRadio.value;
+    if (indefinitePitchRadio.checked)
+      return indefinitePitchRadio.value;
+  }
+  console.log(patternSearchOption())
+  /* Forth layer of filtering: Pattern search */
+  resultChantList = filterByMelodicPattern(resultChantList, )
+
   /* Return the result */
   return resultChantList;
 }
@@ -209,7 +226,6 @@ export function performSearch() {
 /**
  * Show the search result on the screen
  * @param {Chant[]} resultChantList list of chants that match the search query
- * @param {{"liquescent": string[], "quilisma": string[], "oriscus": string[]}} syllablesList list of syllables that contain the ornamental shapes
  */
 export function showSearchResult(resultChantList) {
   searchResultDiv.innerHTML = '';

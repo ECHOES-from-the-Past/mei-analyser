@@ -19,12 +19,6 @@ export const clientVersion = document.getElementById('client-version');
 
 /* -------------- DOM ELEMENTS -------------- */
 /* Search-related */
-/** @type {HTMLInputElement} */
-export const pitchRadio = document.getElementById('pitch-radio');
-
-/** @type {HTMLInputElement} */
-export const contourRadio = document.getElementById('contour-radio');
-
 /**
  * @type {HTMLInputElement}
  * Checkboxes for aquitanian and square notation search
@@ -73,6 +67,15 @@ export const melismaDecrement = document.getElementById('melisma-decrement');
 
 /** @type {HTMLInputElement} */
 export const patternInputBox = document.getElementById('pattern-input-box');
+
+/** @type {HTMLInputElement} */
+export const contourRadio = document.getElementById('contour-radio');
+
+/** @type {HTMLInputElement} */
+export const absolutePitchRadio = document.getElementById('absolute-pitch-radio');
+
+/** @type {HTMLInputElement} */
+export const indefinitePitchRadio = document.getElementById('indefinite-pitch-radio');
 
 /** @type {HTMLButtonElement} */
 export const searchButton = document.getElementById('search-btn');
