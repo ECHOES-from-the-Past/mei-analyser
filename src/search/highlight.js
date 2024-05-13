@@ -9,30 +9,30 @@ import { Chant, NeumeComponent } from "../utility/components.js";
  * @returns {Number} the number of pattern(s) found
  */
 function highlightAbsolutePitchPattern(chant, searchPattern) {
-    let count = 0;
-    const ncArray = chant.getNeumeComponents();
-    for (let i_nc = 0; i_nc < ncArray.length - searchPattern.length + 1; i_nc++) {
-        if (ncArray[i_nc].getLoc() == searchPattern[0]) {
-            let i_search = 1;
-            let patternFound = [ncArray[i_nc]];
-            while (i_search < searchPattern.length) {
-                if (ncArray[i_nc + i_search].getLoc() == searchPattern[i_search]) {
-                    patternFound.push(ncArray[i_nc + i_search]);
-                    i_search++;
-                } else {
-                    // Reset list if no search found
-                    patternFound = [];
-                    break;
-                }
-            }
-
-            if (patternFound.length > 0) {
-                highlightPattern(patternFound);
-                count++;
-            }
+  let count = 0;
+  const ncArray = chant.getNeumeComponents();
+  for (let i_nc = 0; i_nc < ncArray.length - searchPattern.length + 1; i_nc++) {
+    if (ncArray[i_nc].getLoc() == searchPattern[0]) {
+      let i_search = 1;
+      let patternFound = [ncArray[i_nc]];
+      while (i_search < searchPattern.length) {
+        if (ncArray[i_nc + i_search].getLoc() == searchPattern[i_search]) {
+          patternFound.push(ncArray[i_nc + i_search]);
+          i_search++;
+        } else {
+          // Reset list if no search found
+          patternFound = [];
+          break;
         }
+      }
+
+      if (patternFound.length > 0) {
+        highlightPattern(patternFound);
+        count++;
+      }
     }
-    return count;
+  }
+  return count;
 }
 
 /**
@@ -56,27 +56,27 @@ function highlightAbsolutePitchPattern(chant, searchPattern) {
  * @param {Number[]} search_pattern an array of number, parse from user's input
  */
 export function highlightPitchPattern(chant, searchPattern) {
-    const ncArray = chant.getNeumeComponents();
-    const chantNotationType = chant.getNotationType();
-    let patternFound = [];
-    let patternCount = 0;
+  const ncArray = chant.getNeumeComponents();
+  const chantNotationType = chant.getNotationType();
+  let patternFound = [];
+  let patternCount = 0;
 
-    for (let i_nc = 0; i_nc < ncArray.length - searchPattern.length; i_nc++) {
-        patternFound.push(ncArray[i_nc]);
-        let distance = search_pattern[0] - aquitanian_content[i_nc].loc;
-        let temp_search_pattern = [...searchPattern].map((e) => e - distance);
-        if (aquitanian_content[i_nc + i].loc == temp_search_pattern[i]) {
-            found_pattern.push(aquitanian_content[i_nc + i]);
-        } else {
-            found_pattern = [];
-            break;
-        }
-        if (patternFound.length > 0) {
-            highlightPattern(patternFound);
-            patternCount++;
-        }
+  for (let i_nc = 0; i_nc < ncArray.length - searchPattern.length; i_nc++) {
+    patternFound.push(ncArray[i_nc]);
+    let distance = search_pattern[0] - aquitanian_content[i_nc].loc;
+    let temp_search_pattern = [...searchPattern].map((e) => e - distance);
+    if (aquitanian_content[i_nc + i].loc == temp_search_pattern[i]) {
+      found_pattern.push(aquitanian_content[i_nc + i]);
+    } else {
+      found_pattern = [];
+      break;
     }
-    return patternCount;
+    if (patternFound.length > 0) {
+      highlightPattern(patternFound);
+      patternCount++;
+    }
+  }
+  return patternCount;
 }
 
 /**
@@ -106,49 +106,49 @@ export function highlightPitchPattern(chant, searchPattern) {
  * @returns {Number} The number of patterns found
  */
 export function highlightContourPattern(chant, searchPattern) {
+  /**
+   * @type {NeumeComponentAQ[] | NeumeComponentSQ[]}
+   */
+  const ncArray = chant.neumeComponents;
+  const chantNotationType = chant.notationType;
+
+  let patternCount = 0;
+  let patterns = [];
+
+  for (let i_nc = 0; i_nc < ncArray.length - searchPattern.length; i_nc++) {
     /**
-     * @type {NeumeComponentAQ[] | NeumeComponentSQ[]}
-     */
-    const ncArray = chant.getNeumeComponents();
-    const chantNotationType = chant.getNotationType();
-
-    let patternCount = 0;
-    let patterns = [];
-
-    for (let i_nc = 0; i_nc < ncArray.length - searchPattern.length; i_nc++) {
-        /**
-         * @type {NeumeComponent[]}
-         * An array that stores the neuem components that match the search pattern
-        */
-        let patternFound = [];
-        patternFound.push(ncArray[i_nc]);
-        for (let i_sp = 0; i_sp < searchPattern.length; i_sp++) {
-            if (chantNotationType == "aquitanian") {
-                // processing the search for Aquitanian notation, using the `loc` attribute
-                if (ncArray[i_nc + i_sp].getLoc() + searchPattern[i_sp] == ncArray[i_nc + i_sp + 1].getLoc()) {
-                    patternFound.push(ncArray[i_nc + i_sp + 1]);
-                } else {
-                    patternFound = [];
-                    break;
-                }
-            } else if (chantNotationType == "square") {
-                // processing the search for Square notation, using the `septenary` value of the note
-                if (ncArray[i_nc + i_sp].septenary() + searchPattern[i_sp] == ncArray[i_nc + i_sp + 1].septenary()) {
-                    patternFound.push(ncArray[i_nc + i_sp + 1]);
-                } else {
-                    patternFound = [];
-                    break;
-                }
-            }
+     * @type {NeumeComponent[]}
+     * An array that stores the neuem components that match the search pattern
+    */
+    let patternFound = [];
+    patternFound.push(ncArray[i_nc]);
+    for (let i_sp = 0; i_sp < searchPattern.length; i_sp++) {
+      if (chantNotationType == "aquitanian") {
+        // processing the search for Aquitanian notation, using the `loc` attribute
+        if (ncArray[i_nc + i_sp].getLoc() + searchPattern[i_sp] == ncArray[i_nc + i_sp + 1].getLoc()) {
+          patternFound.push(ncArray[i_nc + i_sp + 1]);
+        } else {
+          patternFound = [];
+          break;
         }
-        if (patternFound.length > 0) {
-            highlightPattern(patternFound);
-            patterns.push(patternFound);
-            patternCount++;
+      } else if (chantNotationType == "square") {
+        // processing the search for Square notation, using the `septenary` value of the note
+        if (ncArray[i_nc + i_sp].septenary() + searchPattern[i_sp] == ncArray[i_nc + i_sp + 1].septenary()) {
+          patternFound.push(ncArray[i_nc + i_sp + 1]);
+        } else {
+          patternFound = [];
+          break;
         }
+      }
     }
-    console.debug(patterns);
-    return patternCount;
+    if (patternFound.length > 0) {
+      highlightPattern(patternFound);
+      patterns.push(patternFound);
+      patternCount++;
+    }
+  }
+  console.debug(patterns);
+  return patternCount;
 }
 
 /**
@@ -156,7 +156,7 @@ export function highlightContourPattern(chant, searchPattern) {
  * @param {Number} slot the slot number (1 or 2)
  */
 export function displayChantMode(chant, slot) {
-    document.getElementById("chant-mode-" + slot).innerHTML = chant.getMode();
+  document.getElementById("chant-mode-" + slot).innerHTML = chant.getMode();
 }
 
 /**
@@ -176,8 +176,8 @@ export function displayChantMode(chant, slot) {
  * @param {Number} slot 
  */
 function contourPatternSearch(chant, searchPattern, slot) {
-    let patternCount = highlightContourPattern(chant, searchPattern);
+  let patternCount = highlightContourPattern(chant, searchPattern);
 
-    document.getElementById("chant-type-" + slot).innerHTML = chant.getNotationType();
-    document.getElementById("pattern-count-" + slot).innerHTML = patternCount;
+  document.getElementById("chant-type-" + slot).innerHTML = chant.getNotationType();
+  document.getElementById("pattern-count-" + slot).innerHTML = patternCount;
 }

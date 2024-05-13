@@ -245,14 +245,14 @@ export class Chant {
     /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
     this.neumeComponents = this.parseMEIforNeumeComponents();
 
-    if (this.getNotationType() === "square") {
+    if (this.notationType === "square") {
       let [sqMode, sqRating, modeDescription] = this.calculateSquareMode();
       this.mode = sqMode == -1 ? undefined : sqMode;
       this.modeCertainty = sqRating * 100;
 
       /** @type {string} an explaination of the mode detection only availble for Square notation */
       this.modeDescription = modeDescription;
-    } else if (this.getNotationType() === "aquitanian") {
+    } else if (this.notationType === "aquitanian") {
       let mode = this.calculateAquitanianMode();
       this.mode = mode == -1 ? undefined : mode;
       this.modeCertainty = mode == -1 ? undefined : 100;
@@ -646,15 +646,15 @@ export class Chant {
     return this.filePath;
   }
 
-  getNotationType() {
+  get getNotationType() {
     return this.notationType;
   }
 
-  getNeumeComponents() {
+  get getNeumeComponents() {
     return this.neumeComponents;
   }
 
-  getMode() {
+  get getMode() {
     return Number(this.mode);
   }
 }

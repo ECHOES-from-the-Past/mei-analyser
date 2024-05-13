@@ -9,6 +9,7 @@ import {
   contourRadio, absolutePitchRadio, indefinitePitchRadio, patternInputBox
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
+import { highlightContourPattern } from "./highlight.js";
 
 /**
  * ----------------------- SEARCH -----------------------
@@ -82,12 +83,12 @@ function filterByModes(chantList, modeCheckboxes, undetectedCheckbox) {
 
   for (let i = 0; i < modeCheckboxes.length; i++) {
     if (modeCheckboxes[i].checked) {
-      resultChantList.push(...chantList.filter(chant => {if (chant.mode == i + 1) return true;}));
+      resultChantList.push(...chantList.filter(chant => { if (chant.mode == i + 1) return true; }));
     }
   }
-  
+
   if (undetectedCheckbox.checked) {
-    resultChantList.push(...chantList.filter(chant => {if (chant.mode == undefined) return true;}));
+    resultChantList.push(...chantList.filter(chant => { if (chant.mode == undefined) return true; }));
   }
 
   return resultChantList;
@@ -147,6 +148,40 @@ function obtainSyllables(chantList, ornamentalOptions) {
   return syllablesLists;
 }
 
+function getMelodicPatternSearchMode() {
+  if (contourRadio.checked)
+    return contourRadio.value;
+  if (absolutePitchRadio.checked)
+    return absolutePitchRadio.value;
+  if (indefinitePitchRadio.checked)
+    return indefinitePitchRadio.value;
+}
+
+function processSearchPattern(searchPattern, searchMode) {
+  const numericMelodyRegex = /-?\d/g
+  const alphabetMelodicRegex = /[A-Ga-g]/g
+
+  let melodyList = [];
+
+  if(searchMode == 'absolute-pitch') {
+    melodyList = searchPattern.match(alphabetMelodicRegex);
+    if(melodyList == null) {
+      console.log("Melody list empty!");
+    }
+  } else if (searchMode == 'indefinite-pitch' || searchMode == 'contour') {
+    melodyList = searchPattern.match(numericMelodyRegex);
+    if(melodyList == null || melodyList.length == 0) {
+      console.log("Melody list empty!");
+    }
+    melodyList.map(Number);
+  } else {
+    console.error("Invalid melodic search mode")
+  }
+
+  console.log(melodyList)
+  return melodyList;
+}
+
 /**
  * Using regular expression to process the user's input
  * (from the old parseSearchPattern function)
@@ -165,10 +200,10 @@ function obtainSyllables(chantList, ornamentalOptions) {
  * @param {string} searchMode 
  */
 function filterByMelodicPattern(searchPattern, searchMode) {
-  const numericMelodyRegex = /-?\d/g
-  const alphabetMelodicRegex = /[A-Ga-g]/g
-
-  return searchPattern.match().map(Number);
+  console.log(searchMode);
+  console.log(processSearchPattern(searchPattern, searchMode))
+  
+  return ;
 }
 
 /**
@@ -207,17 +242,8 @@ export function performSearch() {
   /* Third layer of filtering: Modes */
   resultChantList = filterByModes(resultChantList, modeCheckboxes, undetectedCheckbox);
 
-  let patternSearchOption = () => {
-    if(contourRadio.checked)
-      return contourRadio.value;
-    if(absolutePitchRadio.checked)
-      return absolutePitchRadio.value;
-    if (indefinitePitchRadio.checked)
-      return indefinitePitchRadio.value;
-  }
-  console.log(patternSearchOption())
   /* Forth layer of filtering: Pattern search */
-  resultChantList = filterByMelodicPattern(resultChantList, )
+  filterByMelodicPattern(patternInputBox.value, getMelodicPatternSearchMode())
 
   /* Return the result */
   return resultChantList;
@@ -336,12 +362,17 @@ export function showSearchResult(resultChantList) {
     let displayChantBtn = document.createElement('button');
     displayChantBtn.textContent = "Display Chant " + chant.fileName.match(fileNameRegex);
     displayChantBtn.addEventListener("click", () => {
+      // Display the chant information (file name, notation type, mode, etc.)
+      printChantInformation(chant);
+      
       // Set the box for the chant and draw the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
-      // Display the chant information (file name, notation type, mode, etc.)
-      printChantInformation(chant);
+
       chantDisplay.scrollIntoView({ behavior: "smooth" });
+      
+      // Highlight search pattern
+      highlightContourPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()))
     });
 
     let tdLinks = createTableCell();
