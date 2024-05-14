@@ -429,9 +429,8 @@ export class Chant {
      * 1st condtion (34%): FINALIS - the last note's pitch of the Square notation chant
      * @type {NeumeComponentSQ}
      */
-    const finalisPitch = this.neumeComponents[this.neumeComponents.length - 1].pname;
     modeDescription += `Finalis pitch is '${finalisPitch}'.\n`;
-    
+
     let authenticMode = -1, plagalMode = -1;
     let authenticRepercussio = '', plagalRepercussio = '';
 
@@ -549,30 +548,16 @@ export class Chant {
      * @returns {number} the rate of the pitches within the range
      * @usage pitchRange('d')
      */
-
-    const pitchRangeRate = (modeType, pitch) => {
-      const finalisOctave = this.neumeComponents[this.neumeComponents.length - 1].octave;
-      let lowerOctaveBoundary, upperOctaveBoundary;
-      if (modeType === 'authentic') {
-        lowerOctaveBoundary = finalisOctave;
-        upperOctaveBoundary = finalisOctave + 1;
-      } else if (modeType === 'plagal') {
-        if (finalisPitch === 'd' || finalisPitch === 'e') {
-          lowerOctaveBoundary = finalisOctave - 1;
-          upperOctaveBoundary = finalisOctave;
-        } else if (finalisPitch === 'f' || finalisPitch === 'g') {
-          lowerOctaveBoundary = finalisOctave;
-          upperOctaveBoundary = finalisOctave + 1;
-        }
-      } else {
-        console.error('Invalid mode type');
-        return -1;
+    let pitchRangeRate = (pitch) => {
+      const sortedNeumeComponents = this.neumeComponents.sort((a, b) => toSeptenary(a) - toSeptenary(b))
+      const lowerOctave = sortedNeumeComponents[0].octave;
+      let upperOctave = sortedNeumeComponents[sortedNeumeComponents.length - 1].octave;
+      if (upperOctave === lowerOctave) {
+        upperOctave += 1;
       }
-
-      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, lowerOctaveBoundary).septenary();
-      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, upperOctaveBoundary).septenary();
-
-      const ncSeptenary = this.neumeComponents.map((nc) => nc.septenary());
+      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, lowerOctave).septenary();
+      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, upperOctave).septenary();
+      const ncSeptenary = sortedNeumeComponents.map((nc) => nc.septenary());
 
       const totalNotes = ncSeptenary.length;
       const totalNotesInRange = ncSeptenary.filter((septenaryValue) => septenaryValue >= lowerBoundNCSeptenary && septenaryValue <= upperBoundNCSeptenary).length;
