@@ -1,4 +1,4 @@
-import { Chant, NeumeComponent, Syllable, SyllableWord } from "../utility/components.js";
+import { Chant, NeumeComponent, Syllable, SyllableWord, toSeptenary } from "../utility/components.js";
 import { retrieve, drawSVGFromMEIContent } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
@@ -6,7 +6,9 @@ import {
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
   modeCheckboxes, undetectedCheckbox,
   melismaInput,
-  contourRadio, absolutePitchRadio, indefinitePitchRadio, patternInputBox
+  contourRadio, absolutePitchRadio, indefinitePitchRadio, patternInputBox,
+  melodicSearchError,
+  searchResultInfo
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
 import { highlightContourPattern } from "./highlight.js";
@@ -163,22 +165,20 @@ function processSearchPattern(searchPattern, searchMode) {
 
   let melodyList = [];
 
-  if(searchMode == 'absolute-pitch') {
+  melodicSearchError.hidden = true;
+  if (searchMode == 'absolute-pitch') {
     melodyList = searchPattern.match(alphabetMelodicRegex);
-    if(melodyList == null) {
+    if (melodyList == null) {
       console.log("Melody list empty!");
     }
   } else if (searchMode == 'indefinite-pitch' || searchMode == 'contour') {
     melodyList = searchPattern.match(numericMelodyRegex);
-    if(melodyList == null || melodyList.length == 0) {
+    if (melodyList == null || melodyList.length == 0) {
       console.log("Melody list empty!");
     }
-    melodyList.map(Number);
-  } else {
-    console.error("Invalid melodic search mode")
+    melodyList = melodyList.map(Number);
   }
 
-  console.log(melodyList)
   return melodyList;
 }
 
@@ -196,14 +196,81 @@ function processSearchPattern(searchPattern, searchMode) {
  * - `absolute-pitch` ~ Square pitch pattern (alphabetical value)
  * - `indefinite-pitch` ~ Aquitanian pitch pattern (numerical value)
  * - `contour` ~ Aquitanian/Square contour pattern (numerical)
- * @param {string} searchPattern 
+ * @param {Chant[]} chantList
+ * @param {string} searchPattern
  * @param {string} searchMode 
+ * @returns {Chant[]} list of chants that contains the melodic pattern
  */
-function filterByMelodicPattern(searchPattern, searchMode) {
-  console.log(searchMode);
-  console.log(processSearchPattern(searchPattern, searchMode))
-  
-  return ;
+function filterByMelodicPattern(chantList, searchPattern, searchMode) {
+  if (!searchPattern) {
+    return chantList;
+  }
+
+  let searchQueryList = [], resultChantList = [];
+
+  try {
+    searchQueryList = processSearchPattern(searchPattern, searchMode);
+  } catch (error) {
+    console.error(error);
+    melodicSearchError.textContent = "Invalid melodic pattern. Please check your input or search mode selection.";
+    melodicSearchError.hidden = false;
+    return;
+  }
+
+  console.log(chantList, searchQueryList, searchMode);
+  if (searchMode == 'contour') {
+    for (let chant of chantList) {
+      let hasPattern = false;
+      const ncArray = chant.neumeComponents;
+      const chantNotationType = chant.notationType;
+
+      let patterns = [];
+
+      for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
+        let patternFound = [];
+        patternFound.push(ncArray[i_nc]);
+
+        if (chantNotationType == "aquitanian") {
+          for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
+            // processing the search for Aquitanian notation, using the `loc` attribute
+            if (Number(ncArray[i_nc + i_sq].loc) + searchQueryList[i_sq] == Number(ncArray[i_nc + i_sq + 1].loc)) {
+              patternFound.push(ncArray[i_nc + i_sq + 1]);
+            } else {
+              patternFound = [];
+              break;
+            }
+          }
+        }
+        else if (chantNotationType == "square") {
+          for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
+            // processing the search for Square notation, using the `septenary` value of the note
+            if (toSeptenary(ncArray[i_nc + i_search]) + searchQueryList[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
+              patternFound.push(ncArray[i_nc + i_search + 1]);
+            } else {
+              patternFound = [];
+              break;
+            }
+          }
+        }
+        if (patternFound.length > 0) {
+          patterns.push(patternFound);
+        }
+      }
+
+      hasPattern = patterns.length > 0;
+      if (hasPattern) {
+        resultChantList.push(chant);
+      }
+    }
+  } else if (searchMode == 'absolute-pitch') {
+
+  } else if (searchMode == 'indefinite-pitch') {
+
+  } else {
+    console.error("Invalid search mode!");
+  }
+
+  return resultChantList;
 }
 
 /**
@@ -243,7 +310,10 @@ export function performSearch() {
   resultChantList = filterByModes(resultChantList, modeCheckboxes, undetectedCheckbox);
 
   /* Forth layer of filtering: Pattern search */
-  filterByMelodicPattern(patternInputBox.value, getMelodicPatternSearchMode())
+  resultChantList = filterByMelodicPattern(resultChantList, patternInputBox.value, getMelodicPatternSearchMode())
+
+  // Display the amount of chants that match the search options
+  searchResultInfo.innerHTML = `Found <b>${resultChantList.length}</b> chants from the search options.`;
 
   /* Return the result */
   return resultChantList;

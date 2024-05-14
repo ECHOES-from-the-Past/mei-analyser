@@ -45,6 +45,9 @@
   --mismatch-stroke: hsl(240, 100%, 50%);
   --mismatch-fill-box: hsla(240, 100%, 50%, 0.12);
   --mismatch-stroke-box: hsla(240, 100%, 50%, 0.4);
+
+  /* Text */
+  --text-error: hsl(0, 78%, 57%);
 }
 
 /* Navbar, the top elements div */
@@ -170,11 +173,6 @@ g {
 
 .panel {
   padding: 0 1rem 0;
-}
-
-.pattern-count {
-  color:hsl(357, 95%, 25%);
-  font-weight: bold;
 }
 
 .file-upload-box {
@@ -310,12 +308,25 @@ input#pattern-input-box {
   margin: 0.3rem 0;
 }
 
+.error {
+  color: var(--text-error);
+}
+
+.tooltip {
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: var(--button);
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.5rem;
+}
+
 .tooltip-content {
-  display: none;
-  position: absolute;
-  width: 36%;
+  padding: 2rem;
+  margin: 8rem;
   background-color: var(--background);
-  border: 1px solid var(--background-hover);
+  border: 4px solid var(--button);
+  border-radius: 0.5rem;
 }
 
 .nonselectable-text {

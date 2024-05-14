@@ -103,29 +103,43 @@
             </div>
             <hr>
             <!-- Search by melodic pattern -->
-            <p class="tooltip" id="melodic-search-tooltip"> Search by melodic pattern </p>
-            <div class="tooltip-content" id="melodic-search-tooltip-content" hidden:>
-              <p>
-                Melodic intervals in the form of positive or negative integers (e.g., +1 indicates one step up—either a
-                semitone or a tone—from the previous note; 0 indicates unison; and -2 indicates two steps down—either a
-                major or minor third—from the previous note). If looking for a series of notes, the integers should be
-                separated by a space (e.g., 0 +2 -1 +1 +1).
-              </p>
-              <p>
-                Exact pitches could be separated by space (e.g., a b E F). Use uppercase letters for a lower octave and
-                lowercase letters for an upper octave.
-              </p>
-              <p>
-                Indefinite pitch (only for Aquitanian notation). The query indicates the note's location with reference
-                to the line, which has a position of 0. Example: -2 -2 0 -1 0 +1. Here, the first note is two steps
-                below
-                the line (it can be either a major or minor third with respect to the line), the second note is the same
-                as
-                the first, the third note is on the line, the fourth note is one step below the line (either a semitone
-                or tone), the fifth note is on the line, and the sixth note is one step above the line (either a
-                semitone
-                or tone). This will return similar results from the example given in the contour-based search.
-              </p>
+            <p> Search by melodic pattern <button class="tooltip" id="pattern-search-tooltip" popovertarget="pattern-search-tooltip-content"> ⓘ </button></p>
+            <div class="tooltip-content" id="pattern-search-tooltip-content" popover>
+              <ul>
+                <li>
+                  <p>
+                    Exact pitches could be separated by space (e.g., a b E F). Use uppercase letters for a lower octave
+                    and
+                    lowercase letters for an upper octave.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    Indefinite pitch (only for Aquitanian notation). The query indicates the note's location with
+                    reference
+                    to the line, which has a position of 0. Example: -2 -2 0 -1 0 +1. Here, the first note is two steps
+                    below
+                    the line (it can be either a major or minor third with respect to the line), the second note is the
+                    same
+                    as
+                    the first, the third note is on the line, the fourth note is one step below the line (either a
+                    semitone
+                    or tone), the fifth note is on the line, and the sixth note is one step above the line (either a
+                    semitone
+                    or tone). This will return similar results from the example given in the contour-based search.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    <b> Contour (Melodic intervals) </b> in the form of positive or negative integers (e.g., +1
+                    indicates one step up—either a semitone or a tone—from the previous note; 0 indicates unison; and -2
+                    indicates two steps
+                    down—either a major or minor third—from the previous note). If looking for a series of notes, the
+                    integers should
+                    be separated by a space (e.g., 0 +2 -1 +1 +1).
+                  </p>
+                </li>
+              </ul>
             </div>
             <input name="pattern-search-radio" id="absolute-pitch-radio" value="absolute-pitch" type="radio" checked>
             <label for="absolute-pitch-radio"> Absolute Pitch (e.g., "a b E F")</label>
@@ -137,6 +151,7 @@
             <label for="contour-radio"> Contour (melodic intervals) </label>
             <br>
             <input type="text" id="pattern-input-box" placeholder="e.g.: 1 2 -1">
+            <p class="error" id="melodic-search-error" hidden> Search error </p>
             <hr>
             <br>
             <button id="search-btn"> Search</button>
@@ -158,6 +173,7 @@
         <div id="search-panel-rightside">
           <div class="section">
             <h1> Search Results </h1>
+            <p id="search-result-info"></p>
             <div id="search-result">
               <p>Search results will display here</p>
 

@@ -1,4 +1,4 @@
-/* --------------- TOP/NAVBAR ELEMENTS --------------- */
+/* --------------------- TOP/NAVBAR ELEMENTS --------------------- */
 /** @type {HTMLButtonElement} */
 export const searchModeButton = document.getElementById('search-mode-btn');
 
@@ -17,8 +17,9 @@ export const refreshWheel = document.getElementById('refresh-wheel');
 /** @type {HTMLSpanElement} */
 export const clientVersion = document.getElementById('client-version');
 
-/* -------------- DOM ELEMENTS -------------- */
-/* Search-related */
+
+
+/* --------------------- Search-related --------------------- */
 /**
  * @type {HTMLInputElement}
  * Checkboxes for aquitanian and square notation search
@@ -68,6 +69,12 @@ export const melismaDecrement = document.getElementById('melisma-decrement');
 /** @type {HTMLInputElement} */
 export const patternInputBox = document.getElementById('pattern-input-box');
 
+/** @type {HTMLSpanElement} */
+export const patternSearchTooltip = document.getElementById('pattern-search-tooltip');
+
+/** @type {HTMLDivElement} */
+export const patternSearchTooltipContent = document.getElementById('pattern-search-tooltip-content');
+
 /** @type {HTMLInputElement} */
 export const contourRadio = document.getElementById('contour-radio');
 
@@ -77,20 +84,32 @@ export const absolutePitchRadio = document.getElementById('absolute-pitch-radio'
 /** @type {HTMLInputElement} */
 export const indefinitePitchRadio = document.getElementById('indefinite-pitch-radio');
 
+/** @type {HTMLInputElement} */
+export const melodicSearchError = document.getElementById('melodic-search-error');
+
 /** @type {HTMLButtonElement} */
 export const searchButton = document.getElementById('search-btn');
 
-/* Database-related */
+
+/* --------------------- Search result --------------------- */
+/** @type {HTMLDivElement} */
+export const searchResultDiv = document.getElementById('search-result');
+
+/** @type {HTMLPElement} */
+export const searchResultInfo = document.getElementById('search-result-info');
+
+
+/* --------------------- Database-related --------------------- */
 /** @type {HTMLButtonElement} */
 export const viewDatabaseButton = document.getElementById('view-database-btn');
 
 /** @type {ListItem} */
 export const databaseList = document.getElementById('database-list');
 
-/** @type {HTMLDivElement} */
-export const searchResultDiv = document.getElementById('search-result');
 
-/* Chant display */
+
+
+/* --------------------- Chant display --------------------- */
 /** @type {HTMLDivElement} */
 export const chantDisplay = document.getElementById('chant-display');
 

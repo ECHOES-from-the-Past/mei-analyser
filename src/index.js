@@ -7,14 +7,11 @@ import {
     aquitanianCheckbox, squareCheckbox,
     modeCheckboxes, allModeCheckbox, undetectedCheckbox,
     liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
+    absolutePitchRadio, indefinitePitchRadio, contourRadio, patternInputBox,
+    patternSearchTooltip, patternSearchTooltipContent,
     searchButton,
     searchResultDiv, chantSVG, chantDisplay, chantInfo,
-    melismaIncrement, melismaDecrement,
-    melismaInput,
-    patternInputBox,
-    absolutePitchRadio,
-    indefinitePitchRadio,
-    contourRadio,
+    melismaIncrement, melismaDecrement, melismaInput,
 } from './DOMelements.mjs';
 import {
     drawSVGFromMEIContent, loadMEIFile,
@@ -99,30 +96,6 @@ window.onresize = () => {
         console.log('Resized!');
     }, 500);
 }
-
-/*
-document.onreadystatechange = () => {
-    console.debug("Document ready state: " + document.readyState);
-    switch (document.readyState) {
-        case "loading": {
-            // create a loading screen
-            let loadingScreen = document.createElement('div');
-            loadingScreen.innerHTML = "<h1>Loading...</h1>";
-            loadingScreen.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);";
-            document.body.appendChild(loadingScreen);
-            break;
-        }
-        case "complete": {
-            // await Promise.all([loadDatabaseToChant(), loadPersistedSearchOptions()]);
-            loadPersistedSearchOptions();
-            let remoteVersion = packageJSON.version;
-            let localVersion = import.meta.env.VITE_APP_VERSION;
-            console.log(`Remote version: ${remoteVersion}, Local version: ${localVersion}`);
-            break;
-        }
-    }
-}
-*/
 
 /**
 * Load predefined files when DOM is loaded
@@ -293,7 +266,7 @@ indefinitePitchRadio.addEventListener("change", () => {
     persist('melodicPatternSearchMode', 'indefinite-pitch')
 });
 
-patternInputBox.addEventListener("change", () => {
+patternInputBox.addEventListener("input", () => {
     persist('patternInputBox', patternInputBox.value);
 })
 
@@ -327,6 +300,14 @@ melismaDecrement.addEventListener("click", () => {
     melismaInput.stepDown();
     persist('melismaInput', melismaInput.value);
 });
+
+// patternSearchTooltip.addEventListener("mouseover", () => {
+//     patternSearchTooltipContent.hidden = false;
+// });
+
+// patternSearchTooltip.addEventListener("mouseout", () => {
+//     patternSearchTooltipContent.hidden = true;
+// });
 
 /* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */
 /**

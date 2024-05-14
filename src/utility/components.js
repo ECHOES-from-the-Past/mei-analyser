@@ -140,11 +140,7 @@ export class NeumeComponentAQ extends NeumeComponent {
    */
   constructor(id, tilt, ornamental, loc) {
     super(id, tilt, ornamental);
-    this.loc = loc;
-  }
-
-  getLoc() {
-    return Number(this.loc);
+    this.loc = Number(loc);
   }
 }
 
