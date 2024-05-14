@@ -468,10 +468,9 @@ export class Chant {
      * 1st step: detecting the FINALIS - the last note's pitch of the Square notation chant
      * @type {NeumeComponentSQ}
      */
-    modeDescription += `Finalis pitch is '${finalisPitch}'.\n`;
     const finalisNC = this.neumeComponents[this.neumeComponents.length - 1];
 
-    const finalisPitch = finalisNC.getPitch();
+    const finalisPitch = finalisNC.pname;
     let authenticMode = -1, plagalMode = -1;
     let authenticRepercussioPitch = '', plagalRepercussioPitch = '';
     let mode3alternatives = false;
@@ -693,7 +692,7 @@ export class Chant {
      */
 
     const pitchRangeRate = (modeType, pitch) => {
-      const finalisOctave = this.neumeComponents[this.neumeComponents.length - 1].getOctave();
+      const finalisOctave = this.neumeComponents[this.neumeComponents.length - 1].octave;
       let lowerOctaveBoundary, upperOctaveBoundary;
       if (modeType === 'authentic') {
         lowerOctaveBoundary = finalisOctave;
