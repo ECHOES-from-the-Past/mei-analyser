@@ -17,78 +17,72 @@ export class NeumeComponent {
     this.tilt = tilt;
     this.ornamental = ornamental;
   }
+}
 
-  getId() {
-    return this.id;
-  }
 
-  getTilt() {
-    return this.tilt;
-  }
+/**
+ * Log the neume component to the console.
+ * Useful for debugging purposes.
+ */
+function logNeumeComponent(neumeComponent) {
+  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
+  nc_svg.forEach((nc) => {
+    console.log(nc);
+  });
+}
 
-  getOrnamental() {
-    return this.ornamental;
-  }
+/**
+ * Put the neume component in a spotlight by surrounding it with a box.
+ * @param {NeumeComponent} neumeComponent the neume component to be spotlighted
+ * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
+ * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
+ */
+export function spotlightNeumeComponent(neumeComponent, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
+  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
+  nc_svg.forEach((nc) => {
+    const x_coord = nc.querySelector('use').attributes.getNamedItem('x').value;
+    const y_coord = nc.querySelector('use').attributes.getNamedItem('y').value;
+    const width = '300';
+    const height = '400';
 
-  /**
+    // construct a spotlight rectangle to highlight the neume component
+    const spotlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    spotlight.setAttribute('class', 'spotlight-rect');
+    spotlight.setAttribute('x', x_coord - width / 3);
+    spotlight.setAttribute('y', y_coord - height / 2);
+    spotlight.setAttribute('width', width);
+    spotlight.setAttribute('height', height);
+    spotlight.setAttribute('fill', color);
+    spotlight.setAttribute('stroke', stroke_color);
+    spotlight.setAttribute('stroke-width', '30px');
+    // Display the spotlight rectangle
+    nc.appendChild(spotlight);
+  });
+}
+
+/**
    * Highlight the neume component.
+   * @param {NeumeComponent} nc the NeumeComponent object
    * @param {String} color the fill colour of the neume component (default: 'rgba(149, 48, 217, 0.6)' - purple)
    * @param {String} stroke_color the stroke colour of the neume component (default: 'rgba(149, 48, 217, 1)' - purple)
    */
-  highlight(color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
-    const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
-    nc_svg.forEach((nc) => {
-      nc.style.fill = color;
-      nc.style.stroke = stroke_color;
-      nc.style.strokeWidth = '30px';
-    });
-  }
+export function highlightNeumeComponent(neumeComponent, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
+  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
+  nc_svg.forEach((nc) => {
+    nc.style.fill = color;
+    nc.style.stroke = stroke_color;
+    nc.style.strokeWidth = '30px';
+  });
+}
 
-  /**
-   * Put the neume component in a spotlight by surrounding it with a box.
-   * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
-   * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
-   */
-  spotlight(color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
-    const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
-    nc_svg.forEach((nc) => {
-      const x_coord = nc.querySelector('use').attributes.getNamedItem('x').value;
-      const y_coord = nc.querySelector('use').attributes.getNamedItem('y').value;
-      const width = '300';
-      const height = '400';
-
-      // construct a spotlight rectangle to highlight the neume component
-      const spotlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-      spotlight.setAttribute('class', 'spotlight-rect');
-      spotlight.setAttribute('x', x_coord - width / 3);
-      spotlight.setAttribute('y', y_coord - height / 2);
-      spotlight.setAttribute('width', width);
-      spotlight.setAttribute('height', height);
-      spotlight.setAttribute('fill', color);
-      spotlight.setAttribute('stroke', stroke_color);
-      spotlight.setAttribute('stroke-width', '30px');
-      // Display the spotlight rectangle
-      nc.appendChild(spotlight);
-    });
-  }
-
-  unhighlight() {
-    const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
-    nc_svg.forEach((nc) => {
-      nc.style.fill = 'black';
-    });
-  }
-
-  /**
-   * Log the neume component to the console.
-   * Useful for debugging purposes.
-   */
-  log() {
-    const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
-    nc_svg.forEach((nc) => {
-      console.log(nc);
-    });
-  }
+/**
+ * 
+ */
+export function unhighlight(neumeComponent) {
+  const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
+  nc_svg.forEach((nc) => {
+    nc.style.fill = 'black';
+  });
 }
 
 /**
@@ -101,12 +95,12 @@ export class NeumeComponentSQ extends NeumeComponent {
    * @param {*} tilt (optional) the tilt direction of the neume component (e.g., "s", "ne")
    * @param {*} ornamental (optional) the ornamental shape of the component
    * @param {String} pname pitch name of the note. (e.g. "d")
-   * @param {Number} oct octave of the note. (e.g. 8)
+   * @param {Number} octave octave of the note. (e.g. 8)
    */
-  constructor(id, tilt, ornamental, pname, oct) {
+  constructor(id, tilt, ornamental, pname, octave) {
     super(id, tilt, ornamental);
     this.pname = pname;
-    this.oct = oct;
+    this.octave = octave;
   }
 
   /**
@@ -115,16 +109,22 @@ export class NeumeComponentSQ extends NeumeComponent {
    */
   septenary() {
     const sq_pitch = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
-    return Number(sq_pitch.indexOf(this.pname)) + Number(this.oct) * 7;
-  }
-
-  getPitch() {
-    return this.pname;
+    return Number(sq_pitch.indexOf(this.pname)) + Number(this.octave) * 7;
   }
 
   getOctave() {
-    return Number(this.oct);
+    return Number(this.octave);
   }
+}
+
+/**
+ * 
+ * @param {NeumeComponentSQ} ncSQ the square neume component of interest
+ * @returns the septenary value of the square neume component
+ */
+export function toSeptenary(ncSQ) {
+  const sq_pitch = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
+  return Number(sq_pitch.indexOf(ncSQ.pname)) + Number(ncSQ.octave) * 7;
 }
 
 /**
@@ -167,14 +167,6 @@ export class SyllableWord {
     this.text = text;
     this.position = position;
   }
-
-  getId() {
-    return this.id;
-  }
-
-  getText() {
-    return this.text;
-  }
 }
 
 /**
@@ -196,10 +188,6 @@ export class Syllable {
     this.id = id;
     this.syllableWord = syllableWord;
     this.neumeComponents = neumeComponents;
-  }
-
-  getId() {
-    return this.id;
   }
 }
 
@@ -382,8 +370,8 @@ export class Chant {
     // Checking last note
     const lastNote = this.neumeComponents[this.neumeComponents.length - 1];
     // Finding all rhombus shapes by checking every `nc` for a `@tilt = se`
-    const allWithSETilt = this.neumeComponents.filter((nc) => nc.getTilt() === 'se');
-    let allWithSETiltLoc = allWithSETilt.map((nc) => nc.getLoc());
+    const allWithSETilt = this.neumeComponents.filter((nc) => nc.tilt === 'se');
+    let allWithSETiltLoc = allWithSETilt.map((nc) => nc.loc);
 
     // Checking the @loc value of all rhombus shapes to help determining the mode of the Aquitanian chant
     // Example with "neg1pos3"
@@ -401,7 +389,7 @@ export class Chant {
       return mode;
     }
 
-    let lastNoteLoc = lastNote.getLoc();
+    let lastNoteLoc = lastNote.loc;
     if (lastNoteLoc == -2 && neg1pos3) {
       mode = 1;
     } else if (lastNoteLoc == 0 && neg2pos1) {
@@ -441,9 +429,9 @@ export class Chant {
      * 1st condtion (34%): FINALIS - the last note's pitch of the Square notation chant
      * @type {NeumeComponentSQ}
      */
-    const finalisPitch = this.neumeComponents[this.neumeComponents.length - 1].getPitch();
+    const finalisPitch = this.neumeComponents[this.neumeComponents.length - 1].pname;
     modeDescription += `Finalis pitch is '${finalisPitch}'.\n`;
-
+    
     let authenticMode = -1, plagalMode = -1;
     let authenticRepercussio = '', plagalRepercussio = '';
 
@@ -479,7 +467,7 @@ export class Chant {
      * 2nd condition (33%): REPERCUSSIO - Most repeated note
      */
     /** @type {string[]} array of all pitches in the chant */
-    const pitchFrequency = this.neumeComponents.map((nc) => nc.getPitch())
+    const pitchFrequency = this.neumeComponents.map((nc) => nc.pname)
     let counts = {};
     // Count the frequency of each note
     pitchFrequency.forEach((note) => {
@@ -561,16 +549,30 @@ export class Chant {
      * @returns {number} the rate of the pitches within the range
      * @usage pitchRange('d')
      */
-    let pitchRangeRate = (pitch) => {
-      const sortedNeumeComponents = this.neumeComponents.sort((a, b) => a.septenary() - b.septenary())
-      const lowerOctave = sortedNeumeComponents[0].getOctave();
-      let upperOctave = sortedNeumeComponents[sortedNeumeComponents.length - 1].getOctave();
-      if (upperOctave === lowerOctave) {
-        upperOctave += 1;
+
+    const pitchRangeRate = (modeType, pitch) => {
+      const finalisOctave = this.neumeComponents[this.neumeComponents.length - 1].octave;
+      let lowerOctaveBoundary, upperOctaveBoundary;
+      if (modeType === 'authentic') {
+        lowerOctaveBoundary = finalisOctave;
+        upperOctaveBoundary = finalisOctave + 1;
+      } else if (modeType === 'plagal') {
+        if (finalisPitch === 'd' || finalisPitch === 'e') {
+          lowerOctaveBoundary = finalisOctave - 1;
+          upperOctaveBoundary = finalisOctave;
+        } else if (finalisPitch === 'f' || finalisPitch === 'g') {
+          lowerOctaveBoundary = finalisOctave;
+          upperOctaveBoundary = finalisOctave + 1;
+        }
+      } else {
+        console.error('Invalid mode type');
+        return -1;
       }
-      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, lowerOctave).septenary();
-      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, upperOctave).septenary();
-      const ncSeptenary = sortedNeumeComponents.map((nc) => nc.septenary());
+
+      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, lowerOctaveBoundary).septenary();
+      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, upperOctaveBoundary).septenary();
+
+      const ncSeptenary = this.neumeComponents.map((nc) => nc.septenary());
 
       const totalNotes = ncSeptenary.length;
       const totalNotesInRange = ncSeptenary.filter((septenaryValue) => septenaryValue >= lowerBoundNCSeptenary && septenaryValue <= upperBoundNCSeptenary).length;
@@ -640,21 +642,5 @@ export class Chant {
     const fileManifestation = this.meiParsedContent.querySelector('manifestation');
     const source = fileManifestation.querySelector('identifier').innerHTML;
     return source;
-  }
-
-  getFilePath() {
-    return this.filePath;
-  }
-
-  get getNotationType() {
-    return this.notationType;
-  }
-
-  get getNeumeComponents() {
-    return this.neumeComponents;
-  }
-
-  get getMode() {
-    return Number(this.mode);
   }
 }

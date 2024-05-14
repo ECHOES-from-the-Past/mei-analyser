@@ -1,5 +1,5 @@
 import { highlightPattern } from "../utility/utils.js";
-import { Chant, NeumeComponent } from "../utility/components.js";
+import { Chant, NeumeComponent, toSeptenary } from "../utility/components.js";
 
 /**
  * @deprecated unused function, saving for future reference only.
@@ -106,6 +106,8 @@ export function highlightPitchPattern(chant, searchPattern) {
  * @returns {Number} The number of patterns found
  */
 export function highlightContourPattern(chant, searchPattern) {
+  console.debug("Highlighting contour pattern");
+  console.debug(searchPattern);
   /**
    * @type {NeumeComponentAQ[] | NeumeComponentSQ[]}
    */
@@ -124,8 +126,9 @@ export function highlightContourPattern(chant, searchPattern) {
     patternFound.push(ncArray[i_nc]);
     for (let i_sp = 0; i_sp < searchPattern.length; i_sp++) {
       if (chantNotationType == "aquitanian") {
+        console.debug("Highlighting Aquitanian chant");
         // processing the search for Aquitanian notation, using the `loc` attribute
-        if (ncArray[i_nc + i_sp].getLoc() + searchPattern[i_sp] == ncArray[i_nc + i_sp + 1].getLoc()) {
+        if (ncArray[i_nc + i_sp].loc + searchPattern[i_sp] == ncArray[i_nc + i_sp + 1].loc) {
           patternFound.push(ncArray[i_nc + i_sp + 1]);
         } else {
           patternFound = [];
@@ -133,7 +136,8 @@ export function highlightContourPattern(chant, searchPattern) {
         }
       } else if (chantNotationType == "square") {
         // processing the search for Square notation, using the `septenary` value of the note
-        if (ncArray[i_nc + i_sp].septenary() + searchPattern[i_sp] == ncArray[i_nc + i_sp + 1].septenary()) {
+        console.debug(`${toSeptenary(ncArray[i_nc + i_sp])} + ${searchPattern[i_sp]} = ${toSeptenary(ncArray[i_nc + i_sp + 1])}`)
+        if (toSeptenary(ncArray[i_nc + i_sp]) + searchPattern[i_sp] == toSeptenary(ncArray[i_nc + i_sp + 1])) {
           patternFound.push(ncArray[i_nc + i_sp + 1]);
         } else {
           patternFound = [];
@@ -141,6 +145,7 @@ export function highlightContourPattern(chant, searchPattern) {
         }
       }
     }
+
     if (patternFound.length > 0) {
       highlightPattern(patternFound);
       patterns.push(patternFound);
@@ -158,16 +163,6 @@ export function highlightContourPattern(chant, searchPattern) {
 export function displayChantMode(chant, slot) {
   document.getElementById("chant-mode-" + slot).innerHTML = chant.getMode();
 }
-
-/**
- * Make a function that search for all the chants with a certain mode
- * @param {Number} mode the mode to be searched
-*/
-
-/**
- * Search for pitch/melodic pattern + mode (combining search functions)
- */
-
 
 /**
  * Process the contour search pattern for both left and right slots

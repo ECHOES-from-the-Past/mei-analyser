@@ -11,6 +11,10 @@ import {
     searchResultDiv, chantSVG, chantDisplay, chantInfo,
     melismaIncrement, melismaDecrement,
     melismaInput,
+    patternInputBox,
+    absolutePitchRadio,
+    indefinitePitchRadio,
+    contourRadio,
 } from './DOMelements.mjs';
 import {
     drawSVGFromMEIContent, loadMEIFile,
@@ -52,7 +56,7 @@ function loadPersistedSearchOptions() {
     });
 
     allModeCheckbox.checked = retrieve('allModeCheckbox');
-    if(retrieve("allModeCheckbox") === null) {
+    if (retrieve("allModeCheckbox") === null) {
         allModeCheckbox.click();
     }
     undetectedCheckbox.checked = retrieve('modeUndetectedCheckbox');
@@ -62,6 +66,20 @@ function loadPersistedSearchOptions() {
     oriscusCheckbox.checked = retrieve('oriscusCheckbox');
 
     melismaInput.value = retrieve('melismaInput') === null ? 6 : retrieve('melismaInput');
+
+    switch (retrieve('melodicPatternSearchMode')) {
+        case 'absolute-pitch':
+            absolutePitchRadio.checked = true;
+            break;
+        case 'contour':
+            contourRadio.checked = true;
+            break;
+        case 'indefinite-pitch':
+            indefinitePitchRadio.checked = true;
+            break;
+    }
+
+    patternInputBox.value = retrieve('patternInputBox');
 }
 
 let databaseIsOpen = false;
@@ -225,17 +243,6 @@ async function loadDatabaseToLocalStorage() {
 }
 
 /* --------------- SEARCH PANEL PERSISTANCE --------------- */
-// pitchRadio.addEventListener("change", () => {
-//     persist('patternSearchMode', 'pitch');
-// });
-
-// contourRadio.addEventListener("change", () => {
-//     persist('patternSearchMode', 'contour');
-// });
-
-// searchQueryInput.addEventListener("input", () => {
-//     persist('searchQuery', searchQueryInput.value);
-// });
 aquitanianCheckbox.addEventListener("change", () => {
     persist('aquitanianCheckbox', aquitanianCheckbox.checked);
 });
@@ -273,6 +280,22 @@ allModeCheckbox.addEventListener("change", () => {
 undetectedCheckbox.addEventListener("change", () => {
     persist('modeUndetectedCheckbox', undetectedCheckbox.checked);
 });
+
+absolutePitchRadio.addEventListener("change", () => {
+    persist('melodicPatternSearchMode', 'absolute-pitch')
+});
+
+contourRadio.addEventListener("change", () => {
+    persist('melodicPatternSearchMode', 'contour')
+});
+
+indefinitePitchRadio.addEventListener("change", () => {
+    persist('melodicPatternSearchMode', 'indefinite-pitch')
+});
+
+patternInputBox.addEventListener("change", () => {
+    persist('patternInputBox', patternInputBox.value);
+})
 
 /* --------------- DATABASE PANEL PERSISTANCE --------------- */
 viewDatabaseButton.addEventListener("click", () => {

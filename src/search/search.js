@@ -364,13 +364,13 @@ export function showSearchResult(resultChantList) {
     displayChantBtn.addEventListener("click", () => {
       // Display the chant information (file name, notation type, mode, etc.)
       printChantInformation(chant);
-      
+
       // Set the box for the chant and draw the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
 
       chantDisplay.scrollIntoView({ behavior: "smooth" });
-      
+
       // Highlight search pattern
       highlightContourPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()))
     });
