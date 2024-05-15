@@ -1,4 +1,4 @@
-import { Chant, NeumeComponent, Syllable, SyllableWord, toSeptenary } from "../utility/components.js";
+import { Chant, NeumeComponent, toSeptenary } from "../utility/components.js";
 import { retrieve, drawSVGFromMEIContent } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
@@ -96,60 +96,6 @@ function filterByModes(chantList, modeCheckboxes, undetectedCheckbox) {
   return resultChantList;
 }
 
-
-
-/** @deprecated */
-function getOrnamentalSyllables(chant, ornamentalType) {
-  let syllableList = [];
-  /** @type {Syllable[]} */
-  let syllables = chant.syllables;
-  for (let i = 0; i < syllables.length; i++) {
-    /** @type {Syllable} */
-    let syllable_i = syllables[i];
-    for (let j = 0; j < syllable_i.neumeComponents.length; j++) {
-      let neume = syllable_i.neumeComponents[j];
-      if (neume.ornamental != null && neume.ornamental.type == ornamentalType) {
-        syllableList.push(syllable_i.syllableWord);
-      }
-    }
-  }
-  return syllableList;
-}
-
-/**
- * @deprecated
- * Obtain the syllables that contain the ornamental shapes
- * @param {Chant[]} chantList list of chants to be filtered
- * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
- * @returns {{"liquescent": string[], "quilisma": string[], "oriscus": string[]}} list of syllables that contain the ornamental shapes
- */
-function obtainSyllables(chantList, ornamentalOptions) {
-  let liquescentSyllables = [];
-  let quilismaSyllables = [];
-  let oriscusSyllables = [];
-  for (let chant of chantList) {
-    if (ornamentalOptions.liquescent) {
-      liquescentSyllables.push(getOrnamentalSyllables(chant, "liquescent"));
-    }
-
-    if (ornamentalOptions.quilisma) {
-      quilismaSyllables.push(getOrnamentalSyllables(chant, "quilisma"));
-    }
-
-    if (ornamentalOptions.oriscus) {
-      oriscusSyllables.push(getOrnamentalSyllables(chant, "oriscus"));
-    }
-  }
-
-  const syllablesLists = {
-    "liquescent": liquescentSyllables,
-    "quilisma": quilismaSyllables,
-    "oriscus": oriscusSyllables
-  }
-
-  return syllablesLists;
-}
-
 function getMelodicPatternSearchMode() {
   if (contourRadio.checked)
     return contourRadio.value;
@@ -183,6 +129,141 @@ function processSearchPattern(searchPattern, searchMode) {
 }
 
 /**
+ * 
+ * @param {Chant} chant The chant object
+ * @param {string[]} searchQueryList in the form of ['A', 'B', 'C', 'D', 'E'] for example
+ * @returns 
+ */
+function processAbsolutePitchMelodicPattern(chant, searchQueryList) {
+  const ncArray = chant.neumeComponents;
+  const chantNotationType = chant.notationType;
+
+  let patterns = [];
+
+  for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
+    let patternFound = [];
+    patternFound.push(ncArray[i_nc]);
+
+    if (chantNotationType == "aquitanian") {
+      for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
+        // processing the search for Aquitanian notation, using the `loc` attribute
+        if (ncArray[i_nc + i_sq].loc + searchQueryList[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
+          patternFound.push(ncArray[i_nc + i_sq + 1]);
+        } else {
+          patternFound = [];
+          break;
+        }
+      }
+    }
+    else if (chantNotationType == "square") {
+      for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
+        // processing the search for Square notation, using the `septenary` value of the note
+        if (toSeptenary(ncArray[i_nc + i_search]) + searchQueryList[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
+          patternFound.push(ncArray[i_nc + i_search + 1]);
+        } else {
+          patternFound = [];
+          break;
+        }
+      }
+    }
+    if (patternFound.length > 0) {
+      patterns.push(patternFound);
+    }
+  }
+  return patterns;
+}  
+
+/**
+ * 
+ * @param {Chant} chant The chant object
+ * @param {string[]} searchQueryList in the form of [-1, 1, 0, -1, 2] for example
+ * @returns 
+ */
+function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
+  const ncArray = chant.neumeComponents;
+  const chantNotationType = chant.notationType;
+
+  let patterns = [];
+
+  for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
+    let patternFound = [];
+    patternFound.push(ncArray[i_nc]);
+
+    if (chantNotationType == "aquitanian") {
+      for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
+        // processing the search for Aquitanian notation, using the `loc` attribute
+        if (ncArray[i_nc + i_sq].loc + searchQueryList[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
+          patternFound.push(ncArray[i_nc + i_sq + 1]);
+        } else {
+          patternFound = [];
+          break;
+        }
+      }
+    }
+    else if (chantNotationType == "square") {
+      for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
+        // processing the search for Square notation, using the `septenary` value of the note
+        if (toSeptenary(ncArray[i_nc + i_search]) + searchQueryList[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
+          patternFound.push(ncArray[i_nc + i_search + 1]);
+        } else {
+          patternFound = [];
+          break;
+        }
+      }
+    }
+    if (patternFound.length > 0) {
+      patterns.push(patternFound);
+    }
+  }
+  return patterns;
+}  
+
+/**
+ * 
+ * @param {Chant} chant a Chant object
+ * @param {number[]} searchQueryList the list of numbers
+ * @returns 
+ */
+function processContourMelodicPattern(chant, searchQueryList) {
+  const ncArray = chant.neumeComponents;
+  const chantNotationType = chant.notationType;
+
+  let patterns = [];
+
+  for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
+    let patternFound = [];
+    patternFound.push(ncArray[i_nc]);
+
+    if (chantNotationType == "aquitanian") {
+      for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
+        // processing the search for Aquitanian notation, using the `loc` attribute
+        if (ncArray[i_nc + i_sq].loc + searchQueryList[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
+          patternFound.push(ncArray[i_nc + i_sq + 1]);
+        } else {
+          patternFound = [];
+          break;
+        }
+      }
+    }
+    else if (chantNotationType == "square") {
+      for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
+        // processing the search for Square notation, using the `septenary` value of the note
+        if (toSeptenary(ncArray[i_nc + i_search]) + searchQueryList[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
+          patternFound.push(ncArray[i_nc + i_search + 1]);
+        } else {
+          patternFound = [];
+          break;
+        }
+      }
+    }
+    if (patternFound.length > 0) {
+      patterns.push(patternFound);
+    }
+  }
+  return patterns;
+}
+
+/**
  * Using regular expression to process the user's input
  * (from the old parseSearchPattern function)
  * Regex pattern: /-?\d/g
@@ -202,6 +283,7 @@ function processSearchPattern(searchPattern, searchMode) {
  * @returns {Chant[]} list of chants that contains the melodic pattern
  */
 function filterByMelodicPattern(chantList, searchPattern, searchMode) {
+  // If search pattern is empty, return the original chant list regardless of the search mode
   if (!searchPattern) {
     return chantList;
   }
@@ -220,52 +302,25 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
   console.log(chantList, searchQueryList, searchMode);
   if (searchMode == 'contour') {
     for (let chant of chantList) {
-      let hasPattern = false;
-      const ncArray = chant.neumeComponents;
-      const chantNotationType = chant.notationType;
-
-      let patterns = [];
-
-      for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
-        let patternFound = [];
-        patternFound.push(ncArray[i_nc]);
-
-        if (chantNotationType == "aquitanian") {
-          for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
-            // processing the search for Aquitanian notation, using the `loc` attribute
-            if (Number(ncArray[i_nc + i_sq].loc) + searchQueryList[i_sq] == Number(ncArray[i_nc + i_sq + 1].loc)) {
-              patternFound.push(ncArray[i_nc + i_sq + 1]);
-            } else {
-              patternFound = [];
-              break;
-            }
-          }
-        }
-        else if (chantNotationType == "square") {
-          for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
-            // processing the search for Square notation, using the `septenary` value of the note
-            if (toSeptenary(ncArray[i_nc + i_search]) + searchQueryList[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
-              patternFound.push(ncArray[i_nc + i_search + 1]);
-            } else {
-              patternFound = [];
-              break;
-            }
-          }
-        }
-        if (patternFound.length > 0) {
-          patterns.push(patternFound);
-        }
-      }
-
-      hasPattern = patterns.length > 0;
-      if (hasPattern) {
+      let patterns = processContourMelodicPattern(chant, searchQueryList);
+      if (patterns.length > 0) {
         resultChantList.push(chant);
       }
     }
   } else if (searchMode == 'absolute-pitch') {
-
+    for (let chant of chantList) {
+      let patterns = processAbsolutePitchMelodicPattern(chant, searchQueryList);
+      if (patterns.length > 0) {
+        resultChantList.push(chant);
+      }
+    }
   } else if (searchMode == 'indefinite-pitch') {
-
+    for (let chant of chantList) {
+      let patterns = processIndefinitePitchMelodicPattern(chant, searchQueryList);
+      if (patterns.length > 0) {
+        resultChantList.push(chant);
+      }
+    }
   } else {
     console.error("Invalid search mode!");
   }
@@ -282,14 +337,9 @@ export function performSearch() {
   let resultChantList = retrieve('chantList');
 
   /* First layer of filtering: Notation type */
-  let notationTypeOptions = {
-    "aquitanian": aquitanianCheckbox.checked,
-    "square": squareCheckbox.checked
-  }
-
   resultChantList = resultChantList.filter(chant => {
-    if (notationTypeOptions.aquitanian && chant.notationType == "aquitanian") return true;
-    if (notationTypeOptions.square && chant.notationType == "square") return true;
+    if (aquitanianCheckbox.checked && chant.notationType == "aquitanian") return true;
+    if (squareCheckbox.checked && chant.notationType == "square") return true;
     return false;
   });
 
@@ -442,7 +492,13 @@ export function showSearchResult(resultChantList) {
       chantDisplay.scrollIntoView({ behavior: "smooth" });
 
       // Highlight search pattern
-      highlightContourPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()))
+      if (contourRadio.checked) {
+        highlightContourPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()))
+      } else if (absolutePitchRadio.checked) {
+        highlightContourPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()))
+      } else if (indefinitePitchRadio.checked) {
+        highlightContourPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()))
+      }
     });
 
     let tdLinks = createTableCell();

@@ -1,4 +1,4 @@
-import { NeumeComponentAQ, NeumeComponentSQ } from './components.js';
+import { NeumeComponentAQ, NeumeComponentSQ, highlightNeumeComponent } from './components.js';
 import database from '../database/database.json';
 
 export const env = import.meta.env.MODE; // 'development' or 'production'

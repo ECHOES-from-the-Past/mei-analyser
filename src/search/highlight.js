@@ -107,10 +107,6 @@ export function highlightPitchPattern(chant, searchPattern) {
  */
 export function highlightContourPattern(chant, searchPattern) {
   console.debug("Highlighting contour pattern");
-  console.debug(searchPattern);
-  /**
-   * @type {NeumeComponentAQ[] | NeumeComponentSQ[]}
-   */
   const ncArray = chant.neumeComponents;
   const chantNotationType = chant.notationType;
 
@@ -126,7 +122,6 @@ export function highlightContourPattern(chant, searchPattern) {
     patternFound.push(ncArray[i_nc]);
     for (let i_sp = 0; i_sp < searchPattern.length; i_sp++) {
       if (chantNotationType == "aquitanian") {
-        console.debug("Highlighting Aquitanian chant");
         // processing the search for Aquitanian notation, using the `loc` attribute
         if (ncArray[i_nc + i_sp].loc + searchPattern[i_sp] == ncArray[i_nc + i_sp + 1].loc) {
           patternFound.push(ncArray[i_nc + i_sp + 1]);
@@ -136,7 +131,6 @@ export function highlightContourPattern(chant, searchPattern) {
         }
       } else if (chantNotationType == "square") {
         // processing the search for Square notation, using the `septenary` value of the note
-        console.debug(`${toSeptenary(ncArray[i_nc + i_sp])} + ${searchPattern[i_sp]} = ${toSeptenary(ncArray[i_nc + i_sp + 1])}`)
         if (toSeptenary(ncArray[i_nc + i_sp]) + searchPattern[i_sp] == toSeptenary(ncArray[i_nc + i_sp + 1])) {
           patternFound.push(ncArray[i_nc + i_sp + 1]);
         } else {
