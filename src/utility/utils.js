@@ -122,9 +122,9 @@ export function clearHighlights() {
  * @param {NeumeComponentAQ[] | NeumeComponentSQ[]} pattern an array of type NeumeComponentAQ or NeumeComponentSQ
  */
 export function highlightPattern(pattern) {
-  console.log("Highlight!")
   for (const nc of pattern) {
     highlightNeumeComponent(nc);
+    console.log(`Neume Component: ${nc.id}`);
   }
 }
 

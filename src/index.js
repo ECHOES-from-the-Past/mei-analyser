@@ -274,6 +274,12 @@ patternInputBox.addEventListener("input", () => {
     persist('patternInputBox', patternInputBox.value);
 })
 
+patternInputBox.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        searchButton.click();
+    }
+});
+
 /* --------------- DATABASE PANEL PERSISTANCE --------------- */
 viewDatabaseButton.addEventListener("click", () => {
     if (databaseIsOpen === false) {

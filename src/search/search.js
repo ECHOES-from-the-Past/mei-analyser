@@ -1,5 +1,5 @@
 import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../utility/components.js";
-import { retrieve, drawSVGFromMEIContent } from "../utility/utils.js";
+import { retrieve, drawSVGFromMEIContent, highlightPattern } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
@@ -133,7 +133,7 @@ function processSearchPattern(searchPattern, searchMode) {
  * 
  * @param {Chant} chant The chant object, assuming it's in Square notation
  * @param {string[]} searchQueryList in the form of ['A', 'B', 'C', 'D', 'E'] for example
- * @returns 
+ * @returns {NeumeComponentSQ[][]} a list of patterns (in list form) that match the search query
  */
 function processAbsolutePitchMelodicPattern(chant, searchQueryList) {
   /** @type {NeumeComponentSQ[]} */
@@ -143,7 +143,6 @@ function processAbsolutePitchMelodicPattern(chant, searchQueryList) {
 
   for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
     let patternFound = [];
-    patternFound.push(ncArray[i_nc]);
 
     for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
       // processing the search for Square notation, using the `septenary` value of the note
@@ -157,7 +156,6 @@ function processAbsolutePitchMelodicPattern(chant, searchQueryList) {
 
     if (patternFound.length > 0) {
       patterns.push(patternFound);
-      console.log(patternFound);
     }
   }
   return patterns;
@@ -275,7 +273,6 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
     return;
   }
 
-  console.log(chantList, searchQueryList, searchMode);
   if (searchMode == 'contour') {
     for (let chant of chantList) {
       let patterns = processContourMelodicPattern(chant, searchQueryList);
@@ -285,9 +282,11 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
     }
   } else if (searchMode == 'absolute-pitch') {
     for (let chant of chantList) {
-      let patterns = processAbsolutePitchMelodicPattern(chant, searchQueryList);
-      if (patterns.length > 0) {
-        resultChantList.push(chant);
+      if (chant.notationType == "square") {
+        let patterns = processAbsolutePitchMelodicPattern(chant, searchQueryList);
+        if (patterns.length > 0) {
+          resultChantList.push(chant);
+        }
       }
     }
   } else if (searchMode == 'indefinite-pitch') {
@@ -397,6 +396,16 @@ export function showSearchResult(resultChantList) {
     }
 
     let tdSyllablesContent = [];
+    // In case the word is part of a melodic pattern
+    let melodicPattern = [];
+    if (contourRadio.checked) {
+      melodicPattern = processContourMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+    } else if (absolutePitchRadio.checked) {
+      melodicPattern = processAbsolutePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+    } else if (indefinitePitchRadio.checked) {
+      melodicPattern = processIndefinitePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+    }
+
     for (let syllable of chant.syllables) {
       // Extract the syllable word and its position from each syllable
       let word = syllable.syllableWord.text;
@@ -419,6 +428,20 @@ export function showSearchResult(resultChantList) {
       let melismaMin = melismaInput.value;
       if (syllable.neumeComponents.length >= melismaMin) {
         wordWrapper.classList.add("melisma-word");
+      }
+
+      if (melodicPattern.length > 0) {
+        for (let pattern of melodicPattern) {
+          // compare two list, if there's a match (the same element from both), add the class to the wordWrapper
+          for (let i = 0; i < pattern.length; i++) {
+            for (let j = 0; j < syllable.neumeComponents.length; j++) {
+              if (JSON.stringify(pattern[i]) === JSON.stringify(syllable.neumeComponents[j])) {
+                console.log("Matched!");
+                wordWrapper.classList.add("melodic-pattern-word");
+              }
+            }
+          }
+        }
       }
 
       wordWrapper.innerText = word;
@@ -470,12 +493,16 @@ export function showSearchResult(resultChantList) {
       chantDisplay.scrollIntoView({ behavior: "smooth" });
 
       // Highlight search pattern
+      let melodicPattern = [];
       if (contourRadio.checked) {
-        highlightContourPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()))
+        melodicPattern = processContourMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
       } else if (absolutePitchRadio.checked) {
-        highlightContourPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()))
+        melodicPattern = processAbsolutePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
       } else if (indefinitePitchRadio.checked) {
-        highlightContourPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()))
+        melodicPattern = processIndefinitePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+      }
+      for (let pattern of melodicPattern) {
+        highlightPattern(pattern);
       }
     });
 
