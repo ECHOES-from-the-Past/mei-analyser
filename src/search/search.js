@@ -1,4 +1,4 @@
-import { Chant, NeumeComponent, toSeptenary } from "../utility/components.js";
+import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../utility/components.js";
 import { retrieve, drawSVGFromMEIContent } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
@@ -117,6 +117,7 @@ function processSearchPattern(searchPattern, searchMode) {
     if (melodyList == null) {
       console.log("Melody list empty!");
     }
+    melodyList = melodyList.map(pitch => pitch.toLowerCase());
   } else if (searchMode == 'indefinite-pitch' || searchMode == 'contour') {
     melodyList = searchPattern.match(numericMelodyRegex);
     if (melodyList == null || melodyList.length == 0) {
@@ -130,13 +131,13 @@ function processSearchPattern(searchPattern, searchMode) {
 
 /**
  * 
- * @param {Chant} chant The chant object
+ * @param {Chant} chant The chant object, assuming it's in Square notation
  * @param {string[]} searchQueryList in the form of ['A', 'B', 'C', 'D', 'E'] for example
  * @returns 
  */
 function processAbsolutePitchMelodicPattern(chant, searchQueryList) {
+  /** @type {NeumeComponentSQ[]} */
   const ncArray = chant.neumeComponents;
-  const chantNotationType = chant.notationType;
 
   let patterns = [];
 
@@ -144,79 +145,54 @@ function processAbsolutePitchMelodicPattern(chant, searchQueryList) {
     let patternFound = [];
     patternFound.push(ncArray[i_nc]);
 
-    if (chantNotationType == "aquitanian") {
-      for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
-        // processing the search for Aquitanian notation, using the `loc` attribute
-        if (ncArray[i_nc + i_sq].loc + searchQueryList[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
-          patternFound.push(ncArray[i_nc + i_sq + 1]);
-        } else {
-          patternFound = [];
-          break;
-        }
+    for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
+      // processing the search for Square notation, using the `septenary` value of the note
+      if (ncArray[i_nc + i_search].pname == searchQueryList[i_search]) {
+        patternFound.push(ncArray[i_nc + i_search]);
+      } else {
+        patternFound = [];
+        break;
       }
     }
-    else if (chantNotationType == "square") {
-      for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
-        // processing the search for Square notation, using the `septenary` value of the note
-        if (toSeptenary(ncArray[i_nc + i_search]) + searchQueryList[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
-          patternFound.push(ncArray[i_nc + i_search + 1]);
-        } else {
-          patternFound = [];
-          break;
-        }
-      }
-    }
+
     if (patternFound.length > 0) {
       patterns.push(patternFound);
+      console.log(patternFound);
     }
   }
   return patterns;
-}  
+}
 
 /**
- * 
- * @param {Chant} chant The chant object
+ * Only works for Aquitanian notation chants
+ * @param {Chant} chant The chant object, assuming it's in Aquitanian notation
  * @param {string[]} searchQueryList in the form of [-1, 1, 0, -1, 2] for example
  * @returns 
  */
 function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
   const ncArray = chant.neumeComponents;
-  const chantNotationType = chant.notationType;
 
   let patterns = [];
 
   for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
     let patternFound = [];
-    patternFound.push(ncArray[i_nc]);
 
-    if (chantNotationType == "aquitanian") {
-      for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
-        // processing the search for Aquitanian notation, using the `loc` attribute
-        if (ncArray[i_nc + i_sq].loc + searchQueryList[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
-          patternFound.push(ncArray[i_nc + i_sq + 1]);
-        } else {
-          patternFound = [];
-          break;
-        }
+    for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
+      if (ncArray[i_nc + i_sq].loc == searchQueryList[i_sq]) {
+        patternFound.push(ncArray[i_nc + i_sq]);
+      } else {
+        patternFound = [];
+        break;
       }
     }
-    else if (chantNotationType == "square") {
-      for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
-        // processing the search for Square notation, using the `septenary` value of the note
-        if (toSeptenary(ncArray[i_nc + i_search]) + searchQueryList[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
-          patternFound.push(ncArray[i_nc + i_search + 1]);
-        } else {
-          patternFound = [];
-          break;
-        }
-      }
-    }
+
     if (patternFound.length > 0) {
       patterns.push(patternFound);
     }
   }
+
   return patterns;
-}  
+}
 
 /**
  * 
@@ -316,9 +292,11 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
     }
   } else if (searchMode == 'indefinite-pitch') {
     for (let chant of chantList) {
-      let patterns = processIndefinitePitchMelodicPattern(chant, searchQueryList);
-      if (patterns.length > 0) {
-        resultChantList.push(chant);
+      if (chant.notationType == "aquitanian") {
+        let patterns = processIndefinitePitchMelodicPattern(chant, searchQueryList);
+        if (patterns.length > 0) {
+          resultChantList.push(chant);
+        }
       }
     }
   } else {

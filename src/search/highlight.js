@@ -2,84 +2,6 @@ import { highlightPattern } from "../utility/utils.js";
 import { Chant, NeumeComponent, toSeptenary } from "../utility/components.js";
 
 /**
- * @deprecated unused function, saving for future reference only.
- * Highlighting notes based on its absolute pitch pattern (only work for Aquitanian notation)
- * @param {Chant} chant the aquitanian MEI (.mei) file to be highlighted
- * @param {Number[]} searchPattern an array of number, parse from user's input
- * @returns {Number} the number of pattern(s) found
- */
-function highlightAbsolutePitchPattern(chant, searchPattern) {
-  let count = 0;
-  const ncArray = chant.getNeumeComponents();
-  for (let i_nc = 0; i_nc < ncArray.length - searchPattern.length + 1; i_nc++) {
-    if (ncArray[i_nc].getLoc() == searchPattern[0]) {
-      let i_search = 1;
-      let patternFound = [ncArray[i_nc]];
-      while (i_search < searchPattern.length) {
-        if (ncArray[i_nc + i_search].getLoc() == searchPattern[i_search]) {
-          patternFound.push(ncArray[i_nc + i_search]);
-          i_search++;
-        } else {
-          // Reset list if no search found
-          patternFound = [];
-          break;
-        }
-      }
-
-      if (patternFound.length > 0) {
-        highlightPattern(patternFound);
-        count++;
-      }
-    }
-  }
-  return count;
-}
-
-/**
- * Algorithm:
- * 1. Get the distance between the first value of search_pattern
- * and the neume component of aquitanian_content
- * 2. Subtract all values in search_pattern by the distance 
- * found above 
- * 3. Check the matching sequence (aquitanian_content[i:].loc and search_pattern[i:])
- * until the end of search pattern.
- * 4. Highlight found pattern
-*/
-
-/**
- * A function that highlight Aquitanian chant based on its contour location.
- * It also search the Square chant for a similar contour pattern.
- * 
- * The seach output may overlap; hence, it needs a pattern record and should allow
- * users to visit each pattern at a time.
- * @param {Chant} aquitanian_content the chant's MEI file in Aquitanian notation
- * @param {Number[]} search_pattern an array of number, parse from user's input
- */
-export function highlightPitchPattern(chant, searchPattern) {
-  const ncArray = chant.getNeumeComponents();
-  const chantNotationType = chant.getNotationType();
-  let patternFound = [];
-  let patternCount = 0;
-
-  for (let i_nc = 0; i_nc < ncArray.length - searchPattern.length; i_nc++) {
-    patternFound.push(ncArray[i_nc]);
-    let distance = search_pattern[0] - aquitanian_content[i_nc].loc;
-    let temp_search_pattern = [...searchPattern].map((e) => e - distance);
-    if (aquitanian_content[i_nc + i].loc == temp_search_pattern[i]) {
-      found_pattern.push(aquitanian_content[i_nc + i]);
-    } else {
-      found_pattern = [];
-      break;
-    }
-    if (patternFound.length > 0) {
-      highlightPattern(patternFound);
-      patternCount++;
-    }
-  }
-  return patternCount;
-}
-
-/**
  * Algorithm: convert square neume component to base-7 value (via `septenary()`)
  * and check the melodic interval between two values.
  * NOTE: there are some redundancy/repetition in the calculation that can be optimized. 
@@ -106,7 +28,6 @@ export function highlightPitchPattern(chant, searchPattern) {
  * @returns {Number} The number of patterns found
  */
 export function highlightContourPattern(chant, searchPattern) {
-  console.debug("Highlighting contour pattern");
   const ncArray = chant.neumeComponents;
   const chantNotationType = chant.notationType;
 

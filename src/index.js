@@ -116,6 +116,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Display the client version
     clientVersion.textContent = `Client version: ${localVersion} | Remote version: ${remoteVersion}`;
+    
+    if(env === 'development') {
+        clientVersion.textContent += '- Development';
+    }
 });
 
 /* --------------- TOP BUTTON Event Listeners --------------- */
