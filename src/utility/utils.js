@@ -1,15 +1,14 @@
-import { NeumeComponentAQ, NeumeComponentSQ, highlightNeumeComponent } from './components.js';
-import database from '../database/database.json';
+import { NeumeComponent } from './components.js';
 
 export const env = import.meta.env.MODE; // 'development' or 'production'
 
-/** @type {String} root path to the database folder based on the environment */
-let databasePath = "";
-if (env === "development") {
-  databasePath = "../../GABCtoMEI/MEI_outfiles/";
-} else if (env === "production") {
-  databasePath = "./database/";
-}
+// /** @type {String} root path to the database folder based on the environment */
+// let databasePath = "";
+// if (env === "development") {
+//   databasePath = "../../GABCtoMEI/MEI_outfiles/";
+// } else if (env === "production") {
+//   databasePath = "./database/";
+// }
 
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
@@ -33,21 +32,8 @@ export async function loadMEIFile(fileName) {
  * @param {Number} order 1 for left position, 2 for right position
  */
 export async function drawMEIContent(meiContent, order) {
-  if (meiContent == null) {
-    // In case the MEI content is not loaded (e.g., on first load of the page), load the sample MEI content
-    const sampleAquitanianChant = databasePath + database[0];
-    const sampleSquareChant = databasePath + database[1];
-    if (order == 1) {
-      meiContent = await loadMEIFile(sampleAquitanianChant, 1);
-    } else if (order == 2) {
-      meiContent = await loadMEIFile(sampleSquareChant, 2);
-    } else {
-      console.error(`Cannot load sample MEI content to invalid order: ${order}.\n Should be 1 (left) or 2 (right).`);
-    }
-  }
-
-  // This line initializes the Verovio toolkit
   try {
+    // This line initializes the Verovio toolkit
     let verovioToolkit = new verovio.toolkit();
 
     // Setting options for the toolkit
@@ -104,7 +90,64 @@ export function drawSVGFromMEIContent(meiContent) {
   }
 }
 
-export function clearHighlights() {
+/* ------------------------ HIGHLIGHTING SVGs --------------------------- */
+
+/**
+ * Put the neume component in a spotlight by surrounding it with a box.
+ * @param {NeumeComponent} neumeComponent the neume component to be spotlighted
+ * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
+ * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
+ */
+export function spotlightNeumeComponent(neumeComponent, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
+  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
+  nc_svg.forEach((nc) => {
+    const x_coord = nc.querySelector('use').attributes.getNamedItem('x').value;
+    const y_coord = nc.querySelector('use').attributes.getNamedItem('y').value;
+    const width = '300';
+    const height = '400';
+
+    // construct a spotlight rectangle to highlight the neume component
+    const spotlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    spotlight.setAttribute('class', 'spotlight-rect');
+    spotlight.setAttribute('x', x_coord - width / 3);
+    spotlight.setAttribute('y', y_coord - height / 2);
+    spotlight.setAttribute('width', width);
+    spotlight.setAttribute('height', height);
+    spotlight.setAttribute('fill', color);
+    spotlight.setAttribute('stroke', stroke_color);
+    spotlight.setAttribute('stroke-width', '30px');
+    // Display the spotlight rectangle
+    nc.appendChild(spotlight);
+  });
+}
+
+/**
+   * Highlight the neume component.
+   * @param {NeumeComponent} nc the NeumeComponent object
+   * @param {String} color the fill colour of the neume component (default: 'rgba(149, 48, 217, 0.6)' - purple)
+   * @param {String} stroke_color the stroke colour of the neume component (default: 'rgba(149, 48, 217, 1)' - purple)
+   */
+export function highlightNeumeComponent(neumeComponent, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
+  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
+  nc_svg.forEach((nc) => {
+    nc.style.fill = color;
+    nc.style.stroke = stroke_color;
+    nc.style.strokeWidth = '30px';
+  });
+}
+
+/**
+ * 
+ */
+export function unhighlight(neumeComponent) {
+  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
+  nc_svg.forEach((nc) => {
+    nc.style.fill = 'black';
+  });
+}
+
+
+export function clearAllHighlights() {
   const allNeumeComponents = document.querySelectorAll("g.nc");
   // Clear all highlighted neume components
   allNeumeComponents.forEach(element => {
@@ -119,14 +162,14 @@ export function clearHighlights() {
 
 /**
  * Highlighting a pattern of neume components on the screen
- * @param {NeumeComponentAQ[] | NeumeComponentSQ[]} pattern an array of type NeumeComponentAQ or NeumeComponentSQ
+ * @param {NeumeComponent[]} pattern an array neume components
  */
 export function highlightPattern(pattern) {
   for (const nc of pattern) {
     highlightNeumeComponent(nc);
-    console.log(`Neume Component: ${nc.id}`);
   }
 }
+
 
 /** Persistance functions for the project */
 

@@ -11,7 +11,6 @@ import {
   searchResultInfo
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
-import { highlightContourPattern } from "./highlight.js";
 
 /**
  * ----------------------- SEARCH -----------------------
@@ -114,15 +113,13 @@ function processSearchPattern(searchPattern, searchMode) {
   melodicSearchError.hidden = true;
   if (searchMode == 'absolute-pitch') {
     melodyList = searchPattern.match(alphabetMelodicRegex);
-    if (melodyList == null) {
-      console.log("Melody list empty!");
-    }
+    // In case the user input is empty, regex will return null
+    if (melodyList == null) return [];
     melodyList = melodyList.map(pitch => pitch.toLowerCase());
   } else if (searchMode == 'indefinite-pitch' || searchMode == 'contour') {
     melodyList = searchPattern.match(numericMelodyRegex);
-    if (melodyList == null || melodyList.length == 0) {
-      console.log("Melody list empty!");
-    }
+    // In case the user input is empty, regex will return null
+    if (melodyList == null) return [];
     melodyList = melodyList.map(Number);
   }
 
@@ -268,7 +265,7 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
     searchQueryList = processSearchPattern(searchPattern, searchMode);
   } catch (error) {
     console.error(error);
-    melodicSearchError.textContent = "Invalid melodic pattern. Please check your input or search mode selection.";
+    melodicSearchError.textContent = "Invalid melodic pattern options. Please check your search mode selection or query.";
     melodicSearchError.hidden = false;
     return;
   }
@@ -436,7 +433,6 @@ export function showSearchResult(resultChantList) {
           for (let i = 0; i < pattern.length; i++) {
             for (let j = 0; j < syllable.neumeComponents.length; j++) {
               if (JSON.stringify(pattern[i]) === JSON.stringify(syllable.neumeComponents[j])) {
-                console.log("Matched!");
                 wordWrapper.classList.add("melodic-pattern-word");
               }
             }

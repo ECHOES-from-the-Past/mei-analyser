@@ -32,60 +32,6 @@ function logNeumeComponent(neumeComponent) {
 }
 
 /**
- * Put the neume component in a spotlight by surrounding it with a box.
- * @param {NeumeComponent} neumeComponent the neume component to be spotlighted
- * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
- * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
- */
-export function spotlightNeumeComponent(neumeComponent, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
-  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
-  nc_svg.forEach((nc) => {
-    const x_coord = nc.querySelector('use').attributes.getNamedItem('x').value;
-    const y_coord = nc.querySelector('use').attributes.getNamedItem('y').value;
-    const width = '300';
-    const height = '400';
-
-    // construct a spotlight rectangle to highlight the neume component
-    const spotlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    spotlight.setAttribute('class', 'spotlight-rect');
-    spotlight.setAttribute('x', x_coord - width / 3);
-    spotlight.setAttribute('y', y_coord - height / 2);
-    spotlight.setAttribute('width', width);
-    spotlight.setAttribute('height', height);
-    spotlight.setAttribute('fill', color);
-    spotlight.setAttribute('stroke', stroke_color);
-    spotlight.setAttribute('stroke-width', '30px');
-    // Display the spotlight rectangle
-    nc.appendChild(spotlight);
-  });
-}
-
-/**
-   * Highlight the neume component.
-   * @param {NeumeComponent} nc the NeumeComponent object
-   * @param {String} color the fill colour of the neume component (default: 'rgba(149, 48, 217, 0.6)' - purple)
-   * @param {String} stroke_color the stroke colour of the neume component (default: 'rgba(149, 48, 217, 1)' - purple)
-   */
-export function highlightNeumeComponent(neumeComponent, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
-  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
-  nc_svg.forEach((nc) => {
-    nc.style.fill = color;
-    nc.style.stroke = stroke_color;
-    nc.style.strokeWidth = '30px';
-  });
-}
-
-/**
- * 
- */
-export function unhighlight(neumeComponent) {
-  const nc_svg = document.querySelectorAll(`[id="${this.id}"]`);
-  nc_svg.forEach((nc) => {
-    nc.style.fill = 'black';
-  });
-}
-
-/**
  * The Neume Component class for Square notation.
  */
 export class NeumeComponentSQ extends NeumeComponent {
