@@ -19,18 +19,6 @@ export class NeumeComponent {
   }
 }
 
-
-/**
- * Log the neume component to the console.
- * Useful for debugging purposes.
- */
-function logNeumeComponent(neumeComponent) {
-  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
-  nc_svg.forEach((nc) => {
-    console.log(nc);
-  });
-}
-
 /**
  * The Neume Component class for Square notation.
  */
@@ -40,22 +28,13 @@ export class NeumeComponentSQ extends NeumeComponent {
    * @param {String} id (required) the `@xml:id` attribute of the neume component
    * @param {*} tilt (optional) the tilt direction of the neume component (e.g., "s", "ne")
    * @param {*} ornamental (optional) the ornamental shape of the component
-   * @param {String} pname pitch name of the note. (e.g. "d")
+   * @param {String} pitch pitch name of the note. (e.g. "d")
    * @param {Number} octave octave of the note. (e.g. 8)
    */
-  constructor(id, tilt, ornamental, pname, octave) {
+  constructor(id, tilt, ornamental, pitch, octave) {
     super(id, tilt, ornamental);
-    this.pname = pname;
+    this.pitch = pitch;
     this.octave = octave;
-  }
-
-  /**
-   * Represent square neume component using base-7 value
-   * Septenary = pitch * 7^0 + octave * 7^1
-   */
-  septenary() {
-    const sq_pitch = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
-    return Number(sq_pitch.indexOf(this.pname)) + Number(this.octave) * 7;
   }
 
   getOctave() {
@@ -64,13 +43,14 @@ export class NeumeComponentSQ extends NeumeComponent {
 }
 
 /**
- * 
+ * Represent square neume component using base-7 value
+ * Septenary = pitch * 7^0 + octave * 7^1
  * @param {NeumeComponentSQ} ncSQ the square neume component of interest
  * @returns the septenary value of the square neume component
  */
 export function toSeptenary(ncSQ) {
   const sq_pitch = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
-  return Number(sq_pitch.indexOf(ncSQ.pname)) + Number(ncSQ.octave) * 7;
+  return Number(sq_pitch.indexOf(ncSQ.pitch)) + Number(ncSQ.octave) * 7;
 }
 
 /**
@@ -412,7 +392,7 @@ export class Chant {
      */
     const finalisNC = this.neumeComponents[this.neumeComponents.length - 1];
 
-    const finalisPitch = finalisNC.pname;
+    const finalisPitch = finalisNC.pitch;
     let authenticMode = -1, plagalMode = -1;
     let authenticRepercussioPitch = '', plagalRepercussioPitch = '';
     let mode3alternatives = false;
@@ -460,7 +440,7 @@ export class Chant {
 
     let modeFromRepercussio = -1;
     /** @type {string[]} array of all pitches in the chant */
-    const pitchFrequency = this.neumeComponents.map((nc) => nc.pname)
+    const pitchFrequency = this.neumeComponents.map((nc) => nc.pitch)
     let counts = {};
     // Count the frequency of each note
     pitchFrequency.forEach((note) => {
@@ -652,10 +632,10 @@ export class Chant {
         return -1;
       }
 
-      const lowerBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, lowerOctaveBoundary).septenary();
-      const upperBoundNCSeptenary = new NeumeComponentSQ('', '', '', pitch, upperOctaveBoundary).septenary();
+      const lowerBoundNCSeptenary = toSeptenary(new NeumeComponentSQ('', '', '', pitch, lowerOctaveBoundary));
+      const upperBoundNCSeptenary = toSeptenary(new NeumeComponentSQ('', '', '', pitch, upperOctaveBoundary));
 
-      const ncSeptenary = this.neumeComponents.map((nc) => nc.septenary());
+      const ncSeptenary = this.neumeComponents.map((nc) => toSeptenary(nc));
 
       const totalNotes = ncSeptenary.length;
       const totalNotesInRange = ncSeptenary.filter((septenaryValue) => septenaryValue >= lowerBoundNCSeptenary && septenaryValue <= upperBoundNCSeptenary).length;

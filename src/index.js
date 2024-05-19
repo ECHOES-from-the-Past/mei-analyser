@@ -7,11 +7,12 @@ import {
     aquitanianCheckbox, squareCheckbox,
     modeCheckboxes, allModeCheckbox, undetectedCheckbox,
     liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
-    absolutePitchRadio, indefinitePitchRadio, contourRadio, patternInputBox,
+    exactPitchRadio, indefinitePitchRadio, contourRadio, patternInputBox,
     patternSearchTooltip, patternSearchTooltipContent,
     searchButton,
     searchResultDiv, chantSVG, chantDisplay, chantInfo,
     melismaIncrement, melismaDecrement, melismaInput,
+    clearPatternInputButton,
 } from './DOMelements.mjs';
 import {
     drawSVGFromMEIContent, loadMEIFile,
@@ -38,13 +39,7 @@ const rootPath = "https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoM
 /* ----------------------- Persistence Layer ----------------------- */
 function loadPersistedSearchOptions() {
     console.log("Loading persisted search options...");
-    // if (retrieve('patternSearchMode') == null) {
-    //   persist('patternSearchMode', 'pitch');
-    // }
 
-    // retrieve('patternSearchMode') == 'pitch' ? pitchRadio.checked = true : contourRadio.checked = true;
-
-    // searchQueryInput.value = retrieve('searchQuery');
     aquitanianCheckbox.checked = retrieve('aquitanianCheckbox') === null ? true : retrieve('aquitanianCheckbox');
     squareCheckbox.checked = retrieve('squareCheckbox');
 
@@ -65,14 +60,14 @@ function loadPersistedSearchOptions() {
     melismaInput.value = retrieve('melismaInput') === null ? 6 : retrieve('melismaInput');
 
     switch (retrieve('melodicPatternSearchMode')) {
-        case 'absolute-pitch':
-            absolutePitchRadio.checked = true;
-            break;
-        case 'contour':
-            contourRadio.checked = true;
+        case 'exact-pitch':
+            exactPitchRadio.checked = true;
             break;
         case 'indefinite-pitch':
             indefinitePitchRadio.checked = true;
+            break;
+        case 'contour':
+            contourRadio.checked = true;
             break;
     }
 
@@ -116,8 +111,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Display the client version
     clientVersion.textContent = `Client version: ${localVersion} | Remote version: ${remoteVersion}`;
-    
-    if(env === 'development') {
+
+    if (env === 'development') {
         clientVersion.textContent += '- Development';
     }
 });
@@ -258,8 +253,8 @@ undetectedCheckbox.addEventListener("change", () => {
     persist('modeUndetectedCheckbox', undetectedCheckbox.checked);
 });
 
-absolutePitchRadio.addEventListener("change", () => {
-    persist('melodicPatternSearchMode', 'absolute-pitch')
+exactPitchRadio.addEventListener("change", () => {
+    persist('melodicPatternSearchMode', 'exact-pitch')
 });
 
 contourRadio.addEventListener("change", () => {
@@ -272,7 +267,12 @@ indefinitePitchRadio.addEventListener("change", () => {
 
 patternInputBox.addEventListener("input", () => {
     persist('patternInputBox', patternInputBox.value);
-})
+});
+
+clearPatternInputButton.addEventListener("click", () => {
+    patternInputBox.value = '';
+    persist('patternInputBox', patternInputBox.value);
+});
 
 patternInputBox.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {

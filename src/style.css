@@ -19,20 +19,20 @@
   --button-active: hsl(170, 100%, 12%);
   --button-disabled: hsla(172, 38%, 16%, 0.288);
   --background: hsl(0, 0%, 100%);
-  --background-hover: hsla(147, 100%, 83%, 0.377);
+  --background-hover: hsla(147, 100%, 66%, 0.377);
 
   /* Ornamental colours */
   --liquescent-text: hsl(216, 100%, 41%);
-  --quilisma-text: hsl(54, 100%, 36%);
+  --quilisma-text: hsl(59, 75%, 33%);
   --oriscus-text: hsl(318, 100%, 36%);
-  --unclear-text: hsl(0, 10%, 59%);
+  --unclear-text: hsl(0, 0%, 15%);
 
   --melisma-text: hsl(0, 100%, 16%);
-  --melisma-background: hsla(138, 86%, 52%, 0.445);
+  --melisma-background: hsla(138, 100%, 72%, 0.4);
 
   /* Default highlighting colours */
-  --highlight-fill: hsla(276, 69%, 52%, 0.6);
-  --highlight-stroke: hsl(276, 69%, 52%);
+  --highlight-fill: hsl(276, 74%, 51%);
+  --highlight-stroke: hsl(276, 100%, 31%);
 
   /* Gap highlighting */
   --gap-side-note-fill: hsla(339, 100%, 50%, 0.3);
@@ -244,33 +244,29 @@ input[type="checkbox"]:hover, label:hover {
 .liquescent-word {
   color: var(--liquescent-text);
   font-weight: bold;
-  text-decoration: underline solid;
+  /* text-decoration: underline solid; */
 }
 
 .quilisma-word {
   color: var(--quilisma-text);
   font-weight: bold;
-  text-decoration: underline wavy;
+  /* text-decoration: underline wavy; */
 }
 
 .oriscus-word {
   color: var(--oriscus-text);
   font-weight: bold;
-  text-decoration: underline dashed;
+  /* text-decoration: underline dashed; */
 }
 
 .unclear-word {
   color: var(--unclear-text);
-  text-decoration: underline dotted;
+  /* text-decoration: underline dotted; */
 }
 
 .melisma-word {
   background-color: var(--melisma-background);
   /* color: var(--melisma-text); */
-}
-
-.melodic-pattern-word {
-  text-decoration: underline red dotted 3px;
 }
 
 #melisma-input {
@@ -306,17 +302,6 @@ input[type=number]::-webkit-inner-spin-button {
   box-shadow: 2px 4px 4px var(--button-active);
 }
 
-
-input#pattern-input-box {
-  width: 20rem;
-  height: 1.2rem;
-  margin: 0.3rem 0;
-}
-
-.error {
-  color: var(--text-error);
-}
-
 .tooltip {
   color: white;
   font-weight: bold;
@@ -332,6 +317,24 @@ input#pattern-input-box {
   background-color: var(--background);
   border: 4px solid var(--button);
   border-radius: 0.5rem;
+}
+
+input#pattern-input-box {
+  width: 20rem;
+  height: 1.2rem;
+  margin: 0.3rem 0;
+}
+
+#clear-pattern-input-btn {
+  padding: 0.3rem 0.7rem;
+}
+
+.melodic-pattern-word {
+  text-decoration: underline wavy 0.1rem var(--highlight-fill);
+}
+
+.error {
+  color: var(--text-error);
 }
 
 .nonselectable-text {

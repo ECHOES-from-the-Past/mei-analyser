@@ -170,6 +170,16 @@ export function highlightPattern(pattern) {
   }
 }
 
+/**
+ * Log the neume component to the console.
+ * Useful for debugging purposes.
+ */
+function logNeumeComponent(neumeComponent) {
+  const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
+  nc_svg.forEach((nc) => {
+    console.log(nc);
+  });
+}
 
 /** Persistance functions for the project */
 

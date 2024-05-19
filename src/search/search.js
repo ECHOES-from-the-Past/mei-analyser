@@ -6,7 +6,7 @@ import {
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
   modeCheckboxes, undetectedCheckbox,
   melismaInput,
-  contourRadio, absolutePitchRadio, indefinitePitchRadio, patternInputBox,
+  contourRadio, exactPitchRadio, indefinitePitchRadio, patternInputBox,
   melodicSearchError,
   searchResultInfo
 } from "../DOMelements.mjs";
@@ -98,8 +98,8 @@ function filterByModes(chantList, modeCheckboxes, undetectedCheckbox) {
 function getMelodicPatternSearchMode() {
   if (contourRadio.checked)
     return contourRadio.value;
-  if (absolutePitchRadio.checked)
-    return absolutePitchRadio.value;
+  if (exactPitchRadio.checked)
+    return exactPitchRadio.value;
   if (indefinitePitchRadio.checked)
     return indefinitePitchRadio.value;
 }
@@ -111,7 +111,7 @@ function processSearchPattern(searchPattern, searchMode) {
   let melodyList = [];
 
   melodicSearchError.hidden = true;
-  if (searchMode == 'absolute-pitch') {
+  if (searchMode == 'exact-pitch') {
     melodyList = searchPattern.match(alphabetMelodicRegex);
     // In case the user input is empty, regex will return null
     if (melodyList == null) return [];
@@ -132,7 +132,7 @@ function processSearchPattern(searchPattern, searchMode) {
  * @param {string[]} searchQueryList in the form of ['A', 'B', 'C', 'D', 'E'] for example
  * @returns {NeumeComponentSQ[][]} a list of patterns (in list form) that match the search query
  */
-function processAbsolutePitchMelodicPattern(chant, searchQueryList) {
+function processExactPitchMelodicPattern(chant, searchQueryList) {
   /** @type {NeumeComponentSQ[]} */
   const ncArray = chant.neumeComponents;
 
@@ -143,7 +143,7 @@ function processAbsolutePitchMelodicPattern(chant, searchQueryList) {
 
     for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
       // processing the search for Square notation, using the `septenary` value of the note
-      if (ncArray[i_nc + i_search].pname == searchQueryList[i_search]) {
+      if (ncArray[i_nc + i_search].pitch == searchQueryList[i_search]) {
         patternFound.push(ncArray[i_nc + i_search]);
       } else {
         patternFound = [];
@@ -245,7 +245,7 @@ function processContourMelodicPattern(chant, searchQueryList) {
  * - all alphabetical letters in range A-G or a-g
  * 
  * Search mode options:
- * - `absolute-pitch` ~ Square pitch pattern (alphabetical value)
+ * - `exact-pitch` ~ Square pitch pattern (alphabetical value)
  * - `indefinite-pitch` ~ Aquitanian pitch pattern (numerical value)
  * - `contour` ~ Aquitanian/Square contour pattern (numerical)
  * @param {Chant[]} chantList
@@ -277,10 +277,10 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
         resultChantList.push(chant);
       }
     }
-  } else if (searchMode == 'absolute-pitch') {
+  } else if (searchMode == 'exact-pitch') {
     for (let chant of chantList) {
       if (chant.notationType == "square") {
-        let patterns = processAbsolutePitchMelodicPattern(chant, searchQueryList);
+        let patterns = processExactPitchMelodicPattern(chant, searchQueryList);
         if (patterns.length > 0) {
           resultChantList.push(chant);
         }
@@ -397,8 +397,8 @@ export function showSearchResult(resultChantList) {
     let melodicPattern = [];
     if (contourRadio.checked) {
       melodicPattern = processContourMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
-    } else if (absolutePitchRadio.checked) {
-      melodicPattern = processAbsolutePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+    } else if (exactPitchRadio.checked) {
+      melodicPattern = processExactPitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
     } else if (indefinitePitchRadio.checked) {
       melodicPattern = processIndefinitePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
     }
@@ -492,8 +492,8 @@ export function showSearchResult(resultChantList) {
       let melodicPattern = [];
       if (contourRadio.checked) {
         melodicPattern = processContourMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
-      } else if (absolutePitchRadio.checked) {
-        melodicPattern = processAbsolutePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+      } else if (exactPitchRadio.checked) {
+        melodicPattern = processExactPitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
       } else if (indefinitePitchRadio.checked) {
         melodicPattern = processIndefinitePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
       }
