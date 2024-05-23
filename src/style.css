@@ -23,7 +23,7 @@
 
   /* Ornamental colours */
   --liquescent-text: hsl(216, 100%, 41%);
-  --quilisma-text: hsl(59, 75%, 33%);
+  --quilisma-text: hsl(59, 78%, 28%);
   --oriscus-text: hsl(318, 100%, 36%);
   --unclear-text: hsl(0, 0%, 15%);
 
@@ -244,19 +244,19 @@ input[type="checkbox"]:hover, label:hover {
 .liquescent-word {
   color: var(--liquescent-text);
   font-weight: bold;
-  /* text-decoration: underline solid; */
+  text-decoration: underline solid;
 }
 
 .quilisma-word {
   color: var(--quilisma-text);
   font-weight: bold;
-  /* text-decoration: underline wavy; */
+  text-decoration: underline wavy;
 }
 
 .oriscus-word {
   color: var(--oriscus-text);
   font-weight: bold;
-  /* text-decoration: underline dashed; */
+  text-decoration: underline dashed 0.1rem;
 }
 
 .unclear-word {
@@ -266,7 +266,6 @@ input[type="checkbox"]:hover, label:hover {
 
 .melisma-word {
   background-color: var(--melisma-background);
-  /* color: var(--melisma-text); */
 }
 
 #melisma-input {
@@ -330,7 +329,8 @@ input#pattern-input-box {
 }
 
 .melodic-pattern-word {
-  text-decoration: underline wavy 0.1rem var(--highlight-fill);
+  text-emphasis: '⮝' var(--highlight-fill);
+  text-emphasis-position: under right;
 }
 
 .error {
