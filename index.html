@@ -8,7 +8,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="stylesheet" href="src/style.css" />
   <!-- Adding the scripts to be used for the webpage -->
-  <script defer src="https://www.verovio.org/javascript/develop/verovio-toolkit-wasm.js"></script>
+  <script defer src="https://www.verovio.org/javascript/latest/verovio-toolkit-wasm.js"></script>
 
   <script type="module" src="./src/index.js" defer></script>
   <title> MEI Analyser </title>
@@ -50,20 +50,14 @@
         <div id="search-panel-leftside">
           <div class="section">
             <h1> Search Panel </h1>
-            <!-- <input id="pitch-radio" name="pattern-radio" type="radio" value="pitch" checked>
-              <label for="pitch-radio"> Pitch Pattern (pitch-based) </label>
-              <br> -->
-            <!-- <input id="contour-radio" name="pattern-radio" type="radio" value="contour">
-              <label for="contour-radio"> Contour (melodic intervals) </label>
-              <br> -->
-            <!-- <label for="search-query"> Query: </label>
-              <input id="search-query" placeholder="e.g.: 1 2 -1"> -->
+            <!-- Search by music script (notation type) -->
             <p> Search for chant with the following music script: </p>
             <input type="checkbox" id="aquitanian-checkbox" value="aquitanian-checkbox" checked>
             <label for="aquitanian-checkbox"> Aquitanian </label>
             <input type="checkbox" id="square-checkbox" value="square-checkbox">
             <label for="square-checkbox"> Square </label>
             <hr>
+            <!-- Search/filter by mode -->
             <p> Filter by mode(s): </p>
             <input type="checkbox" id="mode-1-checkbox" value="mode-1">
             <label for="mode-1-checkbox"> Mode 1 </label>
@@ -88,6 +82,7 @@
             <input type="checkbox" id="mode-undetected-checkbox" value="undetected">
             <label for="mode-undetected-checkbox" style="color: red;"> Undetected </label>
             <hr>
+            <!-- Search/filter by ornamental figures -->
             <p> Search for chants that has ornamental figure(s): <br> (No selection will display all chants) </p>
             <input type="checkbox" id="liquescent-checkbox" value="liquescent">
             <label for="liquescent-checkbox" class="liquescent-word"> Liquescent </label>
@@ -96,15 +91,66 @@
             <input type="checkbox" id="oriscus-checkbox" value="oriscus">
             <label for="oriscus-checkbox" class="oriscus-word"> Oriscus </label>
             <hr>
-            <label for="melisma-input" class="nonselectable-text melisma-word"> Melisma(s) with at least </label> 
-            <input type="number" id="melisma-input" min="2" max="20" value="6" readonly>
-            <label for="melisma-input" class="nonselectable-text melisma-word"> notes in a syllable </label>
+            <!-- Search by melisma (melodic density) -->
+            <p>
+              <span class="nonselectable-text melisma-word"> Melisma(s) with at least </span>
+              <input type="number" id="melisma-input" min="2" max="20" value="6" readonly>
+              <span class="nonselectable-text melisma-word"> notes in a syllable </span>
+            </p>
             <div>
               <span class="melisma-arrow nonselectable-text" id="melisma-decrement"> &lt; </span>
               <span class="melisma-arrow nonselectable-text" id="melisma-increment"> &gt; </span>
             </div>
+            <hr>
+            <!-- Search by melodic pattern -->
+            <p> Search by <span class="melodic-pattern-word">melodic pattern</span> <button class="tooltip"
+                id="pattern-search-tooltip" popovertarget="pattern-search-tooltip-content"> ⓘ </button></p>
+            <div class="tooltip-content" id="pattern-search-tooltip-content" popover>
+              <ul>
+                <li>
+                  <p>
+                    <b>Exact pitch (only for Square music script chants)</b>: Exact pitches could be (e.g., a b E F).
+                    <!-- Use uppercase letters for a lower octave and lowercase letters for an upper octave. -->
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    <b>Indefinite pitch (only for Aquitanian music script chants)</b>: The query indicates the note's
+                    location with reference to the line, which has a position of 0. Example: -2 -2 0 -1 0 +1.
+
+                    Here, the first note is two steps below the line (it can be either a major or minor third with
+                    respect to the line), the second note is the same as the first, the third note is on the line,
+                    the fourth note is one step below the line (either a semitone or tone), the fifth note is on
+                    the line, and the sixth note is one step above the line (either a semitone or tone). This will
+                    return similar results from the example given in the contour-based search.
+                  </p>
+                </li>
+                <li>
+                  <p>
+                    <b> Contour (Melodic intervals) </b> in the form of positive or negative integers (e.g., +1
+                    indicates one step up—either a semitone or a tone—from the previous note; 0 indicates unison;
+                    and -2 indicates two steps down—either a major or minor third—from the previous note). If
+                    looking for a series of notes, the integers should be separated by a space (e.g., 0 +2 -1 +1 +1).
+                  </p>
+                </li>
+              </ul>
+            </div>
+            <input name="pattern-search-radio" id="exact-pitch-radio" value="exact-pitch" type="radio" checked>
+            <label for="exact-pitch-radio"> Exact Pitch (e.g., "a b E F")</label>
             <br>
-            <button id="search-btn"> Search</button>
+            <input name="pattern-search-radio" id="indefinite-pitch-radio" value="indefinite-pitch" type="radio">
+            <label for="indefinite-pitch-radio"> Indefinite Pitch (e.g., "1 2 -1") </label>
+            <br>
+            <input name="pattern-search-radio" id="contour-radio" value="contour" type="radio">
+            <label for="contour-radio"> Contour (melodic intervals) </label>
+            <br>
+            <input type="text" id="pattern-input-box" placeholder="e.g.: 1 2 -1">
+            <!-- clear input button -->
+            <button id="clear-pattern-input-btn"> Clear </button>
+            <p class="error" id="melodic-search-error" hidden> Search error </p>
+            <hr>
+            <br>
+            <button id="search-btn"> Search </button>
           </div>
 
           <div id="chant-list database" class="section">
@@ -123,6 +169,7 @@
         <div id="search-panel-rightside">
           <div class="section">
             <h1> Search Results </h1>
+            <p id="search-result-info"></p>
             <div id="search-result">
               <p>Search results will display here</p>
 

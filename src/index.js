@@ -7,10 +7,12 @@ import {
     aquitanianCheckbox, squareCheckbox,
     modeCheckboxes, allModeCheckbox, undetectedCheckbox,
     liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
+    exactPitchRadio, indefinitePitchRadio, contourRadio, patternInputBox,
+    patternSearchTooltip, patternSearchTooltipContent,
     searchButton,
     searchResultDiv, chantSVG, chantDisplay, chantInfo,
-    melismaIncrement, melismaDecrement,
-    melismaInput,
+    melismaIncrement, melismaDecrement, melismaInput,
+    clearPatternInputButton,
 } from './DOMelements.mjs';
 import {
     drawSVGFromMEIContent, loadMEIFile,
@@ -37,13 +39,7 @@ const rootPath = "https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoM
 /* ----------------------- Persistence Layer ----------------------- */
 function loadPersistedSearchOptions() {
     console.log("Loading persisted search options...");
-    // if (retrieve('patternSearchMode') == null) {
-    //   persist('patternSearchMode', 'pitch');
-    // }
 
-    // retrieve('patternSearchMode') == 'pitch' ? pitchRadio.checked = true : contourRadio.checked = true;
-
-    // searchQueryInput.value = retrieve('searchQuery');
     aquitanianCheckbox.checked = retrieve('aquitanianCheckbox') === null ? true : retrieve('aquitanianCheckbox');
     squareCheckbox.checked = retrieve('squareCheckbox');
 
@@ -52,7 +48,7 @@ function loadPersistedSearchOptions() {
     });
 
     allModeCheckbox.checked = retrieve('allModeCheckbox');
-    if(retrieve("allModeCheckbox") === null) {
+    if (retrieve("allModeCheckbox") === null) {
         allModeCheckbox.click();
     }
     undetectedCheckbox.checked = retrieve('modeUndetectedCheckbox');
@@ -62,6 +58,20 @@ function loadPersistedSearchOptions() {
     oriscusCheckbox.checked = retrieve('oriscusCheckbox');
 
     melismaInput.value = retrieve('melismaInput') === null ? 6 : retrieve('melismaInput');
+
+    switch (retrieve('melodicPatternSearchMode')) {
+        case 'exact-pitch':
+            exactPitchRadio.checked = true;
+            break;
+        case 'indefinite-pitch':
+            indefinitePitchRadio.checked = true;
+            break;
+        case 'contour':
+            contourRadio.checked = true;
+            break;
+    }
+
+    patternInputBox.value = retrieve('patternInputBox');
 }
 
 let databaseIsOpen = false;
@@ -82,30 +92,6 @@ window.onresize = () => {
     }, 500);
 }
 
-/*
-document.onreadystatechange = () => {
-    console.debug("Document ready state: " + document.readyState);
-    switch (document.readyState) {
-        case "loading": {
-            // create a loading screen
-            let loadingScreen = document.createElement('div');
-            loadingScreen.innerHTML = "<h1>Loading...</h1>";
-            loadingScreen.style = "position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);";
-            document.body.appendChild(loadingScreen);
-            break;
-        }
-        case "complete": {
-            // await Promise.all([loadDatabaseToChant(), loadPersistedSearchOptions()]);
-            loadPersistedSearchOptions();
-            let remoteVersion = packageJSON.version;
-            let localVersion = import.meta.env.VITE_APP_VERSION;
-            console.log(`Remote version: ${remoteVersion}, Local version: ${localVersion}`);
-            break;
-        }
-    }
-}
-*/
-
 /**
 * Load predefined files when DOM is loaded
 */
@@ -125,6 +111,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Display the client version
     clientVersion.textContent = `Client version: ${localVersion} | Remote version: ${remoteVersion}`;
+
+    if (env === 'development') {
+        clientVersion.textContent += '- Development';
+    }
 });
 
 /* --------------- TOP BUTTON Event Listeners --------------- */
@@ -225,17 +215,6 @@ async function loadDatabaseToLocalStorage() {
 }
 
 /* --------------- SEARCH PANEL PERSISTANCE --------------- */
-// pitchRadio.addEventListener("change", () => {
-//     persist('patternSearchMode', 'pitch');
-// });
-
-// contourRadio.addEventListener("change", () => {
-//     persist('patternSearchMode', 'contour');
-// });
-
-// searchQueryInput.addEventListener("input", () => {
-//     persist('searchQuery', searchQueryInput.value);
-// });
 aquitanianCheckbox.addEventListener("change", () => {
     persist('aquitanianCheckbox', aquitanianCheckbox.checked);
 });
@@ -274,6 +253,33 @@ undetectedCheckbox.addEventListener("change", () => {
     persist('modeUndetectedCheckbox', undetectedCheckbox.checked);
 });
 
+exactPitchRadio.addEventListener("change", () => {
+    persist('melodicPatternSearchMode', 'exact-pitch')
+});
+
+contourRadio.addEventListener("change", () => {
+    persist('melodicPatternSearchMode', 'contour')
+});
+
+indefinitePitchRadio.addEventListener("change", () => {
+    persist('melodicPatternSearchMode', 'indefinite-pitch')
+});
+
+patternInputBox.addEventListener("input", () => {
+    persist('patternInputBox', patternInputBox.value);
+});
+
+clearPatternInputButton.addEventListener("click", () => {
+    patternInputBox.value = '';
+    persist('patternInputBox', patternInputBox.value);
+});
+
+patternInputBox.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        searchButton.click();
+    }
+});
+
 /* --------------- DATABASE PANEL PERSISTANCE --------------- */
 viewDatabaseButton.addEventListener("click", () => {
     if (databaseIsOpen === false) {
@@ -304,6 +310,14 @@ melismaDecrement.addEventListener("click", () => {
     melismaInput.stepDown();
     persist('melismaInput', melismaInput.value);
 });
+
+// patternSearchTooltip.addEventListener("mouseover", () => {
+//     patternSearchTooltipContent.hidden = false;
+// });
+
+// patternSearchTooltip.addEventListener("mouseout", () => {
+//     patternSearchTooltipContent.hidden = true;
+// });
 
 /* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */
 /**

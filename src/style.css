@@ -19,20 +19,20 @@
   --button-active: hsl(170, 100%, 12%);
   --button-disabled: hsla(172, 38%, 16%, 0.288);
   --background: hsl(0, 0%, 100%);
-  --background-hover: hsla(147, 100%, 83%, 0.377);
+  --background-hover: hsla(147, 100%, 66%, 0.377);
 
   /* Ornamental colours */
   --liquescent-text: hsl(216, 100%, 41%);
-  --quilisma-text: hsl(54, 100%, 36%);
+  --quilisma-text: hsl(59, 78%, 28%);
   --oriscus-text: hsl(318, 100%, 36%);
-  --unclear-text: hsl(0, 10%, 59%);
+  --unclear-text: hsl(0, 0%, 15%);
 
   --melisma-text: hsl(0, 100%, 16%);
-  --melisma-background: hsla(138, 86%, 52%, 0.445);
+  --melisma-background: hsla(138, 100%, 72%, 0.4);
 
   /* Default highlighting colours */
-  --highlight-fill: hsla(276, 69%, 52%, 0.6);
-  --highlight-stroke: hsl(276, 69%, 52%);
+  --highlight-fill: hsl(276, 74%, 51%);
+  --highlight-stroke: hsl(276, 100%, 31%);
 
   /* Gap highlighting */
   --gap-side-note-fill: hsla(339, 100%, 50%, 0.3);
@@ -45,6 +45,9 @@
   --mismatch-stroke: hsl(240, 100%, 50%);
   --mismatch-fill-box: hsla(240, 100%, 50%, 0.12);
   --mismatch-stroke-box: hsla(240, 100%, 50%, 0.4);
+
+  /* Text */
+  --text-error: hsl(0, 78%, 57%);
 }
 
 /* Navbar, the top elements div */
@@ -172,11 +175,6 @@ g {
   padding: 0 1rem 0;
 }
 
-.pattern-count {
-  color:hsl(357, 95%, 25%);
-  font-weight: bold;
-}
-
 .file-upload-box {
   border: 1px solid #ccc;
   width: 60%;
@@ -258,17 +256,16 @@ input[type="checkbox"]:hover, label:hover {
 .oriscus-word {
   color: var(--oriscus-text);
   font-weight: bold;
-  text-decoration: underline dashed;
+  text-decoration: underline dashed 0.1rem;
 }
 
 .unclear-word {
   color: var(--unclear-text);
-  text-decoration: underline dotted;
+  /* text-decoration: underline dotted; */
 }
 
 .melisma-word {
   background-color: var(--melisma-background);
-  /* color: var(--melisma-text); */
 }
 
 #melisma-input {
@@ -302,6 +299,42 @@ input[type=number]::-webkit-inner-spin-button {
 
 .melisma-arrow:active {
   box-shadow: 2px 4px 4px var(--button-active);
+}
+
+.tooltip {
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: var(--button);
+  padding: 0.1rem 0.5rem;
+  border-radius: 0.5rem;
+}
+
+.tooltip-content {
+  padding: 2rem;
+  margin: 8rem;
+  background-color: var(--background);
+  border: 4px solid var(--button);
+  border-radius: 0.5rem;
+}
+
+input#pattern-input-box {
+  width: 20rem;
+  height: 1.2rem;
+  margin: 0.3rem 0;
+}
+
+#clear-pattern-input-btn {
+  padding: 0.3rem 0.7rem;
+}
+
+.melodic-pattern-word {
+  text-emphasis: '⮝' var(--highlight-fill);
+  text-emphasis-position: under right;
+}
+
+.error {
+  color: var(--text-error);
 }
 
 .nonselectable-text {

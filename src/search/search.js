@@ -1,11 +1,14 @@
-import { Chant, NeumeComponent, Syllable, SyllableWord } from "../utility/components.js";
-import { retrieve, drawSVGFromMEIContent } from "../utility/utils.js";
+import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../utility/components.js";
+import { retrieve, drawSVGFromMEIContent, highlightPattern } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
   modeCheckboxes, undetectedCheckbox,
-  melismaInput
+  melismaInput,
+  contourRadio, exactPitchRadio, indefinitePitchRadio, patternInputBox,
+  melodicSearchError,
+  searchResultInfo
 } from "../DOMelements.mjs";
 import database from "../database/database.json";
 
@@ -81,69 +84,222 @@ function filterByModes(chantList, modeCheckboxes, undetectedCheckbox) {
 
   for (let i = 0; i < modeCheckboxes.length; i++) {
     if (modeCheckboxes[i].checked) {
-      resultChantList.push(...chantList.filter(chant => {if (chant.mode == i + 1) return true;}));
+      resultChantList.push(...chantList.filter(chant => { if (chant.mode == i + 1) return true; }));
     }
   }
-  
+
   if (undetectedCheckbox.checked) {
-    resultChantList.push(...chantList.filter(chant => {if (chant.mode == undefined) return true;}));
+    resultChantList.push(...chantList.filter(chant => { if (chant.mode == undefined) return true; }));
   }
 
   return resultChantList;
 }
 
+function getMelodicPatternSearchMode() {
+  if (contourRadio.checked)
+    return contourRadio.value;
+  if (exactPitchRadio.checked)
+    return exactPitchRadio.value;
+  if (indefinitePitchRadio.checked)
+    return indefinitePitchRadio.value;
+}
 
+function processSearchPattern(searchPattern, searchMode) {
+  const numericMelodyRegex = /-?\d/g
+  const alphabetMelodicRegex = /[A-Ga-g]/g
 
-/** @deprecated */
-function getOrnamentalSyllables(chant, ornamentalType) {
-  let syllableList = [];
-  /** @type {Syllable[]} */
-  let syllables = chant.syllables;
-  for (let i = 0; i < syllables.length; i++) {
-    /** @type {Syllable} */
-    let syllable_i = syllables[i];
-    for (let j = 0; j < syllable_i.neumeComponents.length; j++) {
-      let neume = syllable_i.neumeComponents[j];
-      if (neume.ornamental != null && neume.ornamental.type == ornamentalType) {
-        syllableList.push(syllable_i.syllableWord);
-      }
-    }
+  let melodyList = [];
+
+  melodicSearchError.hidden = true;
+  if (searchMode == 'exact-pitch') {
+    melodyList = searchPattern.match(alphabetMelodicRegex);
+    // In case the user input is empty, regex will return null
+    if (melodyList == null) return [];
+    melodyList = melodyList.map(pitch => pitch.toLowerCase());
+  } else if (searchMode == 'indefinite-pitch' || searchMode == 'contour') {
+    melodyList = searchPattern.match(numericMelodyRegex);
+    // In case the user input is empty, regex will return null
+    if (melodyList == null) return [];
+    melodyList = melodyList.map(Number);
   }
-  return syllableList;
+
+  return melodyList;
 }
 
 /**
- * @deprecated
- * Obtain the syllables that contain the ornamental shapes
- * @param {Chant[]} chantList list of chants to be filtered
- * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
- * @returns {{"liquescent": string[], "quilisma": string[], "oriscus": string[]}} list of syllables that contain the ornamental shapes
+ * 
+ * @param {Chant} chant The chant object, assuming it's in Square notation
+ * @param {string[]} searchQueryList in the form of ['A', 'B', 'C', 'D', 'E'] for example
+ * @returns {NeumeComponentSQ[][]} a list of patterns (in list form) that match the search query
  */
-function obtainSyllables(chantList, ornamentalOptions) {
-  let liquescentSyllables = [];
-  let quilismaSyllables = [];
-  let oriscusSyllables = [];
-  for (let chant of chantList) {
-    if (ornamentalOptions.liquescent) {
-      liquescentSyllables.push(getOrnamentalSyllables(chant, "liquescent"));
+function processExactPitchMelodicPattern(chant, searchQueryList) {
+  /** @type {NeumeComponentSQ[]} */
+  const ncArray = chant.neumeComponents;
+
+  let patterns = [];
+
+  for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
+    let patternFound = [];
+
+    for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
+      // processing the search for Square notation, using the `septenary` value of the note
+      if (ncArray[i_nc + i_search].pitch == searchQueryList[i_search]) {
+        patternFound.push(ncArray[i_nc + i_search]);
+      } else {
+        patternFound = [];
+        break;
+      }
     }
 
-    if (ornamentalOptions.quilisma) {
-      quilismaSyllables.push(getOrnamentalSyllables(chant, "quilisma"));
+    if (patternFound.length > 0) {
+      patterns.push(patternFound);
+    }
+  }
+  return patterns;
+}
+
+/**
+ * Only works for Aquitanian notation chants
+ * @param {Chant} chant The chant object, assuming it's in Aquitanian notation
+ * @param {string[]} searchQueryList in the form of [-1, 1, 0, -1, 2] for example
+ * @returns 
+ */
+function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
+  const ncArray = chant.neumeComponents;
+
+  let patterns = [];
+
+  for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
+    let patternFound = [];
+
+    for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
+      if (ncArray[i_nc + i_sq].loc == searchQueryList[i_sq]) {
+        patternFound.push(ncArray[i_nc + i_sq]);
+      } else {
+        patternFound = [];
+        break;
+      }
     }
 
-    if (ornamentalOptions.oriscus) {
-      oriscusSyllables.push(getOrnamentalSyllables(chant, "oriscus"));
+    if (patternFound.length > 0) {
+      patterns.push(patternFound);
     }
   }
 
-  const syllablesLists = {
-    "liquescent": liquescentSyllables,
-    "quilisma": quilismaSyllables,
-    "oriscus": oriscusSyllables
+  return patterns;
+}
+
+/**
+ * 
+ * @param {Chant} chant a Chant object
+ * @param {number[]} searchQueryList the list of numbers
+ * @returns 
+ */
+function processContourMelodicPattern(chant, searchQueryList) {
+  const ncArray = chant.neumeComponents;
+  const chantNotationType = chant.notationType;
+
+  let patterns = [];
+
+  for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
+    let patternFound = [];
+    patternFound.push(ncArray[i_nc]);
+
+    if (chantNotationType == "aquitanian") {
+      for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
+        // processing the search for Aquitanian notation, using the `loc` attribute
+        if (ncArray[i_nc + i_sq].loc + searchQueryList[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
+          patternFound.push(ncArray[i_nc + i_sq + 1]);
+        } else {
+          patternFound = [];
+          break;
+        }
+      }
+    }
+    else if (chantNotationType == "square") {
+      for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
+        // processing the search for Square notation, using the `septenary` value of the note
+        if (toSeptenary(ncArray[i_nc + i_search]) + searchQueryList[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
+          patternFound.push(ncArray[i_nc + i_search + 1]);
+        } else {
+          patternFound = [];
+          break;
+        }
+      }
+    }
+    if (patternFound.length > 0) {
+      patterns.push(patternFound);
+    }
+  }
+  return patterns;
+}
+
+/**
+ * Using regular expression to process the user's input
+ * (from the old parseSearchPattern function)
+ * Regex pattern: /-?\d/g
+ * - an optional negative `-` sign
+ * - a single digit
+ * 
+ * Regex pattern: /[A-Ga-g]/g
+ * - all alphabetical letters in range A-G or a-g
+ * 
+ * Search mode options:
+ * - `exact-pitch` ~ Square pitch pattern (alphabetical value)
+ * - `indefinite-pitch` ~ Aquitanian pitch pattern (numerical value)
+ * - `contour` ~ Aquitanian/Square contour pattern (numerical)
+ * @param {Chant[]} chantList
+ * @param {string} searchPattern
+ * @param {string} searchMode 
+ * @returns {Chant[]} list of chants that contains the melodic pattern
+ */
+function filterByMelodicPattern(chantList, searchPattern, searchMode) {
+  // If search pattern is empty, return the original chant list regardless of the search mode
+  if (!searchPattern) {
+    return chantList;
   }
 
-  return syllablesLists;
+  let searchQueryList = [], resultChantList = [];
+
+  try {
+    searchQueryList = processSearchPattern(searchPattern, searchMode);
+  } catch (error) {
+    console.error(error);
+    melodicSearchError.textContent = "Invalid melodic pattern options. Please check your search mode selection or query.";
+    melodicSearchError.hidden = false;
+    return;
+  }
+
+  if (searchMode == 'contour') {
+    for (let chant of chantList) {
+      let patterns = processContourMelodicPattern(chant, searchQueryList);
+      if (patterns.length > 0) {
+        resultChantList.push(chant);
+      }
+    }
+  } else if (searchMode == 'exact-pitch') {
+    for (let chant of chantList) {
+      if (chant.notationType == "square") {
+        let patterns = processExactPitchMelodicPattern(chant, searchQueryList);
+        if (patterns.length > 0) {
+          resultChantList.push(chant);
+        }
+      }
+    }
+  } else if (searchMode == 'indefinite-pitch') {
+    for (let chant of chantList) {
+      if (chant.notationType == "aquitanian") {
+        let patterns = processIndefinitePitchMelodicPattern(chant, searchQueryList);
+        if (patterns.length > 0) {
+          resultChantList.push(chant);
+        }
+      }
+    }
+  } else {
+    console.error("Invalid search mode!");
+  }
+
+  return resultChantList;
 }
 
 /**
@@ -155,14 +311,9 @@ export function performSearch() {
   let resultChantList = retrieve('chantList');
 
   /* First layer of filtering: Notation type */
-  let notationTypeOptions = {
-    "aquitanian": aquitanianCheckbox.checked,
-    "square": squareCheckbox.checked
-  }
-
   resultChantList = resultChantList.filter(chant => {
-    if (notationTypeOptions.aquitanian && chant.notationType == "aquitanian") return true;
-    if (notationTypeOptions.square && chant.notationType == "square") return true;
+    if (aquitanianCheckbox.checked && chant.notationType == "aquitanian") return true;
+    if (squareCheckbox.checked && chant.notationType == "square") return true;
     return false;
   });
 
@@ -182,6 +333,12 @@ export function performSearch() {
   /* Third layer of filtering: Modes */
   resultChantList = filterByModes(resultChantList, modeCheckboxes, undetectedCheckbox);
 
+  /* Forth layer of filtering: Pattern search */
+  resultChantList = filterByMelodicPattern(resultChantList, patternInputBox.value, getMelodicPatternSearchMode())
+
+  // Display the amount of chants that match the search options
+  searchResultInfo.innerHTML = `Found <b>${resultChantList.length}</b> chants from the search options.`;
+
   /* Return the result */
   return resultChantList;
 }
@@ -189,7 +346,6 @@ export function performSearch() {
 /**
  * Show the search result on the screen
  * @param {Chant[]} resultChantList list of chants that match the search query
- * @param {{"liquescent": string[], "quilisma": string[], "oriscus": string[]}} syllablesList list of syllables that contain the ornamental shapes
  */
 export function showSearchResult(resultChantList) {
   searchResultDiv.innerHTML = '';
@@ -237,6 +393,16 @@ export function showSearchResult(resultChantList) {
     }
 
     let tdSyllablesContent = [];
+    // In case the word is part of a melodic pattern
+    let melodicPattern = [];
+    if (contourRadio.checked) {
+      melodicPattern = processContourMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+    } else if (exactPitchRadio.checked) {
+      melodicPattern = processExactPitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+    } else if (indefinitePitchRadio.checked) {
+      melodicPattern = processIndefinitePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+    }
+
     for (let syllable of chant.syllables) {
       // Extract the syllable word and its position from each syllable
       let word = syllable.syllableWord.text;
@@ -259,6 +425,19 @@ export function showSearchResult(resultChantList) {
       let melismaMin = melismaInput.value;
       if (syllable.neumeComponents.length >= melismaMin) {
         wordWrapper.classList.add("melisma-word");
+      }
+
+      if (melodicPattern.length > 0) {
+        for (let pattern of melodicPattern) {
+          // compare two list, if there's a match (the same element from both), add the class to the wordWrapper
+          for (let i = 0; i < pattern.length; i++) {
+            for (let j = 0; j < syllable.neumeComponents.length; j++) {
+              if (JSON.stringify(pattern[i]) === JSON.stringify(syllable.neumeComponents[j])) {
+                wordWrapper.classList.add("melodic-pattern-word");
+              }
+            }
+          }
+        }
       }
 
       wordWrapper.innerText = word;
@@ -300,12 +479,27 @@ export function showSearchResult(resultChantList) {
     let displayChantBtn = document.createElement('button');
     displayChantBtn.textContent = "Display Chant " + chant.fileName.match(fileNameRegex);
     displayChantBtn.addEventListener("click", () => {
+      // Display the chant information (file name, notation type, mode, etc.)
+      printChantInformation(chant);
+
       // Set the box for the chant and draw the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
       chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
-      // Display the chant information (file name, notation type, mode, etc.)
-      printChantInformation(chant);
+
       chantDisplay.scrollIntoView({ behavior: "smooth" });
+
+      // Highlight search pattern
+      let melodicPattern = [];
+      if (contourRadio.checked) {
+        melodicPattern = processContourMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+      } else if (exactPitchRadio.checked) {
+        melodicPattern = processExactPitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+      } else if (indefinitePitchRadio.checked) {
+        melodicPattern = processIndefinitePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
+      }
+      for (let pattern of melodicPattern) {
+        highlightPattern(pattern);
+      }
     });
 
     let tdLinks = createTableCell();
