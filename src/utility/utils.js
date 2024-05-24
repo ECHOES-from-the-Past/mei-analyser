@@ -181,6 +181,17 @@ function logNeumeComponent(neumeComponent) {
   });
 }
 
+export function getNeumeComponentList(syllableList) {
+  // Get all the neume components from the syllables
+  let neumeComponents = [];
+
+  for (let syllable of syllableList) {
+    neumeComponents.push(...syllable.neumeComponents);
+  }
+  
+  return neumeComponents;
+}
+
 /** Persistance functions for the project */
 
 /**

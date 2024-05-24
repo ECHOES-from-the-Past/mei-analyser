@@ -1,5 +1,5 @@
 import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../utility/components.js";
-import { retrieve, drawSVGFromMEIContent, highlightPattern } from "../utility/utils.js";
+import { retrieve, drawSVGFromMEIContent, highlightPattern, getNeumeComponentList } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
@@ -27,7 +27,7 @@ import database from "../database/database.json";
  */
 function hasOrnamental(chant, ornamentalType) {
   /** @type {NeumeComponent[]} */
-  let neumeComponents = chant.neumeComponents;
+  let neumeComponents = getNeumeComponentList(chant.syllables);
   for (let neume of neumeComponents) {
     // TODO: Get the syllables from here
     if (neume.ornamental != null && neume.ornamental.type == ornamentalType) return true;
@@ -134,7 +134,7 @@ function processSearchPattern(searchPattern, searchMode) {
  */
 function processExactPitchMelodicPattern(chant, searchQueryList) {
   /** @type {NeumeComponentSQ[]} */
-  const ncArray = chant.neumeComponents;
+  const ncArray = getNeumeComponentList(chant.syllables);
 
   let patterns = [];
 
@@ -165,7 +165,7 @@ function processExactPitchMelodicPattern(chant, searchQueryList) {
  * @returns 
  */
 function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
-  const ncArray = chant.neumeComponents;
+  const ncArray = getNeumeComponentList(chant.syllables);
 
   let patterns = [];
 
@@ -196,7 +196,7 @@ function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
  * @returns 
  */
 function processContourMelodicPattern(chant, searchQueryList) {
-  const ncArray = chant.neumeComponents;
+  const ncArray = getNeumeComponentList(chant.syllables);
   const chantNotationType = chant.notationType;
 
   let patterns = [];
