@@ -151,14 +151,10 @@ export class Chant {
 
     this.syllables = this.parseMeiForSyllables();
 
-    // /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
-    // this.neumeComponents = this.parseMEIforNeumeComponents();
-
     if (this.notationType === "square") {
       let [sqMode, sqRating, modeDescription] = this.calculateSquareMode();
       this.mode = sqMode == -1 ? undefined : sqMode;
       this.modeCertainty = sqRating * 100;
-
       /** @type {string} an explaination of the mode detection only availble for Square notation */
       this.modeDescription = modeDescription;
     } else if (this.notationType === "aquitanian") {
@@ -178,47 +174,6 @@ export class Chant {
 
     this.source = this.obtainSource();
   }
-
-  // /**
-  //  * Parse the MEI Content to extract the neume components
-  //  * @returns {NeumeComponentAQ[] | NeumeComponentSQ[]} an array of NeumeComponent
-  //  */
-  // parseMEIforNeumeComponents() {
-  //   const allSyllables = this.meiParsedContent.querySelectorAll('syllable');
-
-  //   let ncArray = [];
-  //   // Iterate through every syllable of the chant
-  //   for (let syllable of allSyllables) {
-  //     // Obtain a list of neume components `<nc>` in the syllable
-  //     const ncList = syllable.querySelectorAll('nc');
-  //     for (const nc of ncList) {
-  //       // Getting common attributes of NeumeComponent: id, tilt, ornamental
-  //       const id = nc.attributes.getNamedItem("xml:id").value;
-  //       let tilt = nc.attributes.getNamedItem('tilt');
-  //       tilt = tilt != null ? tilt.value : null;
-  //       const ornamental = nc.children.length > 0 ? {
-  //         "type": nc.children[0].nodeName,
-  //         "id": nc.children[0].attributes.getNamedItem("xml:id").value
-  //       } : null;
-
-  //       if (this.notationType === "square") {
-  //         // Getting all the necessary attributes of NeumeComponentSQ
-  //         const pitch = nc.attributes.getNamedItem("pname").value;
-  //         const octave = nc.attributes.getNamedItem("oct").value;
-
-  //         const nc_SQ = new NeumeComponentSQ(id, tilt, ornamental, pitch, octave);
-  //         ncArray.push(nc_SQ);
-  //       } else if (this.notationType === "aquitanian") {
-  //         // Getting the necessary attribute of NeumeComponentAQ
-  //         const loc = nc.attributes.getNamedItem("loc").value;
-
-  //         const nc_AQ = new NeumeComponentAQ(id, tilt, ornamental, loc);
-  //         ncArray.push(nc_AQ);
-  //       }
-  //     }
-  //   }
-  //   return ncArray;
-  // }
 
   parseMeiForSyllables() {
     const allSyllables = this.meiParsedContent.querySelectorAll('syllable');
@@ -339,41 +294,6 @@ export class Chant {
 
   /**
    * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/10 for Square mode detection
-   * Mode description template: (in HTML syntax)
-   * <ul>
-   *  <li> The finalis pitch is 'E', suggesting modes 3 and 4. </li>
-   *  <li> Regarding <b> repercussio </b>:
-   *    <ul>
-   *      <li>
-   *        For authentic mode (mode 3): 'C' and 'B' are not among the most repeated notes.
-   *        Therefore, there is a 0% probability of being in authentic mode.
-   *      </li>
-   *      <li>
-   *        For plagal mode (mode 4): 'A' is the second most repeated note (15 times) after a note other than the finalis 'E'.
-   *        Therefore, there is a 50% probability of being in plagal mode.
-   *      </li>
-   *      <li>
-   *        <b> Ambitus suggests plagal mode '4' with 94.87% of notes in range </b>
-   *      </li>
-   *    </ul>
-   *  </li>
-   *  <li> Regarding <b> ambitus </b>:
-   *    <ul>
-   *      <li>
-   *        For the authentic mode (mode 3): 92.31% of the notes are within the range 'E-E'
-   *      </li>
-   *      <li>
-   *        For the plagal mode (mode 4): 94.87% of the notes are within the range 'B-B'
-   *      </li>
-   *      <li>
-   *        <b> Ambitus suggests plagal mode '4' with 94.87% of notes in range </b>
-   *      </li>
-   *    </ul>
-   *  </li>
-   *  <li> <b> Authentic mode '3' has 46.15% rating | Plagal mode '4' has 72.44% raging </b> </li>
-   * </ul>
-   * 
-   * <p><b> Authentic mode '3' has 46.15% rating | Plagal mode '4' has 72.44% raging </b></p>
    * @returns {[number, number, string]} the mode, the overall rating, and the descripion of the chant.
    */
   calculateSquareMode() {
