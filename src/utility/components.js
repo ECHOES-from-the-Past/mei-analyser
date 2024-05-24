@@ -1,4 +1,4 @@
-import { env } from "./utils";
+import { env, getNeumeComponentList } from "./utils";
 
 /**
  * An "abstract" class for a Neume Component (`<nc>`).
@@ -119,7 +119,6 @@ export class Syllable {
  * @property {string} meiContent the content of the .mei file
  * @property {XMLDocument} meiParsedContent the parsed content of the .mei file. This is only useful in chant creation
  * @property {string} notationType the notation type of the chant (either "aquitanian" or "square")
- * @property {NeumeComponentAQ[] | NeumeComponentSQ[]} neumeComponents an array of NeumeComponent
  * @property {number} mode the mode of the chant
  * @property {number} modeCertainty the certainty of the mode detection
  * @property {string} modeDescription an explaination of the mode detection
@@ -152,8 +151,8 @@ export class Chant {
 
     this.syllables = this.parseMeiForSyllables();
 
-    /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
-    this.neumeComponents = this.parseMEIforNeumeComponents();
+    // /** @type {NeumeComponentAQ[] | NeumeComponentSQ[]} */
+    // this.neumeComponents = this.parseMEIforNeumeComponents();
 
     if (this.notationType === "square") {
       let [sqMode, sqRating, modeDescription] = this.calculateSquareMode();
@@ -180,46 +179,46 @@ export class Chant {
     this.source = this.obtainSource();
   }
 
-  /**
-   * Parse the MEI Content to extract the neume components
-   * @returns {NeumeComponentAQ[] | NeumeComponentSQ[]} an array of NeumeComponent
-   */
-  parseMEIforNeumeComponents() {
-    const allSyllables = this.meiParsedContent.querySelectorAll('syllable');
+  // /**
+  //  * Parse the MEI Content to extract the neume components
+  //  * @returns {NeumeComponentAQ[] | NeumeComponentSQ[]} an array of NeumeComponent
+  //  */
+  // parseMEIforNeumeComponents() {
+  //   const allSyllables = this.meiParsedContent.querySelectorAll('syllable');
 
-    let ncArray = [];
-    // Iterate through every syllable of the chant
-    for (let syllable of allSyllables) {
-      // Obtain a list of neume components `<nc>` in the syllable
-      const ncList = syllable.querySelectorAll('nc');
-      for (const nc of ncList) {
-        // Getting common attributes of NeumeComponent: id, tilt, ornamental
-        const id = nc.attributes.getNamedItem("xml:id").value;
-        let tilt = nc.attributes.getNamedItem('tilt');
-        tilt = tilt != null ? tilt.value : null;
-        const ornamental = nc.children.length > 0 ? {
-          "type": nc.children[0].nodeName,
-          "id": nc.children[0].attributes.getNamedItem("xml:id").value
-        } : null;
+  //   let ncArray = [];
+  //   // Iterate through every syllable of the chant
+  //   for (let syllable of allSyllables) {
+  //     // Obtain a list of neume components `<nc>` in the syllable
+  //     const ncList = syllable.querySelectorAll('nc');
+  //     for (const nc of ncList) {
+  //       // Getting common attributes of NeumeComponent: id, tilt, ornamental
+  //       const id = nc.attributes.getNamedItem("xml:id").value;
+  //       let tilt = nc.attributes.getNamedItem('tilt');
+  //       tilt = tilt != null ? tilt.value : null;
+  //       const ornamental = nc.children.length > 0 ? {
+  //         "type": nc.children[0].nodeName,
+  //         "id": nc.children[0].attributes.getNamedItem("xml:id").value
+  //       } : null;
 
-        if (this.notationType === "square") {
-          // Getting all the necessary attributes of NeumeComponentSQ
-          const pitch = nc.attributes.getNamedItem("pname").value;
-          const octave = nc.attributes.getNamedItem("oct").value;
+  //       if (this.notationType === "square") {
+  //         // Getting all the necessary attributes of NeumeComponentSQ
+  //         const pitch = nc.attributes.getNamedItem("pname").value;
+  //         const octave = nc.attributes.getNamedItem("oct").value;
 
-          const nc_SQ = new NeumeComponentSQ(id, tilt, ornamental, pitch, octave);
-          ncArray.push(nc_SQ);
-        } else if (this.notationType === "aquitanian") {
-          // Getting the necessary attribute of NeumeComponentAQ
-          const loc = nc.attributes.getNamedItem("loc").value;
+  //         const nc_SQ = new NeumeComponentSQ(id, tilt, ornamental, pitch, octave);
+  //         ncArray.push(nc_SQ);
+  //       } else if (this.notationType === "aquitanian") {
+  //         // Getting the necessary attribute of NeumeComponentAQ
+  //         const loc = nc.attributes.getNamedItem("loc").value;
 
-          const nc_AQ = new NeumeComponentAQ(id, tilt, ornamental, loc);
-          ncArray.push(nc_AQ);
-        }
-      }
-    }
-    return ncArray;
-  }
+  //         const nc_AQ = new NeumeComponentAQ(id, tilt, ornamental, loc);
+  //         ncArray.push(nc_AQ);
+  //       }
+  //     }
+  //   }
+  //   return ncArray;
+  // }
 
   parseMeiForSyllables() {
     const allSyllables = this.meiParsedContent.querySelectorAll('syllable');
@@ -289,10 +288,11 @@ export class Chant {
    */
   calculateAquitanianMode() {
     let mode = -1;
+    const neumeComponentList = getNeumeComponentList(this.syllables);
     // Checking last note
-    const lastNote = this.neumeComponents[this.neumeComponents.length - 1];
+    const lastNote = neumeComponentList[neumeComponentList.length - 1];
     // Finding all rhombus shapes by checking every `nc` for a `@tilt = se`
-    const allWithSETilt = this.neumeComponents.filter((nc) => nc.tilt === 'se');
+    const allWithSETilt = neumeComponentList.filter((nc) => nc.tilt === 'se');
     let allWithSETiltLoc = allWithSETilt.map((nc) => nc.loc);
 
     // Checking the @loc value of all rhombus shapes to help determining the mode of the Aquitanian chant
@@ -386,11 +386,13 @@ export class Chant {
 
     let modeDescription = document.createElement('ul');
 
-    /** 
+    const neumeComponentList = getNeumeComponentList(this.syllables);
+
+    /**
      * 1st step: detecting the FINALIS - the last note's pitch of the Square notation chant
      * @type {NeumeComponentSQ}
      */
-    const finalisNC = this.neumeComponents[this.neumeComponents.length - 1];
+    const finalisNC = neumeComponentList[neumeComponentList.length - 1];
 
     const finalisPitch = finalisNC.pitch;
     let authenticMode = -1, plagalMode = -1;
@@ -440,7 +442,7 @@ export class Chant {
 
     let modeFromRepercussio = -1;
     /** @type {string[]} array of all pitches in the chant */
-    const pitchFrequency = this.neumeComponents.map((nc) => nc.pitch)
+    const pitchFrequency = neumeComponentList.map((nc) => nc.pitch)
     let counts = {};
     // Count the frequency of each note
     pitchFrequency.forEach((note) => {
@@ -614,7 +616,7 @@ export class Chant {
      */
 
     const pitchRangeRate = (modeType, pitch) => {
-      const finalisOctave = this.neumeComponents[this.neumeComponents.length - 1].octave;
+      const finalisOctave = neumeComponentList[neumeComponentList.length - 1].octave;
       let lowerOctaveBoundary, upperOctaveBoundary;
       if (modeType === 'authentic') {
         lowerOctaveBoundary = finalisOctave;
@@ -635,7 +637,7 @@ export class Chant {
       const lowerBoundNCSeptenary = toSeptenary(new NeumeComponentSQ('', '', '', pitch, lowerOctaveBoundary));
       const upperBoundNCSeptenary = toSeptenary(new NeumeComponentSQ('', '', '', pitch, upperOctaveBoundary));
 
-      const ncSeptenary = this.neumeComponents.map((nc) => toSeptenary(nc));
+      const ncSeptenary = neumeComponentList.map((nc) => toSeptenary(nc));
 
       const totalNotes = ncSeptenary.length;
       const totalNotesInRange = ncSeptenary.filter((septenaryValue) => septenaryValue >= lowerBoundNCSeptenary && septenaryValue <= upperBoundNCSeptenary).length;
