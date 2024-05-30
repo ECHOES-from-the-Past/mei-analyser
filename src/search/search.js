@@ -339,6 +339,14 @@ export function performSearch() {
   // Display the amount of chants that match the search options
   searchResultInfo.innerHTML = `Found <b>${resultChantList.length}</b> chants from the search options.`;
 
+  /**
+   * Sort chant list by file name
+   * Ternary operation explain:
+   * - If chantA's file name is "less than" chantB's file name, return -1 to sort chantA before chantB
+   * - Otherwise, return 1 to sort chantA after chantB
+   */
+  resultChantList.sort((chantA, chantB) => (chantA.fileName < chantB.fileName) ? -1 : 1);
+
   /* Return the result */
   return resultChantList;
 }
