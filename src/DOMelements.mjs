@@ -81,8 +81,8 @@ export const contourRadio = document.getElementById('contour-radio');
 /** @type {HTMLInputElement} */
 export const exactPitchRadio = document.getElementById('exact-pitch-radio');
 
-/** @type {HTMLInputElement} */
-export const indefinitePitchRadio = document.getElementById('indefinite-pitch-radio');
+// /** @type {HTMLInputElement} */
+// export const indefinitePitchRadio = document.getElementById('indefinite-pitch-radio');
 
 /** @type {HTMLButtonElement} */
 export const clearPatternInputButton = document.getElementById('clear-pattern-input-btn');
@@ -110,8 +110,6 @@ export const viewDatabaseButton = document.getElementById('view-database-btn');
 export const databaseList = document.getElementById('database-list');
 
 
-
-
 /* --------------------- Chant display --------------------- */
 /** @type {HTMLDivElement} */
 export const chantDisplay = document.getElementById('chant-display');
@@ -121,15 +119,3 @@ export const chantInfo = document.getElementById('chant-info');
 
 /** @type {HTMLDivElement} */
 export const chantSVG = document.getElementById('chant-svg');
-
-/** @type {HTMLElement} */
-export const chantMenuLeft = document.getElementById('database-chant-left');
-
-/** @type {HTMLElement} */
-export const chantMenuRight = document.getElementById('database-chant-right');
-
-/** @type {HTMLInputElement} */
-export const fileInputLeft = document.getElementById('file-input-left');
-
-/** @type {HTMLInputElement} */
-export const fileInputRight = document.getElementById('file-input-right');

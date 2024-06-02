@@ -115,18 +115,6 @@
                 </li>
                 <li>
                   <p>
-                    <b>Indefinite pitch (only for Aquitanian music script chants)</b>: The query indicates the note's
-                    location with reference to the line, which has a position of 0. Example: -2 -2 0 -1 0 +1.
-
-                    Here, the first note is two steps below the line (it can be either a major or minor third with
-                    respect to the line), the second note is the same as the first, the third note is on the line,
-                    the fourth note is one step below the line (either a semitone or tone), the fifth note is on
-                    the line, and the sixth note is one step above the line (either a semitone or tone). This will
-                    return similar results from the example given in the contour-based search.
-                  </p>
-                </li>
-                <li>
-                  <p>
                     <b> Contour (Melodic intervals) </b> in the form of positive or negative integers (e.g., +1
                     indicates one step up—either a semitone or a tone—from the previous note; 0 indicates unison;
                     and -2 indicates two steps down—either a major or minor third—from the previous note). If
@@ -138,9 +126,9 @@
             <input name="pattern-search-radio" id="exact-pitch-radio" value="exact-pitch" type="radio" checked>
             <label for="exact-pitch-radio"> Exact Pitch (e.g., "a b E F")</label>
             <br>
-            <input name="pattern-search-radio" id="indefinite-pitch-radio" value="indefinite-pitch" type="radio">
+            <!-- <input name="pattern-search-radio" id="indefinite-pitch-radio" value="indefinite-pitch" type="radio">
             <label for="indefinite-pitch-radio"> Indefinite Pitch (e.g., "1 2 -1") </label>
-            <br>
+            <br> -->
             <input name="pattern-search-radio" id="contour-radio" value="contour" type="radio">
             <label for="contour-radio"> Contour (melodic intervals) </label>
             <br>

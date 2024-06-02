@@ -1,13 +1,12 @@
 import {
     viewDatabaseButton,
-    fileInputLeft, fileInputRight,
     searchModeButton, crossComparisonModeButton,
     refreshDatabaseButton, refreshStatus, clientVersion, refreshWheel,
     databaseList,
     aquitanianCheckbox, squareCheckbox,
     modeCheckboxes, allModeCheckbox, undetectedCheckbox,
     liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
-    exactPitchRadio, indefinitePitchRadio, contourRadio, patternInputBox,
+    exactPitchRadio, contourRadio, patternInputBox,
     patternSearchTooltip, patternSearchTooltipContent,
     searchButton,
     searchResultDiv, chantSVG, chantDisplay, chantInfo,
@@ -261,9 +260,9 @@ contourRadio.addEventListener("change", () => {
     persist('melodicPatternSearchMode', 'contour')
 });
 
-indefinitePitchRadio.addEventListener("change", () => {
-    persist('melodicPatternSearchMode', 'indefinite-pitch')
-});
+// indefinitePitchRadio.addEventListener("change", () => {
+//     persist('melodicPatternSearchMode', 'indefinite-pitch')
+// });
 
 patternInputBox.addEventListener("input", () => {
     persist('patternInputBox', patternInputBox.value);
@@ -333,11 +332,3 @@ async function uploadFile(slot) {
     drawMEIContent(newContent, slot);
     URL.revokeObjectURL(uploaded_file);
 }
-
-fileInputLeft.addEventListener("change", () => {
-    uploadFile(1);
-});
-
-fileInputRight.addEventListener("change", () => {
-    uploadFile(2);
-});
