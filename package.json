@@ -9,8 +9,11 @@
     "dev": "vite",
     "build": "vite build --base=/mei-analyser/",
     "preview": "vite preview --base=/mei-analyser/",
-    "updateDatabaseList": "node src/database/updateDatabase.cjs",
+    "updateDatabaseList": "node src/database/updateDatabase.mjs",
     "test": "node src/analysis/test-algorithm.js"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@octokit/core": "^6.1.2"
+  }
 }
