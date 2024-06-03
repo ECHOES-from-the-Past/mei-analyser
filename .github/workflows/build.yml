@@ -6,7 +6,7 @@ on:
   push:
     pull_request:
       branches: ['main']
-    paths: ['src/**', index.html, .github/workflows/*.yml]
+      paths: ['src/**', index.html, .github/workflows/*.yml]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

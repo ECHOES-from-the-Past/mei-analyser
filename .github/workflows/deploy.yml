@@ -24,7 +24,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build application on branch with PR
+    name: Build application on `main`
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -45,7 +45,7 @@ jobs:
           path: './dist' # Upload dist repository
           overwrite: true
   database:
-    name: Update list of chants from GABCtoMEI repository
+    name: Update list of chants from GABCtoMEI
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -75,6 +75,7 @@ jobs:
           retention-days: 90
           overwrite: true
   deploy:
+    name: Deploy to GitHub Pages
     needs: [build, database]
     runs-on: ubuntu-latest
     environment:
@@ -89,7 +90,7 @@ jobs:
           name: production-artifact
           path: ./dist
       - name: Upload Page artifact to GitHub Pages
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
           path: './dist' # Upload dist repository
           retention-days: 90
