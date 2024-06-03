@@ -75,7 +75,7 @@ jobs:
           retention-days: 90
           overwrite: true
   deploy:
-    needs: build, database
+    needs: [build, database]
     runs-on: ubuntu-latest
     environment:
       name: github-pages
