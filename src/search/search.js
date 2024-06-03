@@ -1,5 +1,5 @@
 import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../utility/components.js";
-import { retrieve, drawSVGFromMEIContent, highlightPattern, getNeumeComponentList } from "../utility/utils.js";
+import { retrieve, drawSVGFromMEIContent, highlightPattern, getNeumeComponentList, env, getDatabase } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
@@ -10,7 +10,6 @@ import {
   melodicSearchError,
   searchResultInfo
 } from "../DOMelements.mjs";
-import database from "../database/database.json";
 
 /**
  * ----------------------- SEARCH -----------------------
@@ -539,7 +538,8 @@ export function showSearchResult(resultChantList) {
  * Display the chant's information to the screen
  * @param {Chant} chant the chant which information is to be extracted and printed
  */
-function printChantInformation(chant) {
+async function printChantInformation(chant) {
+  const database = await getDatabase();
   chantInfo.innerHTML = '';
 
   let info = {

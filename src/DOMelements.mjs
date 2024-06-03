@@ -18,7 +18,6 @@ export const refreshWheel = document.getElementById('refresh-wheel');
 export const clientVersion = document.getElementById('client-version');
 
 
-
 /* --------------------- Search-related --------------------- */
 /**
  * @type {HTMLInputElement}
@@ -80,9 +79,6 @@ export const contourRadio = document.getElementById('contour-radio');
 
 /** @type {HTMLInputElement} */
 export const exactPitchRadio = document.getElementById('exact-pitch-radio');
-
-// /** @type {HTMLInputElement} */
-// export const indefinitePitchRadio = document.getElementById('indefinite-pitch-radio');
 
 /** @type {HTMLButtonElement} */
 export const clearPatternInputButton = document.getElementById('clear-pattern-input-btn');

@@ -8,9 +8,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=/mei-analyser/",
-    "preview": "vite preview --base=/mei-analyser/",
-    "updateDatabaseList": "node src/database/updateDatabase.mjs",
-    "test": "node src/analysis/test-algorithm.js"
+    "database": "node src/database/updateDatabase.mjs",
+    "preview": "NODE_ENV=production npm run database && vite preview --base=/mei-analyser/",
+    "algorithm": "node src/analysis/test-algorithm.js"
   },
   "type": "module",
   "dependencies": {

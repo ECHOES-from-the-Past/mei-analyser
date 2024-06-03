@@ -1,14 +1,22 @@
 import { NeumeComponent } from './components.js';
 
 export const env = import.meta.env.MODE; // 'development' or 'production'
+console.debug(`Current environment: ${env}`);
 
-// /** @type {String} root path to the database folder based on the environment */
-// let databasePath = "";
-// if (env === "development") {
-//   databasePath = "../../GABCtoMEI/MEI_outfiles/";
-// } else if (env === "production") {
-//   databasePath = "./database/";
-// }
+/**
+ * 
+ * @returns the list of MEI files in the database
+ */
+export async function getDatabase() {
+  if (env == 'development') {
+    return await fetch('src/database/database.json')
+      .then(response => response.json());
+  } else if (env == 'production') {
+    // Needs `NODE_ENV=production npm run database` to create the database.json file in the `dist` folder
+    return await fetch('./database.json')
+      .then(response => response.json());
+  }
+}
 
 /**
  * Load MEI file from its file path and set an order on the screen (1, 2)
@@ -188,7 +196,7 @@ export function getNeumeComponentList(syllableList) {
   for (let syllable of syllableList) {
     neumeComponents.push(...syllable.neumeComponents);
   }
-  
+
   return neumeComponents;
 }
 
