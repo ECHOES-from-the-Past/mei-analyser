@@ -1,10 +1,11 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy to GitHub Pages
+name: Build application on branch push
 
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ['main']
+    pull_request:
+      branches: ['main']
     paths: ['src/**', index.html, .github/workflows/*.yml]
 
   # Allows you to run this workflow manually from the Actions tab
@@ -24,6 +25,7 @@ concurrency:
 
 jobs:
   build:
+    name: Build application on branch with PR
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,29 +39,33 @@ jobs:
         run: npm install
       - name: Build Webpage & Documentation
         run: npm run build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifact
+          path: './dist' # Upload dist repository
+          retention-days: 1
+          overwrite: true
   database:
     name: Update list of chants from GABCtoMEI repository
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ">=21.6.1"
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm install
+      - name: Get the artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifact
+          path: ./dist
       - name: Run production database script
         run: npm run database
         env:
           NODE_ENV: production
-  deploy:
-    needs: build, database
-    runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    steps:
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: './dist' # Upload dist repository
-          retention-days: 1
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
