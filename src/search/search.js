@@ -1,16 +1,15 @@
 import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../utility/components.js";
-import { retrieve, drawSVGFromMEIContent, highlightPattern, getNeumeComponentList } from "../utility/utils.js";
+import { retrieve, drawSVGFromMEIContent, highlightPattern, getNeumeComponentList, env, getDatabase } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
   modeCheckboxes, undetectedCheckbox,
   melismaInput,
-  contourRadio, exactPitchRadio, indefinitePitchRadio, patternInputBox,
+  contourRadio, exactPitchRadio, patternInputBox,
   melodicSearchError,
   searchResultInfo
 } from "../DOMelements.mjs";
-import database from "../database/database.json";
 
 /**
  * ----------------------- SEARCH -----------------------
@@ -100,8 +99,6 @@ function getMelodicPatternSearchMode() {
     return contourRadio.value;
   if (exactPitchRadio.checked)
     return exactPitchRadio.value;
-  if (indefinitePitchRadio.checked)
-    return indefinitePitchRadio.value;
 }
 
 function processSearchPattern(searchPattern, searchMode) {
@@ -477,7 +474,7 @@ export function showSearchResult(resultChantList) {
       a.style.textDecoration = "none";
       // Wrap a button with the link
       a.appendChild(linkButton);
-      linkButton.innerText = "PEM - " + pemUrl.split("/").pop();
+      linkButton.innerText = "View image on PEM";
       linkButton.style.width = "8.64rem";
       // Add the linked button to the div
       pemLinkBtnDiv.appendChild(a);
@@ -485,7 +482,7 @@ export function showSearchResult(resultChantList) {
 
     // add the file name of the chant to row cell
     let displayChantBtn = document.createElement('button');
-    displayChantBtn.textContent = "Display Chant " + chant.fileName.match(fileNameRegex);
+    displayChantBtn.textContent = "Display chant " + chant.fileName.match(fileNameRegex);
     displayChantBtn.addEventListener("click", () => {
       // Display the chant information (file name, notation type, mode, etc.)
       printChantInformation(chant);
@@ -514,8 +511,8 @@ export function showSearchResult(resultChantList) {
     let tdLinksDiv = document.createElement('div');
 
     tdLinksDiv.style = "display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1rem;";
-    tdLinksDiv.appendChild(pemLinkBtnDiv);
     tdLinksDiv.appendChild(displayChantBtn);
+    tdLinksDiv.appendChild(pemLinkBtnDiv);
     tdLinks.appendChild(tdLinksDiv);
 
     let tdSource = createTableCell(chant.source);
@@ -541,7 +538,8 @@ export function showSearchResult(resultChantList) {
  * Display the chant's information to the screen
  * @param {Chant} chant the chant which information is to be extracted and printed
  */
-function printChantInformation(chant) {
+async function printChantInformation(chant) {
+  const database = await getDatabase();
   chantInfo.innerHTML = '';
 
   let info = {

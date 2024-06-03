@@ -1,6 +1,6 @@
 {
   "name": "mei-analyser",
-  "version": "0.2.9",
+  "version": "0.3.0",
   "devDependencies": {
     "vite": ">=5.2.6"
   },
@@ -8,9 +8,12 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build --base=/mei-analyser/",
-    "preview": "vite preview --base=/mei-analyser/",
-    "updateDatabaseList": "node src/database/updateDatabase.cjs",
-    "test": "node src/analysis/test-algorithm.js"
+    "database": "node src/database/updateDatabase.mjs",
+    "preview": "NODE_ENV=production npm run database && vite preview --base=/mei-analyser/",
+    "algorithm": "node src/analysis/test-algorithm.js"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "@octokit/core": "^6.1.2"
+  }
 }

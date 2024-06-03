@@ -1,13 +1,12 @@
 import {
     viewDatabaseButton,
-    fileInputLeft, fileInputRight,
     searchModeButton, crossComparisonModeButton,
     refreshDatabaseButton, refreshStatus, clientVersion, refreshWheel,
     databaseList,
     aquitanianCheckbox, squareCheckbox,
     modeCheckboxes, allModeCheckbox, undetectedCheckbox,
     liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
-    exactPitchRadio, indefinitePitchRadio, contourRadio, patternInputBox,
+    exactPitchRadio, contourRadio, patternInputBox,
     patternSearchTooltip, patternSearchTooltipContent,
     searchButton,
     searchResultDiv, chantSVG, chantDisplay, chantInfo,
@@ -16,24 +15,16 @@ import {
 } from './DOMelements.mjs';
 import {
     drawSVGFromMEIContent, loadMEIFile,
-    checkPersistanceExists, persist, retrieve
+    checkPersistanceExists, persist, retrieve, getDatabase, env
 } from './utility/utils.js';
 import {
     clearSearchResultsAndInfo,
     performSearch, showSearchResult
 } from './search/search.js';
 
-import database from './database/database.json';
-
 import { Chant } from './utility/components.js';
 
-/**
- * Obtain the current development or production environment
- * from Vite's `import.meta.env` object
- */
-const env = import.meta.env.MODE;
-console.debug(`Current environment: ${env}`);
-const rootPath = "https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoMEI/main/MEI_outfiles/";
+const rootPath = "https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoMEI/main/";
 
 
 /* ----------------------- Persistence Layer ----------------------- */
@@ -86,8 +77,6 @@ window.onresize = () => {
     clearTimeout(timeOutFunctionId);
     console.log('Resizing...');
     timeOutFunctionId = setTimeout(() => {
-        // drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-        // drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
         console.log('Resized!');
     }, 500);
 }
@@ -171,6 +160,9 @@ async function constructDatabaseList() {
 }
 
 async function loadDatabaseToLocalStorage() {
+    const database = await getDatabase();
+    console.log(database);
+
     /** @type {Chant[]} A list of all the chants in the database */
     let chantList = [];
     const remoteDatabaseVersion = await fetch("https://raw.githubusercontent.com/ECHOES-from-the-Past/mei-analyser/main/package.json")
@@ -261,9 +253,9 @@ contourRadio.addEventListener("change", () => {
     persist('melodicPatternSearchMode', 'contour')
 });
 
-indefinitePitchRadio.addEventListener("change", () => {
-    persist('melodicPatternSearchMode', 'indefinite-pitch')
-});
+// indefinitePitchRadio.addEventListener("change", () => {
+//     persist('melodicPatternSearchMode', 'indefinite-pitch')
+// });
 
 patternInputBox.addEventListener("input", () => {
     persist('patternInputBox', patternInputBox.value);
@@ -318,26 +310,3 @@ melismaDecrement.addEventListener("click", () => {
 // patternSearchTooltip.addEventListener("mouseout", () => {
 //     patternSearchTooltipContent.hidden = true;
 // });
-
-/* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */
-/**
- * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
- * @param {number} slot either 1 or 2
- */
-async function uploadFile(slot) {
-    clearHighlights();
-    const uploaded_file = document.getElementById('file-input-' + slot).files[0];
-    const objectURL = URL.createObjectURL(uploaded_file);
-
-    const newContent = await loadMEIFile(objectURL, slot);
-    drawMEIContent(newContent, slot);
-    URL.revokeObjectURL(uploaded_file);
-}
-
-fileInputLeft.addEventListener("change", () => {
-    uploadFile(1);
-});
-
-fileInputRight.addEventListener("change", () => {
-    uploadFile(2);
-});

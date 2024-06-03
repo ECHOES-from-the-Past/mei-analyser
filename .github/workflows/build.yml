@@ -1,11 +1,12 @@
 # Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Build application on branch with PR
 
 on:
   # Runs on pushes targeting the default branch
   push:
-    branches: ['main']
-    paths: ['src/**', index.html, .github/workflows/static-deploy.yml]
+    pull_request:
+      branches: ['main']
+    paths: ['src/**', index.html, .github/workflows/*.yml]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -13,7 +14,6 @@ on:
 # Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
   contents: read
-  pages: write
   id-token: write
   actions: read
 
@@ -23,17 +23,12 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
+    name: Build application
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          submodules: recursive
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
@@ -43,13 +38,3 @@ jobs:
         run: npm install
       - name: Build Webpage & Documentation
         run: npm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          # Upload dist repository
-          path: './dist'
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
