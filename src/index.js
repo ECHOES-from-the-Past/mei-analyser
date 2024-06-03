@@ -77,8 +77,6 @@ window.onresize = () => {
     clearTimeout(timeOutFunctionId);
     console.log('Resizing...');
     timeOutFunctionId = setTimeout(() => {
-        // drawMEIContent(sessionStorage.getItem('mei-content-1'), 1);
-        // drawMEIContent(sessionStorage.getItem('mei-content-2'), 2);
         console.log('Resized!');
     }, 500);
 }
@@ -312,18 +310,3 @@ melismaDecrement.addEventListener("click", () => {
 // patternSearchTooltip.addEventListener("mouseout", () => {
 //     patternSearchTooltipContent.hidden = true;
 // });
-
-/* --------------- CROSS-COMPARISON PANEL PERSISTANCE --------------- */
-/**
- * Upload file to a slot on the display (1: left, 2: right) for cross-comparison
- * @param {number} slot either 1 or 2
- */
-async function uploadFile(slot) {
-    clearHighlights();
-    const uploaded_file = document.getElementById('file-input-' + slot).files[0];
-    const objectURL = URL.createObjectURL(uploaded_file);
-
-    const newContent = await loadMEIFile(objectURL, slot);
-    drawMEIContent(newContent, slot);
-    URL.revokeObjectURL(uploaded_file);
-}
