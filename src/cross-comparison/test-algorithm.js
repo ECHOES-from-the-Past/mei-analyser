@@ -66,13 +66,34 @@ function sw_test02() {
   console.log(align_sw(M, A, B, match, mismatch, gap));
 }
 
+function sw_test03() {
+  const A = [2, 3, 5, 7, 9, 3, 1, 2, 4]; // row, the sequence
+  const B = [5, 7, 9]; // column, search query
+  const match = 1, mismatch = -1, gap = -1;
+  const M = matrix_sw(A, B, match, mismatch, gap);
+  console.table(M);
+  console.log(align_sw(M, A, B, match, mismatch, gap));
+}
+
+function nw_test05() {
+  const A = [2, 3, 5, 7, 9, 3, 1, 2, 4];
+  const B = [5, 7, 9, 2, 5, 5, 7, 9];
+  const match = 1, mismatch = -1, gap = -2;
+  const gapSymbol = '-';
+  const M = matrix_nw(A, B, match, mismatch, gap);
+  console.table(M);
+  console.log(align_nw(M, A, B, gapSymbol));
+}
+
 function main() {
-  nw_test01();
-  nw_test02();
-  nw_test03();
-  nw_test04();
+  // nw_test01();
+  // nw_test02();
+  // nw_test03();
+  // nw_test04();
   sw_test01();
   sw_test02();
+  sw_test03();
+  nw_test05();
 }
 
 main();
