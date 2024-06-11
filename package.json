@@ -10,7 +10,7 @@
     "build": "vite build --base=/mei-analyser/",
     "database": "node src/database/updateDatabase.mjs",
     "preview": "NODE_ENV=production npm run database && vite preview --base=/mei-analyser/",
-    "algorithm": "node src/analysis/test-algorithm.js"
+    "algorithm": "node src/cross-comparison/test-algorithm.js"
   },
   "type": "module",
   "dependencies": {

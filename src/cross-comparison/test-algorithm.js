@@ -49,16 +49,17 @@ function nw_test04() {
 }
 
 function sw_test01() {
-  const A = [2, 5, 7, 9, 3, 1, 2, 4];
+  const A = [2,    5,    9, 3, 1, 2, 4];
   const B = [2, 3, 5, 7, 9, 3, 1, 2, 4];
   const match = 1, mismatch = -1, gap = -1;
   const M = matrix_sw(A, B, match, mismatch, gap);
   console.table(M);
+  console.log(align_sw(M, A, B, match, mismatch, gap));
 }
 
 function sw_test02() {
-  const A = [2,    5, 7, 9, 3, 1, 2, 4];
-  const B = [2, 3, 5, 7, 9, 3, 1, 2, 4];
+  const A = [2, 3, 5, 7, 9, 3, 1, 2, 4]; // row
+  const B = [2, 3, 5, 2, 4]; // column
   const match = 1, mismatch = -1, gap = -1;
   const M = matrix_sw(A, B, match, mismatch, gap);
   console.table(M);
@@ -70,9 +71,8 @@ function main() {
   nw_test02();
   nw_test03();
   nw_test04();
-  // sw_test01();
-  // sw_test02();
-  // example_nc();
+  sw_test01();
+  sw_test02();
 }
 
 main();
