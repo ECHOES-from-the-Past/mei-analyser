@@ -22,7 +22,7 @@ import {
     performSearch, showSearchResult
 } from './search/search.js';
 
-import { Chant } from './utility/components.js';
+import { Chant } from './database/components.js';
 
 const rootPath = "https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoMEI/main/";
 

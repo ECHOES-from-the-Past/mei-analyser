@@ -1,4 +1,4 @@
-import { NeumeComponent } from './components.js';
+import { NeumeComponent } from '../database/components.js';
 
 export const env = import.meta.env.MODE; // 'development' or 'production'
 console.debug(`Current environment: ${env}`);
@@ -187,17 +187,6 @@ function logNeumeComponent(neumeComponent) {
   nc_svg.forEach((nc) => {
     console.log(nc);
   });
-}
-
-export function getNeumeComponentList(syllableList) {
-  // Get all the neume components from the syllables
-  let neumeComponents = [];
-
-  for (let syllable of syllableList) {
-    neumeComponents.push(...syllable.neumeComponents);
-  }
-
-  return neumeComponents;
 }
 
 /** Persistance functions for the project */

@@ -1,4 +1,4 @@
-import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../utility/components.js";
+import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../database/components.js";
 import { retrieve, drawSVGFromMEIContent, highlightPattern, getNeumeComponentList, env, getDatabase } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
