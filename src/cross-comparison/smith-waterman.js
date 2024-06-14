@@ -29,7 +29,7 @@ export function align_sw(M, A, B) {
     var AlignmentA = [];
     var AlignmentB = [];
 
-    const gap_symbol = '<span style=color:red>GAP</span>';
+    const gap_symbol = 'GAP';
 
     let imax = 0, jmax = 0;
     let max = 0;
@@ -43,6 +43,8 @@ export function align_sw(M, A, B) {
         }
     }
 
+    console.log("imax: ", imax, "jmax: ", jmax, "max: ", max)
+
     let i = imax, j = jmax;
     while (i > 1 || j > 1) {
         const up = M[i - 1][j];
@@ -50,18 +52,18 @@ export function align_sw(M, A, B) {
         const ul = M[i - 1][j - 1];
 
         if (ul == Math.max(up, left, ul)) {
-            AlignmentA.unshift(A[j]);
-            AlignmentB.unshift(B[i]);
+            AlignmentA.unshift(A[i]);
+            AlignmentB.unshift(B[j]);
             i--;
             j--;
         } else if (up == Math.max(up, left, ul)) {
-            AlignmentA.unshift(gap_symbol);
-            AlignmentB.unshift(B[i]);
+            AlignmentA.unshift(A[i]);
+            AlignmentB.unshift(gap_symbol);
             i--;
         }
         else if (left == Math.max(up, left, ul)) {
-            AlignmentA.unshift(A[j]);
-            AlignmentB.unshift(gap_symbol);
+            AlignmentA.unshift(gap_symbol);
+            AlignmentB.unshift(B[j]);
             j--;
         }
     }
