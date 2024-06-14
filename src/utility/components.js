@@ -36,10 +36,6 @@ export class NeumeComponentSQ extends NeumeComponent {
     this.pitch = pitch;
     this.octave = Number(octave);
   }
-
-  getOctave() {
-    return Number(this.octave);
-  }
 }
 
 /**

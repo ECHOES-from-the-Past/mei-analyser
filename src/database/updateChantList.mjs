@@ -1,15 +1,7 @@
 import * as xml2js from 'xml2js';
 import * as fs from 'fs';
 import { NeumeComponentAQ, NeumeComponentSQ, Syllable, SyllableWord } from '../utility/components';
-
-const testFile = await fetch("https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoMEI/main/MEI_outfiles/antiphonae_ad_communionem/001_C01_benedicite-omnes_pem82441_aquit_AQUIT.mei")
-    .then(response => response.text())
-
-let testMeiJSON = {};
-xml2js.parseString(testFile, (err, result) => {
-    console.log(result.mei.meiHead[0].fileDesc[0].titleStmt[0].title[0]);
-    testMeiJSON = result;
-});
+import { Octokit } from "@octokit/core";
 
 function parseMEIContentToJSON(meiContent) {
     let meiJSON = {};
@@ -62,40 +54,59 @@ function getAllSyllables(meiJSON) {
 
 function parseToSyllableObject(syllable, notationType) {
     const syl = syllable.syl[0];
-    const sylWordId = syl.$.id;
+    const sylWordId = syl.$["xml:id"];
     const sylWordText = syl._;
     const sylWordPosition = syl.$.wordpos;
     // Creating a SyllableText object
     const syllableWordObject = new SyllableWord(sylWordId, sylWordText, sylWordPosition);
 
     // Getting all the neume components enclosed in the syllable
-    const ncList = syllable.nc;
+    console.log(syllable)
     let neumeComponents = [];
-    for (const nc of ncList) {
-        const ncId = nc.$.id;
-        let ncTilt = nc.$.tilt;
-        const ncOrnamental = nc.children.length > 0 ? {
-            "type": nc.children[0].name,
-            "id": nc.children[0].$.id
-        } : null;
+    if (syllable.neume != undefined) {
+        const neumeList = syllable.neume;
+        for (let neume of neumeList) {
+            for (let nc of neume.nc) {
+                const ncId = nc.$["xml:id"];
+                let ncTilt = nc.$.tilt ? nc.$.tilt : null;
 
-        if (notationType === "square") {
-            // Getting all the necessary attributes of NeumeComponentSQ
-            const pitch = nc.$.pname;
-            const octave = nc.$.oct;
+                let ncOrnamental = null;
+                nc.liquescent ? ncOrnamental = {
+                    "type": "liquescent",
+                    "id": nc.liquescent[0].$["xml:id"]
+                } : null;
 
-            const nc_SQ = new NeumeComponentSQ(ncId, ncTilt, ncOrnamental, pitch, octave);
-            neumeComponents.push(nc_SQ);
-        } else if (notationType === "aquitanian") {
-            // Getting the necessary attribute of NeumeComponentAQ
-            const loc = nc.$.loc;
+                nc.quilisma ? ncOrnamental = {
+                    "type": "quilisma",
+                    "id": nc.quilisma[0].$["xml:id"]
+                } : null;
 
-            const nc_AQ = new NeumeComponentAQ(ncId, ncTilt, ncOrnamental, loc);
-            neumeComponents.push(nc_AQ);
+                nc.oriscus ? ncOrnamental = {
+                    "type": "oriscus",
+                    "id": nc.oriscus[0].$["xml:id"]
+                } : null;
+
+                // let ncOrnamental = null; // TEMPORARY, TODO
+
+                if (notationType === "square") {
+                    // Getting all the necessary attributes of NeumeComponentSQ
+                    const pitch = nc.$.pname;
+                    const octave = nc.$.oct;
+
+                    const nc_SQ = new NeumeComponentSQ(ncId, ncTilt, ncOrnamental, pitch, octave);
+                    neumeComponents.push(nc_SQ);
+                } else if (notationType === "aquitanian") {
+                    // Getting the necessary attribute of NeumeComponentAQ
+                    const loc = nc.$.loc;
+
+                    const nc_AQ = new NeumeComponentAQ(ncId, ncTilt, ncOrnamental, loc);
+                    neumeComponents.push(nc_AQ);
+                }
+            }
         }
     }
     // Creating a Syllable object
-    const id = syllable.$.id;
+    const id = syllable.$["xml:id"];
     const syllableObj = new Syllable(id, syllableWordObject, neumeComponents);
     return syllableObj;
 }
@@ -108,8 +119,6 @@ function parseToSyllableArray(allSyllables, notationType) {
     }
     return syllableArray;
 }
-
-console.log(getAllSyllables(testMeiJSON));
 
 /**
  * Helper function to calculate the mode of the Aquitanian chant.
@@ -550,6 +559,108 @@ export class Chant {
     }
 }
 
-function main() {
-    
+async function test() {
+    const testFile = await fetch("https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoMEI/main/MEI_outfiles/antiphonae_ad_communionem/005_C05_dicit-dominus_pem84540_aquit_AQUIT.mei")
+        .then(response => response.text())
+
+    let testMeiJSON = {};
+    xml2js.parseString(testFile, (err, result) => {
+        testMeiJSON = result;
+    });
+
+    // console.log(testMeiJSON.mei.music[0].body[0].mdiv[0].score[0].section[0].staff[0].layer[0].syllable[0]);
+
+    let notationType = getNotationType(testMeiJSON);
+    let pemDatabaseUrls = getDatabaseUrls(testMeiJSON);
+    let title = getChantTitle(testMeiJSON);
+    let source = getSource(testMeiJSON);
+    let allSyllables = getAllSyllables(testMeiJSON);
+    let syllables = parseToSyllableArray(allSyllables, notationType);
+
+    // let mode, modeCertainty, modeDescription;
+    // if (notationType === "aquitanian") {
+    //     mode = calculateAquitanianMode(syllables);
+    //     modeCertainty = mode === -1 ? 0 : 1;
+    //     modeDescription = `The Aquitanian mode of the chant is ${mode}`;
+    // } else if (notationType === "square") {
+    //     [mode, modeCertainty, modeDescription] = calculateSquareMode(syllables);
+    // }
+
+    let mode, modeCertainty, modeDescription = [null, null, null];
+    let chant = new Chant(testFile, "test.mei", title, source,
+        notationType, syllables,
+        mode, modeCertainty, modeDescription,
+        pemDatabaseUrls);
+
+    console.log(chant.syllables[4]);
+    fs.writeFileSync("src/database/testChant.json", JSON.stringify(chant), 'utf8');
 }
+
+test();
+
+// /**
+//  * Use authentication token to increase the rate limit for the GitHub API
+//  * For regular deployment of this project, 60 request per hour is more than enough,
+//  * since the deployment only occurs once in a while.
+//  */
+// const octokit = new Octokit({
+//     // auth: 'YOUR-TOKEN'
+// })
+
+// const OWNER = 'ECHOES-from-the-Past'
+// const REPO = 'GABCtoMEI'
+
+// // Retrieve the directory tree
+// let data = await octokit.request(`GET /repos/${OWNER}/${REPO}/git/trees/main`, {
+//     owner: OWNER,
+//     repo: REPO,
+//     // tree_sha: 'main',
+//     accept: 'application/vnd.github+json',
+//     headers: {
+//         'X-GitHub-Api-Version': '2022-11-28'
+//     },
+//     recursive: 'true'
+// });
+
+// let targetChantlist = process.env.NODE_ENV === "production" ? "dist/chantlist.json" : "src/database/chantlist.json";
+
+// let allMEIfiles = data.data.tree.map((item) => {
+//     return item.path;
+// });
+
+// // Filter out only MEI files
+// allMEIfiles = allMEIfiles.filter((file) => {
+//     return (!file.includes("testfiles") && !file.includes("intermedfiles") && file.endsWith('.mei') && file != 'template.mei');
+// });
+
+
+// // Get all the content of the MEI files and parse them into Chant objects
+// let allChants = [];
+
+// for (let file of allMEIfiles) {
+//     let meiContent = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${file}`)
+//         .then(response => response.text());
+
+//     let meiJSON = parseMEIContentToJSON(meiContent);
+//     let notationType = getNotationType(meiJSON);
+//     let pemDatabaseUrls = getDatabaseUrls(meiJSON);
+//     let title = getChantTitle(meiJSON);
+//     let source = getSource(meiJSON);
+//     let allSyllables = getAllSyllables(meiJSON);
+//     let syllables = parseToSyllableArray(allSyllables, notationType);
+
+//     let mode, modeCertainty, modeDescription;
+//     if (notationType === "aquitanian") {
+//         mode = calculateAquitanianMode(syllables);
+//         modeCertainty = mode === -1 ? 0 : 1;
+//         modeDescription = `The Aquitanian mode of the chant is ${mode}`;
+//     } else if (notationType === "square") {
+//         [mode, modeCertainty, modeDescription] = calculateSquareMode(syllables);
+//     }
+
+//     let chant = new Chant(meiContent, file, title, source, notationType, syllables, mode, modeCertainty, modeDescription, pemDatabaseUrls);
+//     allChants.push(chant);
+// }
+
+// // Write all files/folder to database.json (a JSON list)
+// fs.writeFileSync(targetChantlist, JSON.stringify(allChants), 'utf8');
