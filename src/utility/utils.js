@@ -4,21 +4,6 @@ export const env = import.meta.env.MODE; // 'development' or 'production'
 console.debug(`Current environment: ${env}`);
 
 /**
- * 
- * @returns the list of MEI files in the database
- */
-export async function getDatabase() {
-  if (env == 'development') {
-    return await fetch('src/database/database.json')
-      .then(response => response.json());
-  } else if (env == 'production') {
-    // Needs `NODE_ENV=production npm run database` to create the database.json file in the `dist` folder
-    return await fetch('./database.json')
-      .then(response => response.json());
-  }
-}
-
-/**
  * Load MEI file from its file path and set an order on the screen (1, 2)
  * @param {string} fileName link to the MEI (.mei) file to be rendered
  * @returns the content of the MEI file

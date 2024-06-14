@@ -1,5 +1,6 @@
 import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../database/components.js";
-import { retrieve, drawSVGFromMEIContent, highlightPattern, getNeumeComponentList, env, getDatabase } from "../utility/utils.js";
+import { retrieve, drawSVGFromMEIContent, highlightPattern } from "../utility/utils.js";
+import { getNeumeComponentList } from "../database/components.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
@@ -303,9 +304,11 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
  * Perform highlighting when user clicks on "Search" button
  * @return {"chant": Chant[]} list of chants that match the search query
  */
-export function performSearch() {
+export async function performSearch() {
   /** Retrieving the locally stored list of chants */
-  let resultChantList = retrieve('chantList');
+  let resultChantList = await fetch('src/database/database.json')
+    .then(response => response.json());
+  console.log(resultChantList);
 
   /* First layer of filtering: Notation type */
   resultChantList = resultChantList.filter(chant => {
@@ -539,7 +542,6 @@ export function showSearchResult(resultChantList) {
  * @param {Chant} chant the chant which information is to be extracted and printed
  */
 async function printChantInformation(chant) {
-  const database = await getDatabase();
   chantInfo.innerHTML = '';
 
   let info = {
@@ -570,12 +572,14 @@ async function printChantInformation(chant) {
       }
     } else if (k == "MEI File") { // Links to the GitHub MEI files
       p.innerHTML = `<b>${k}</b>: `;
-      const rootGABCtoMEI = 'https://github.com/ECHOES-from-the-Past/GABCtoMEI/blob/main/MEI_outfiles/';
-      let file = database.find(c => c.includes(info[k]));
+      const rootGABCtoMEI = 'https://github.com/ECHOES-from-the-Past/GABCtoMEI/blob/main/';
+
+      let fileName = chant.fileName;
       let a = document.createElement('a');
-      a.href = rootGABCtoMEI + file;
+
+      a.href = rootGABCtoMEI + fileName;
       a.target = "_blank";
-      a.innerText = `${chant.fileName} (GitHub)`;
+      a.innerText = `${fileName.split("/").pop()} (GitHub)`; // showing the file name only
       p.appendChild(a);
     } else {  // Default rendering
       p.innerHTML = `<b>${k}</b>: ${info[k]}`;
