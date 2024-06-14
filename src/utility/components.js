@@ -34,7 +34,7 @@ export class NeumeComponentSQ extends NeumeComponent {
   constructor(id, tilt, ornamental, pitch, octave) {
     super(id, tilt, ornamental);
     this.pitch = pitch;
-    this.octave = octave;
+    this.octave = Number(octave);
   }
 
   getOctave() {
@@ -114,6 +114,8 @@ export class Syllable {
 }
 
 /** 
+ * @deprecated.
+ * 
  * @property {string} filePath the path of the .mei file
  * @property {string} fileName the name of the .mei file
  * @property {string} meiContent the content of the .mei file
@@ -136,6 +138,7 @@ export class Chant {
     // Parse the XML .mei file to mutable JS type
     let parser = new DOMParser();
     let htmldoc = parser.parseFromString(meiContent, "text/xml");
+    console.log(htmldoc.childNodes[2]);
 
     /** @type {String} */
     this.filePath = filePath; // could be null, but shouldn't be
