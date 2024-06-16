@@ -4,6 +4,16 @@ export const env = import.meta.env.MODE; // 'development' or 'production'
 console.debug(`Current environment: ${env}`);
 
 /**
+ * Display the certainty percentage on the screen.
+ * @param {Number} certaintyPercentage the certainty percentage of the search result
+ * @returns the certainty percentage
+ * @example displayCertainty(0.8) --> "80%"
+*/
+export function displayCertainty(certaintyPercentage) {
+  return (certaintyPercentage.toFixed(2) * 100).toFixed(0) + "%";
+}
+
+/**
  * Load MEI file from its file path and set an order on the screen (1, 2)
  * @param {string} fileName link to the MEI (.mei) file to be rendered
  * @returns the content of the MEI file

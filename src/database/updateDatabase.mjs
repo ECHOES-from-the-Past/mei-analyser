@@ -12,6 +12,16 @@ import * as fs from 'fs';
 import { NeumeComponentAQ, NeumeComponentSQ, Syllable, SyllableWord, getNeumeComponentList, toSeptenary } from './components.js';
 import { Octokit } from "@octokit/core";
 
+/**
+ * Display the certainty percentage as string
+ * @param {Number} certaintyPercentage the certainty percentage of the search result
+ * @returns the certainty percentage
+ * @example displayRating(0.8) --> "80%"
+*/
+function displayRating(certaintyPercentage) {
+    return (certaintyPercentage.toFixed(2) * 100).toFixed(0) + "%";
+  }
+
 function parseMEIContentToJSON(meiContent) {
     let meiJSON = {};
     xml2js.parseString(meiContent, (err, result) => {
@@ -343,7 +353,7 @@ function calculateSquareMode(syllables) {
     }
 
     // Conclude authentic repercussio:
-    repercussioAuthDesc += `Therefore, there is a <b>${authenticRepercussioRating.toFixed(4) * 100}%</b> probability of being in authentic mode.`;
+    repercussioAuthDesc += `Therefore, there is a <b>${displayRating(authenticRepercussioRating)}</b> probability of being in authentic mode.`;
 
     // Conclude the repercussio description
     repercussioDesc += repercussioAuthDesc + "</li>";
@@ -381,7 +391,7 @@ function calculateSquareMode(syllables) {
         }
     }
     // Conclude plagal repercussio:
-    repercussioPlagDesc += `Therefore, there is a <b>${plagalRepercussioRating.toFixed(4) * 100}%</b> probability of being in plagal mode.`;
+    repercussioPlagDesc += `Therefore, there is a <b>${displayRating(plagalRepercussioRating)}</b> probability of being in plagal mode.`;
 
     // Conclude the repercussio description
     repercussioDesc += repercussioPlagDesc + "</li>";
@@ -390,10 +400,10 @@ function calculateSquareMode(syllables) {
     let repercussioSuggestion = "<p>";
     if (authenticRepercussioRating > plagalRepercussioRating) {
         modeFromRepercussio = authenticMode;
-        repercussioSuggestion += `<b> Repercussio suggests authentic mode '${modeFromRepercussio}' with ${authenticRepercussioRating.toFixed(4) * 100}% certainty.</b>`;
+        repercussioSuggestion += `<b> Repercussio suggests authentic mode '${modeFromRepercussio}' with ${displayRating(authenticRepercussioRating)} certainty.</b>`;
     } else {
         modeFromRepercussio = plagalMode;
-        repercussioSuggestion += `<b> Repercussio suggests plagal mode '${modeFromRepercussio}' with ${plagalRepercussioRating.toFixed(4) * 100}% certainty.</b>`;
+        repercussioSuggestion += `<b> Repercussio suggests plagal mode '${modeFromRepercussio}' with ${displayRating(plagalRepercussioRating)} certainty.</b>`;
     }
     repercussioDesc += repercussioSuggestion + "</p>";
 
@@ -479,13 +489,13 @@ function calculateSquareMode(syllables) {
     [ambitusPlagalRating, lowerOctavePlagal, upperOctavePlagal] = pitchRangeRate('plagal', ambitusPlagalRange);
 
     let ambitusAuthDesc = '<li>';
-    ambitusAuthDesc += `For the authentic mode (mode '${authenticMode}'): <b>${Number(ambitusAuthenticRating).toFixed(4) * 100}%</b> of the notes\
+    ambitusAuthDesc += `For the authentic mode (mode '${authenticMode}'): <b>${displayRating(ambitusAuthenticRating)}</b> of the notes\
         are within the range '${ambitusAuthenticRange.toUpperCase()}-${ambitusAuthenticRange.toUpperCase()}'\
         (${ambitusAuthenticRange.toUpperCase()}${lowerOctaveAuthentic}-${ambitusAuthenticRange.toUpperCase()}${upperOctaveAuthentic}).`;
 
 
     let ambitusPlagDesc = '<li>';
-    ambitusPlagDesc += `For the plagal mode (mode '${plagalMode}'): <b>${Number(ambitusPlagalRating).toFixed(4) * 100}%</b> of the notes\
+    ambitusPlagDesc += `For the plagal mode (mode '${plagalMode}'): <b>${displayRating(ambitusPlagalRating)}</b> of the notes\
         are within the range '${ambitusPlagalRange.toUpperCase()}-${ambitusPlagalRange.toUpperCase()}'\
         (${ambitusPlagalRange.toUpperCase()}${lowerOctavePlagal}-${ambitusPlagalRange.toUpperCase()}${upperOctavePlagal}).`;
 
@@ -497,12 +507,12 @@ function calculateSquareMode(syllables) {
 
     if (ambitusAuthenticRating > ambitusPlagalRating) {
         modeFromAmbitus = authenticMode;
-        ambitusSuggestion += `<b> Ambitus suggests authentic mode '${modeFromAmbitus}' with ${Number(ambitusAuthenticRating).toFixed(4) * 100}%\
-          certainty over plagal mode with ${Number(ambitusPlagalRating).toFixed(4) * 100}% certainty</b>.`;
+        ambitusSuggestion += `<b> Ambitus suggests authentic mode '${modeFromAmbitus}' with ${displayRating(ambitusAuthenticRating)}\
+          certainty over plagal mode with ${displayRating(ambitusPlagalRating)} certainty</b>.`;
     } else {
         modeFromAmbitus = plagalMode;
-        ambitusSuggestion += `<b> Ambitus suggests plagal mode '${modeFromAmbitus}' with ${Number(ambitusPlagalRating).toFixed(4) * 100}% `;
-        ambitusSuggestion += `certainty over authentic mode with ${Number(ambitusAuthenticRating).toFixed(4) * 100}% certainty</b>.`;
+        ambitusSuggestion += `<b> Ambitus suggests plagal mode '${modeFromAmbitus}' with ${displayRating(ambitusPlagalRating)} `;
+        ambitusSuggestion += `certainty over authentic mode with ${displayRating(ambitusAuthenticRating)} certainty</b>.`;
     }
 
     ambitusDesc += ambitusSuggestion + "</p>";
@@ -512,8 +522,8 @@ function calculateSquareMode(syllables) {
     let authenticRating = (authenticRepercussioRating + ambitusAuthenticRating) / 2;
     let plagalRating = (plagalRepercussioRating + ambitusPlagalRating) / 2;
     let conclusion = "<p>";
-    conclusion += `<b><u> Authentic mode '${authenticMode}' has ${authenticRating.toFixed(4) * 100}% certainty | `;
-    conclusion += `Plagal mode '${plagalMode}' has ${plagalRating.toFixed(4) * 100}% certainty.</u></b>`;
+    conclusion += `<b><u> Authentic mode '${authenticMode}' has ${displayRating(authenticRating)} certainty | `;
+    conclusion += `Plagal mode '${plagalMode}' has ${displayRating(plagalRating)} certainty.</u></b>`;
 
     modeDescription += conclusion + "</p>";
 

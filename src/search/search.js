@@ -1,5 +1,5 @@
 import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList } from "../database/components.js";
-import { drawSVGFromMEIContent, highlightPattern, env } from "../utility/utils.js";
+import { drawSVGFromMEIContent, highlightPattern, env, displayCertainty } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
@@ -393,7 +393,7 @@ export function showSearchResult(resultChantList) {
     let tdNotationType = createTableCell(chant.notationType);
     let tdMode;
     if (chant.mode != -1) {
-      tdMode = createTableCell(`${chant.mode} (${chant.modeCertainty.toFixed(1)}%)`);
+      tdMode = createTableCell(`${chant.mode} (${displayCertainty(chant.modeCertainty)})`);
     } else {
       tdMode = createTableCell("Unknown");
       tdMode.style.color = "red";
@@ -548,7 +548,7 @@ async function printChantInformation(chant) {
     "Source": chant.source,
     "Music script": chant.notationType,
     "Mode": chant.mode == -1 ? "Unknown" : chant.mode,
-    "Mode Certainty": chant.modeCertainty == undefined ? "-" : chant.modeCertainty.toFixed(2) + "%",
+    "Mode Certainty": chant.modeCertainty == undefined ? "-" : displayCertainty(chant.modeCertainty),
     "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription,
     "MEI File": chant.fileName,
     "PEM Database URL": chant.pemDatabaseUrls,

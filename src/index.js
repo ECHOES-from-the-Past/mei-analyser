@@ -7,24 +7,17 @@ import {
     modeCheckboxes, allModeCheckbox, unknownModeCheckbox,
     liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
     exactPitchRadio, contourRadio, patternInputBox,
-    patternSearchTooltip, patternSearchTooltipContent,
     searchButton,
-    searchResultDiv, chantSVG, chantDisplay, chantInfo,
     melismaIncrement, melismaDecrement, melismaInput,
     clearPatternInputButton,
 } from './DOMelements.mjs';
 import {
-    drawSVGFromMEIContent, loadMEIFile,
-    checkPersistanceExists, persist, retrieve, env
+    persist, retrieve, env
 } from './utility/utils.js';
 import {
     clearSearchResultsAndInfo,
     performSearch, showSearchResult
 } from './search/search.js';
-
-import { Chant } from './database/components.js';
-
-const rootPath = "https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoMEI/main/";
 
 
 /* ----------------------- Persistence Layer ----------------------- */
