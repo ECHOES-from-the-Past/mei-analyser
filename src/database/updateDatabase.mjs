@@ -2,9 +2,9 @@
  * This script updates the database.json file with all the MEI files in the MEI_outfiles folder.
  * 
  * To run this script, use the following command: (assuming you are in the root folder of the project)
- * `node src/database/updateDatabase.cjs`
+ * `node src/database/updateDatabase.mjs`
  * # or
- * `npm run updateDatabaseList`
+ * `npm run database`
  */
 
 import * as xml2js from 'xml2js';

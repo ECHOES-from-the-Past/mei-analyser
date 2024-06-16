@@ -1,5 +1,5 @@
 import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../database/components.js";
-import { retrieve, drawSVGFromMEIContent, highlightPattern } from "../utility/utils.js";
+import { retrieve, drawSVGFromMEIContent, highlightPattern, env } from "../utility/utils.js";
 import { getNeumeComponentList } from "../database/components.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
@@ -305,10 +305,10 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
  * @return {"chant": Chant[]} list of chants that match the search query
  */
 export async function performSearch() {
+  const databaseURL = env == "development" ? "src/database/database.json" : "./database.json";
+  
   /** Retrieving the locally stored list of chants */
-  let resultChantList = await fetch('src/database/database.json')
-    .then(response => response.json());
-  console.log(resultChantList);
+  let resultChantList = fetch(databaseURL).then(response => response.json());
 
   /* First layer of filtering: Notation type */
   resultChantList = resultChantList.filter(chant => {
