@@ -4,7 +4,7 @@ import {
     refreshStatus, clientVersion, refreshWheel,
     databaseList,
     aquitanianCheckbox, squareCheckbox,
-    modeCheckboxes, allModeCheckbox, undetectedCheckbox,
+    modeCheckboxes, allModeCheckbox, unknownModeCheckbox,
     liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
     exactPitchRadio, contourRadio, patternInputBox,
     patternSearchTooltip, patternSearchTooltipContent,
@@ -42,7 +42,7 @@ function loadPersistedSearchOptions() {
     if (retrieve("allModeCheckbox") === null) {
         allModeCheckbox.click();
     }
-    undetectedCheckbox.checked = retrieve('modeUndetectedCheckbox');
+    unknownModeCheckbox.checked = retrieve('unknownModeCheckbox');
 
     liquescentCheckbox.checked = retrieve('liquescentCheckbox');
     quilismaCheckbox.checked = retrieve('quilismaCheckbox');
@@ -186,8 +186,8 @@ allModeCheckbox.addEventListener("change", () => {
     });
 });
 
-undetectedCheckbox.addEventListener("change", () => {
-    persist('modeUndetectedCheckbox', undetectedCheckbox.checked);
+unknownModeCheckbox.addEventListener("change", () => {
+    persist('unknownModeCheckbox', unknownModeCheckbox.checked);
 });
 
 exactPitchRadio.addEventListener("change", () => {

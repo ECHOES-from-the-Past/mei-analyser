@@ -50,7 +50,7 @@ export const modeCheckboxes = [
     mode5Checkbox, mode6Checkbox, mode7Checkbox, mode8Checkbox,
 ];
 
-export const undetectedCheckbox = document.getElementById('mode-undetected-checkbox');
+export const unknownModeCheckbox = document.getElementById('unknown-mode-checkbox');
 export const allModeCheckbox = document.getElementById('all-mode-checkbox');
 
 /** @type {HTMLInputElement} */

@@ -6,7 +6,7 @@
   },
   "private": true,
   "scripts": {
-    "dev": "vite",
+    "dev": "npm run database && vite",
     "build": "vite build --base=/mei-analyser/",
     "database": "node src/database/updateDatabase.mjs",
     "preview": "NODE_ENV=production npm run database && vite preview --base=/mei-analyser/",
