@@ -1,21 +1,16 @@
-import { NeumeComponent } from './components.js';
+import { NeumeComponent } from '../database/components.js';
 
 export const env = import.meta.env.MODE; // 'development' or 'production'
 console.debug(`Current environment: ${env}`);
 
 /**
- * 
- * @returns the list of MEI files in the database
- */
-export async function getDatabase() {
-  if (env == 'development') {
-    return await fetch('src/database/database.json')
-      .then(response => response.json());
-  } else if (env == 'production') {
-    // Needs `NODE_ENV=production npm run database` to create the database.json file in the `dist` folder
-    return await fetch('./database.json')
-      .then(response => response.json());
-  }
+ * Display the certainty percentage on the screen.
+ * @param {Number} certaintyPercentage the certainty percentage of the search result
+ * @returns the certainty percentage
+ * @example displayCertainty(0.8) --> "80%"
+*/
+export function displayCertainty(certaintyPercentage) {
+  return (certaintyPercentage.toFixed(2) * 100).toFixed(0) + "%";
 }
 
 /**
@@ -187,17 +182,6 @@ function logNeumeComponent(neumeComponent) {
   nc_svg.forEach((nc) => {
     console.log(nc);
   });
-}
-
-export function getNeumeComponentList(syllableList) {
-  // Get all the neume components from the syllables
-  let neumeComponents = [];
-
-  for (let syllable of syllableList) {
-    neumeComponents.push(...syllable.neumeComponents);
-  }
-
-  return neumeComponents;
 }
 
 /** Persistance functions for the project */

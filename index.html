@@ -30,10 +30,6 @@
       </button>
     </a>
 
-    <button id="refresh-database-btn" class="nonselectable-text">
-      Update Database
-    </button>
-
     <div id="refresh-wheel" hidden></div>
     <span style="color: var(--button-active); font:bold" id="refresh-status" hidden>
     </span>
@@ -79,8 +75,8 @@
             <br>
             <input type="checkbox" id="all-mode-checkbox" value="all-mode">
             <label for="all-mode-checkbox" style="color: var(--button-active);"> All Modes </label>
-            <input type="checkbox" id="mode-undetected-checkbox" value="undetected">
-            <label for="mode-undetected-checkbox" style="color: red;"> Undetected </label>
+            <input type="checkbox" id="unknown-mode-checkbox" value="unknown">
+            <label for="unknown-mode-checkbox" style="color: red;"> Unknown </label>
             <hr>
             <!-- Search/filter by ornamental figures -->
             <p> Search for chants that has ornamental figure(s): <br> (No selection will display all chants) </p>
@@ -141,9 +137,10 @@
             <button id="search-btn"> Search </button>
           </div>
 
-          <div id="chant-list database" class="section">
+          <!-- Temporary disabled due to architecture updates -->
+          <div id="chant-list database" class="section" hidden>
             <h2> Database </h2>
-            <button id="view-database-btn" class="nonselectable-text"> View database </button>
+            <button id="view-database-btn" class="nonselectable-text" disabled> Browse database </button>
             <div>
               <ul id="database-list">
                 <!-- Chant list goes here -->

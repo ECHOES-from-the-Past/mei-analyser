@@ -1,4 +1,4 @@
-import { NeumeComponentAQ, NeumeComponentSQ } from "../utility/components.js";
+import { NeumeComponentAQ, NeumeComponentSQ } from "../database/components.js";
 import { needlemanWunsch_nc } from "./needleman-wunsch.js";
 
 

@@ -1,10 +1,10 @@
-import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary } from "../utility/components.js";
-import { retrieve, drawSVGFromMEIContent, highlightPattern, getNeumeComponentList, env, getDatabase } from "../utility/utils.js";
+import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList } from "../database/components.js";
+import { drawSVGFromMEIContent, highlightPattern, env, displayCertainty } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
-  modeCheckboxes, undetectedCheckbox,
+  modeCheckboxes, unknownModeCheckbox,
   melismaInput,
   contourRadio, exactPitchRadio, patternInputBox,
   melodicSearchError,
@@ -74,10 +74,10 @@ function filterByOrnamentalShapes(chantList, ornamentalOptions) {
  * Filter by modes
  * @param {Chant[]} chantList list of chants to be filtered
  * @param {HTMLInputElement[]} modeCheckboxes list of checkboxes for each mode
- * @param {HTMLInputElement} undetectedCheckbox checkbox for undetected mode
+ * @param {HTMLInputElement} unknownModeCheckbox checkbox for unknown/undetected mode
  * @returns {Chant[]} list of chants that has the selected modes. If no modes are selected, return all the chants.
  */
-function filterByModes(chantList, modeCheckboxes, undetectedCheckbox) {
+function filterByModes(chantList, modeCheckboxes, unknownModeCheckbox) {
   /** @type {Chant[]} resulting list of chants after filtering */
   let resultChantList = [];
 
@@ -87,8 +87,8 @@ function filterByModes(chantList, modeCheckboxes, undetectedCheckbox) {
     }
   }
 
-  if (undetectedCheckbox.checked) {
-    resultChantList.push(...chantList.filter(chant => { if (chant.mode == undefined) return true; }));
+  if (unknownModeCheckbox.checked) {
+    resultChantList.push(...chantList.filter(chant => { if (chant.mode == -1) return true; }));
   }
 
   return resultChantList;
@@ -303,9 +303,11 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
  * Perform highlighting when user clicks on "Search" button
  * @return {"chant": Chant[]} list of chants that match the search query
  */
-export function performSearch() {
+export async function performSearch() {
+  const databaseURL = env == "development" ? "src/database/database.json" : "./database.json";
+  
   /** Retrieving the locally stored list of chants */
-  let resultChantList = retrieve('chantList');
+  let resultChantList = await fetch(databaseURL).then(response => response.json());
 
   /* First layer of filtering: Notation type */
   resultChantList = resultChantList.filter(chant => {
@@ -328,7 +330,7 @@ export function performSearch() {
   resultChantList = filterByOrnamentalShapes(resultChantList, ornamentalOptions);
 
   /* Third layer of filtering: Modes */
-  resultChantList = filterByModes(resultChantList, modeCheckboxes, undetectedCheckbox);
+  resultChantList = filterByModes(resultChantList, modeCheckboxes, unknownModeCheckbox);
 
   /* Forth layer of filtering: Pattern search */
   resultChantList = filterByMelodicPattern(resultChantList, patternInputBox.value, getMelodicPatternSearchMode())
@@ -390,10 +392,10 @@ export function showSearchResult(resultChantList) {
 
     let tdNotationType = createTableCell(chant.notationType);
     let tdMode;
-    if (chant.mode != undefined) {
-      tdMode = createTableCell(`${chant.mode} (${chant.modeCertainty.toFixed(1)}%)`);
+    if (chant.mode != -1) {
+      tdMode = createTableCell(`${chant.mode} (${displayCertainty(chant.modeCertainty)})`);
     } else {
-      tdMode = createTableCell("undetected");
+      tdMode = createTableCell("Unknown");
       tdMode.style.color = "red";
     }
 
@@ -539,15 +541,14 @@ export function showSearchResult(resultChantList) {
  * @param {Chant} chant the chant which information is to be extracted and printed
  */
 async function printChantInformation(chant) {
-  const database = await getDatabase();
   chantInfo.innerHTML = '';
 
   let info = {
     "Title": chant.title,
     "Source": chant.source,
     "Music script": chant.notationType,
-    "Mode": chant.mode == undefined ? "Undetected" : chant.mode,
-    "Mode Certainty": chant.modeCertainty == undefined ? "-" : chant.modeCertainty.toFixed(2) + "%",
+    "Mode": chant.mode == -1 ? "Unknown" : chant.mode,
+    "Mode Certainty": chant.modeCertainty == undefined ? "-" : displayCertainty(chant.modeCertainty),
     "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription,
     "MEI File": chant.fileName,
     "PEM Database URL": chant.pemDatabaseUrls,
@@ -570,12 +571,14 @@ async function printChantInformation(chant) {
       }
     } else if (k == "MEI File") { // Links to the GitHub MEI files
       p.innerHTML = `<b>${k}</b>: `;
-      const rootGABCtoMEI = 'https://github.com/ECHOES-from-the-Past/GABCtoMEI/blob/main/MEI_outfiles/';
-      let file = database.find(c => c.includes(info[k]));
+      const rootGABCtoMEI = 'https://github.com/ECHOES-from-the-Past/GABCtoMEI/blob/main/';
+
+      let fileName = chant.fileName;
       let a = document.createElement('a');
-      a.href = rootGABCtoMEI + file;
+
+      a.href = rootGABCtoMEI + fileName;
       a.target = "_blank";
-      a.innerText = `${chant.fileName} (GitHub)`;
+      a.innerText = `${fileName.split("/").pop()} (GitHub)`; // showing the file name only
       p.appendChild(a);
     } else {  // Default rendering
       p.innerHTML = `<b>${k}</b>: ${info[k]}`;

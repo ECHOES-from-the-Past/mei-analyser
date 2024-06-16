@@ -5,9 +5,6 @@ export const searchModeButton = document.getElementById('search-mode-btn');
 /** @type {HTMLButtonElement} */
 export const crossComparisonModeButton = document.getElementById('cross-comparison-mode-btn');
 
-/** @type {HTMLButtonElement} */
-export const refreshDatabaseButton = document.getElementById('refresh-database-btn');
-
 /** @type {HTMLElement} */
 export const refreshStatus = document.getElementById('refresh-status');
 
@@ -53,7 +50,7 @@ export const modeCheckboxes = [
     mode5Checkbox, mode6Checkbox, mode7Checkbox, mode8Checkbox,
 ];
 
-export const undetectedCheckbox = document.getElementById('mode-undetected-checkbox');
+export const unknownModeCheckbox = document.getElementById('unknown-mode-checkbox');
 export const allModeCheckbox = document.getElementById('all-mode-checkbox');
 
 /** @type {HTMLInputElement} */
