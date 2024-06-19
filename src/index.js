@@ -10,6 +10,7 @@ import {
     searchButton,
     melismaIncrement, melismaDecrement, melismaInput,
     clearPatternInputButton,
+    customGABCCheckbox,
 } from './DOMelements.mjs';
 import {
     persist, retrieve, env
@@ -208,6 +209,13 @@ patternInputBox.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
         searchButton.click();
     }
+});
+
+customGABCCheckbox.addEventListener("change", () => {
+    persist('customGABCCheckbox', customGABCCheckbox.checked);
+    document.querySelectorAll('.custom-gabc').forEach((element) => {
+        element.hidden = !customGABCCheckbox.checked;
+    });
 });
 
 /* --------------- DATABASE PANEL PERSISTANCE --------------- */

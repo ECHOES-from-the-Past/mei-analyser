@@ -8,7 +8,8 @@ import {
   melismaInput,
   contourRadio, exactPitchRadio, patternInputBox,
   melodicSearchError,
-  searchResultInfo
+  searchResultInfo,
+  customGABCCheckbox
 } from "../DOMelements.mjs";
 
 /**
@@ -305,7 +306,7 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
  */
 export async function performSearch() {
   const databaseURL = env == "development" ? "src/database/database.json" : "./database.json";
-  
+
   /** Retrieving the locally stored list of chants */
   let resultChantList = await fetch(databaseURL).then(response => response.json());
 
@@ -386,6 +387,8 @@ export function showSearchResult(resultChantList) {
    * @type {RegExp}
    * */
   const fileNameRegex = /\d{3}_\w{1}\d{2}/;
+
+  /** Constructing the details of the table */
   for (let chant of resultChantList) {
     // create a result row for each chant
     let resultRow = document.createElement('tr');
@@ -399,7 +402,10 @@ export function showSearchResult(resultChantList) {
       tdMode.style.color = "red";
     }
 
+    /* Constructing the text column  */
     let tdSyllablesContent = [];
+    let customGABC = [];
+
     // In case the word is part of a melodic pattern
     let melodicPattern = [];
     if (contourRadio.checked) {
@@ -456,13 +462,31 @@ export function showSearchResult(resultChantList) {
         // standard syllable
         // initial syllable
         tdSyllablesContent.push(word);
+        if (chant.notationType == "square") {
+          customGABC.push(`${word}(${syllable.neumeComponents.map(nc => nc.pitch).join("")})`);
+        } else if (chant.notationType == "aquitanian") {
+          customGABC.push(`${word}(${syllable.neumeComponents.map(nc => nc.loc).join("")})`);
+        }
       } else if (position == "m" || position == "t") {
         // medial syllable, add to the last syllable
         // terminal syllable, add to the last syllable
         tdSyllablesContent[tdSyllablesContent.length - 1] += word;
+        if (chant.notationType == "square") {
+          customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => nc.pitch).join("")})`;
+        } else if (chant.notationType == "aquitanian") {
+          customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => nc.loc).join("")})`;
+        }
       }
     }
     let tdSyllables = createTableCellHTML(tdSyllablesContent.join(" "));
+
+    let customGABCDiv = document.createElement('div');
+    customGABCDiv.classList.add("custom-gabc");
+
+    customGABCDiv.innerHTML = "<hr>" + customGABC.join(" ");
+    customGABCDiv.hidden = !customGABCCheckbox.checked;
+
+    tdSyllables.appendChild(customGABCDiv);
 
 
     /** @type {HTMLAnchorElement} */

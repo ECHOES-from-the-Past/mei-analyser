@@ -83,6 +83,9 @@ export const clearPatternInputButton = document.getElementById('clear-pattern-in
 /** @type {HTMLInputElement} */
 export const melodicSearchError = document.getElementById('melodic-search-error');
 
+/** @type {HTMLInputElement} */
+export const customGABCCheckbox = document.getElementById('custom-gabc-checkbox');
+
 /** @type {HTMLButtonElement} */
 export const searchButton = document.getElementById('search-btn');
 
