@@ -145,6 +145,9 @@ function parseToSyllableArray(allSyllables, notationType) {
  */
 function calculateAquitanianMode(syllables) {
     let mode = -1;
+    let modeDescription = "";
+    let modeCertainty = 0;
+
     const neumeComponentList = getNeumeComponentList(syllables);
     // Checking last note
     const lastNote = neumeComponentList[neumeComponentList.length - 1];
@@ -165,11 +168,10 @@ function calculateAquitanianMode(syllables) {
 
     if (allWithSETiltLoc.length <= 1) {
         mode = -1;
-        return mode;
+        return [mode, modeCertainty, "The mode of the Aquitanian chant is unknown, no rhombus shapes are detected"];
     }
 
     let lastNoteLoc = lastNote.loc;
-    let modeDescription = "";
     if (lastNoteLoc == -2 && neg1pos3) {
         mode = 1;
         modeDescription = "Mode 1 is detected. The pitch of the line is 'F'";
@@ -201,7 +203,7 @@ function calculateAquitanianMode(syllables) {
         mode = -1;
         modeDescription = "The mode of the Aquitanian chant is unknown";
     }
-    let modeCertainty = mode == -1 ? 0 : 1;
+    modeCertainty = mode == -1 ? 0 : 1;
 
     return [mode, modeCertainty, modeDescription];
 }
@@ -672,9 +674,7 @@ for (let file of allMEIfiles) {
 
     let mode, modeCertainty, modeDescription;
     if (notationType === "aquitanian") {
-        mode = calculateAquitanianMode(syllables);
-        modeCertainty = mode === -1 ? 0 : 1;
-        modeDescription = `The detected mode of the chant is ${mode}`;
+        [mode, modeCertainty, modeDescription] = calculateAquitanianMode(syllables);
     } else if (notationType === "square") {
         [mode, modeCertainty, modeDescription] = calculateSquareMode(syllables);
     }
