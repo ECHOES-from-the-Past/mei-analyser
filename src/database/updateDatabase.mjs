@@ -141,7 +141,7 @@ function parseToSyllableArray(allSyllables, notationType) {
 /**
  * Helper function to calculate the mode of the Aquitanian chant.
  * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8 for Aquitanian mode detection
- * @returns {number} the mode of the chant. If the mode is not found, return -1
+ * @returns {number, number, string} the mode, the certainty, and the descripion of the chant.
  */
 function calculateAquitanianMode(syllables) {
     let mode = -1;
@@ -169,29 +169,41 @@ function calculateAquitanianMode(syllables) {
     }
 
     let lastNoteLoc = lastNote.loc;
+    let modeDescription = "";
     if (lastNoteLoc == -2 && neg1pos3) {
         mode = 1;
+        modeDescription = "Mode 1 is detected. The pitch of the line is 'F'";
     } else if (lastNoteLoc == 0 && neg2pos1) {
         mode = 2;
+        modeDescription = "Mode 2 is detected. The pitch of the line is 'D'";
     } else if (lastNoteLoc == -2 && neg2pos2) {
         mode = 3;
-    } else if (lastNoteLoc == 0 && zeroneg3pos4) {
-        mode = 4;
+        modeDescription = "Mode 3 is detected. The pitch of the line is 'G'";
     } else if (lastNoteLoc == -1 && neg1pos3) {
         mode = 4;
+        modeDescription = "Mode 4 is detected. The pitch of the line is 'F'";
+    } else if (lastNoteLoc == 0 && zeroneg3pos4) { // rare case
+        mode = 4;
+        modeDescription = "Mode 4 is detected. The pitch of the line is 'E'";
     } else if (lastNoteLoc == -2 && neg3pos1) {
         mode = 5;
+        modeDescription = "Mode 5 is detected. The pitch of the line is 'A'";
     } else if (lastNoteLoc == 0 && neg1pos3) {
         mode = 6;
+        modeDescription = "Mode 6 is detected. The pitch of the line is 'F'";
     } else if (lastNoteLoc == -2 && zeropos3) {
         mode = 7;
+        modeDescription = "Mode 7 is detected. The pitch of the line is 'B'";
     } else if (lastNoteLoc == 0 && neg2pos2) {
         mode = 8;
+        modeDescription = "Mode 8 is detected. The pitch of the line is 'G'";
     } else { // if all conditions fails
         mode = -1;
+        modeDescription = "The mode of the Aquitanian chant is unknown";
     }
+    let modeCertainty = mode == -1 ? 0 : 1;
 
-    return mode;
+    return [mode, modeCertainty, modeDescription];
 }
 
 /**
@@ -591,9 +603,7 @@ async function test() {
 
     let mode, modeCertainty, modeDescription;
     if (notationType === "aquitanian") {
-        mode = calculateAquitanianMode(syllables);
-        modeCertainty = mode === -1 ? 0 : 1;
-        modeDescription = `The Aquitanian mode of the chant is ${mode}`;
+        [mode, modeCertainty, modeDescription] = calculateAquitanianMode(syllables);
     } else if (notationType === "square") {
         [mode, modeCertainty, modeDescription] = calculateSquareMode(syllables);
     }
