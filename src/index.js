@@ -81,23 +81,24 @@ window.onresize = () => {
 * Load predefined files when DOM is loaded
 */
 document.addEventListener("DOMContentLoaded", async () => {
-    const packageJSON = await fetch("https://raw.githubusercontent.com/ECHOES-from-the-Past/mei-analyser/main/package.json")
-        .then(response => response.json());
+    const buildVersion = await fetch("../package.json")
+        .then(response => response.json().version);
 
     loadPersistedSearchOptions();
-    const remoteVersion = packageJSON.version;
 
     // Display the client version
-    clientVersion.textContent = `Version: ${remoteVersion}`;
+    clientVersion.textContent = `Version: ${buildVersion}`;
 
     if (env === 'development') {
         clientVersion.textContent += " (Development)";
     }
 
     // Clear the chant list if the version is less than 0.3.0
-    if (retrieve('version') !== remoteVersion) {
+    if (retrieve('version') !== buildVersion) {
         localStorage.removeItem('chantList');
     }
+
+    persist('version', buildVersion);
 });
 
 /* --------------- TOP BUTTON Event Listeners --------------- */
