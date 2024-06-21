@@ -9,7 +9,7 @@
 
 import * as xml2js from 'xml2js';
 import * as fs from 'fs';
-import { NeumeComponentAQ, NeumeComponentSQ, Syllable, SyllableWord, getNeumeComponentList, toSeptenary } from './components.js';
+import { Chant, NeumeComponentAQ, NeumeComponentSQ, Syllable, SyllableWord, getNeumeComponentList, toSeptenary } from '../utility/components.js';
 import { Octokit } from "@octokit/core";
 
 /**

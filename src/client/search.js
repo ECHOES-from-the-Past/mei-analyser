@@ -1,4 +1,4 @@
-import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList } from "../database/components.js";
+import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList } from "../utility/components.js";
 import { drawSVGFromMEIContent, highlightPattern, env, displayCertainty } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
@@ -13,10 +13,11 @@ import {
   aquitanianPitchCheckbox
 } from "../DOMelements.mjs";
 
-import { Chant } from "../database/components.js";
+import { Chant } from "../utility/components.js";
 /**
  * ----------------------- SEARCH -----------------------
  */
+
 
 /**
  * HELPER FUNCTION
@@ -416,8 +417,6 @@ export function showSearchResult(resultChantList) {
       melodicPattern = processContourMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
     } else if (exactPitchRadio.checked) {
       melodicPattern = processExactPitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
-    } else if (indefinitePitchRadio.checked) {
-      melodicPattern = processIndefinitePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
     }
 
     for (let syllable of chant.syllables) {

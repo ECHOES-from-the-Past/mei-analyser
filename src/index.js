@@ -18,7 +18,7 @@ import {
 import {
     clearSearchResultsAndInfo,
     performSearch, showSearchResult
-} from './search/search.js';
+} from './client/search.js';
 
 
 /* ----------------------- Persistence Layer ----------------------- */

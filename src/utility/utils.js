@@ -1,4 +1,4 @@
-import { NeumeComponent } from '../database/components.js';
+import { NeumeComponent } from './components.js';
 
 export const env = import.meta.env.MODE; // 'development' or 'production'
 console.debug(`Current environment: ${env}`);

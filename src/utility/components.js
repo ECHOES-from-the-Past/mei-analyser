@@ -1,13 +1,3 @@
-export function getNeumeComponentList(syllableList) {
-  // Get all the neume components from the syllables
-  let neumeComponents = [];
-
-  for (let syllable of syllableList) {
-    neumeComponents.push(...syllable.neumeComponents);
-  }
-
-  return neumeComponents;
-}
 /**
  * An "abstract" class for a Neume Component (`<nc>`).
  * All Neume Components has an id and an optional tilt field.
@@ -47,18 +37,7 @@ export class NeumeComponentSQ extends NeumeComponent {
 }
 
 /**
- * Represent square neume component using base-7 value
- * Septenary = pitch * 7^0 + octave * 7^1
- * @param {NeumeComponentSQ} ncSQ the square neume component of interest
- * @returns the septenary value of the square neume component
- */
-export function toSeptenary(ncSQ) {
-  const sq_pitch = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
-  return Number(sq_pitch.indexOf(ncSQ.pitch)) + Number(ncSQ.octave) * 7;
-}
-
-/**
- * The Neume Component class for <b>Aquitanian</b> notation.
+ * The Neume Component class for Aquitanian notation.
  */
 export class NeumeComponentAQ extends NeumeComponent {
   /**
@@ -82,7 +61,7 @@ export class SyllableWord {
    * @param {String} text the text of the syllable
    * @param {String} position the position of the syllable
    * 
-   * Note for the position:
+   * Note for the `position`:
    * - 'i' for initial
    * - 'm' for medial
    * - 't' for terminal
@@ -100,7 +79,7 @@ export class SyllableWord {
  * Each syllable is composed of an array of NeumeComponents
  * and a syllable text. They also has an unique id.
  * @property {String} id the `@xml:id` attribute of the syllable
- * @property {SyllableText} text the text of the syllable
+ * @property {SyllableWord} text the text of the syllable
  * @property {NeumeComponent[]} neumeComponents an array of NeumeComponent
  */
 export class Syllable {
@@ -120,8 +99,8 @@ export class Syllable {
 export class Chant {
   /**
    * Constructing a Chant object from a .mei file content
-   * @param {MEI_Content} meiContent The content of the .mei file
-   * @param {String} fileName the path of the .mei file
+   * @param {String} meiContent The content of the .mei file in raw string format
+   * @param {String} fileName the name of the .mei file, usually a relative path in GABCtoMEI repository
    * @param {String} title the title of the chant
    * @param {String} source the source of the chant
    * @param {String} notationType the notation type of the chant (either "aquitanian" or "square")
@@ -145,4 +124,38 @@ export class Chant {
       this.clef = clef;
       this.pemDatabaseUrls = pemDatabaseUrls;
   }
+}
+
+
+/*
+  ------------------------ HELPER FUNCTIONS ------------------------
+  Note for the helper functions: These functions should work on both client (the webpage or DOM) 
+  and server side (Node.js) due to the components declared here are used in both sides.
+*/
+
+/**
+ * 
+ * @param {Syllable[]} syllableList A list of syllable objects
+ * @returns {NeumeComponent[]}
+ */
+export function getNeumeComponentList(syllableList) {
+  // Get all the neume components from the syllables
+  let neumeComponents = [];
+
+  for (let syllable of syllableList) {
+    neumeComponents.push(...syllable.neumeComponents);
+  }
+
+  return neumeComponents;
+}
+
+/**
+ * Represent square neume component using base-7 value
+ * Septenary = pitch * 7^0 + octave * 7^1
+ * @param {NeumeComponentSQ} ncSQ the square neume component of interest
+ * @returns the septenary value of the square neume component
+ */
+export function toSeptenary(ncSQ) {
+  const sq_pitch = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
+  return Number(sq_pitch.indexOf(ncSQ.pitch)) + Number(ncSQ.octave) * 7;
 }
