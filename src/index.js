@@ -1,7 +1,7 @@
 import {
     viewDatabaseButton,
     searchModeButton, crossComparisonModeButton,
-    refreshStatus, clientVersion, refreshWheel,
+    clientStatus, clientVersion, refreshWheel,
     databaseList,
     aquitanianCheckbox, squareCheckbox,
     modeCheckboxes, allModeCheckbox, unknownModeCheckbox,
@@ -12,6 +12,7 @@ import {
     clearPatternInputButton,
     customGABCCheckbox,
     aquitanianPitchCheckbox,
+    melodicSearchError,
 } from './DOMelements.mjs';
 import {
     persist, retrieve, env
@@ -100,6 +101,11 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     persist('version', buildVersion);
+    invalidOptions();
+});
+
+window.addEventListener("change", () => {
+    invalidOptions();
 });
 
 /* --------------- TOP BUTTON Event Listeners --------------- */
@@ -257,10 +263,40 @@ melismaDecrement.addEventListener("click", () => {
     persist('melismaInput', melismaInput.value);
 });
 
-// patternSearchTooltip.addEventListener("mouseover", () => {
-//     patternSearchTooltipContent.hidden = false;
-// });
+function invalidOptions() {
+    if(!aquitanianCheckbox.checked && !squareCheckbox.checked) {
+        clientStatus.textContent = "Please select at least one notation type";
+        clientStatus.style.color = "red";
+        clientStatus.hidden = false;
+        searchButton.disabled = true;
+        return;
+    }
 
-// patternSearchTooltip.addEventListener("mouseout", () => {
-//     patternSearchTooltipContent.hidden = true;
-// });
+    let allCheckboxUnchecked = () => {
+        for (let checkbox of modeCheckboxes) {
+            if (checkbox.checked) {
+                return false;
+            }
+        }
+        return true;
+    }
+    if(allCheckboxUnchecked() && !unknownModeCheckbox.checked) {
+        clientStatus.textContent = "Please select at least one mode";
+        clientStatus.style.color = "red";
+        clientStatus.hidden = false;
+        searchButton.disabled = true;
+        return;
+    }
+
+    if (!aquitanianCheckbox.checked && squareCheckbox.checked &&
+        allCheckboxUnchecked() && unknownModeCheckbox.checked) {
+        clientStatus.textContent = "Please select at least one mode or uncheck 'Unknown Mode'";
+        clientStatus.style.color = "red";
+        clientStatus.hidden = false;
+        searchButton.disabled = true;
+        return;
+    } else {
+        clientStatus.hidden = true;
+        searchButton.disabled = false;
+    }
+}

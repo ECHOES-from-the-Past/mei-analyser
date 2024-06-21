@@ -6,7 +6,7 @@ export const searchModeButton = document.getElementById('search-mode-btn');
 export const crossComparisonModeButton = document.getElementById('cross-comparison-mode-btn');
 
 /** @type {HTMLElement} */
-export const refreshStatus = document.getElementById('refresh-status');
+export const clientStatus = document.getElementById('client-status');
 
 /** @type {HTMLDivElement} */
 export const refreshWheel = document.getElementById('refresh-wheel');
