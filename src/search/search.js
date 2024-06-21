@@ -1,4 +1,4 @@
-import { Chant, NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList } from "../database/components.js";
+import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList } from "../database/components.js";
 import { drawSVGFromMEIContent, highlightPattern, env, displayCertainty } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
@@ -572,8 +572,8 @@ async function printChantInformation(chant) {
     "Source": chant.source,
     "Music script": chant.notationType,
     "Mode": chant.mode == -1 ? "Unknown" : chant.mode,
-    "Mode Certainty": chant.modeCertainty == undefined ? "-" : displayCertainty(chant.modeCertainty),
-    "Mode Description": chant.modeDescription == undefined ? "-" : chant.modeDescription,
+    "Mode Certainty": displayCertainty(chant.modeCertainty),
+    "Mode Description": chant.modeDescription,
     "MEI File": chant.fileName,
     "PEM Database URL": chant.pemDatabaseUrls,
   };

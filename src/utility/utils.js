@@ -75,9 +75,10 @@ export function drawSVGFromMEIContent(meiContent) {
     let verovioToolkit = new verovio.toolkit();
 
     // Setting options for the toolkit
-    let zoom = 80;
+    let zoom = 70;
+
     verovioToolkit.setOptions({
-      pageWidth: document.body.clientWidth * 60 / zoom,
+      pageWidth: document.getElementById("chant-svg").offsetWidth / zoom * 100,
       adjustPageHeight: true,
       shrinkToFit: true,
       scale: zoom,
