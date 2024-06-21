@@ -20,8 +20,12 @@ import { Octokit } from "@octokit/core";
 */
 function displayRating(certaintyPercentage) {
     return (certaintyPercentage.toFixed(2) * 100).toFixed(0) + "%";
-  }
+}
 
+/**
+ * @param {string} meiContent 
+ * @returns {JSON} the JSON object of the MEI content
+ */
 function parseMEIContentToJSON(meiContent) {
     let meiJSON = {};
     xml2js.parseString(meiContent, (err, result) => {
@@ -54,13 +58,42 @@ function getDatabaseUrls(meiJSON) {
 }
 
 /**
+ * 
+ * @param {JSON} meiJSON 
+ * @returns {{line:number, shape:string}} the line and the shape of the clef
+ */
+function getClefInformation(meiJSON, notationType, modeDescription) {
+    let clef = {
+        "line": 0,
+        "shape": null
+    }
+
+    // only worls for square notation with <clef> field
+    if (notationType === "square") {
+        const clefJSON = meiJSON.mei.music[0].body[0].mdiv[0].score[0].section[0].staff[0].layer[0].clef[0];
+        clef.line = Number(clefJSON.$.line);
+        clef.shape = clefJSON.$.shape;
+    } else if (notationType === "aquitanian") {
+        // see issue https://github.com/ECHOES-from-the-Past/mei-analyser/issues/52 for reference
+        clef.line = 0;
+        clef.shape = modeDescription.match(/'[A-G]'/) ? modeDescription.match(/'[A-G]'/)[0].replace(/'/g, '') : null;
+    }
+    return clef;
+}
+
+/**
  * Obtain the title of the chant
+ * @returns {string} the title of the chant
  */
 function getChantTitle(meiJSON) {
     const title = meiJSON.mei.meiHead[0].fileDesc[0].titleStmt[0].title[0];
     return title;
 }
 
+/**
+ * Get the source of the chant
+ * @returns {string} the source of the chant
+ */
 function getSource(meiJSON) {
     const source = meiJSON.mei.meiHead[0].manifestationList[0].manifestation[0].itemList[0].item[0].identifier;
     return source;
@@ -71,6 +104,12 @@ function getAllSyllables(meiJSON) {
     return allSyllables;
 }
 
+/**
+ * 
+ * @param {JSON} syllable 
+ * @param {string} notationType 
+ * @returns {Syllable} a syllable object
+ */
 function parseToSyllableObject(syllable, notationType) {
     const syl = syllable.syl[0];
     const sylWordId = syl.$["xml:id"];
@@ -129,6 +168,12 @@ function parseToSyllableObject(syllable, notationType) {
     return syllableObj;
 }
 
+/**
+ * 
+ * @param {JSON} allSyllables 
+ * @param {string} notationType 
+ * @returns {Syllable[]} an array of syllable objects
+ */
 function parseToSyllableArray(allSyllables, notationType) {
     let syllableArray = [];
     for (let syllable of allSyllables) {
@@ -141,10 +186,13 @@ function parseToSyllableArray(allSyllables, notationType) {
 /**
  * Helper function to calculate the mode of the Aquitanian chant.
  * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8 for Aquitanian mode detection
- * @returns {number} the mode of the chant. If the mode is not found, return -1
+ * @returns {[number, number, string]} the mode, the certainty, and the descripion of the chant.
  */
 function calculateAquitanianMode(syllables) {
     let mode = -1;
+    let modeDescription = "";
+    let modeCertainty = 0;
+
     const neumeComponentList = getNeumeComponentList(syllables);
     // Checking last note
     const lastNote = neumeComponentList[neumeComponentList.length - 1];
@@ -165,33 +213,44 @@ function calculateAquitanianMode(syllables) {
 
     if (allWithSETiltLoc.length <= 1) {
         mode = -1;
-        return mode;
+        return [mode, modeCertainty, "The mode of the Aquitanian chant is unknown, no rhombus shapes are detected"];
     }
 
     let lastNoteLoc = lastNote.loc;
     if (lastNoteLoc == -2 && neg1pos3) {
         mode = 1;
+        modeDescription = "Mode 1 is detected. The pitch of the line is 'F'";
     } else if (lastNoteLoc == 0 && neg2pos1) {
         mode = 2;
+        modeDescription = "Mode 2 is detected. The pitch of the line is 'D'";
     } else if (lastNoteLoc == -2 && neg2pos2) {
         mode = 3;
-    } else if (lastNoteLoc == 0 && zeroneg3pos4) {
-        mode = 4;
+        modeDescription = "Mode 3 is detected. The pitch of the line is 'G'";
     } else if (lastNoteLoc == -1 && neg1pos3) {
         mode = 4;
+        modeDescription = "Mode 4 is detected. The pitch of the line is 'F'";
+    } else if (lastNoteLoc == 0 && zeroneg3pos4) { // rare case
+        mode = 4;
+        modeDescription = "Mode 4 is detected. The pitch of the line is 'E'";
     } else if (lastNoteLoc == -2 && neg3pos1) {
         mode = 5;
+        modeDescription = "Mode 5 is detected. The pitch of the line is 'A'";
     } else if (lastNoteLoc == 0 && neg1pos3) {
         mode = 6;
+        modeDescription = "Mode 6 is detected. The pitch of the line is 'F'";
     } else if (lastNoteLoc == -2 && zeropos3) {
         mode = 7;
+        modeDescription = "Mode 7 is detected. The pitch of the line is 'B'";
     } else if (lastNoteLoc == 0 && neg2pos2) {
         mode = 8;
+        modeDescription = "Mode 8 is detected. The pitch of the line is 'G'";
     } else { // if all conditions fails
         mode = -1;
+        modeDescription = "The mode of the Aquitanian chant is unknown";
     }
+    modeCertainty = mode == -1 ? 0 : 1;
 
-    return mode;
+    return [mode, modeCertainty, modeDescription];
 }
 
 /**
@@ -542,25 +601,22 @@ function calculateSquareMode(syllables) {
     return [mode, rating, modeDescription];
 }
 
-/** 
- * @property {string} meiContent the content of the .mei file
- * @property {string} fileName the name of the .mei file
- * @property {string} title the title of the chant
- * @property {string} source the source of the chant
- * @property {string} notationType the notation type of the chant (either "aquitanian" or "square")
- * @property {Syllable[]} syllables an array of all the syllables in the chant
- * @property {number} mode the mode of the chant
- * @property {number} modeCertainty the certainty of the mode detection
- * @property {string} modeDescription an explaination of the mode detection
- * @property {string[]} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
-*/
 export class Chant {
     /**
      * Constructing a Chant object from a .mei file content
      * @param {MEI_Content} meiContent The content of the .mei file
-     * @param {String} filePath the path of the .mei file
+     * @param {String} fileName the path of the .mei file
+     * @param {String} title the title of the chant
+     * @param {String} source the source of the chant
+     * @param {String} notationType the notation type of the chant (either "aquitanian" or "square")
+     * @param {Syllable[]} syllables an array of all the syllables in the chant
+     * @param {number} mode the mode of the chant
+     * @param {number} modeCertainty the certainty of the mode detection
+     * @param {String} modeDescription an explaination of the mode detection
+     * @param {String} clef the clef of the chant
+     * @param {String[]} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
      */
-    constructor(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, pemDatabaseUrls) {
+    constructor(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, clef, pemDatabaseUrls) {
         this.meiContent = meiContent;
         this.fileName = fileName;
         this.title = title;
@@ -570,44 +626,10 @@ export class Chant {
         this.mode = mode;
         this.modeCertainty = modeCertainty;
         this.modeDescription = modeDescription;
+        this.clef = clef;
         this.pemDatabaseUrls = pemDatabaseUrls;
     }
 }
-
-async function test() {
-    const testFile = await fetch("https://raw.githubusercontent.com/ECHOES-from-the-Past/GABCtoMEI/main/MEI_outfiles/antiphonae_ad_communionem/002_C02_benedicite-omnes_pem85041_square_SQUARE.mei")
-        .then(response => response.text())
-
-    let testMeiJSON = parseMEIContentToJSON(testFile);
-
-    // console.log(testMeiJSON.mei.music[0].body[0].mdiv[0].score[0].section[0].staff[0].layer[0].syllable[0]);
-
-    let notationType = getNotationType(testMeiJSON);
-    let pemDatabaseUrls = getDatabaseUrls(testMeiJSON);
-    let title = getChantTitle(testMeiJSON);
-    let source = getSource(testMeiJSON);
-    let allSyllables = getAllSyllables(testMeiJSON);
-    let syllables = parseToSyllableArray(allSyllables, notationType);
-
-    let mode, modeCertainty, modeDescription;
-    if (notationType === "aquitanian") {
-        mode = calculateAquitanianMode(syllables);
-        modeCertainty = mode === -1 ? 0 : 1;
-        modeDescription = `The Aquitanian mode of the chant is ${mode}`;
-    } else if (notationType === "square") {
-        [mode, modeCertainty, modeDescription] = calculateSquareMode(syllables);
-    }
-
-    // let mode, modeCertainty, modeDescription = [null, null, null];
-    let chant = new Chant(testFile, "test.mei", title, source,
-        notationType, syllables,
-        mode, modeCertainty, modeDescription,
-        pemDatabaseUrls);
-
-    fs.writeFileSync("src/database/testChant.json", JSON.stringify([chant]), 'utf8');
-}
-
-// test();
 
 /**
  * Use authentication token to increase the rate limit for the GitHub API
@@ -648,28 +670,27 @@ allMEIfiles = allMEIfiles.filter((file) => {
 // Get all the content of the MEI files and parse them into Chant objects
 let allChants = [];
 
-for (let file of allMEIfiles) {
-    let meiContent = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${file}`)
+for (let fileName of allMEIfiles) {
+    let meiContent = await fetch(`https://raw.githubusercontent.com/${OWNER}/${REPO}/main/${fileName}`)
         .then(response => response.text());
 
     let meiJSON = parseMEIContentToJSON(meiContent);
-    let notationType = getNotationType(meiJSON);
-    let pemDatabaseUrls = getDatabaseUrls(meiJSON);
     let title = getChantTitle(meiJSON);
     let source = getSource(meiJSON);
+    let notationType = getNotationType(meiJSON);
     let allSyllables = getAllSyllables(meiJSON);
     let syllables = parseToSyllableArray(allSyllables, notationType);
 
     let mode, modeCertainty, modeDescription;
     if (notationType === "aquitanian") {
-        mode = calculateAquitanianMode(syllables);
-        modeCertainty = mode === -1 ? 0 : 1;
-        modeDescription = `The detected mode of the chant is ${mode}`;
+        [mode, modeCertainty, modeDescription] = calculateAquitanianMode(syllables);
     } else if (notationType === "square") {
         [mode, modeCertainty, modeDescription] = calculateSquareMode(syllables);
     }
+    let clef = getClefInformation(meiJSON, notationType, modeDescription);
 
-    let chant = new Chant(meiContent, file, title, source, notationType, syllables, mode, modeCertainty, modeDescription, pemDatabaseUrls);
+    let pemDatabaseUrls = getDatabaseUrls(meiJSON);
+    let chant = new Chant(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, clef, pemDatabaseUrls);
     allChants.push(chant);
 }
 
