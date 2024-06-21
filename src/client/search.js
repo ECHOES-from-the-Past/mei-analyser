@@ -1,5 +1,5 @@
 import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList } from "../utility/components.js";
-import { drawSVGFromMEIContent, highlightPattern, env, displayCertainty } from "../utility/utils.js";
+import { drawSVGFromMEIContent, highlightPattern, env, displayCertainty, spotlightNeumeComponent } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
@@ -275,7 +275,7 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
     patternInputStatus.hidden = false;
     return [];
   }
-  
+
   if (searchQueryList.length === 0) {
     patternInputStatus.hidden = false;
     patternInputStatus.textContent = "Invalid melodic pattern options/input. Please check your search mode selection or query.\n";
@@ -553,6 +553,14 @@ export function showSearchResult(resultChantList) {
 
       for (let pattern of melodicPattern) {
         highlightPattern(pattern);
+      }
+
+      // Spotlight the melisma
+      let melismaMin = melismaInput.value;
+      for (let syllable of chant.syllables) {
+        if (syllable.neumeComponents.length >= melismaMin) {
+          syllable.neumeComponents.forEach(nc => spotlightNeumeComponent(nc, 'var(--melisma-spotlight-fill)', 'var(--melisma-spotlight-stroke)'));
+        }
       }
     });
 

@@ -29,10 +29,15 @@
 
   --melisma-text: hsl(0, 100%, 16%);
   --melisma-background: hsla(138, 100%, 72%, 0.4);
+  --melisma-spotlight-fill: hsla(138, 100%, 72%, 0.2);
+  --melisma-spotlight-stroke: hsl(138, 100%, 72%);
 
   /* Default highlighting colours */
   --highlight-fill: hsl(276, 74%, 51%);
   --highlight-stroke: hsl(276, 100%, 31%);
+
+  --spotlight-fill: hsla(276, 74%, 51%, 0.075);
+  --spotlight-stroke: hsla(276, 100%, 31%, 0.466);
 
   /* Gap highlighting */
   --gap-side-note-fill: hsla(339, 100%, 50%, 0.3);
