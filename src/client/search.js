@@ -308,7 +308,7 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
 
 /**
  * Perform highlighting when user clicks on "Search" button
- * @return {"chant": Chant[]} list of chants that match the search query
+ * @return {Chant[]} list of chants that match the search query
  */
 export async function performSearch() {
   const databaseURL = env == "development" ? "src/database/database.json" : "./database.json";
