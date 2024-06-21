@@ -21,6 +21,8 @@ import {
     performSearch, showSearchResult
 } from './client/search.js';
 
+import packageJSON from '../package.json';
+
 
 /* ----------------------- Persistence Layer ----------------------- */
 function loadPersistedSearchOptions() {
@@ -80,9 +82,8 @@ window.onresize = () => {
 /**
 * Load predefined files when DOM is loaded
 */
-document.addEventListener("DOMContentLoaded", async () => {
-    const buildVersion = await fetch("../package.json")
-        .then(response => response.json().version);
+document.addEventListener("DOMContentLoaded", () => {
+    const buildVersion = packageJSON.version;
 
     loadPersistedSearchOptions();
 
