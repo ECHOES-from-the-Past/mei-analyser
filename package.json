@@ -2,6 +2,7 @@
   "name": "mei-analyser",
   "version": "0.4.1",
   "devDependencies": {
+    "@types/xml2js": "^0.4.14",
     "vite": ">=5.2.6"
   },
   "private": true,
