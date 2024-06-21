@@ -1,5 +1,5 @@
-import { NeumeComponentAQ, NeumeComponentSQ } from "../database/components.js";
-import { needlemanWunsch_nc } from "./needleman-wunsch.js";
+import { NeumeComponentAQ, NeumeComponentSQ } from "../utility/components.js";
+import { needlemanWunsch_nc } from "../algorithms/needleman-wunsch.js";
 
 
 function location_septenary_mapping(NeumeComponentPattern) {

@@ -1,4 +1,9 @@
-import { NeumeComponent } from '../database/components.js';
+import { NeumeComponent } from './components.js';
+
+/*
+Note for utility functions: These functions are primarily used on the client side (DOM)
+and are not used in the server-side code. Be aware when importing these functions.
+*/
 
 export const env = import.meta.env.MODE; // 'development' or 'production'
 console.debug(`Current environment: ${env}`);
@@ -27,39 +32,6 @@ export async function loadMEIFile(fileName) {
     .catch((error) => {
       console.error(`Error: ${error}`);
     });
-}
-
-/**
- * Draw the MEI content to the screen on a specific slot/order (1: left, 2: right)
- * @param {string} meiContent file content of the MEI file
- * @param {Number} order 1 for left position, 2 for right position
- */
-export async function drawMEIContent(meiContent, order) {
-  try {
-    // This line initializes the Verovio toolkit
-    let verovioToolkit = new verovio.toolkit();
-
-    // Setting options for the toolkit
-    let zoom = 80;
-    verovioToolkit.setOptions({
-      pageWidth: document.body.clientWidth * 50 / zoom,
-      adjustPageHeight: true,
-      shrinkToFit: true,
-      scale: zoom,
-      footer: "none",
-    });
-
-    verovioToolkit.loadData(meiContent);
-    let svg = verovioToolkit.renderToSVG(1);
-
-    // Get the div element to render the MEI content and set the innerHTML to the SVG content
-    const meifile = document.getElementById("mei-file-" + order);
-    meifile.innerHTML = svg;
-
-  } catch (error) {
-    console.error(error);
-    console.log("Please reload the page and try again.");
-  }
 }
 
 /**

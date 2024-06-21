@@ -10,6 +10,8 @@ import {
     searchButton,
     melismaIncrement, melismaDecrement, melismaInput,
     clearPatternInputButton,
+    customGABCCheckbox,
+    aquitanianPitchCheckbox,
 } from './DOMelements.mjs';
 import {
     persist, retrieve, env
@@ -17,7 +19,7 @@ import {
 import {
     clearSearchResultsAndInfo,
     performSearch, showSearchResult
-} from './search/search.js';
+} from './client/search.js';
 
 
 /* ----------------------- Persistence Layer ----------------------- */
@@ -47,15 +49,16 @@ function loadPersistedSearchOptions() {
         case 'exact-pitch':
             exactPitchRadio.checked = true;
             break;
-        case 'indefinite-pitch':
-            indefinitePitchRadio.checked = true;
-            break;
         case 'contour':
             contourRadio.checked = true;
             break;
     }
 
     patternInputBox.value = retrieve('patternInputBox');
+
+    // Other options
+    customGABCCheckbox.checked = retrieve('customGABCCheckbox');
+    aquitanianPitchCheckbox.checked = retrieve('aquitanianPitchCheckbox');
 }
 
 let databaseIsOpen = false;
@@ -191,10 +194,6 @@ contourRadio.addEventListener("change", () => {
     persist('melodicPatternSearchMode', 'contour')
 });
 
-// indefinitePitchRadio.addEventListener("change", () => {
-//     persist('melodicPatternSearchMode', 'indefinite-pitch')
-// });
-
 patternInputBox.addEventListener("input", () => {
     persist('patternInputBox', patternInputBox.value);
 });
@@ -208,6 +207,17 @@ patternInputBox.addEventListener("keydown", (event) => {
     if (event.key === "Enter") {
         searchButton.click();
     }
+});
+
+customGABCCheckbox.addEventListener("change", () => {
+    persist('customGABCCheckbox', customGABCCheckbox.checked);
+    document.querySelectorAll('.custom-gabc').forEach((element) => {
+        element.hidden = !customGABCCheckbox.checked;
+    });
+});
+
+aquitanianPitchCheckbox.addEventListener("change", () => {
+    persist('aquitanianPitchCheckbox', aquitanianPitchCheckbox.checked);
 });
 
 /* --------------- DATABASE PANEL PERSISTANCE --------------- */
