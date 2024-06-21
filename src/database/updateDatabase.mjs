@@ -424,27 +424,22 @@ function calculateSquareMode(syllables) {
 
     if (sortedCounts[0] === plagalRepercussioPitch) { // case (i)
         plagalRepercussioRating += 1;
-        repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the most repeated note\
-          (${counts[plagalRepercussioPitch]} times). `;
+        repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the most repeated note (${counts[plagalRepercussioPitch]} times). `;
     } else {
         if (sortedCounts[1] === plagalRepercussioPitch && sortedCounts[0] === finalisPitch) { // case (ii)
             plagalRepercussioRating += 0.75;
-            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the second most repeated note\
-            (${counts[plagalRepercussioPitch]} times) `;
+            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the second most repeated note (${counts[plagalRepercussioPitch]} times) `;
             repercussioPlagDesc += `after finalis '${finalisPitch.toUpperCase()}'. `;
         } else if (sortedCounts[1] === plagalRepercussioPitch && sortedCounts[0] !== finalisPitch) { // case (iii)
             plagalRepercussioRating += 0.5;
-            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the second most repeated note\
-            (${counts[plagalRepercussioPitch]} times) `
+            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the second most repeated note (${counts[plagalRepercussioPitch]} times) `
             repercussioPlagDesc += `after a note other than finalis '${finalisPitch.toUpperCase()}'. `;
         } else if (sortedCounts[2] === plagalRepercussioPitch) { // case (iv)
             plagalRepercussioRating += 0.25;
-            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the third most repeated note\
-            (${counts[plagalRepercussioPitch]} times). `;
+            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the third most repeated note (${counts[plagalRepercussioPitch]} times). `;
         } else if (sortedCounts[3] === plagalRepercussioPitch) { // case (v)
             plagalRepercussioRating += 0.125;
-            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is  the fourth most repeated note\
-            (${counts[plagalRepercussioPitch]} times). `;
+            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is  the fourth most repeated note (${counts[plagalRepercussioPitch]} times). `;
         } else {
             repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is not among the most repeated notes. `;
         }
@@ -464,7 +459,7 @@ function calculateSquareMode(syllables) {
         modeFromRepercussio = plagalMode;
         repercussioSuggestion += `<b> Repercussio suggests plagal mode '${modeFromRepercussio}' with ${displayRating(plagalRepercussioRating)} certainty.</b>`;
     }
-    repercussioDesc += repercussioSuggestion + "</p>";
+    repercussioDesc += repercussioSuggestion + "</p>" + "</ul>"; // close the repercussio description
 
     modeDescription += repercussioDesc;
 
@@ -548,18 +543,19 @@ function calculateSquareMode(syllables) {
     [ambitusPlagalRating, lowerOctavePlagal, upperOctavePlagal] = pitchRangeRate('plagal', ambitusPlagalRange);
 
     let ambitusAuthDesc = '<li>';
-    ambitusAuthDesc += `For the authentic mode (mode '${authenticMode}'): <b>${displayRating(ambitusAuthenticRating)}</b> of the notes\
-        are within the range '${ambitusAuthenticRange.toUpperCase()}-${ambitusAuthenticRange.toUpperCase()}'\
-        (${ambitusAuthenticRange.toUpperCase()}${lowerOctaveAuthentic}-${ambitusAuthenticRange.toUpperCase()}${upperOctaveAuthentic}).`;
-
+    ambitusAuthDesc += `For the authentic mode (mode '${authenticMode}'): <b>${displayRating(ambitusAuthenticRating)}</b> of the notes `;
+    ambitusAuthDesc += `are within the range '${ambitusAuthenticRange.toUpperCase()}-${ambitusAuthenticRange.toUpperCase()}' `;
+    ambitusAuthDesc += `(${ambitusAuthenticRange.toUpperCase()}${lowerOctaveAuthentic}-${ambitusAuthenticRange.toUpperCase()}${upperOctaveAuthentic}).`;
+    ambitusAuthDesc += "</li>";
 
     let ambitusPlagDesc = '<li>';
-    ambitusPlagDesc += `For the plagal mode (mode '${plagalMode}'): <b>${displayRating(ambitusPlagalRating)}</b> of the notes\
-        are within the range '${ambitusPlagalRange.toUpperCase()}-${ambitusPlagalRange.toUpperCase()}'\
-        (${ambitusPlagalRange.toUpperCase()}${lowerOctavePlagal}-${ambitusPlagalRange.toUpperCase()}${upperOctavePlagal}).`;
+    ambitusPlagDesc += `For the plagal mode (mode '${plagalMode}'): <b>${displayRating(ambitusPlagalRating)}</b> of the notes `;
+    ambitusPlagDesc += `are within the range '${ambitusPlagalRange.toUpperCase()}-${ambitusPlagalRange.toUpperCase()}' `;
+    ambitusPlagDesc += `(${ambitusPlagalRange.toUpperCase()}${lowerOctavePlagal}-${ambitusPlagalRange.toUpperCase()}${upperOctavePlagal}).`;
+    ambitusPlagDesc += "</li>";
 
-    ambitusDesc += ambitusAuthDesc + "</li>";
-    ambitusDesc += ambitusPlagDesc + "</li>";
+    ambitusDesc += ambitusAuthDesc;
+    ambitusDesc += ambitusPlagDesc;
 
     // Ambitus suggestion
     let ambitusSuggestion = "<p>";
@@ -575,25 +571,26 @@ function calculateSquareMode(syllables) {
     }
 
     ambitusDesc += ambitusSuggestion + "</p>";
-    modeDescription += ambitusDesc;
+    modeDescription += ambitusDesc + "</ul>"; // close the ambitus description
+
+    modeDescription += "</ul>";
 
     // Conclusion
     let authenticRating = (authenticRepercussioRating + ambitusAuthenticRating) / 2;
     let plagalRating = (plagalRepercussioRating + ambitusPlagalRating) / 2;
-    let conclusion = "<p>";
-    conclusion += `<b><u> Authentic mode '${authenticMode}' has ${displayRating(authenticRating)} certainty | `;
+
+    let conclusion = "<li style='list-style-type: none;'>";
+    conclusion += `&emsp; <b><u> Authentic mode '${authenticMode}' has ${displayRating(authenticRating)} certainty | `;
     conclusion += `Plagal mode '${plagalMode}' has ${displayRating(plagalRating)} certainty.</u></b>`;
+    conclusion += "</li>";
 
-    modeDescription += conclusion + "</p>";
-
-    modeDescription += "</ul>";
+    modeDescription += conclusion;
 
     // Calculate the final mode and rating
     if (authenticRating > plagalRating) {
         mode = authenticMode;
         rating = authenticRating;
-    }
-    else {
+    } else {
         mode = plagalMode;
         rating = plagalRating;
     }
