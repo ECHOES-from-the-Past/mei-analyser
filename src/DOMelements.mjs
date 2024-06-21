@@ -81,7 +81,7 @@ export const exactPitchRadio = document.getElementById('exact-pitch-radio');
 export const clearPatternInputButton = document.getElementById('clear-pattern-input-btn');
 
 /** @type {HTMLInputElement} */
-export const melodicSearchError = document.getElementById('melodic-search-error');
+export const patternInputStatus = document.getElementById('pattern-input-status');
 
 /** @type {HTMLInputElement} */
 export const customGABCCheckbox = document.getElementById('custom-gabc-checkbox');

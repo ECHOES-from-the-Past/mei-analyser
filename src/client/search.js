@@ -7,7 +7,7 @@ import {
   modeCheckboxes, unknownModeCheckbox,
   melismaInput,
   contourRadio, exactPitchRadio, patternInputBox,
-  melodicSearchError,
+  patternInputStatus,
   searchResultInfo,
   customGABCCheckbox,
   aquitanianPitchCheckbox
@@ -111,18 +111,22 @@ function processSearchPattern(searchPattern, searchMode) {
 
   let melodyList = [];
 
-  melodicSearchError.hidden = true;
+  patternInputStatus.hidden = true;
   if (searchMode == 'exact-pitch') {
     melodyList = searchPattern.match(alphabetMelodicRegex);
     // In case the user input is empty, regex will return null
     if (melodyList == null) return [];
     melodyList = melodyList.map(pitch => pitch.toLowerCase());
-  } else if (searchMode == 'indefinite-pitch' || searchMode == 'contour') {
+  } else if (searchMode == 'contour') {
     melodyList = searchPattern.match(numericMelodyRegex);
     // In case the user input is empty, regex will return null
     if (melodyList == null) return [];
     melodyList = melodyList.map(Number);
   }
+
+  patternInputStatus.hidden = false;
+  patternInputStatus.textContent = `Query detected: [${melodyList.join(", ")}]`;
+  patternInputStatus.style.color = "green";
 
   return melodyList;
 }
@@ -160,6 +164,8 @@ function processExactPitchMelodicPattern(chant, searchQueryList) {
 }
 
 /**
+ * @deprecated for being unused
+ * 
  * Only works for Aquitanian notation chants
  * @param {Chant} chant The chant object, assuming it's in Aquitanian notation
  * @param {string[]} searchQueryList in the form of [-1, 1, 0, -1, 2] for example
@@ -247,8 +253,7 @@ function processContourMelodicPattern(chant, searchQueryList) {
  * 
  * Search mode options:
  * - `exact-pitch` ~ Square pitch pattern (alphabetical value)
- * - `indefinite-pitch` ~ Aquitanian pitch pattern (numerical value)
- * - `contour` ~ Aquitanian/Square contour pattern (numerical)
+ * - `contour` ~ Aquitanian/Square contour pattern (numerical value)
  * @param {Chant[]} chantList
  * @param {string} searchPattern
  * @param {string} searchMode 
@@ -266,9 +271,16 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
     searchQueryList = processSearchPattern(searchPattern, searchMode);
   } catch (error) {
     console.error(error);
-    melodicSearchError.textContent = "Invalid melodic pattern options. Please check your search mode selection or query.";
-    melodicSearchError.hidden = false;
-    return;
+    patternInputStatus.textContent = "Invalid melodic pattern options/input. Please check your search mode selection or query.";
+    patternInputStatus.hidden = false;
+    return [];
+  }
+  
+  if (searchQueryList.length === 0) {
+    patternInputStatus.hidden = false;
+    patternInputStatus.textContent = "Invalid melodic pattern options/input. Please check your search mode selection or query.\n";
+    patternInputStatus.style.color = "red";
+    return [];
   }
 
   if (searchMode == 'contour') {
@@ -282,15 +294,6 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
     for (let chant of chantList) {
       if (chant.notationType == "square") {
         let patterns = processExactPitchMelodicPattern(chant, searchQueryList);
-        if (patterns.length > 0) {
-          resultChantList.push(chant);
-        }
-      }
-    }
-  } else if (searchMode == 'indefinite-pitch') {
-    for (let chant of chantList) {
-      if (chant.notationType == "aquitanian") {
-        let patterns = processIndefinitePitchMelodicPattern(chant, searchQueryList);
         if (patterns.length > 0) {
           resultChantList.push(chant);
         }
@@ -462,7 +465,7 @@ export function showSearchResult(resultChantList) {
       }
 
       const octaveKeys = ["c", "d", "e", "f", "g", "a", "b"];
-      
+
       if (position == "s" || position == "i") {
         // standard syllable
         // initial syllable
@@ -546,9 +549,8 @@ export function showSearchResult(resultChantList) {
         melodicPattern = processContourMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
       } else if (exactPitchRadio.checked) {
         melodicPattern = processExactPitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
-      } else if (indefinitePitchRadio.checked) {
-        melodicPattern = processIndefinitePitchMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
       }
+
       for (let pattern of melodicPattern) {
         highlightPattern(pattern);
       }

@@ -12,7 +12,7 @@ import {
     clearPatternInputButton,
     customGABCCheckbox,
     aquitanianPitchCheckbox,
-    melodicSearchError,
+    patternInputStatus,
 } from './DOMelements.mjs';
 import {
     persist, retrieve, env
