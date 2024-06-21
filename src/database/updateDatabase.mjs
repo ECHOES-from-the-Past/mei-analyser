@@ -601,36 +601,6 @@ function calculateSquareMode(syllables) {
     return [mode, rating, modeDescription];
 }
 
-export class Chant {
-    /**
-     * Constructing a Chant object from a .mei file content
-     * @param {MEI_Content} meiContent The content of the .mei file
-     * @param {String} fileName the path of the .mei file
-     * @param {String} title the title of the chant
-     * @param {String} source the source of the chant
-     * @param {String} notationType the notation type of the chant (either "aquitanian" or "square")
-     * @param {Syllable[]} syllables an array of all the syllables in the chant
-     * @param {number} mode the mode of the chant
-     * @param {number} modeCertainty the certainty of the mode detection
-     * @param {String} modeDescription an explaination of the mode detection
-     * @param {String} clef the clef of the chant
-     * @param {String[]} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
-     */
-    constructor(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, clef, pemDatabaseUrls) {
-        this.meiContent = meiContent;
-        this.fileName = fileName;
-        this.title = title;
-        this.source = source;
-        this.notationType = notationType;
-        this.syllables = syllables;
-        this.mode = mode;
-        this.modeCertainty = modeCertainty;
-        this.modeDescription = modeDescription;
-        this.clef = clef;
-        this.pemDatabaseUrls = pemDatabaseUrls;
-    }
-}
-
 /**
  * Use authentication token to increase the rate limit for the GitHub API
  * For regular deployment of this project, 60 request per hour is more than enough,

@@ -9,9 +9,11 @@ import {
   contourRadio, exactPitchRadio, patternInputBox,
   melodicSearchError,
   searchResultInfo,
-  customGABCCheckbox
+  customGABCCheckbox,
+  aquitanianPitchCheckbox
 } from "../DOMelements.mjs";
 
+import { Chant } from "../database/components.js";
 /**
  * ----------------------- SEARCH -----------------------
  */
@@ -388,7 +390,9 @@ export function showSearchResult(resultChantList) {
    * */
   const fileNameRegex = /\d{3}_\w{1}\d{2}/;
 
-  /** Constructing the details of the table */
+  /** Constructing the details of the table 
+   * @type {Chant}
+  */
   for (let chant of resultChantList) {
     // create a result row for each chant
     let resultRow = document.createElement('tr');
@@ -458,6 +462,10 @@ export function showSearchResult(resultChantList) {
         word = wordWrapper.outerHTML;
       }
 
+      const octaveKeys = ["c", "d", "e", "f", "g", "a", "b"];
+      const clef = chant.clef.shape;
+      const gap = octaveKeys.indexOf(clef.toLowerCase());
+
       if (position == "s" || position == "i") {
         // standard syllable
         // initial syllable
@@ -465,7 +473,13 @@ export function showSearchResult(resultChantList) {
         if (chant.notationType == "square") {
           customGABC.push(`${word}(${syllable.neumeComponents.map(nc => nc.pitch).join("")})`);
         } else if (chant.notationType == "aquitanian") {
-          customGABC.push(`${word}(${syllable.neumeComponents.map(nc => nc.loc).join("")})`);
+          if (aquitanianPitchCheckbox.checked && chant.clef.shape != null) {
+            customGABC.push(`${word}(${syllable.neumeComponents.map(nc => {
+              return octaveKeys.at((nc.loc + 7 + gap) % 7);
+            }).join("")})`);
+          } else if (!aquitanianPitchCheckbox.checked) {
+            customGABC.push(`${word}(${syllable.neumeComponents.map(nc => nc.loc).join("")})`);
+          }
         }
       } else if (position == "m" || position == "t") {
         // medial syllable, add to the last syllable
@@ -474,7 +488,13 @@ export function showSearchResult(resultChantList) {
         if (chant.notationType == "square") {
           customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => nc.pitch).join("")})`;
         } else if (chant.notationType == "aquitanian") {
-          customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => nc.loc).join("")})`;
+          if (aquitanianPitchCheckbox.checked && chant.clef.shape != null) {
+            customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => {
+              return octaveKeys.at((nc.loc + 7 + gap) % 7);
+            }).join("")})`;
+          } else if (!aquitanianPitchCheckbox.checked) {
+            customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => nc.loc).join("")})`;
+          }
         }
       }
     }
@@ -509,9 +529,9 @@ export function showSearchResult(resultChantList) {
     // add the file name of the chant to row cell
     let displayChantBtn = document.createElement('button');
     displayChantBtn.textContent = "Display chant " + chant.fileName.match(fileNameRegex);
-    displayChantBtn.addEventListener("click", () => {
+    displayChantBtn.addEventListener("click", async () => {
       // Display the chant information (file name, notation type, mode, etc.)
-      printChantInformation(chant);
+      await printChantInformation(chant);
 
       // Set the box for the chant and draw the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
