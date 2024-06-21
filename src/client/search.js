@@ -462,9 +462,7 @@ export function showSearchResult(resultChantList) {
       }
 
       const octaveKeys = ["c", "d", "e", "f", "g", "a", "b"];
-      const clef = chant.clef.shape;
-      const gap = octaveKeys.indexOf(clef.toLowerCase());
-
+      
       if (position == "s" || position == "i") {
         // standard syllable
         // initial syllable
@@ -473,6 +471,8 @@ export function showSearchResult(resultChantList) {
           customGABC.push(`${word}(${syllable.neumeComponents.map(nc => nc.pitch).join("")})`);
         } else if (chant.notationType == "aquitanian") {
           if (aquitanianPitchCheckbox.checked && chant.clef.shape != null) {
+            const clef = chant.clef.shape;
+            const gap = octaveKeys.indexOf(clef.toLowerCase());
             customGABC.push(`${word}(${syllable.neumeComponents.map(nc => {
               return octaveKeys.at((nc.loc + 7 + gap) % 7);
             }).join("")})`);
@@ -488,6 +488,8 @@ export function showSearchResult(resultChantList) {
           customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => nc.pitch).join("")})`;
         } else if (chant.notationType == "aquitanian") {
           if (aquitanianPitchCheckbox.checked && chant.clef.shape != null) {
+            const clef = chant.clef.shape;
+            const gap = octaveKeys.indexOf(clef.toLowerCase());
             customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => {
               return octaveKeys.at((nc.loc + 7 + gap) % 7);
             }).join("")})`;
