@@ -22,7 +22,7 @@ permissions:
 
 # Allow one concurrent deployment
 concurrency:
-  group: 'pages'
+  group: 'deploy-production'
   cancel-in-progress: true
 
 jobs:
