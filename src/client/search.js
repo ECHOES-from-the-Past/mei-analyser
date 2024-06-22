@@ -203,6 +203,10 @@ function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
  * @returns 
  */
 function processContourMelodicPattern(chant, searchQueryList) {
+  if (searchQueryList.length == 0) {
+    return [];
+  }
+
   const ncArray = getNeumeComponentList(chant.syllables);
   const chantNotationType = chant.notationType;
 
@@ -275,7 +279,7 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
     patternInputStatus.hidden = false;
     return [];
   }
-  
+
   if (searchQueryList.length === 0) {
     patternInputStatus.hidden = false;
     patternInputStatus.textContent = "Invalid melodic pattern options/input. Please check your search mode selection or query.\n";
