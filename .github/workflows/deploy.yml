@@ -32,15 +32,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: ">=21.6.1"
-          cache: 'npm'
+          bun-version: "latest"
       - name: Install dependencies
-        run: npm install
+        run: bun install
       - name: Build Webpage & Documentation
-        run: npm run build
+        run: bun run build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
@@ -54,20 +53,19 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up Node
-        uses: actions/setup-node@v4
+      - name: Set up bun
+        uses: oven-sh/setup-bun@v1
         with:
-          node-version: ">=21.6.1"
-          cache: 'npm'
+          bun-version: "latest"
       - name: Install dependencies
-        run: npm install
+        run: bun install
       - name: Get the artifacts
         uses: actions/download-artifact@v4
         with:
           name: production-artifact
           path: ./dist
       - name: Run production database script
-        run: npm run database
+        run: bun run database
         env:
           NODE_ENV: production
       - name: Reupload artifact
@@ -75,7 +73,7 @@ jobs:
         with:
           name: production-artifact
           path: './dist' # Upload dist repository
-          retention-days: 90
+          retention-days: 7
           overwrite: true
   deploy:
     name: Deploy to GitHub Pages
@@ -96,7 +94,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: './dist' # Upload dist repository
-          retention-days: 90
+          retention-days: 7
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
