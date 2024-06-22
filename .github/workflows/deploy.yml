@@ -5,7 +5,7 @@ on:
   # Runs on pushes targeting the default branch
   push:
     branches: ['main']
-    paths: ['src/**', index.html, .github/workflows/*.yml]
+    paths: ['src/**', index.html, .github/workflows/*.yml, package.json]
 
   # Automatic build for every week, on Sunday at 3:00 AM
   schedule:
