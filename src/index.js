@@ -13,6 +13,7 @@ import {
     customGABCCheckbox,
     aquitanianPitchCheckbox,
     patternInputStatus,
+    melismaEnableCheckbox,
 } from './DOMelements.mjs';
 import {
     persist, retrieve, env
@@ -62,6 +63,7 @@ function loadPersistedSearchOptions() {
     // Other options
     customGABCCheckbox.checked = retrieve('customGABCCheckbox');
     aquitanianPitchCheckbox.checked = retrieve('aquitanianPitchCheckbox');
+    melismaEnableCheckbox.checked = retrieve('melismaEnableCheckbox');
 }
 
 let databaseIsOpen = false;
@@ -251,6 +253,10 @@ searchButton.addEventListener("click", async () => {
         showSearchResult(results);
         return results;
     });
+});
+
+melismaEnableCheckbox.addEventListener("change", () => {
+    persist('melismaEnableCheckbox', melismaEnableCheckbox.checked);
 });
 
 melismaIncrement.addEventListener("click", () => {

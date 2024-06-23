@@ -74,18 +74,28 @@
 }
 
 @-webkit-keyframes spin {
-  0% { -webkit-transform: rotate(0deg); }
-  100% { -webkit-transform: rotate(360deg); }
+  0% {
+    -webkit-transform: rotate(0deg);
+  }
+
+  100% {
+    -webkit-transform: rotate(360deg);
+  }
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Custom button styles */
 #devMode-btn {
-  position: absolute; 
+  position: absolute;
   right: 0;
   background-color: hsl(12, 100%, 72%);
   color: hsl(0, 0%, 0%);
@@ -133,7 +143,9 @@ button>a {
   text-decoration: none;
 }
 
-h1, h2, h3 {
+h1,
+h2,
+h3 {
   margin: 0 0 0.5rem 0;
   padding: 0 0;
 }
@@ -165,7 +177,8 @@ g {
   align-items: start;
 }
 
-#mei-display, #mei-file-select {
+#mei-display,
+#mei-file-select {
   text-align: center;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -187,7 +200,7 @@ g {
   justify-content: center;
 }
 
-#cross-comparison-result > p {
+#cross-comparison-result>p {
   word-wrap: break-word;
   margin: 0.5em;
 }
@@ -207,7 +220,7 @@ select {
 /* Styling for the search panel */
 #search-panel-grid {
   display: grid;
-  grid-template-columns: 1fr 2.7fr;
+  grid-template-columns: 1.2fr 2.7fr;
   gap: 1.2rem;
 }
 
@@ -229,14 +242,16 @@ select {
   font-size: 1.2rem;
 }
 
-#result-table>tbody>tr>td, #result-table>tbody>tr>a {
+#result-table>tbody>tr>td,
+#result-table>tbody>tr>a {
   text-align: center;
   padding: 0.5rem;
   border: 1px solid hsla(101, 70%, 16%, 0.678);
   height: inherit;
 }
 
-input[type="checkbox"]:hover, label:hover {
+input[type="checkbox"]:hover,
+label:hover {
   cursor: pointer;
   background-color: var(--background-hover);
 }
@@ -335,6 +350,12 @@ input#pattern-input-box {
 
 .error {
   color: var(--text-error);
+}
+
+#mode-grid {
+  display: flex;
+  justify-content: flex-start;
+  flex-wrap: wrap;
 }
 
 .nonselectable-text {

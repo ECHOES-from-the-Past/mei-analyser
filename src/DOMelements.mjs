@@ -87,6 +87,9 @@ export const patternInputStatus = document.getElementById('pattern-input-status'
 export const customGABCCheckbox = document.getElementById('custom-gabc-checkbox');
 
 /** @type {HTMLInputElement} */
+export const melismaEnableCheckbox = document.getElementById('melisma-enable-checkbox');
+
+/** @type {HTMLInputElement} */
 export const aquitanianPitchCheckbox = document.getElementById('aquitanian-pitch-checkbox');
 
 /** @type {HTMLButtonElement} */

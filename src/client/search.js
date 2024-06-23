@@ -10,7 +10,8 @@ import {
   patternInputStatus,
   searchResultInfo,
   customGABCCheckbox,
-  aquitanianPitchCheckbox
+  aquitanianPitchCheckbox,
+  melismaEnableCheckbox
 } from "../DOMelements.mjs";
 
 import { Chant } from "../utility/components.js";
@@ -444,10 +445,12 @@ export function showSearchResult(resultChantList) {
         wordWrapper.classList.add(ornamentalNC + "-word") // for CSS styling
       }
 
-      // Detect melismas with 6+ neume components
-      let melismaMin = melismaInput.value;
-      if (syllable.neumeComponents.length >= melismaMin) {
-        wordWrapper.classList.add("melisma-word");
+      if (melismaEnableCheckbox.checked) {
+        // Detect melismas with neume components
+        let melismaMin = melismaInput.value;
+        if (syllable.neumeComponents.length >= melismaMin) {
+          wordWrapper.classList.add("melisma-word");
+        }
       }
 
       if (melodicPattern.length > 0) {
