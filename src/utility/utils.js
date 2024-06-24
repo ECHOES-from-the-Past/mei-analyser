@@ -1,4 +1,6 @@
 import { NeumeComponent } from './components.js';
+import createVerovioModule from 'verovio/wasm';
+import { VerovioToolkit } from 'verovio/esm';
 
 /*
 Note for utility functions: These functions are primarily used on the client side (DOM)
@@ -39,31 +41,33 @@ export async function loadMEIFile(fileName) {
  * @param {MEI_FileContent} meiContent file content of the MEI file
  * @returns {SVGElement} SVG content of the MEI file
  */
-export function drawSVGFromMEIContent(meiContent) {
+export async function drawSVGFromMEIContent(meiContent) {
+  let svg;
   try {
     /** @type {SVGElement} */
-    let svg;
-    // This line initializes the Verovio toolkit
-    let verovioToolkit = new verovio.toolkit();
+    await createVerovioModule().then(VerovioModule => {
+      // This line initializes the Verovio toolkit
+      const verovioToolkit = new VerovioToolkit(VerovioModule);
 
-    // Setting options for the toolkit
-    let zoom = 70;
+      // Setting options for the toolkit
+      let zoom = 70;
 
-    verovioToolkit.setOptions({
-      pageWidth: document.getElementById("chant-svg").offsetWidth / zoom * 100,
-      adjustPageHeight: true,
-      shrinkToFit: true,
-      scale: zoom,
-      footer: "none",
+      verovioToolkit.setOptions({
+        pageWidth: document.getElementById("chant-svg").offsetWidth / zoom * 100,
+        adjustPageHeight: true,
+        shrinkToFit: true,
+        scale: zoom,
+        footer: "none",
+      });
+      verovioToolkit.loadData(meiContent);
+
+      svg = verovioToolkit.renderToSVG(1);
     });
-    verovioToolkit.loadData(meiContent);
-    svg = verovioToolkit.renderToSVG(1);
-
-    return svg;
   } catch (error) {
     console.error(error);
     console.log("Please reload the page and try again.");
   }
+  return svg;
 }
 
 /* ------------------------ HIGHLIGHTING SVGs --------------------------- */

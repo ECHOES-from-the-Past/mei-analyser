@@ -10,7 +10,8 @@ import {
   patternInputStatus,
   searchResultInfo,
   customGABCCheckbox,
-  aquitanianPitchCheckbox
+  aquitanianPitchCheckbox,
+  melismaEnableCheckbox
 } from "../DOMelements.mjs";
 
 import { Chant } from "../utility/components.js";
@@ -203,6 +204,10 @@ function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
  * @returns 
  */
 function processContourMelodicPattern(chant, searchQueryList) {
+  if (searchQueryList.length == 0) {
+    return [];
+  }
+
   const ncArray = getNeumeComponentList(chant.syllables);
   const chantNotationType = chant.notationType;
 
@@ -361,7 +366,7 @@ export async function performSearch() {
  * Show the search result on the screen
  * @param {Chant[]} resultChantList list of chants that match the search query
  */
-export function showSearchResult(resultChantList) {
+export async function showSearchResult(resultChantList) {
   searchResultDiv.innerHTML = '';
 
   /** @type {HTMLTableElement} */
@@ -440,10 +445,12 @@ export function showSearchResult(resultChantList) {
         wordWrapper.classList.add(ornamentalNC + "-word") // for CSS styling
       }
 
-      // Detect melismas with 6+ neume components
-      let melismaMin = melismaInput.value;
-      if (syllable.neumeComponents.length >= melismaMin) {
-        wordWrapper.classList.add("melisma-word");
+      if (melismaEnableCheckbox.checked) {
+        // Detect melismas with neume components
+        let melismaMin = melismaInput.value;
+        if (syllable.neumeComponents.length >= melismaMin) {
+          wordWrapper.classList.add("melisma-word");
+        }
       }
 
       if (melodicPattern.length > 0) {
@@ -539,7 +546,7 @@ export function showSearchResult(resultChantList) {
 
       // Set the box for the chant and draw the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
-      chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
+      chantSVG.innerHTML = await drawSVGFromMEIContent(chant.meiContent);
 
       chantDisplay.scrollIntoView({ behavior: "smooth" });
 
