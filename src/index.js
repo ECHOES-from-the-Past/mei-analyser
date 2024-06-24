@@ -14,6 +14,7 @@ import {
     aquitanianPitchCheckbox,
     patternInputStatus,
     melismaEnableCheckbox,
+    scrollUpButton,
 } from './DOMelements.mjs';
 import {
     persist, retrieve, env
@@ -119,6 +120,18 @@ searchModeButton.addEventListener("click", () => {
 crossComparisonModeButton.addEventListener("click", () => {
     document.getElementById('search-panel').hidden = true;
     document.getElementById('cross-comparison-panel').hidden = false;
+});
+
+window.onscroll = () => {
+    if (window.scrollY > 650) {
+        scrollUpButton.style.display = "block";
+    } else {
+        scrollUpButton.style.display = "none";
+    }
+}
+
+scrollUpButton.addEventListener("click", () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 /* --------------------- DATABASE --------------------- */
