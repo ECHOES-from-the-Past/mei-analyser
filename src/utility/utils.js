@@ -78,7 +78,7 @@ export async function drawSVGFromMEIContent(meiContent) {
  * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
  * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
  */
-export function spotlightNeumeComponent(neumeComponent, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
+export function spotlightNeumeComponent(neumeComponent, color = 'var(--spotlight-fill)', stroke_color = 'var(--spotlight-stroke)') {
   const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
   nc_svg.forEach((nc) => {
     const x_coord = nc.querySelector('use').attributes.getNamedItem('x').value;
@@ -116,6 +116,14 @@ export function highlightNeumeComponent(neumeComponent, color = 'var(--highlight
   });
 }
 
+export function highlightSvgElementById(svgID, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
+  const nc_svg = document.querySelectorAll(`[id="${svgID}"]`);
+  nc_svg.forEach((nc) => {
+    nc.style.fill = color;
+    nc.style.stroke = stroke_color;
+    nc.style.strokeWidth = '30px';
+  });
+}
 /**
  * 
  */
@@ -144,9 +152,9 @@ export function clearAllHighlights() {
  * Highlighting a pattern of neume components on the screen
  * @param {NeumeComponent[]} pattern an array neume components
  */
-export function highlightPattern(pattern) {
+export function highlightPattern(pattern, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)'){
   for (const nc of pattern) {
-    highlightNeumeComponent(nc);
+    highlightNeumeComponent(nc, color, stroke_color);
   }
 }
 
