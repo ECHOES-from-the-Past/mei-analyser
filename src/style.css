@@ -358,6 +358,10 @@ input#pattern-input-box {
   flex-wrap: wrap;
 }
 
+#mode-grid>* {
+  flex: 1 2 25%;
+}
+
 .nonselectable-text {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
