@@ -99,6 +99,9 @@ function filterByModes(chantList, modeCheckboxes, unknownModeCheckbox) {
   return resultChantList;
 }
 
+/**
+ * @returns {string} 'exact-pitch' or 'contour' based on the user's selection
+ */
 function getMelodicPatternSearchMode() {
   if (contourRadio.checked)
     return contourRadio.value;
@@ -106,6 +109,13 @@ function getMelodicPatternSearchMode() {
     return exactPitchRadio.value;
 }
 
+/**
+ * Process the search pattern using regexp
+ * @param {string} searchPattern raw string taken from the input box
+ * @param {string} searchMode 'exact-pitch' or 'contour'
+ * @returns {string[] | number[]} list of pitches or contours in the search pattern. 
+ * If the search pattern is empty, return an empty list [].
+ */
 function processSearchPattern(searchPattern, searchMode) {
   const numericMelodyRegex = /-?\d/g
   const alphabetMelodicRegex = /[A-Ga-g]/g
@@ -650,12 +660,20 @@ async function printChantInformation(chant) {
   }
 }
 
+/**
+ * @param {string} content raw string to be displayed in a table cell
+ * @returns {HTMLTableCellElement}
+ */
 function createTableCell(content) {
   let td = document.createElement('td');
   td.textContent = content;
   return td;
 }
 
+/**
+ * @param {any} content raw HTML content to be displayed in a table cell
+ * @returns {HTMLTableCellElement}
+ */
 function createTableCellHTML(content) {
   let td = document.createElement('td');
   td.innerHTML = content;
