@@ -14,6 +14,9 @@ export const refreshWheel = document.getElementById('refresh-wheel');
 /** @type {HTMLSpanElement} */
 export const clientVersion = document.getElementById('client-version');
 
+/** @type {HTMLButtonElement} */
+export const scrollUpButton = document.getElementById('scroll-up-btn');
+
 
 /* --------------------- Search-related --------------------- */
 /**
