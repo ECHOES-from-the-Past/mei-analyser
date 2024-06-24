@@ -13,6 +13,8 @@
   /* Reference for the attribute below: https://youtu.be/cH8VbLM1958 */
   min-width: 0;
 
+  --no-color: hsla(0, 0%, 0%, 0);
+
   /* Colour scheme */
   --button: hsl(170, 100%, 16%);
   --button-hover: hsla(182, 100%, 20%, 0.753);
@@ -27,8 +29,8 @@
   --oriscus-text: hsl(318, 100%, 36%);
   --unclear-text: hsl(0, 0%, 15%);
 
-  --melisma-text: hsl(0, 100%, 16%);
-  --melisma-background: hsla(138, 100%, 72%, 0.4);
+  --melisma-text: hsl(115, 61%, 28%);
+  --melisma-background: hsla(138, 100%, 66%, 0.4);
   --melisma-spotlight-fill: hsla(138, 100%, 72%, 0.2);
   --melisma-spotlight-stroke: hsl(138, 100%, 72%);
 
@@ -225,7 +227,7 @@ select {
 /* Styling for the search panel */
 #search-panel-grid {
   display: grid;
-  grid-template-columns: 1.2fr 2.7fr;
+  grid-template-columns: 1fr 2.7fr;
   gap: 1.2rem;
 }
 

@@ -116,6 +116,14 @@ export function highlightNeumeComponent(neumeComponent, color = 'var(--highlight
   });
 }
 
+export function highlightSvgElementById(svgID, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
+  const nc_svg = document.querySelectorAll(`[id="${svgID}"]`);
+  nc_svg.forEach((nc) => {
+    nc.style.fill = color;
+    nc.style.stroke = stroke_color;
+    nc.style.strokeWidth = '30px';
+  });
+}
 /**
  * 
  */

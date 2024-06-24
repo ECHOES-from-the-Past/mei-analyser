@@ -1,5 +1,5 @@
 import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList } from "../utility/components.js";
-import { drawSVGFromMEIContent, highlightPattern, env, displayCertainty, spotlightNeumeComponent } from "../utility/utils.js";
+import { drawSVGFromMEIContent, highlightPattern, env, displayCertainty, spotlightNeumeComponent, highlightSvgElementById } from "../utility/utils.js";
 import {
   liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
   aquitanianCheckbox, squareCheckbox,
@@ -566,7 +566,7 @@ export async function showSearchResult(resultChantList) {
       let melismaMin = melismaInput.value;
       for (let syllable of chant.syllables) {
         if (syllable.neumeComponents.length >= melismaMin) {
-          syllable.neumeComponents.forEach(nc => spotlightNeumeComponent(nc, 'var(--melisma-spotlight-fill)', 'var(--melisma-spotlight-stroke)'));
+          highlightSvgElementById(syllable.syllableWord.id, 'var(--melisma-text)', 'var(--melisma-background)');
         }
       }
     });
