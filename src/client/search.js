@@ -366,7 +366,7 @@ export async function performSearch() {
  * Show the search result on the screen
  * @param {Chant[]} resultChantList list of chants that match the search query
  */
-export function showSearchResult(resultChantList) {
+export async function showSearchResult(resultChantList) {
   searchResultDiv.innerHTML = '';
 
   /** @type {HTMLTableElement} */
@@ -546,7 +546,7 @@ export function showSearchResult(resultChantList) {
 
       // Set the box for the chant and draw the chant
       chantSVG.style.boxShadow = "0 0 2px 3px #888";
-      chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
+      chantSVG.innerHTML = await drawSVGFromMEIContent(chant.meiContent);
 
       chantDisplay.scrollIntoView({ behavior: "smooth" });
 
