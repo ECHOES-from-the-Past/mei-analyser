@@ -196,6 +196,15 @@ function calculateAquitanianMode(syllables) {
     const neumeComponentList = getNeumeComponentList(syllables);
     // Checking last note
     const lastNote = neumeComponentList[neumeComponentList.length - 1];
+    let lastNoteLoc = lastNote.loc;
+
+    // Starting a list of descriptions
+    modeDescription += "<ul>";
+    // Finalis
+    modeDescription += `<li> The finalis of the chant is located at location <b>${lastNoteLoc}</b>. </li>`;
+
+    // Rhombus
+
     // Finding all rhombus shapes by checking every `nc` for a `@tilt = se`
     const allWithSETilt = neumeComponentList.filter((nc) => nc.tilt === 'se');
     let allWithSETiltLoc = allWithSETilt.map((nc) => nc.loc);
@@ -213,42 +222,67 @@ function calculateAquitanianMode(syllables) {
 
     if (allWithSETiltLoc.length <= 1) {
         mode = -1;
-        return [mode, modeCertainty, "The mode of the Aquitanian chant is unknown, no rhombus shapes are detected"];
-    }
+        modeDescription += "The mode of the Aquitanian chant is unknown, no rhombus shapes are detected";
+    } else {
+        let rhombusDescription = [];
+        if (lastNoteLoc == -2 && neg1pos3) {
+            mode = 1;
+            rhombusDescription.push("three steps above the line (+3 | B)");
+            rhombusDescription.push("one step below the line (-1 | E)");
+        } else if (lastNoteLoc == 0 && neg2pos1) {
+            mode = 2;
+            rhombusDescription.push("one step above the line (+1 | E)");
+            rhombusDescription.push("two steps below the line (-2 | B)");
+        } else if (lastNoteLoc == -2 && neg2pos2) {
+            mode = 3;
+            rhombusDescription.push("two steps above the line (+2 | B)");
+            rhombusDescription.push("two steps below the line (-2 | E)");
+        } else if (lastNoteLoc == -1 && neg1pos3) {
+            mode = 4;
+            rhombusDescription.push("three steps above the line (+3 | B)");
+            rhombusDescription.push("one step below the line (-1 | E)");
+        } else if (lastNoteLoc == 0 && zeroneg3pos4) { // rare case
+            mode = 4;
+            rhombusDescription.push("on the line (0 | E)")
+            rhombusDescription.push("four steps above the line (+4 | B)");
+            rhombusDescription.push("three steps below the line (-3 | B)");
+        } else if (lastNoteLoc == -2 && neg3pos1) {
+            mode = 5;
+            rhombusDescription.push("one step above the line (+1 | B)");
+            rhombusDescription.push("three steps below the line (-3 | E)");
+        } else if (lastNoteLoc == 0 && neg1pos3) {
+            mode = 6;
+            rhombusDescription.push("three steps above the line (+3 | B)");
+            rhombusDescription.push("one step below the line (-1 | E)");
+        } else if (lastNoteLoc == -2 && zeropos3) {
+            mode = 7;
+            rhombusDescription.push("on the line (0 | B)");
+            rhombusDescription.push("three steps above the line (+3 | E)");
+        } else if (lastNoteLoc == 0 && neg2pos2) {
+            mode = 8;
+            rhombusDescription.push("two steps above the line (+2 | B)");
+            rhombusDescription.push("two steps below the line (-2 | E)");
+        } else { // if all conditions fails
+            mode = -1;
+            modeDescription = "The mode of the Aquitanian chant is unknown";
+        }
 
-    let lastNoteLoc = lastNote.loc;
-    if (lastNoteLoc == -2 && neg1pos3) {
-        mode = 1;
-        modeDescription = "Mode 1 is detected. The pitch of the line is 'F'";
-    } else if (lastNoteLoc == 0 && neg2pos1) {
-        mode = 2;
-        modeDescription = "Mode 2 is detected. The pitch of the line is 'D'";
-    } else if (lastNoteLoc == -2 && neg2pos2) {
-        mode = 3;
-        modeDescription = "Mode 3 is detected. The pitch of the line is 'G'";
-    } else if (lastNoteLoc == -1 && neg1pos3) {
-        mode = 4;
-        modeDescription = "Mode 4 is detected. The pitch of the line is 'F'";
-    } else if (lastNoteLoc == 0 && zeroneg3pos4) { // rare case
-        mode = 4;
-        modeDescription = "Mode 4 is detected. The pitch of the line is 'E'";
-    } else if (lastNoteLoc == -2 && neg3pos1) {
-        mode = 5;
-        modeDescription = "Mode 5 is detected. The pitch of the line is 'A'";
-    } else if (lastNoteLoc == 0 && neg1pos3) {
-        mode = 6;
-        modeDescription = "Mode 6 is detected. The pitch of the line is 'F'";
-    } else if (lastNoteLoc == -2 && zeropos3) {
-        mode = 7;
-        modeDescription = "Mode 7 is detected. The pitch of the line is 'B'";
-    } else if (lastNoteLoc == 0 && neg2pos2) {
-        mode = 8;
-        modeDescription = "Mode 8 is detected. The pitch of the line is 'G'";
-    } else { // if all conditions fails
-        mode = -1;
-        modeDescription = "The mode of the Aquitanian chant is unknown";
+        modeDescription += `<li> The <b> rhomboidal punctum </b> can be found exclusively ${rhombusDescription.join(" or ")}. </li>`;
     }
     modeCertainty = mode == -1 ? 0 : 1;
+
+    const linePitch = {
+        1: 'F',
+        2: 'D',
+        3: 'G',
+        4: 'F',
+        5: 'A',
+        6: 'F',
+        7: 'B',
+        8: 'G'
+    }
+
+    modeDescription += `<li> Mode ${mode} is detected. The pitch of the line is '${linePitch[mode]}'. </li>`;
 
     return [mode, modeCertainty, modeDescription];
 }
