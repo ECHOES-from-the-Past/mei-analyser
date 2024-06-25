@@ -180,7 +180,7 @@ function processExactPitchMelodicPattern(chant, searchQueryList) {
  * Only works for Aquitanian notation chants
  * @param {Chant} chant The chant object, assuming it's in Aquitanian notation
  * @param {string[]} searchQueryList in the form of [-1, 1, 0, -1, 2] for example
- * @returns 
+ * @returns {NeumeComponent[][]} a list of patterns (in list form) that match the search query
  */
 function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
   const ncArray = getNeumeComponentList(chant.syllables);
@@ -211,7 +211,7 @@ function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
  * 
  * @param {Chant} chant a Chant object
  * @param {number[]} searchQueryList the list of numbers
- * @returns 
+ * @returns {NeumeComponent[][]} a list of patterns (in list form) that match the search query
  */
 function processContourMelodicPattern(chant, searchQueryList) {
   if (searchQueryList.length == 0) {
@@ -429,7 +429,9 @@ export async function showSearchResult(resultChantList) {
     let tdSyllablesContent = [];
     let customGABC = [];
 
-    // In case the word is part of a melodic pattern
+    /** In case the word is part of a melodic pattern
+     * @type {NeumeComponent[][]}
+     * */
     let melodicPattern = [];
     if (contourRadio.checked) {
       melodicPattern = processContourMelodicPattern(chant, processSearchPattern(patternInputBox.value, getMelodicPatternSearchMode()));
@@ -488,7 +490,15 @@ export async function showSearchResult(resultChantList) {
         // initial syllable
         tdSyllablesContent.push(word);
         if (chant.notationType == "square") {
-          customGABC.push(`${word}(${syllable.neumeComponents.map(nc => nc.pitch).join("")})`);
+          customGABC.push(`${word}(${syllable.neumeComponents.map(nc => {
+            for (let mp of melodicPattern) {
+              if (mp.includes(nc)) {
+                console.log(nc);
+                return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
+              }
+            }
+            return nc.pitch;
+          }).join("")})`);
         } else if (chant.notationType == "aquitanian") {
           if (aquitanianPitchCheckbox.checked && chant.clef.shape != null) {
             const clef = chant.clef.shape;
@@ -505,7 +515,15 @@ export async function showSearchResult(resultChantList) {
         // terminal syllable, add to the last syllable
         tdSyllablesContent[tdSyllablesContent.length - 1] += word;
         if (chant.notationType == "square") {
-          customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => nc.pitch).join("")})`;
+          customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => {
+            for (let mp of melodicPattern) {
+              if (mp.includes(nc)) {
+                console.log(nc);
+                return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
+              }
+            }
+            return nc.pitch;
+          }).join("")})`;
         } else if (chant.notationType == "aquitanian") {
           if (aquitanianPitchCheckbox.checked && chant.clef.shape != null) {
             const clef = chant.clef.shape;
