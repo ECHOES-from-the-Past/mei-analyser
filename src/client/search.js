@@ -484,7 +484,6 @@ export async function showSearchResult(resultChantList) {
       }
 
       const octaveKeys = ["c", "d", "e", "f", "g", "a", "b"];
-
       if (position == "s" || position == "i") {
         // standard syllable
         // initial syllable
@@ -493,7 +492,6 @@ export async function showSearchResult(resultChantList) {
           customGABC.push(`${word}(${syllable.neumeComponents.map(nc => {
             for (let mp of melodicPattern) {
               if (mp.includes(nc)) {
-                console.log(nc);
                 return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
               }
             }
@@ -504,10 +502,24 @@ export async function showSearchResult(resultChantList) {
             const clef = chant.clef.shape;
             const gap = octaveKeys.indexOf(clef.toLowerCase());
             customGABC.push(`${word}(${syllable.neumeComponents.map(nc => {
-              return octaveKeys.at((nc.loc + 7 + gap) % 7);
+              let outNc = octaveKeys.at((nc.loc + 7 + gap) % 7);
+              for (let mp of melodicPattern) {
+                if (mp.includes(nc)) {
+                  return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                }
+              }
+              return outNc;
             }).join("")})`);
           } else if (!aquitanianPitchCheckbox.checked) {
-            customGABC.push(`${word}(${syllable.neumeComponents.map(nc => nc.loc).join("")})`);
+            customGABC.push(`${word}(${syllable.neumeComponents.map(nc => {
+              let outNc = nc.loc;
+              for (let mp of melodicPattern) {
+                if (mp.includes(nc)) {
+                  return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                }
+              }
+              return outNc;
+            }).join("")})`);
           }
         }
       } else if (position == "m" || position == "t") {
@@ -518,7 +530,6 @@ export async function showSearchResult(resultChantList) {
           customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => {
             for (let mp of melodicPattern) {
               if (mp.includes(nc)) {
-                console.log(nc);
                 return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
               }
             }
@@ -529,10 +540,24 @@ export async function showSearchResult(resultChantList) {
             const clef = chant.clef.shape;
             const gap = octaveKeys.indexOf(clef.toLowerCase());
             customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => {
-              return octaveKeys.at((nc.loc + 7 + gap) % 7);
+              let outNc = octaveKeys.at((nc.loc + 7 + gap) % 7);
+              for (let mp of melodicPattern) {
+                if (mp.includes(nc)) {
+                  return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                }
+              }
+              return outNc;
             }).join("")})`;
           } else if (!aquitanianPitchCheckbox.checked) {
-            customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => nc.loc).join("")})`;
+            customGABC[customGABC.length - 1] += `${word}(${syllable.neumeComponents.map(nc => {
+              let outNc = nc.loc;
+              for (let mp of melodicPattern) {
+                if (mp.includes(nc)) {
+                  return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                }
+              }
+              return outNc;
+            }).join("")})`;
           }
         }
       }
