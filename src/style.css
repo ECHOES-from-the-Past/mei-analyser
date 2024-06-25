@@ -38,6 +38,7 @@
   /* Default highlighting colours */
   --highlight-fill: hsl(276, 74%, 51%);
   --highlight-stroke: hsl(276, 100%, 31%);
+  --melodic-pattern-gabc: hsla(276, 100%, 75%, 0.596);
 
   --spotlight-fill: hsla(276, 74%, 51%, 0.075);
   --spotlight-stroke: hsla(276, 100%, 31%, 0.466);
@@ -354,6 +355,11 @@ input#pattern-input-box {
 .melodic-pattern-word {
   text-emphasis: triangle var(--highlight-fill);
   text-emphasis-position: under right;
+}
+
+.melodic-pattern-word-gabc {
+  background-color: var(--melodic-pattern-gabc);
+  font-weight: 550;
 }
 
 .error {
