@@ -22,6 +22,7 @@
   --button-disabled: hsla(172, 38%, 16%, 0.288);
   --background: hsl(0, 0%, 100%);
   --background-hover: hsla(147, 100%, 66%, 0.377);
+  --label-hover: hsla(207, 100%, 84%, 0.459);
 
   /* Ornamental colours */
   --liquescent-text: hsl(216, 100%, 41%);
@@ -261,7 +262,7 @@ select {
 input[type="checkbox"]:hover,
 label:hover {
   cursor: pointer;
-  background-color: var(--background-hover);
+  background-color: var(--label-hover);
 }
 
 .liquescent-word {
