@@ -615,11 +615,13 @@ export async function showSearchResult(resultChantList) {
         highlightPattern(pattern);
       }
 
-      // Spotlight the melisma
-      let melismaMin = melismaInput.value;
-      for (let syllable of chant.syllables) {
-        if (syllable.neumeComponents.length >= melismaMin) {
-          highlightSvgElementById(syllable.syllableWord.id, 'var(--melisma-text)', 'var(--melisma-background)');
+      // Highlight the melisma on the chant
+      if (melismaEnableCheckbox.checked) {
+        let melismaMin = melismaInput.value;
+        for (let syllable of chant.syllables) {
+          if (syllable.neumeComponents.length >= melismaMin) {
+            highlightSvgElementById(syllable.syllableWord.id, 'var(--melisma-text)', 'var(--melisma-background)');
+          }
         }
       }
     });
