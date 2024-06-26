@@ -201,7 +201,16 @@ function calculateAquitanianMode(syllables) {
     // Starting a list of descriptions
     modeDescription += "<ul>";
     // Finalis
-    modeDescription += `<li> The <b> finalis </b> is located at location <b>${lastNoteLoc}</b>. </li>`;
+    let finalisDescription = "";
+    if (lastNoteLoc == 0) {
+        finalisDescription = "on the line (position 0)";
+    } else if (lastNoteLoc > 0) {
+        finalisDescription = `${lastNoteLoc} steps above the line (position +${lastNoteLoc})`;
+    } else {
+        finalisDescription = `${Math.abs(lastNoteLoc)} steps below the line (position ${lastNoteLoc})`;
+    }
+
+    modeDescription += `<li> The <b> finalis </b> is located ${finalisDescription}. </li>`;
 
     // Rhombus
 
@@ -225,7 +234,7 @@ function calculateAquitanianMode(syllables) {
         modeDescription += "<li> <b> No rhombus shape </b> is detected in the chant. </li>";
     } else if (allWithSETiltLoc.length == 1) {
         mode = -1;
-        modeDescription += "<li> Only <b> one rhombus shape </b> is detected </li>";
+        modeDescription += "<li> Only <b> one rhombus shape </b> is detected. </li>";
     } else {
         let rhombusDescription = [];
         if (lastNoteLoc == -2 && neg1pos3) {
@@ -295,14 +304,10 @@ function calculateAquitanianMode(syllables) {
     }
 
     if (mode == -1) {
-        modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to detect a mode for the chant. The pitch of the line is unknown'. </b> </u> </li>`;
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to detect a mode for the chant. The pitch of the line is unknown. </b> </u> </li>`;
     } else {
         modeDescription += `<li style='list-style-type: none;'> <b> <u> Mode ${mode} is detected. The pitch of the line is '${linePitch[mode]}'. </b> </u>  </li>`;
     }
-
-    /*
-    Remove the notes from 
-     */
 
     modeDescription += "</ul>";
 
