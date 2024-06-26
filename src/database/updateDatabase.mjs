@@ -222,55 +222,57 @@ function calculateAquitanianMode(syllables) {
 
     if (allWithSETiltLoc.length <= 0) {
         mode = -1;
-        modeDescription += "The mode of the Aquitanian chant is unknown, no rhombus shapes are detected";
+        modeDescription += "<li> <b> No rhombus shape </b> is detected in the chant. </li>";
     } else if (allWithSETiltLoc.length == 1) {
         mode = -1;
-        modeDescription += "The mode of the Aquitanian chant is unknown, only <b> one </b> rhombus shape is detected";
-    }
-    let rhombusDescription = [];
-    if (lastNoteLoc == -2 && neg1pos3) {
-        mode = 1;
-        rhombusDescription.push("three steps above the line (+3 | B)");
-        rhombusDescription.push("one step below the line (-1 | E)");
-    } else if (lastNoteLoc == 0 && neg2pos1) {
-        mode = 2;
-        rhombusDescription.push("one step above the line (+1 | E)");
-        rhombusDescription.push("two steps below the line (-2 | B)");
-    } else if (lastNoteLoc == -2 && neg2pos2) {
-        mode = 3;
-        rhombusDescription.push("two steps above the line (+2 | B)");
-        rhombusDescription.push("two steps below the line (-2 | E)");
-    } else if (lastNoteLoc == -1 && neg1pos3) {
-        mode = 4;
-        rhombusDescription.push("three steps above the line (+3 | B)");
-        rhombusDescription.push("one step below the line (-1 | E)");
-    } else if (lastNoteLoc == 0 && zeroneg3pos4) { // rare case
-        mode = 4;
-        rhombusDescription.push("on the line (0 | E)")
-        rhombusDescription.push("four steps above the line (+4 | B)");
-        rhombusDescription.push("three steps below the line (-3 | B)");
-    } else if (lastNoteLoc == -2 && neg3pos1) {
-        mode = 5;
-        rhombusDescription.push("one step above the line (+1 | B)");
-        rhombusDescription.push("three steps below the line (-3 | E)");
-    } else if (lastNoteLoc == 0 && neg1pos3) {
-        mode = 6;
-        rhombusDescription.push("three steps above the line (+3 | B)");
-        rhombusDescription.push("one step below the line (-1 | E)");
-    } else if (lastNoteLoc == -2 && zeropos3) {
-        mode = 7;
-        rhombusDescription.push("on the line (0 | B)");
-        rhombusDescription.push("three steps above the line (+3 | E)");
-    } else if (lastNoteLoc == 0 && neg2pos2) {
-        mode = 8;
-        rhombusDescription.push("two steps above the line (+2 | B)");
-        rhombusDescription.push("two steps below the line (-2 | E)");
-    } else { // if all conditions fails
-        mode = -1;
-        modeDescription = "The mode of the Aquitanian chant is unknown";
-    }
+        modeDescription += "<li> Only <b> one rhombus shape </b> is detected </li>";
+    } else {
+        let rhombusDescription = [];
+        if (lastNoteLoc == -2 && neg1pos3) {
+            mode = 1;
+            rhombusDescription.push("three steps above the line (+3)");
+            rhombusDescription.push("one step below the line (-1)");
+        } else if (lastNoteLoc == 0 && neg2pos1) {
+            mode = 2;
+            rhombusDescription.push("one step above the line (+1)");
+            rhombusDescription.push("two steps below the line (-2)");
+        } else if (lastNoteLoc == -2 && neg2pos2) {
+            mode = 3;
+            rhombusDescription.push("two steps above the line (+2)");
+            rhombusDescription.push("two steps below the line (-2)");
+        } else if (lastNoteLoc == -1 && neg1pos3) {
+            mode = 4;
+            rhombusDescription.push("three steps above the line (+3)");
+            rhombusDescription.push("one step below the line (-1)");
+        } else if (lastNoteLoc == 0 && zeroneg3pos4) { // rare case
+            mode = 4;
+            rhombusDescription.push("on the line (0)")
+            rhombusDescription.push("four steps above the line (+4)");
+            rhombusDescription.push("three steps below the line (-3)");
+        } else if (lastNoteLoc == -2 && neg3pos1) {
+            mode = 5;
+            rhombusDescription.push("one step above the line (+1)");
+            rhombusDescription.push("three steps below the line (-3)");
+        } else if (lastNoteLoc == 0 && neg1pos3) {
+            mode = 6;
+            rhombusDescription.push("three steps above the line (+3)");
+            rhombusDescription.push("one step below the line (-1)");
+        } else if (lastNoteLoc == -2 && zeropos3) {
+            mode = 7;
+            rhombusDescription.push("on the line (0)");
+            rhombusDescription.push("three steps above the line (+3)");
+        } else if (lastNoteLoc == 0 && neg2pos2) {
+            mode = 8;
+            rhombusDescription.push("two steps above the line (+2)");
+            rhombusDescription.push("two steps below the line (-2)");
+        }
 
-    modeDescription += `<li> The <b> rhomboidal punctum </b> can be found exclusively ${rhombusDescription.join(" or ")}. </li>`;
+        if (rhombusDescription.length > 0) {
+            modeDescription += `<li> The <b> rhomboidal punctum </b> can be found exclusively ${rhombusDescription.join(" or ")}. </li>`;
+        } else {
+            modeDescription += `<li> The <b> rhomboidal punctum </b> provides no information. </li>`;
+        }
+    }
 
     // repercussio
     let count = {};
@@ -283,21 +285,24 @@ function calculateAquitanianMode(syllables) {
     }
     let sortedCount = Object.keys(count).sort((a, b) => count[b] - count[a]);
 
-    modeDescription += `<li><b>Repercussio</b> in descending order of appearance are at: ${sortedCount.map(loc => `${loc} (${count[loc]} times)`).join(", ")}.</li>`;
+    modeDescription += `<li> The <b>repeated notes</b> in descending order of appearance are at: ${sortedCount.map(loc => `${loc > 0 ? `+${loc}` : `${loc}`} (${count[loc]} ${count[loc] > 1 ? 'times' : 'time'})`).join(", ")}.</li>`;
 
     modeCertainty = mode == -1 ? 0 : 1;
 
     const linePitch = {
-        1: 'F',
-        2: 'D',
-        3: 'G',
-        4: 'F',
-        5: 'A',
-        6: 'F',
-        7: 'B',
-        8: 'G'
+        1: 'F', 2: 'D', 3: 'G', 4: 'F',
+        5: 'A', 6: 'F', 7: 'B', 8: 'G'
     }
-    modeDescription += `<li> Mode ${mode} is detected. The pitch of the line is '${linePitch[mode]}'. </li>`;
+
+    if (mode == -1) {
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to detect a mode for the chant. The pitch of the line is unknown'. </b> </u> </li>`;
+    } else {
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Mode ${mode} is detected. The pitch of the line is '${linePitch[mode]}'. </b> </u>  </li>`;
+    }
+
+    /*
+    Remove the notes from 
+     */
 
     modeDescription += "</ul>";
 
