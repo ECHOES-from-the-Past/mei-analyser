@@ -196,6 +196,24 @@ function calculateAquitanianMode(syllables) {
     const neumeComponentList = getNeumeComponentList(syllables);
     // Checking last note
     const lastNote = neumeComponentList[neumeComponentList.length - 1];
+    let lastNoteLoc = lastNote.loc;
+
+    // Starting a list of descriptions
+    modeDescription += "<ul>";
+    // Finalis
+    let finalisDescription = "";
+    if (lastNoteLoc == 0) {
+        finalisDescription = "on the line (position 0)";
+    } else if (lastNoteLoc > 0) {
+        finalisDescription = `${lastNoteLoc} steps above the line (position +${lastNoteLoc})`;
+    } else {
+        finalisDescription = `${Math.abs(lastNoteLoc)} steps below the line (position ${lastNoteLoc})`;
+    }
+
+    modeDescription += `<li> The <b> finalis </b> is located ${finalisDescription}. </li>`;
+
+    // Rhombus
+
     // Finding all rhombus shapes by checking every `nc` for a `@tilt = se`
     const allWithSETilt = neumeComponentList.filter((nc) => nc.tilt === 'se');
     let allWithSETiltLoc = allWithSETilt.map((nc) => nc.loc);
@@ -211,44 +229,87 @@ function calculateAquitanianMode(syllables) {
     const zeroneg3pos4 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != -3 && loc != 4)).length == 0;
     const neg2pos1 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 1)).length == 0;
 
-    if (allWithSETiltLoc.length <= 1) {
+    if (allWithSETiltLoc.length <= 0) {
         mode = -1;
-        return [mode, modeCertainty, "The mode of the Aquitanian chant is unknown, no rhombus shapes are detected"];
+        modeDescription += "<li> <b> No rhombus shape </b> is detected in the chant. </li>";
+    } else if (allWithSETiltLoc.length == 1) {
+        mode = -1;
+        modeDescription += "<li> Only <b> one rhombus shape </b> is detected. </li>";
+    } else {
+        let rhombusDescription = [];
+        if (lastNoteLoc == -2 && neg1pos3) {
+            mode = 1;
+            rhombusDescription.push("three steps above the line (+3)");
+            rhombusDescription.push("one step below the line (-1)");
+        } else if (lastNoteLoc == 0 && neg2pos1) {
+            mode = 2;
+            rhombusDescription.push("one step above the line (+1)");
+            rhombusDescription.push("two steps below the line (-2)");
+        } else if (lastNoteLoc == -2 && neg2pos2) {
+            mode = 3;
+            rhombusDescription.push("two steps above the line (+2)");
+            rhombusDescription.push("two steps below the line (-2)");
+        } else if (lastNoteLoc == -1 && neg1pos3) {
+            mode = 4;
+            rhombusDescription.push("three steps above the line (+3)");
+            rhombusDescription.push("one step below the line (-1)");
+        } else if (lastNoteLoc == 0 && zeroneg3pos4) { // rare case
+            mode = 4;
+            rhombusDescription.push("on the line (0)")
+            rhombusDescription.push("four steps above the line (+4)");
+            rhombusDescription.push("three steps below the line (-3)");
+        } else if (lastNoteLoc == -2 && neg3pos1) {
+            mode = 5;
+            rhombusDescription.push("one step above the line (+1)");
+            rhombusDescription.push("three steps below the line (-3)");
+        } else if (lastNoteLoc == 0 && neg1pos3) {
+            mode = 6;
+            rhombusDescription.push("three steps above the line (+3)");
+            rhombusDescription.push("one step below the line (-1)");
+        } else if (lastNoteLoc == -2 && zeropos3) {
+            mode = 7;
+            rhombusDescription.push("on the line (0)");
+            rhombusDescription.push("three steps above the line (+3)");
+        } else if (lastNoteLoc == 0 && neg2pos2) {
+            mode = 8;
+            rhombusDescription.push("two steps above the line (+2)");
+            rhombusDescription.push("two steps below the line (-2)");
+        }
+
+        if (rhombusDescription.length > 0) {
+            modeDescription += `<li> The <b> rhomboidal punctum </b> can be found exclusively ${rhombusDescription.join(" or ")}. </li>`;
+        } else {
+            modeDescription += `<li> The <b> rhomboidal punctum </b> provides no information. </li>`;
+        }
     }
 
-    let lastNoteLoc = lastNote.loc;
-    if (lastNoteLoc == -2 && neg1pos3) {
-        mode = 1;
-        modeDescription = "Mode 1 is detected. The pitch of the line is 'F'";
-    } else if (lastNoteLoc == 0 && neg2pos1) {
-        mode = 2;
-        modeDescription = "Mode 2 is detected. The pitch of the line is 'D'";
-    } else if (lastNoteLoc == -2 && neg2pos2) {
-        mode = 3;
-        modeDescription = "Mode 3 is detected. The pitch of the line is 'G'";
-    } else if (lastNoteLoc == -1 && neg1pos3) {
-        mode = 4;
-        modeDescription = "Mode 4 is detected. The pitch of the line is 'F'";
-    } else if (lastNoteLoc == 0 && zeroneg3pos4) { // rare case
-        mode = 4;
-        modeDescription = "Mode 4 is detected. The pitch of the line is 'E'";
-    } else if (lastNoteLoc == -2 && neg3pos1) {
-        mode = 5;
-        modeDescription = "Mode 5 is detected. The pitch of the line is 'A'";
-    } else if (lastNoteLoc == 0 && neg1pos3) {
-        mode = 6;
-        modeDescription = "Mode 6 is detected. The pitch of the line is 'F'";
-    } else if (lastNoteLoc == -2 && zeropos3) {
-        mode = 7;
-        modeDescription = "Mode 7 is detected. The pitch of the line is 'B'";
-    } else if (lastNoteLoc == 0 && neg2pos2) {
-        mode = 8;
-        modeDescription = "Mode 8 is detected. The pitch of the line is 'G'";
-    } else { // if all conditions fails
-        mode = -1;
-        modeDescription = "The mode of the Aquitanian chant is unknown";
+    // repercussio
+    let count = {};
+    for (let nc of neumeComponentList) {
+        if (count[nc.loc] === undefined) {
+            count[nc.loc] = 1;
+        } else {
+            count[nc.loc] += 1;
+        }
     }
+    let sortedCount = Object.keys(count).sort((a, b) => count[b] - count[a]);
+
+    modeDescription += `<li> The <b>repeated notes</b> in descending order of appearance are at: ${sortedCount.map(loc => `${loc > 0 ? `+${loc}` : `${loc}`} (${count[loc]} ${count[loc] > 1 ? 'times' : 'time'})`).join(", ")}.</li>`;
+
     modeCertainty = mode == -1 ? 0 : 1;
+
+    const linePitch = {
+        1: 'F', 2: 'D', 3: 'G', 4: 'F',
+        5: 'A', 6: 'F', 7: 'B', 8: 'G'
+    }
+
+    if (mode == -1) {
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to detect a mode for the chant. The pitch of the line is unknown. </b> </u> </li>`;
+    } else {
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Mode ${mode} is detected. The pitch of the line is '${linePitch[mode]}'. </b> </u>  </li>`;
+    }
+
+    modeDescription += "</ul>";
 
     return [mode, modeCertainty, modeDescription];
 }
