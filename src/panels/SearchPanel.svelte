@@ -1,7 +1,9 @@
 <script>
     import Button from "../components/Button.svelte";
-
+    import Checkbox from "../components/Checkbox.svelte";
+    import RadioButton from "../components/RadioButton.svelte";
 </script>
+
 <div id="search-panel">
     <div id="search-panel-grid">
         <!-- Start of leftside search panel -->
@@ -10,110 +12,29 @@
                 <h1>Search Panel</h1>
                 <!-- Search by music script (notation type) -->
                 <p>Filter chants with the following music script:</p>
-                <input
-                    type="checkbox"
-                    id="aquitanian-checkbox"
-                    value="aquitanian-checkbox"
-                    checked
-                />
-                <label for="aquitanian-checkbox"> Aquitanian </label>
-                <input
-                    type="checkbox"
-                    id="square-checkbox"
-                    value="square-checkbox"
-                />
-                <label for="square-checkbox"> Square </label>
+                <Checkbox value="aquitanian" isChecked={true}>
+                    Aquitanian
+                </Checkbox>
+
+                <Checkbox value="square">Square</Checkbox>
+
                 <hr />
+
                 <!-- Search/filter by mode -->
                 <p>Filter by detected mode(s):</p>
                 <div id="mode-grid">
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="mode-1-checkbox"
-                            value="mode-1"
-                        />
-                        <label for="mode-1-checkbox"> Mode 1 </label>
-                    </div>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="mode-2-checkbox"
-                            value="mode-2"
-                        />
-                        <label for="mode-2-checkbox"> Mode 2 </label>
-                    </div>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="mode-3-checkbox"
-                            value="mode-3"
-                        />
-                        <label for="mode-3-checkbox"> Mode 3 </label>
-                    </div>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="mode-4-checkbox"
-                            value="mode-4"
-                        />
-                        <label for="mode-4-checkbox"> Mode 4 </label>
-                    </div>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="mode-5-checkbox"
-                            value="mode-5"
-                        />
-                        <label for="mode-5-checkbox"> Mode 5 </label>
-                    </div>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="mode-6-checkbox"
-                            value="mode-6"
-                        />
-                        <label for="mode-6-checkbox"> Mode 6 </label>
-                    </div>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="mode-7-checkbox"
-                            value="mode-7"
-                        />
-                        <label for="mode-7-checkbox"> Mode 7 </label>
-                    </div>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="mode-8-checkbox"
-                            value="mode-8"
-                        />
-                        <label for="mode-8-checkbox"> Mode 8 </label>
-                    </div>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="all-mode-checkbox"
-                            value="all-mode"
-                        />
-                        <label
-                            for="all-mode-checkbox"
-                            style="color: var(--button-active);"
-                        >
-                            All Modes
-                        </label>
-                    </div>
-                    <div>
-                        <input
-                            type="checkbox"
-                            id="unknown-mode-checkbox"
-                            value="unknown"
-                        />
-                        <label for="unknown-mode-checkbox" style="color: red;">
-                            Unknown
-                        </label>
-                    </div>
+                    <Checkbox value="mode-1">Mode 1</Checkbox>
+                    <Checkbox value="mode-2">Mode 2</Checkbox>
+                    <Checkbox value="mode-3">Mode 3</Checkbox>
+                    <Checkbox value="mode-4">Mode 4</Checkbox>
+
+                    <Checkbox value="mode-5">Mode 5</Checkbox>
+                    <Checkbox value="mode-6">Mode 6</Checkbox>
+                    <Checkbox value="mode-7">Mode 7</Checkbox>
+                    <Checkbox value="mode-8">Mode 8</Checkbox>
+
+                    <Checkbox value="all-mode">All Modes</Checkbox>
+                    <Checkbox value="unknown-mode">Unknown</Checkbox>
                 </div>
                 <hr />
                 <!-- Search/filter by ornamental figures -->
@@ -121,39 +42,24 @@
                     Filter chants that has ornamental figure(s): <br /> (No selection
                     will display all chants)
                 </p>
-                <input
-                    type="checkbox"
-                    id="liquescent-checkbox"
-                    value="liquescent"
-                />
-                <label for="liquescent-checkbox" class="liquescent-word">
-                    Liquescent
-                </label>
-                <input
-                    type="checkbox"
-                    id="quilisma-checkbox"
-                    value="quilisma"
-                />
-                <label for="quilisma-checkbox" class="quilisma-word">
-                    Quilisma
-                </label>
-                <input type="checkbox" id="oriscus-checkbox" value="oriscus" />
-                <label for="oriscus-checkbox" class="oriscus-word">
-                    Oriscus
-                </label>
+
+                <Checkbox value="liquescent">Liquescent</Checkbox>
+                <Checkbox value="quilisma">Quilisma</Checkbox>
+                <Checkbox value="oriscus">Oriscus</Checkbox>
+
                 <hr />
                 <!-- Search by melodic pattern -->
                 <p>
                     Filter chant(s) by <span class="melodic-pattern-word"
                         >melodic pattern</span
                     >
-                    <Button
+                    <button
                         class="tooltip"
                         id="pattern-search-tooltip"
                         popovertarget="pattern-search-tooltip-content"
                     >
                         ⓘ
-                </Button>
+                </button>
                 </p>
                 <div
                     class="tooltip-content"
@@ -186,25 +92,13 @@
                         </li>
                     </ul>
                 </div>
-                <input
-                    name="pattern-search-radio"
-                    id="exact-pitch-radio"
-                    value="exact-pitch"
-                    type="radio"
-                    checked
-                />
-                <label for="exact-pitch-radio"> Exact pitch </label>
+                <RadioButton value="exact-pitch">
+                    Exact Pitch
+                </RadioButton>
                 <br />
-                <!-- <input name="pattern-search-radio" id="indefinite-pitch-radio" value="indefinite-pitch" type="radio">
-        <label for="indefinite-pitch-radio"> Indefinite Pitch (e.g., "1 2 -1") </label>
-        <br> -->
-                <input
-                    name="pattern-search-radio"
-                    id="contour-radio"
-                    value="contour"
-                    type="radio"
-                />
-                <label for="contour-radio"> Contour (melodic intervals) </label>
+                <RadioButton value="contour">
+                    Contour (melodic intervals)
+                </RadioButton>
                 <br />
                 <input
                     type="text"
@@ -212,12 +106,12 @@
                     placeholder="e.g.: 1 2 -1"
                 />
                 <!-- clear input button -->
-                <Button id="clear-pattern-input-btn"> Clear </Button>
+                <Button id="clear-pattern-input-btn">Clear</Button>
                 <p class="error" id="pattern-input-status" hidden>
                     Melodic Pattern Search Status
                 </p>
                 <hr />
-                <Button id="search-btn"> Search </Button>
+                <Button id="search-btn">Search</Button>
                 <br />
             </div>
 
