@@ -2,7 +2,9 @@
   "name": "mei-analyser",
   "version": "0.4.7",
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
     "@types/xml2js": "^0.4.14",
+    "svelte": "^4.2.18",
     "vite": ">=5.2.6"
   },
   "private": true,
