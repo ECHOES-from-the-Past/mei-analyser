@@ -326,6 +326,7 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
  * @return {Chant[]} list of chants that match the search query
  */
 export async function performSearch() {
+  console.log("Performing search")
   const databaseURL = env == "development" ? "src/database/database.json" : "./database.json";
 
   /** Retrieving the locally stored list of chants */
@@ -369,6 +370,7 @@ export async function performSearch() {
   resultChantList.sort((chantA, chantB) => (chantA.fileName < chantB.fileName) ? -1 : 1);
 
   /* Return the result */
+  console.log(resultChantList)
   return resultChantList;
 }
 

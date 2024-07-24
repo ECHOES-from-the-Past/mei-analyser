@@ -22,7 +22,6 @@
   --button-disabled: hsla(172, 38%, 16%, 0.288);
   --background: hsl(0, 0%, 100%);
   --background-hover: hsla(147, 100%, 66%, 0.377);
-  --label-hover: hsla(207, 100%, 84%, 0.459);
 
   /* Ornamental colours */
   --liquescent-text: hsl(216, 100%, 41%);
@@ -59,16 +58,6 @@
   --text-error: hsl(0, 78%, 57%);
 }
 
-/* Navbar, the top elements div */
-#navbar {
-  display: flex;
-  justify-content: flex-start;
-  gap: 0.3rem;
-  align-items: center;
-  background-color: white;
-  color: white;
-}
-
 /* Custom button styles */
 
 h1,
@@ -90,14 +79,6 @@ g {
   fill: hsl(0, 0%, 0%);
 }
 
-.section {
-  /* border: 1px solid hsl(0, 0%, 0%); */
-  border-radius: 12px;
-  padding: 1rem;
-  margin: 1rem 0;
-  box-shadow: 1px 1px 4px hsl(0, 0%, 0%);
-  height: fit-content;
-}
 
 #top-elements {
   display: grid;
@@ -126,11 +107,7 @@ select {
 
 
 /* Styling for the search panel */
-input#pattern-input-box {
-  width: 20rem;
-  height: 1.2rem;
-  margin: 0.3rem 0;
-}
+
 
 #clear-pattern-input-btn {
   padding: 0.3rem 0.7rem;
@@ -160,13 +137,7 @@ input#pattern-input-box {
   flex: 1 2 25%;
 }
 
-#scroll-up-btn {
-  display: none; /* Hidden by default */
-  position: fixed; /* Fixed/sticky position */
-  bottom: 20px;
-  left: 30px;
-  z-index: 99;
-}
+
 
 .nonselectable-text {
   -webkit-touch-callout: none;

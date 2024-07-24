@@ -2,41 +2,43 @@
     import Button from "../components/Button.svelte";
     import Checkbox from "../components/Checkbox.svelte";
     import RadioButton from "../components/RadioButton.svelte";
+
+    import {
+        clearSearchResultsAndInfo,
+        performSearch,
+        showSearchResult,
+    } from "../client/search";
+
+    import Tooltip from "../components/Tooltip.svelte";
+    import Section from "../components/Section.svelte";
+
+    async function searchButtonAction() {
+        clearSearchResultsAndInfo();
+
+        // // Perform search and display the result
+        // refreshWheel.hidden = false;
+        let searchResults = await performSearch().then((results) => {
+            // refreshWheel.hidden = true;
+            showSearchResult(results); // TODO: not displaying
+            return results;
+        });
+    }
 </script>
 
 <div id="search-panel">
     <div id="search-panel-grid">
         <!-- Start of leftside search panel -->
         <div id="search-panel-leftside">
-            <div class="section">
+            <Section>
                 <h1>Search Panel</h1>
                 <!-- Search by music script (notation type) -->
                 <p>Filter chants with the following music script:</p>
-                <Checkbox value="aquitanian" isChecked={true}>
-                    Aquitanian
-                </Checkbox>
+                <Checkbox value="aquitanian">Aquitanian</Checkbox>
 
                 <Checkbox value="square">Square</Checkbox>
 
                 <hr />
 
-                <!-- Search/filter by mode -->
-                <p>Filter by detected mode(s):</p>
-                <div id="mode-grid">
-                    <Checkbox value="mode-1">Mode 1</Checkbox>
-                    <Checkbox value="mode-2">Mode 2</Checkbox>
-                    <Checkbox value="mode-3">Mode 3</Checkbox>
-                    <Checkbox value="mode-4">Mode 4</Checkbox>
-
-                    <Checkbox value="mode-5">Mode 5</Checkbox>
-                    <Checkbox value="mode-6">Mode 6</Checkbox>
-                    <Checkbox value="mode-7">Mode 7</Checkbox>
-                    <Checkbox value="mode-8">Mode 8</Checkbox>
-
-                    <Checkbox value="all-mode">All Modes</Checkbox>
-                    <Checkbox value="unknown-mode">Unknown</Checkbox>
-                </div>
-                <hr />
                 <!-- Search/filter by ornamental figures -->
                 <p>
                     Filter chants that has ornamental figure(s): <br /> (No selection
@@ -50,55 +52,16 @@
                 <hr />
                 <!-- Search by melodic pattern -->
                 <p>
-                    Filter chant(s) by <span class="melodic-pattern-word"
-                        >melodic pattern</span
-                    >
-                    <button
-                        class="tooltip"
-                        id="pattern-search-tooltip"
-                        popovertarget="pattern-search-tooltip-content"
-                    >
-                        ⓘ
-                </button>
+                    Filter chant(s) by
+                    <span class="melodic-pattern-word">
+                        melodic pattern
+                    </span>
+                    <Tooltip/>
                 </p>
-                <div
-                    class="tooltip-content"
-                    id="pattern-search-tooltip-content"
-                    popover
-                >
-                    <ul>
-                        <li>
-                            <p>
-                                <b
-                                    >Exact pitch (only for Square music script
-                                    chants)</b
-                                >: Enter pitch names of the melodic pattern. For
-                                example, "a b a f" will search for a melodic
-                                pattern that follows the sequence A-B-A-F.
-                                <!-- Use uppercase letters for a lower octave and lowercase letters for an upper octave. -->
-                            </p>
-                        </li>
-                        <li>
-                            <p>
-                                <b> Contour (Melodic intervals) </b> in the form
-                                of positive or negative integers (e.g., +1 indicates
-                                one step up - either a semitone or a tone - from
-                                the previous note; 0 indicates unison; and -2 indicates
-                                two steps down - either a major or minor third -
-                                from the previous note). When looking for a series
-                                of notes, the integers can be separated by a space
-                                (e.g., "0 +2 -1 +1 +1").
-                            </p>
-                        </li>
-                    </ul>
-                </div>
-                <RadioButton value="exact-pitch">
-                    Exact Pitch
-                </RadioButton>
-                <br />
-                <RadioButton value="contour">
-                    Contour (melodic intervals)
-                </RadioButton>
+
+                <RadioButton value="exact-pitch" group="search-query-option"> Exact Pitch </RadioButton>
+                <br>
+                <RadioButton value="contour" group="search-query-option"> Contour (melodic intervals) </RadioButton>
                 <br />
                 <input
                     type="text"
@@ -111,20 +74,13 @@
                     Melodic Pattern Search Status
                 </p>
                 <hr />
-                <Button id="search-btn">Search</Button>
+                <Button id="search-btn" onClick={performSearch}>Search</Button>
                 <br />
-            </div>
+            </Section>
 
-            <div class="section" id="other-search-options">
+            <Section>
                 <h3>Other options</h3>
-                <input
-                    type="checkbox"
-                    name="melisma-checkbox"
-                    id="melisma-enable-checkbox"
-                />
-                <label for="melisma-enable-checkbox">
-                    Enable melisma highlighting
-                </label>
+                <Checkbox value="melisma"> Enable melisma highlighting </Checkbox>
                 <p>
                     <span class="nonselectable-text melisma-word">
                         Melisma(s) with at least
@@ -155,32 +111,39 @@
                     </span>
                 </div>
                 <hr />
-                <!-- Search by melisma (melodic density) -->
-                <input
-                    type="checkbox"
-                    name="custom-gabc"
-                    id="custom-gabc-checkbox"
-                />
-                <label for="custom-gabc-checkbox">
+                <Checkbox value="custom-gabc">
                     Toggle show pitch/location with the text
-                </label>
+                </Checkbox>
                 <br />
-                <input
-                    type="checkbox"
-                    name="aquitanian-pitch"
-                    id="aquitanian-pitch-checkbox"
-                />
-                <label for="aquitanian-pitch-checkbox">
+                <Checkbox value="aquitanian-pitch">
                     Show Aquitanian in pitch value with text (only for chants
                     with detected mode)
-                </label>
-            </div>
+                </Checkbox>
+                <hr />
+                <!-- Search/filter by mode -->
+                <p>Filter by detected mode(s):</p>
+                <div id="mode-grid">
+                    <Checkbox value="mode-1">Mode 1</Checkbox>
+                    <Checkbox value="mode-2">Mode 2</Checkbox>
+                    <Checkbox value="mode-3">Mode 3</Checkbox>
+                    <Checkbox value="mode-4">Mode 4</Checkbox>
+
+                    <Checkbox value="mode-5">Mode 5</Checkbox>
+                    <Checkbox value="mode-6">Mode 6</Checkbox>
+                    <Checkbox value="mode-7">Mode 7</Checkbox>
+                    <Checkbox value="mode-8">Mode 8</Checkbox>
+
+                    <Checkbox value="all-mode">All Modes</Checkbox>
+                    <Checkbox value="unknown-mode">Unknown</Checkbox>
+                </div>
+                <hr />
+            </Section>
         </div>
         <!-- End of leftside search panel -->
 
         <!-- Start of rightside search panel -->
         <div id="search-panel-rightside">
-            <div class="section">
+            <Section>
                 <h1>Search Results</h1>
                 <p id="search-result-info"></p>
                 <div id="search-result">
@@ -188,8 +151,8 @@
 
                     <!-- Search results -->
                 </div>
-            </div>
-            <div id="chant-display" class="section">
+            </Section>
+            <Section>
                 <h1>Chant Information</h1>
                 <div id="chant-info">
                     <p>Chant information will display here</p>
@@ -199,7 +162,7 @@
                     <p>Chant visual will appear here</p>
                     <!-- Chant SVG goes here -->
                 </div>
-            </div>
+            </Section>
             <!-- End of rightside search panel -->
         </div>
         <!--  -->
@@ -258,12 +221,6 @@
         height: inherit;
     } */
 
-    input[type="checkbox"]:hover,
-    label:hover {
-        cursor: pointer;
-        background-color: var(--label-hover);
-    }
-
     .liquescent-word {
         color: var(--liquescent-text);
         font-weight: bold;
@@ -317,22 +274,5 @@
 
     .melisma-arrow:active {
         box-shadow: 2px 4px 4px var(--button-active);
-    }
-
-    .tooltip {
-        color: white;
-        font-weight: bold;
-        cursor: pointer;
-        background-color: var(--button);
-        padding: 0.1rem 0.5rem;
-        border-radius: 0.5rem;
-    }
-
-    .tooltip-content {
-        padding: 2rem;
-        margin: 8rem;
-        background-color: var(--background);
-        border: 4px solid var(--button);
-        border-radius: 0.5rem;
     }
 </style>

@@ -246,15 +246,7 @@ viewDatabaseButton.addEventListener("click", () => {
 
 /* --------------- SEARCH PANEL --------------- */
 searchButton.addEventListener("click", async () => {
-    clearSearchResultsAndInfo();
 
-    // Perform search and display the result
-    refreshWheel.hidden = false;
-    let searchResults = await performSearch().then((results) => {
-        refreshWheel.hidden = true;
-        showSearchResult(results);
-        return results;
-    });
 });
 
 melismaEnableCheckbox.addEventListener("change", () => {

@@ -1,14 +1,28 @@
 <script>
     $: hidden = false;
+    $: status = "Client status";
 
-    function toggle() {
+    export function toggle() {
         hidden = !hidden;
+    }
+    export function updateStatus(message) {
+        status = String(message);
     }
 </script>
 
-<div id="refresh-wheel" hidden={hidden}></div>
+<div id="status-bar">
+    <div id="refresh-wheel" {hidden}></div>
+    <span id="client-status" {hidden}> {status} </span>
+</div>
 
 <style>
+    #status-bar {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 0.4rem;
+    }
+
     #refresh-wheel {
         --wheel-border: 0.4rem;
         --wheel-size: 1rem;
@@ -21,6 +35,10 @@
         height: 1rem;
         animation: spin var(--wheel-duration) linear infinite;
         -webkit-animation: spin var(--wheel-duration) linear infinite;
+    }
+
+    #client-status {
+        color: green;
     }
 
     @-webkit-keyframes spin {

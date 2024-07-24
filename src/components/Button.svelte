@@ -1,9 +1,14 @@
 <script>
+    /** @type {String} the component id */
     export let id;
     export let nonselectable;
+
+    /** @type {function} the button's action */
+    export let onClick;
+    // let checked = localStorage.getItem(id) == null ? true : false;
 </script>
 
-<button id={id} nonselectable={nonselectable}>
+<button id={id} nonselectable={nonselectable} on:click={onClick}>
     <slot/>
 </button>
 

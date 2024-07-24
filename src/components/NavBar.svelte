@@ -1,31 +1,52 @@
 <script>
     import Button from "./Button.svelte";
+    import ClientStatus from "./ClientStatus.svelte";
     import ExternalLink from "./ExternalLink.svelte";
-    import RefreshWheel from "./RefreshWheel.svelte";
 
-    function showSearchPanel() {
-        document.getElementById("search-panel").hidden = false;
-        document.getElementById("cross-comparison-panel").hidden = true;
-    }
+    let panelIDs = ["search-panel", "experimental-panel"];
 
-    function showCCPanel() {
-        document.getElementById("search-panel").hidden = true;
-        document.getElementById("cross-comparison-panel").hidden = false;
+    function showPanel(panelID) {
+        panelIDs.forEach((value) => {
+            if (value != panelID) {
+                document.getElementById(value).hidden = true;
+            } else if (value == panelID) {
+                document.getElementById(panelID).hidden = false;
+            }
+        });
     }
 </script>
 
 <div id="navbar">
-    <Button id="search-mode-btn">Corpus Search</Button>
+    <Button id="search-mode-btn" onClick={() => showPanel("search-panel")}>
+        Corpus Search</Button
+    >
 
-    <Button id="cross-comparison-mode-btn"> Cross Comparison </Button>
+    <Button
+        id="experimental-btn"
+        onClick={() => showPanel("experimental-panel")}
+    >
+        Experimental
+    </Button>
 
-    <ExternalLink href="https://github.com/ECHOES-from-the-Past/mei-analyser/wiki">
+    <ExternalLink
+        href="https://github.com/ECHOES-from-the-Past/mei-analyser/wiki"
+    >
         <Button>Project Wiki</Button>
     </ExternalLink>
 
-    <RefreshWheel />
-    <span id="client-status" hidden> Client status </span>
+    <ClientStatus />
 
     <span style="color: var(--button); margin-left: auto;" id="client-version"
     ></span>
 </div>
+
+<style>
+    #navbar {
+        display: flex;
+        justify-content: flex-start;
+        gap: 0.3rem;
+        align-items: center;
+        background-color: white;
+        color: white;
+    }
+</style>
