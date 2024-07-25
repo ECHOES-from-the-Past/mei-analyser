@@ -1,5 +1,4 @@
 <script>
-    // import Button from "./Button.svelte";
 </script>
 
 <button id="scroll-up-btn" class="nonselectable-text">Back to top ▲</button>

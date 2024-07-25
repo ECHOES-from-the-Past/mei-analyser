@@ -13,7 +13,7 @@
 </button>
 
 <style>
-    :root {
+    * {
         --button: hsl(170, 100%, 16%);
         --button-hover: hsla(182, 100%, 20%, 0.753);
         --button-active: hsl(170, 100%, 12%);

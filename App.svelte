@@ -1,15 +1,27 @@
 <script>
     import NavBar from "./src/components/NavBar.svelte";
     import ScrollUpButton from "./src/components/ScrollUpButton.svelte";
-    import SearchPanel from './src/panels/SearchPanel.svelte'
+    import SearchPanel from "./src/panels/SearchPanel.svelte";
     import ExperimentalPanel from "./src/panels/ExperimentalPanel.svelte";
+
+    window.onscroll = () => {
+    if (window.scrollY > 650) {
+        document.getElementById('scroll-up-btn').style.display = "block";
+    } else {
+        document.getElementById('scroll-up-btn').scrollUpButton.style.display = "none";
+    }
+}
 </script>
 
-<NavBar/>
+<NavBar />
 <div id="panels">
-    <SearchPanel/>
-    <ExperimentalPanel/>
+    <SearchPanel />
+    <ExperimentalPanel />
 </div>
-<ScrollUpButton/>
+<ScrollUpButton
+    onClick={() => {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+    }}
+/>
 
 <!-- Search Panel -->

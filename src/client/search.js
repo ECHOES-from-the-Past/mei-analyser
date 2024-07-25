@@ -378,9 +378,7 @@ export async function performSearch() {
  * Show the search result on the screen
  * @param {Chant[]} resultChantList list of chants that match the search query
  */
-export async function showSearchResult(resultChantList) {
-  searchResultDiv.innerHTML = '';
-
+export async function createResultTable(resultChantList) {
   /** @type {HTMLTableElement} */
   let resultTable = document.createElement('table');
   resultTable.id = "result-table"; // for CSS styling
@@ -652,7 +650,7 @@ export async function showSearchResult(resultChantList) {
   resultTable.appendChild(tbody);
 
   // Append the table to the search-result div
-  searchResultDiv.appendChild(resultTable);
+  return resultTable;
 }
 
 /**

@@ -21,7 +21,7 @@ import {
 } from './utility/utils.js';
 import {
     clearSearchResultsAndInfo,
-    performSearch, showSearchResult
+    performSearch, createResultTable
 } from './client/search.js';
 
 import packageJSON from '../package.json';
@@ -110,92 +110,14 @@ window.addEventListener("change", () => {
     invalidOptions();
 });
 
-/* --------------- TOP BUTTON Event Listeners --------------- */
-window.onscroll = () => {
-    if (window.scrollY > 650) {
-        scrollUpButton.style.display = "block";
-    } else {
-        scrollUpButton.style.display = "none";
-    }
-}
-
-scrollUpButton.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-});
-
-/* --------------------- DATABASE --------------------- */
-// /**
-//  * @async
-//  * @listens viewDatabaseButton
-//  * Displaying the database as a list of chants on the screen
-//  */
-// async function constructDatabaseList() {
-//     /** @type {Chant[]} */
-//     const chantList = retrieve('chantList');
-//     databaseList.innerHTML = '';
-//     for (let chant of chantList) {
-//         let li = document.createElement('li');
-//         // Let the options contains the title and the notation type of the chant
-//         li.textContent = chant.title + " (" + chant.notationType + ")";
-//         li.style.wordBreak = "break-word";
-//         li.style.cursor = "pointer";
-//         li.style.padding = "0.3em 0";
-//         li.addEventListener("mouseover", () => {
-//             li.style.backgroundColor = "var(--background-hover)";
-//         });
-//         li.addEventListener("mouseout", () => {
-//             li.style.backgroundColor = "white";
-//         });
-//         li.addEventListener("click", () => {
-//             // Scroll to the chant view of the page, smoothly
-//             chantDisplay.scrollIntoView({ behavior: "smooth" });
-//             // Set the box for the chant
-//             chantSVG.style.boxShadow = "0 0 2px 3px #888";
-//             chantSVG.innerHTML = drawSVGFromMEIContent(chant.meiContent);
-//             // Display the chant information (file name, notation type, mode, etc.)
-//             printChantInformation(chant);
-//         });
-//         databaseList.appendChild(li);
-//     }
-// }
 
 /* --------------- SEARCH PANEL PERSISTANCE --------------- */
-aquitanianCheckbox.addEventListener("change", () => {
-    persist('aquitanianCheckbox', aquitanianCheckbox.checked);
-});
-
-squareCheckbox.addEventListener("change", () => {
-    persist('squareCheckbox', squareCheckbox.checked);
-});
-
-liquescentCheckbox.addEventListener("change", () => {
-    persist('liquescentCheckbox', liquescentCheckbox.checked);
-});
-
-quilismaCheckbox.addEventListener("change", () => {
-    persist('quilismaCheckbox', quilismaCheckbox.checked);
-});
-
-oriscusCheckbox.addEventListener("change", () => {
-    persist('oriscusCheckbox', oriscusCheckbox.checked);
-});
-
-modeCheckboxes.forEach((checkbox, index) => {
-    checkbox.addEventListener("change", () => {
-        persist(`mode${index + 1}Checkbox`, checkbox.checked);
-    });
-});
-
 allModeCheckbox.addEventListener("change", () => {
     modeCheckboxes.forEach((checkbox, index) => {
         checkbox.checked = allModeCheckbox.checked;
         persist(`mode${index + 1}Checkbox`, checkbox.checked);
         persist('allModeCheckbox', allModeCheckbox.checked);
     });
-});
-
-unknownModeCheckbox.addEventListener("change", () => {
-    persist('unknownModeCheckbox', unknownModeCheckbox.checked);
 });
 
 exactPitchRadio.addEventListener("change", () => {
@@ -228,10 +150,6 @@ customGABCCheckbox.addEventListener("change", () => {
     });
 });
 
-aquitanianPitchCheckbox.addEventListener("change", () => {
-    persist('aquitanianPitchCheckbox', aquitanianPitchCheckbox.checked);
-});
-
 /* --------------- DATABASE PANEL PERSISTANCE --------------- */
 viewDatabaseButton.addEventListener("click", () => {
     if (databaseIsOpen === false) {
@@ -248,10 +166,6 @@ viewDatabaseButton.addEventListener("click", () => {
 searchButton.addEventListener("click", async () => {
 
 });
-
-melismaEnableCheckbox.addEventListener("change", () => {
-    persist('melismaEnableCheckbox', melismaEnableCheckbox.checked);
-    });
 
 melismaIncrement.addEventListener("click", () => {
     melismaInput.stepUp();

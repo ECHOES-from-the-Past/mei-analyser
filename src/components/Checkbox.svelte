@@ -1,37 +1,30 @@
 <script>
+    import { persist, retrieve } from "../utility/utils";
+
     export let value;
-    export let checkboxId = `${value}-checkbox`;
-    export let isChecked;
+    export let id = `${value}-checkbox`;
     export let onClick;
 
-    let prevState = localStorage.getItem(checkboxId);
-    if(prevState) {
-        isChecked = prevState
-    } else {
-        isChecked = false;
-        localStorage.setItem(checkboxId, isChecked)
+    /** @type {boolean} */
+    let check = retrieve(id) === true;
+
+    function updateLS() {
+        check = !check;
+        persist(id, check);
     }
 </script>
 
-<div>
+<label>
     <input
-        type="checkbox"
-        id={checkboxId}
-        bind:checked={isChecked}
-        on:click={() => {
-            isChecked = !isChecked;
-            localStorage.setItem(checkboxId, isChecked)
-            // isChecked.set(!isChecked);
-        }}
+        type="checkbox" {id}
         on:click={onClick}
+        on:change={updateLS}
+        bind:checked={check}
     />
-    <label for={checkboxId}>
-        <slot />
-    </label>
-</div>
+    <slot />
+</label>
 
 <style>
-    input[type="checkbox"]:hover,
     label:hover {
         --label-hover: hsla(207, 100%, 84%, 0.459);
         cursor: pointer;

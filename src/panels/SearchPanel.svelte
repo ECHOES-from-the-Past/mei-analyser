@@ -6,11 +6,13 @@
     import {
         clearSearchResultsAndInfo,
         performSearch,
-        showSearchResult,
+        createResultTable,
     } from "../client/search";
 
     import Tooltip from "../components/Tooltip.svelte";
     import Section from "../components/Section.svelte";
+    import InputTextBox from "../components/TextInput.svelte";
+    import { modeCheckboxes } from "../DOMelements.mjs";
 
     async function searchButtonAction() {
         clearSearchResultsAndInfo();
@@ -19,8 +21,45 @@
         // refreshWheel.hidden = false;
         let searchResults = await performSearch().then((results) => {
             // refreshWheel.hidden = true;
-            showSearchResult(results); // TODO: not displaying
+            console.log(createResultTable(results)); // TODO: not displaying
             return results;
+        });
+        createResultTable(searchResults);
+    }
+
+    function selectAllModes() {
+        /**
+         * @type {HTMLInputElement}
+         * @description The checkboxes for each mode and the undetected mode
+         */
+        const mode1Checkbox = document.getElementById("mode-1-checkbox");
+        const mode2Checkbox = document.getElementById("mode-2-checkbox");
+        const mode3Checkbox = document.getElementById("mode-3-checkbox");
+        const mode4Checkbox = document.getElementById("mode-4-checkbox");
+        const mode5Checkbox = document.getElementById("mode-5-checkbox");
+        const mode6Checkbox = document.getElementById("mode-6-checkbox");
+        const mode7Checkbox = document.getElementById("mode-7-checkbox");
+        const mode8Checkbox = document.getElementById("mode-8-checkbox");
+
+        /** @type {HTMLInputElement[]} */
+        const modeCheckboxes = [
+            mode1Checkbox,
+            mode2Checkbox,
+            mode3Checkbox,
+            mode4Checkbox,
+            mode5Checkbox,
+            mode6Checkbox,
+            mode7Checkbox,
+            mode8Checkbox,
+        ];
+
+        const allModeCheckbox = document.getElementById('all-mode-checkbox');
+
+
+        modeCheckboxes.forEach((checkbox, index) => {
+            checkbox.checked = allModeCheckbox.checked;
+            persist(`mode-${index + 1}-checkbox`, checkbox.checked);
+            persist("all-mode-checkbox", allModeCheckbox.checked);
         });
     }
 </script>
@@ -34,40 +73,36 @@
                 <!-- Search by music script (notation type) -->
                 <p>Filter chants with the following music script:</p>
                 <Checkbox value="aquitanian">Aquitanian</Checkbox>
-
                 <Checkbox value="square">Square</Checkbox>
-
                 <hr />
 
                 <!-- Search/filter by ornamental figures -->
                 <p>
-                    Filter chants that has ornamental figure(s): <br /> (No selection
-                    will display all chants)
+                    Filter chants that has ornamental figure(s): <br />
+                    (No selection will display all chants)
                 </p>
-
                 <Checkbox value="liquescent">Liquescent</Checkbox>
                 <Checkbox value="quilisma">Quilisma</Checkbox>
                 <Checkbox value="oriscus">Oriscus</Checkbox>
-
                 <hr />
+
                 <!-- Search by melodic pattern -->
                 <p>
                     Filter chant(s) by
-                    <span class="melodic-pattern-word">
-                        melodic pattern
-                    </span>
-                    <Tooltip/>
+                    <span class="melodic-pattern-word"> melodic pattern </span>
+                    <Tooltip />
                 </p>
 
-                <RadioButton value="exact-pitch" group="search-query-option"> Exact Pitch </RadioButton>
-                <br>
-                <RadioButton value="contour" group="search-query-option"> Contour (melodic intervals) </RadioButton>
+                <RadioButton value="exact-pitch" group="search-query-option">
+                    Exact Pitch
+                </RadioButton>
                 <br />
-                <input
-                    type="text"
-                    id="pattern-input-box"
-                    placeholder="e.g.: 1 2 -1"
-                />
+                <RadioButton value="contour" group="search-query-option">
+                    Contour (melodic intervals)
+                </RadioButton>
+                <br />
+                <InputTextBox id="pattern-input-box" placeholder="e.g.: 1 +1 -2"
+                ></InputTextBox>
                 <!-- clear input button -->
                 <Button id="clear-pattern-input-btn">Clear</Button>
                 <p class="error" id="pattern-input-status" hidden>
@@ -80,7 +115,7 @@
 
             <Section>
                 <h3>Other options</h3>
-                <Checkbox value="melisma"> Enable melisma highlighting </Checkbox>
+                <Checkbox value="melisma">Enable melisma highlighting</Checkbox>
                 <p>
                     <span class="nonselectable-text melisma-word">
                         Melisma(s) with at least
@@ -133,7 +168,9 @@
                     <Checkbox value="mode-7">Mode 7</Checkbox>
                     <Checkbox value="mode-8">Mode 8</Checkbox>
 
-                    <Checkbox value="all-mode">All Modes</Checkbox>
+                    <Checkbox value="all-mode" onClick={selectAllModes}
+                        >All Modes</Checkbox
+                    >
                     <Checkbox value="unknown-mode">Unknown</Checkbox>
                 </div>
                 <hr />
