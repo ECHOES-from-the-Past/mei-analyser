@@ -2,20 +2,90 @@
     import Button from "../components/Button.svelte";
     import Checkbox from "../components/Checkbox.svelte";
     import RadioButton from "../components/RadioButton.svelte";
+    import Tooltip from "../components/Tooltip.svelte";
+    import Section from "../components/Section.svelte";
+    import TextInput from "../components/TextInput.svelte";
+    import MelismaArrow from "../components/MelismaArrow.svelte";
 
     import {
         clearSearchResultsAndInfo,
-        performSearch,
         createResultTable,
     } from "../client/search";
+    import { persist, retrieve } from "../utility/utils";
 
-    import Tooltip from "../components/Tooltip.svelte";
-    import Section from "../components/Section.svelte";
-    import InputTextBox from "../components/TextInput.svelte";
-    import { modeCheckboxes } from "../DOMelements.mjs";
+    /**
+     * Perform highlighting when user clicks on "Search" button
+     * @return {Chant[]} list of chants that match the search query
+     */
+    async function performSearch() {
+        const aquitanianCheckbox = document.getElementById(
+            "aquitanian-checkbox",
+        );
+        const squareCheckbox = document.getElementById("square-checkbox");
+
+        const databaseURL =
+            env == "development"
+                ? "src/database/database.json"
+                : "./database.json";
+
+        /** Retrieving the locally stored list of chants */
+        let resultChantList = await fetch(databaseURL).then((response) =>
+            response.json(),
+        );
+
+
+        /* First layer of filtering: Notation type */
+        // resultChantList = filterByMusicScript(resultChantList, {
+        //   "aquitanian": aquitanianCheckbox.checked,
+        //   "square": squareCheckbox.checked,
+        // })
+
+        /* Second layer of filtering: Ornamental shapes */
+        const liquescentCheckbox = document.getElementById(
+            "liquescent-checkbox",
+        );
+        const quilismaCheckbox = document.getElementById("quilisma-checkbox");
+        const oriscusCheckbox = document.getElementById("oriscus-checkbox");
+        /**
+         * Options for the ornamental search
+         * @type {{liquescent: boolean, quilisma: boolean, oriscus: boolean}}
+         */
+        let ornamentalOptions = {
+            liquescent: liquescentCheckbox.checked,
+            quilisma: quilismaCheckbox.checked,
+            oriscus: oriscusCheckbox.checked,
+        };
+
+        // resultChantList = filterByOrnamentalShapes(resultChantList, ornamentalOptions);
+        console.log(resultChantList);
+
+        /* Third layer of filtering: Modes */
+        // resultChantList = filterByModes(resultChantList, modeCheckboxes, unknownModeCheckbox);
+
+        /* Forth layer of filtering: Pattern search */
+        // resultChantList = filterByMelodicPattern(resultChantList, patternInputBox.value, getMelodicPatternSearchMode())
+
+        // Display the amount of chants that match the search options
+
+        // searchResultInfo.innerHTML = `Found <b>${resultChantList.length}</b> chants from the search options.`;
+
+        /**
+         * Sort chant list by file name
+         * Ternary operation explain:
+         * - If chantA's file name is "less than" chantB's file name, return -1 to sort chantA before chantB
+         * - Otherwise, return 1 to sort chantA after chantB
+         */
+        resultChantList.sort((chantA, chantB) =>
+            chantA.fileName < chantB.fileName ? -1 : 1,
+        );
+
+        /* Return the result */
+        // console.log(resultChantList)
+        return resultChantList;
+    }
 
     async function searchButtonAction() {
-        clearSearchResultsAndInfo();
+        // clearSearchResultsAndInfo();
 
         // // Perform search and display the result
         // refreshWheel.hidden = false;
@@ -28,39 +98,15 @@
     }
 
     function selectAllModes() {
-        /**
-         * @type {HTMLInputElement}
-         * @description The checkboxes for each mode and the undetected mode
-         */
-        const mode1Checkbox = document.getElementById("mode-1-checkbox");
-        const mode2Checkbox = document.getElementById("mode-2-checkbox");
-        const mode3Checkbox = document.getElementById("mode-3-checkbox");
-        const mode4Checkbox = document.getElementById("mode-4-checkbox");
-        const mode5Checkbox = document.getElementById("mode-5-checkbox");
-        const mode6Checkbox = document.getElementById("mode-6-checkbox");
-        const mode7Checkbox = document.getElementById("mode-7-checkbox");
-        const mode8Checkbox = document.getElementById("mode-8-checkbox");
+        const allModeCheckbox = document.getElementById("all-mode-checkbox");
 
-        /** @type {HTMLInputElement[]} */
-        const modeCheckboxes = [
-            mode1Checkbox,
-            mode2Checkbox,
-            mode3Checkbox,
-            mode4Checkbox,
-            mode5Checkbox,
-            mode6Checkbox,
-            mode7Checkbox,
-            mode8Checkbox,
-        ];
-
-        const allModeCheckbox = document.getElementById('all-mode-checkbox');
-
-
-        modeCheckboxes.forEach((checkbox, index) => {
+        for (let i = 1; i <= 8; i++) {
+            let checkbox = document.getElementById(`mode-${i}-checkbox`);
             checkbox.checked = allModeCheckbox.checked;
-            persist(`mode-${index + 1}-checkbox`, checkbox.checked);
-            persist("all-mode-checkbox", allModeCheckbox.checked);
-        });
+            persist(`mode-${i}-checkbox`, checkbox.checked);
+        }
+
+        persist("all-mode-checkbox", allModeCheckbox.checked);
     }
 </script>
 
@@ -101,15 +147,20 @@
                     Contour (melodic intervals)
                 </RadioButton>
                 <br />
-                <InputTextBox id="pattern-input-box" placeholder="e.g.: 1 +1 -2"
-                ></InputTextBox>
-                <!-- clear input button -->
-                <Button id="clear-pattern-input-btn">Clear</Button>
-                <p class="error" id="pattern-input-status" hidden>
+                <TextInput
+                    id="pattern-input-box"
+                    placeholder="e.g.: 1 +1 -2"
+                    onKeydown={() => {
+                        document.getElementById("search-btn").click();
+                    }}
+                />
+                <p id="pattern-input-status" hidden>
                     Melodic Pattern Search Status
                 </p>
                 <hr />
-                <Button id="search-btn" onClick={performSearch}>Search</Button>
+                <Button id="search-btn" onClick={searchButtonAction}
+                    >Search</Button
+                >
                 <br />
             </Section>
 
@@ -117,9 +168,7 @@
                 <h3>Other options</h3>
                 <Checkbox value="melisma">Enable melisma highlighting</Checkbox>
                 <p>
-                    <span class="nonselectable-text melisma-word">
-                        Melisma(s) with at least
-                    </span>
+                    <span class="melisma-word"> Melisma(s) with at least </span>
                     <input
                         type="number"
                         id="melisma-input"
@@ -127,26 +176,22 @@
                         max="20"
                         value="6"
                     />
-                    <span class="nonselectable-text melisma-word">
-                        notes in a syllable
-                    </span>
+                    <span class="melisma-word"> notes in a syllable </span>
+                    <MelismaArrow type="down" />
+                    <MelismaArrow type="up" />
                 </p>
-                <div>
-                    <span
-                        class="melisma-arrow nonselectable-text"
-                        id="melisma-decrement"
-                    >
-                        &lt;
-                    </span>
-                    <span
-                        class="melisma-arrow nonselectable-text"
-                        id="melisma-increment"
-                    >
-                        &gt;
-                    </span>
-                </div>
+                <div></div>
                 <hr />
-                <Checkbox value="custom-gabc">
+                <Checkbox
+                    value="custom-gabc"
+                    onClick={() => {
+                        document
+                            .querySelectorAll(".custom-gabc")
+                            .forEach((element) => {
+                                element.hidden = !this.check; // does this work?
+                            });
+                    }}
+                >
                     Toggle show pitch/location with the text
                 </Checkbox>
                 <br />
@@ -226,37 +271,12 @@
         --spotlight-fill: hsla(276, 74%, 51%, 0.075);
         --spotlight-stroke: hsla(276, 100%, 31%, 0.466);
     }
+    
     #search-panel-grid {
         display: grid;
         grid-template-columns: 1fr 2.7fr;
         gap: 1.2rem;
     }
-
-    #database-list {
-        list-style-type: none;
-        padding: 0.2rem;
-    }
-
-    /* #result-table {
-        width: 100%;
-        word-break: normal;
-    }
-
-    #result-table > thead > th {
-        text-align: center;
-        background-color: var(--button);
-        color: white;
-        padding: 0.8rem;
-        font-size: 1.2rem;
-    }
-
-    #result-table > tbody > tr > td,
-    #result-table > tbody > tr > a {
-        text-align: center;
-        padding: 0.5rem;
-        border: 1px solid hsla(101, 70%, 16%, 0.678);
-        height: inherit;
-    } */
 
     .liquescent-word {
         color: var(--liquescent-text);
@@ -292,24 +312,5 @@
 
     input[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
-    }
-
-    .melisma-arrow {
-        display: inline-block;
-        border: 1px solid var(--button-active);
-        box-shadow: 1px 2px var(--button);
-        border-radius: 0.5rem;
-        padding: 0.1rem 0.4rem;
-        font-size: 1rem;
-        cursor: pointer;
-        transition: box-shadow 0.1s;
-    }
-
-    .melisma-arrow:hover {
-        box-shadow: 2px 3px 1px var(--button-hover);
-    }
-
-    .melisma-arrow:active {
-        box-shadow: 2px 4px 4px var(--button-active);
     }
 </style>

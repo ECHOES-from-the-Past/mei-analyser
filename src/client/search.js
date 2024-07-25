@@ -1,10 +1,7 @@
 import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList } from "../utility/components.js";
 import { drawSVGFromMEIContent, highlightPattern, env, displayCertainty, spotlightNeumeComponent, highlightSvgElementById } from "../utility/utils.js";
 import {
-  liquescentCheckbox, quilismaCheckbox, oriscusCheckbox,
-  aquitanianCheckbox, squareCheckbox,
   searchResultDiv, chantInfo, chantSVG, chantDisplay,
-  modeCheckboxes, unknownModeCheckbox,
   melismaInput,
   contourRadio, exactPitchRadio, patternInputBox,
   patternInputStatus,
@@ -19,6 +16,20 @@ import { Chant } from "../utility/components.js";
  * ----------------------- SEARCH -----------------------
  */
 
+
+/**
+ * 
+ * @param {Chant[]} chantList The list of chants
+ * @param {{"aquitanian": boolean, "square": boolean}} musicScripts an array of chant types.
+ */
+function filterByMusicScript(chantList, musicScripts) {
+  chantList.filter(chant => {
+    if (musicScripts.aquitanian && chant.notationType == "aquitanian") return true;
+    if (musicScripts.square && chant.notationType == "square") return true;
+    return false;
+  });
+
+}
 
 /**
  * HELPER FUNCTION
@@ -78,21 +89,18 @@ function filterByOrnamentalShapes(chantList, ornamentalOptions) {
 /**
  * Filter by modes
  * @param {Chant[]} chantList list of chants to be filtered
- * @param {HTMLInputElement[]} modeCheckboxes list of checkboxes for each mode
- * @param {HTMLInputElement} unknownModeCheckbox checkbox for unknown/undetected mode
+ * @param {{"numbers": Number[], "unknown": boolean}} modes interested modes
  * @returns {Chant[]} list of chants that has the selected modes. If no modes are selected, return all the chants.
  */
-function filterByModes(chantList, modeCheckboxes, unknownModeCheckbox) {
+function filterByModes(chantList, modes) {
   /** @type {Chant[]} resulting list of chants after filtering */
   let resultChantList = [];
 
-  for (let i = 0; i < modeCheckboxes.length; i++) {
-    if (modeCheckboxes[i].checked) {
-      resultChantList.push(...chantList.filter(chant => { if (chant.mode == i + 1) return true; }));
-    }
-  }
-
-  if (unknownModeCheckbox.checked) {
+  modes.numbers.forEach((value) => {
+    resultChantList.push(...chantList.filter(chant => { if (chant.mode == value) return true; }));
+  })
+  
+  if (modes.unknown) {
     resultChantList.push(...chantList.filter(chant => { if (chant.mode == -1) return true; }));
   }
 
@@ -321,58 +329,7 @@ function filterByMelodicPattern(chantList, searchPattern, searchMode) {
   return resultChantList;
 }
 
-/**
- * Perform highlighting when user clicks on "Search" button
- * @return {Chant[]} list of chants that match the search query
- */
-export async function performSearch() {
-  console.log("Performing search")
-  const databaseURL = env == "development" ? "src/database/database.json" : "./database.json";
 
-  /** Retrieving the locally stored list of chants */
-  let resultChantList = await fetch(databaseURL).then(response => response.json());
-
-  /* First layer of filtering: Notation type */
-  resultChantList = resultChantList.filter(chant => {
-    if (aquitanianCheckbox.checked && chant.notationType == "aquitanian") return true;
-    if (squareCheckbox.checked && chant.notationType == "square") return true;
-    return false;
-  });
-
-  /* Second layer of filtering: Ornamental shapes */
-  /**
-   * Options for the ornamental search
-   * @type {{liquescent: boolean, quilisma: boolean, oriscus: boolean}}
-  */
-  let ornamentalOptions = {
-    "liquescent": liquescentCheckbox.checked,
-    "quilisma": quilismaCheckbox.checked,
-    "oriscus": oriscusCheckbox.checked
-  }
-
-  resultChantList = filterByOrnamentalShapes(resultChantList, ornamentalOptions);
-
-  /* Third layer of filtering: Modes */
-  resultChantList = filterByModes(resultChantList, modeCheckboxes, unknownModeCheckbox);
-
-  /* Forth layer of filtering: Pattern search */
-  resultChantList = filterByMelodicPattern(resultChantList, patternInputBox.value, getMelodicPatternSearchMode())
-
-  // Display the amount of chants that match the search options
-  searchResultInfo.innerHTML = `Found <b>${resultChantList.length}</b> chants from the search options.`;
-
-  /**
-   * Sort chant list by file name
-   * Ternary operation explain:
-   * - If chantA's file name is "less than" chantB's file name, return -1 to sort chantA before chantB
-   * - Otherwise, return 1 to sort chantA after chantB
-   */
-  resultChantList.sort((chantA, chantB) => (chantA.fileName < chantB.fileName) ? -1 : 1);
-
-  /* Return the result */
-  console.log(resultChantList)
-  return resultChantList;
-}
 
 /**
  * Show the search result on the screen

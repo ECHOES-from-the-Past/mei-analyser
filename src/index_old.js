@@ -132,50 +132,7 @@ patternInputBox.addEventListener("input", () => {
     persist('patternInputBox', patternInputBox.value);
 });
 
-clearPatternInputButton.addEventListener("click", () => {
-    patternInputBox.value = '';
-    persist('patternInputBox', patternInputBox.value);
-});
 
-patternInputBox.addEventListener("keydown", (event) => {
-    if (event.key === "Enter") {
-        searchButton.click();
-    }
-});
-
-customGABCCheckbox.addEventListener("change", () => {
-    persist('customGABCCheckbox', customGABCCheckbox.checked);
-    document.querySelectorAll('.custom-gabc').forEach((element) => {
-        element.hidden = !customGABCCheckbox.checked;
-    });
-});
-
-/* --------------- DATABASE PANEL PERSISTANCE --------------- */
-viewDatabaseButton.addEventListener("click", () => {
-    if (databaseIsOpen === false) {
-        viewDatabaseButton.textContent = "Close Database";
-        constructDatabaseList();
-    } else {
-        databaseList.innerHTML = '';
-        viewDatabaseButton.textContent = "View Database";
-    }
-    databaseIsOpen = !databaseIsOpen;
-});
-
-/* --------------- SEARCH PANEL --------------- */
-searchButton.addEventListener("click", async () => {
-
-});
-
-melismaIncrement.addEventListener("click", () => {
-    melismaInput.stepUp();
-    persist('melismaInput', melismaInput.value);
-});
-
-melismaDecrement.addEventListener("click", () => {
-    melismaInput.stepDown();
-    persist('melismaInput', melismaInput.value);
-});
 
 function invalidOptions() {
     if (!aquitanianCheckbox.checked && !squareCheckbox.checked) {
