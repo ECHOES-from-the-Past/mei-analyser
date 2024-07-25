@@ -120,17 +120,6 @@ allModeCheckbox.addEventListener("change", () => {
     });
 });
 
-exactPitchRadio.addEventListener("change", () => {
-    persist('melodicPatternSearchMode', 'exact-pitch')
-});
-
-contourRadio.addEventListener("change", () => {
-    persist('melodicPatternSearchMode', 'contour')
-});
-
-patternInputBox.addEventListener("input", () => {
-    persist('patternInputBox', patternInputBox.value);
-});
 
 
 

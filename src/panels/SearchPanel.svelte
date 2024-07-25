@@ -7,22 +7,19 @@
     import TextInput from "../components/TextInput.svelte";
     import MelismaArrow from "../components/MelismaArrow.svelte";
 
-    import {
-        clearSearchResultsAndInfo,
-        createResultTable,
-    } from "../client/search";
-    import { persist, retrieve } from "../utility/utils";
+    import { createResultTable } from "../client/search";
+    import { persist, retrieve, env } from "../utility/utils";
+
+    // DOM Element binding via `bind:this`
+    let aquitanianCheckbox, squareCheckbox;
+    let liquescentCheckbox, quilismaCheckbox, oriscusCheckbox;
+    let searchButton; // bind this with the "Search" button
 
     /**
      * Perform highlighting when user clicks on "Search" button
      * @return {Chant[]} list of chants that match the search query
      */
     async function performSearch() {
-        const aquitanianCheckbox = document.getElementById(
-            "aquitanian-checkbox",
-        );
-        const squareCheckbox = document.getElementById("square-checkbox");
-
         const databaseURL =
             env == "development"
                 ? "src/database/database.json"
@@ -33,19 +30,13 @@
             response.json(),
         );
 
-
         /* First layer of filtering: Notation type */
-        // resultChantList = filterByMusicScript(resultChantList, {
-        //   "aquitanian": aquitanianCheckbox.checked,
-        //   "square": squareCheckbox.checked,
-        // })
+        resultChantList = filterByMusicScript(resultChantList, {
+            aquitanian: aquitanianCheckbox.checked,
+            square: squareCheckbox.checked,
+        });
 
         /* Second layer of filtering: Ornamental shapes */
-        const liquescentCheckbox = document.getElementById(
-            "liquescent-checkbox",
-        );
-        const quilismaCheckbox = document.getElementById("quilisma-checkbox");
-        const oriscusCheckbox = document.getElementById("oriscus-checkbox");
         /**
          * Options for the ornamental search
          * @type {{liquescent: boolean, quilisma: boolean, oriscus: boolean}}
@@ -56,7 +47,7 @@
             oriscus: oriscusCheckbox.checked,
         };
 
-        // resultChantList = filterByOrnamentalShapes(resultChantList, ornamentalOptions);
+        resultChantList = filterByOrnamentalShapes(resultChantList, ornamentalOptions);
         console.log(resultChantList);
 
         /* Third layer of filtering: Modes */
@@ -81,6 +72,80 @@
 
         /* Return the result */
         // console.log(resultChantList)
+        return resultChantList;
+    }
+
+    /**
+     *
+     * @param {Chant[]} chantList The list of chants
+     * @param {{"aquitanian": boolean, "square": boolean}} musicScripts an array of chant types.
+     */
+    function filterByMusicScript(chantList, musicScripts) {
+        chantList.filter((chant) => {
+            if (musicScripts.aquitanian && chant.notationType == "aquitanian")
+                return true;
+            if (musicScripts.square && chant.notationType == "square")
+                return true;
+            return false;
+        });
+    }
+
+    /**
+     * HELPER FUNCTION
+     * Check if a chant has a specific ornamental shape.
+     * This only check for the first occurrence of the ornamental shape in the chant
+     * and does not care for the location of the ornamental shape in the chant.
+     * @param {Chant} chant the chant to be checked
+     * @param {string} ornamentalType the type of ornamental shape to be checked
+     * @returns {boolean} `true` if the chant has the ornamental shape, `false` otherwise
+     */
+    function hasOrnamental(chant, ornamentalType) {
+        /** @type {NeumeComponent[]} */
+        let neumeComponents = getNeumeComponentList(chant.syllables);
+        for (let neume of neumeComponents) {
+            // TODO: Get the syllables from here
+            if (
+                neume.ornamental != null &&
+                neume.ornamental.type == ornamentalType
+            )
+                return true;
+        }
+        return false;
+    }
+
+    /**
+     * Search by ornamental shapes (liquescent, quilisma, oriscus)
+     * @param {Chant[]} chantList list of chants to be filtered
+     * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
+     * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
+     */
+    function filterByOrnamentalShapes(chantList, ornamentalOptions) {
+        /**
+         * Filter the chants based on the options.
+         * If all the options are unchecked (`false`), return all the chants
+         * @type {Chant[]} resulting list of chants after filtering
+         */
+        let resultChantList = chantList;
+
+        // first filter for the liquescent option
+        if (ornamentalOptions.liquescent) {
+            resultChantList = resultChantList.filter((chant) => {
+                if (hasOrnamental(chant, "liquescent")) return true;
+            });
+        }
+        // then filter for the quilisma option
+        if (ornamentalOptions.quilisma) {
+            resultChantList = resultChantList.filter((chant) => {
+                if (hasOrnamental(chant, "quilisma")) return true;
+            });
+        }
+        // then filter for the oriscus option
+        if (ornamentalOptions.oriscus) {
+            resultChantList = resultChantList.filter((chant) => {
+                if (hasOrnamental(chant, "oriscus")) return true;
+            });
+        }
+
         return resultChantList;
     }
 
@@ -118,8 +183,12 @@
                 <h1>Search Panel</h1>
                 <!-- Search by music script (notation type) -->
                 <p>Filter chants with the following music script:</p>
-                <Checkbox value="aquitanian">Aquitanian</Checkbox>
-                <Checkbox value="square">Square</Checkbox>
+                <Checkbox value="aquitanian" bind:this={aquitanianCheckbox}
+                    >Aquitanian</Checkbox
+                >
+                <Checkbox value="square" bind:this={squareCheckbox}
+                    >Square</Checkbox
+                >
                 <hr />
 
                 <!-- Search/filter by ornamental figures -->
@@ -127,9 +196,15 @@
                     Filter chants that has ornamental figure(s): <br />
                     (No selection will display all chants)
                 </p>
-                <Checkbox value="liquescent">Liquescent</Checkbox>
-                <Checkbox value="quilisma">Quilisma</Checkbox>
-                <Checkbox value="oriscus">Oriscus</Checkbox>
+                <Checkbox value="liquescent" bind:this={liquescentCheckbox}>
+                    Liquescent
+                </Checkbox>
+                <Checkbox value="quilisma" bind:this={quilismaCheckbox}>
+                    Quilisma
+                </Checkbox>
+                <Checkbox value="oriscus" bind:this={oriscusCheckbox}>
+                    Oriscus
+                </Checkbox>
                 <hr />
 
                 <!-- Search by melodic pattern -->
@@ -150,17 +225,23 @@
                 <TextInput
                     id="pattern-input-box"
                     placeholder="e.g.: 1 +1 -2"
-                    onKeydown={() => {
-                        document.getElementById("search-btn").click();
+                    onKeydown={(e) => {
+                        if (e.key == "Enter") {
+                            searchButton.click();
+                        }
                     }}
                 />
                 <p id="pattern-input-status" hidden>
                     Melodic Pattern Search Status
                 </p>
                 <hr />
-                <Button id="search-btn" onClick={searchButtonAction}
-                    >Search</Button
+                <Button
+                    id="search-btn"
+                    bind:this={searchButton}
+                    onClick={searchButtonAction}
                 >
+                    Search
+                </Button>
                 <br />
             </Section>
 
@@ -271,7 +352,7 @@
         --spotlight-fill: hsla(276, 74%, 51%, 0.075);
         --spotlight-stroke: hsla(276, 100%, 31%, 0.466);
     }
-    
+
     #search-panel-grid {
         display: grid;
         grid-template-columns: 1fr 2.7fr;

@@ -1,10 +1,24 @@
 <script>
-    export let id;
+    import { persist, retrieve } from "../utility/utils";
+    export let id = "textbox";
     export let placeholder = "Input here";
     export let onKeydown;
+
+    let value = retrieve(id);
+
+    function handleInputChanges() {
+        persist(id, value);
+    }
 </script>
 
-<input type="text" {id} {placeholder} on:keydown={onKeydown} />
+<input
+    type="text"
+    {id}
+    {placeholder}
+    bind:value
+    on:input={handleInputChanges}
+    on:keydown={onKeydown}
+/>
 
 <style>
     input {
