@@ -12,6 +12,10 @@
     function updateLS() {
         persist(group, value);
     }
+
+    export function isChecked() {
+        return check;
+    }
 </script>
 
 <label>

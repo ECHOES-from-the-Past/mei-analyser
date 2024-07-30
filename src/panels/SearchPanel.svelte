@@ -7,10 +7,14 @@
     import TextInput from "../components/TextInput.svelte";
 
     import { persist, retrieve, env } from "../utility/utils";
-
-    export let status;
-
-    status = "hello";
+    import {
+        NeumeComponent,
+        NeumeComponentSQ,
+        toSeptenary,
+        Chant,
+        getNeumeComponentList,
+    } from "../utility/components.js";
+    import { onMount } from "svelte";
 
     // DOM Element binding via `bind:this`
     let aquitanianCheckbox, squareCheckbox;
@@ -32,20 +36,19 @@
         let resultChantList = await fetch(databaseURL).then((response) =>
             response.json(),
         );
-        console.log(resultChantList);
 
         /* First layer of filtering: Notation type */
-        // resultChantList = filterByMusicScript(resultChantList, {
-        //     aquitanian: aquitanianCheckbox.checked,
-        //     square: squareCheckbox.checked,
-        // });
+        resultChantList = filterByMusicScript(resultChantList, {
+            aquitanian: aquitanianCheckbox.isChecked(),
+            square: squareCheckbox.isChecked(),
+        });
 
         /* Second layer of filtering: Ornamental shapes */
-        // resultChantList = filterByOrnamentalShapes(resultChantList, {
-        //     liquescent: liquescentCheckbox.checked,
-        //     quilisma: quilismaCheckbox.checked,
-        //     oriscus: oriscusCheckbox.checked,
-        // });
+        resultChantList = filterByOrnamentalShapes(resultChantList, {
+            liquescent: liquescentCheckbox.isChecked(),
+            quilisma: quilismaCheckbox.isChecked(),
+            oriscus: oriscusCheckbox.isChecked(),
+        });
 
         /* Third layer of filtering: Modes */
         // resultChantList = filterByModes(resultChantList, modeCheckboxes, unknownModeCheckbox);
@@ -63,12 +66,12 @@
          * - If chantA's file name is "less than" chantB's file name, return -1 to sort chantA before chantB
          * - Otherwise, return 1 to sort chantA after chantB
          */
-        resultChantList.sort((chantA, chantB) =>
-            chantA.fileName < chantB.fileName ? -1 : 1,
-        );
+        // resultChantList.sort((chantA, chantB) =>
+        //     chantA.fileName < chantB.fileName ? -1 : 1,
+        // );
 
         /* Return the result */
-        // console.log(resultChantList)
+        console.log(resultChantList);
         return resultChantList;
     }
 
@@ -78,13 +81,17 @@
      * @param {{"aquitanian": boolean, "square": boolean}} musicScripts an array of chant types.
      */
     function filterByMusicScript(chantList, musicScripts) {
-        chantList.filter((chant) => {
-            if (musicScripts.aquitanian && chant.notationType == "aquitanian")
+        let filteredChantList = chantList.filter((chant) => {
+            if (musicScripts.aquitanian && chant.notationType == "aquitanian") {
                 return true;
-            if (musicScripts.square && chant.notationType == "square")
+            }
+            else if (musicScripts.square && chant.notationType == "square") {
                 return true;
+            }
             return false;
         });
+
+        return filteredChantList;
     }
 
     /**
@@ -227,22 +234,9 @@
         // refreshWheel.hidden = false;
         let searchResults = await performSearch().then((results) => {
             // refreshWheel.hidden = true;
-            console.log(createResultTable(results)); // TODO: not displaying
             return results;
         });
         createResultTable(searchResults);
-    }
-
-    function selectAllModes() {
-        const allModeCheckbox = document.getElementById("all-mode-checkbox");
-
-        for (let i = 1; i <= 8; i++) {
-            let checkbox = document.getElementById(`mode-${i}-checkbox`);
-            checkbox.checked = allModeCheckbox.checked;
-            persist(`mode-${i}-checkbox`, checkbox.checked);
-        }
-
-        persist("all-mode-checkbox", allModeCheckbox.checked);
     }
 
     /**
@@ -258,7 +252,6 @@
         const tableHeadRows = [
             "Title",
             "Music Script",
-            "Mode",
             "Text",
             "Source",
             "Links",
@@ -312,7 +305,7 @@
              * @type {NeumeComponent[][]}
              * */
             let melodicPattern = [];
-            if (contourRadio.checked) {
+            if (contourRadio.isChecked()) {
                 melodicPattern = processContourMelodicPattern(
                     chant,
                     processSearchPattern(
@@ -320,7 +313,7 @@
                         getMelodicPatternSearchMode(),
                     ),
                 );
-            } else if (exactPitchRadio.checked) {
+            } else if (exactPitchRadio.isChecked()) {
                 melodicPattern = processExactPitchMelodicPattern(
                     chant,
                     processSearchPattern(
@@ -348,7 +341,7 @@
                     wordWrapper.classList.add(ornamentalNC + "-word"); // for CSS styling
                 }
 
-                if (melismaEnableCheckbox.checked) {
+                if (melismaEnableCheckbox.isChecked()) {
                     // Detect melismas with neume components
                     let melismaMin = melismaInput.value;
                     if (syllable.neumeComponents.length >= melismaMin) {
@@ -403,7 +396,7 @@
                         );
                     } else if (chant.notationType == "aquitanian") {
                         if (
-                            aquitanianPitchCheckbox.checked &&
+                            aquitanianPitchCheckbox.isChecked() &&
                             chant.clef.shape != null
                         ) {
                             const clef = chant.clef.shape;
@@ -423,7 +416,7 @@
                                     })
                                     .join("")})`,
                             );
-                        } else if (!aquitanianPitchCheckbox.checked) {
+                        } else if (!aquitanianPitchCheckbox.isChecked()) {
                             customGABC.push(
                                 `${word}(${syllable.neumeComponents
                                     .map((nc) => {
@@ -457,7 +450,7 @@
                                 .join("")})`;
                     } else if (chant.notationType == "aquitanian") {
                         if (
-                            aquitanianPitchCheckbox.checked &&
+                            aquitanianPitchCheckbox.isChecked() &&
                             chant.clef.shape != null
                         ) {
                             const clef = chant.clef.shape;
@@ -476,7 +469,7 @@
                                         return outNc;
                                     })
                                     .join("")})`;
-                        } else if (!aquitanianPitchCheckbox.checked) {
+                        } else if (!aquitanianPitchCheckbox.isChecked()) {
                             customGABC[customGABC.length - 1] +=
                                 `${word}(${syllable.neumeComponents
                                     .map((nc) => {
@@ -499,7 +492,7 @@
             customGABCDiv.classList.add("custom-gabc");
 
             customGABCDiv.innerHTML = "<hr>" + customGABC.join(" ");
-            customGABCDiv.hidden = !customGABCCheckbox.checked;
+            customGABCDiv.hidden = !customGABCCheckbox.isChecked();
 
             tdSyllables.appendChild(customGABCDiv);
 
@@ -538,7 +531,7 @@
 
                 // Highlight search pattern
                 let melodicPattern = [];
-                if (contourRadio.checked) {
+                if (contourRadio.isChecked()) {
                     melodicPattern = processContourMelodicPattern(
                         chant,
                         processSearchPattern(
@@ -546,7 +539,7 @@
                             getMelodicPatternSearchMode(),
                         ),
                     );
-                } else if (exactPitchRadio.checked) {
+                } else if (exactPitchRadio.isChecked()) {
                     melodicPattern = processExactPitchMelodicPattern(
                         chant,
                         processSearchPattern(
@@ -561,7 +554,7 @@
                 }
 
                 // Highlight the melisma on the chant
-                if (melismaEnableCheckbox.checked) {
+                if (melismaEnableCheckbox.isChecked()) {
                     let melismaMin = melismaInput.value;
                     for (let syllable of chant.syllables) {
                         if (syllable.neumeComponents.length >= melismaMin) {
@@ -756,7 +749,10 @@
                 <Button
                     id="search-btn"
                     bind:this={searchButton}
-                    onClick={searchButtonAction}
+                    onClick={async () => {
+                        await performSearch();
+                        await searchButtonAction();
+                    }}
                 >
                     Search
                 </Button>
@@ -814,8 +810,32 @@
                         <Checkbox value="mode-7">Mode 7</Checkbox>
                         <Checkbox value="mode-8">Mode 8</Checkbox>
 
-                        <Checkbox value="all-mode" onClick={selectAllModes}
-                            >All Modes</Checkbox
+                        <Checkbox
+                            value="all-mode"
+                            onClick={() => {
+                                const allModeCheckbox =
+                                    document.getElementById(
+                                        "all-mode-checkbox",
+                                    );
+
+                                for (let i = 1; i <= 8; i++) {
+                                    let checkbox = document.getElementById(
+                                        `mode-${i}-checkbox`,
+                                    );
+
+                                    checkbox.checked = allModeCheckbox.checked;
+
+                                    persist(
+                                        `mode-${i}-checkbox`,
+                                        checkbox.checked,
+                                    );
+                                }
+
+                                persist(
+                                    "all-mode-checkbox",
+                                    allModeCheckbox.checked,
+                                );
+                            }}>All Modes</Checkbox
                         >
                         <Checkbox value="unknown-mode">Unknown</Checkbox>
                     </div>

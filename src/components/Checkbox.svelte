@@ -12,6 +12,10 @@
         check = !check;
         persist(id, check);
     }
+
+    export function isChecked() {
+        return check;
+    }
 </script>
 
 <label>
