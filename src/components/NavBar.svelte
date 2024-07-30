@@ -14,6 +14,17 @@
             }
         });
     }
+
+    /** @type {ClientStatus} */
+    export let clientStatus;
+    function updateClientStatus(message = "Loading...") {
+        clientStatus.showStatus();
+        clientStatus.updateStatus(message);
+    }
+
+    function hideClientStatus() {
+        clientStatus.hideStatus();
+    }
 </script>
 
 <div id="navbar">
@@ -34,7 +45,7 @@
         <Button>Project Wiki</Button>
     </ExternalLink>
 
-    <ClientStatus />
+    <ClientStatus bind:this={clientStatus} />
 
     <span style="color: var(--button); margin-left: auto;" id="client-version"
     ></span>

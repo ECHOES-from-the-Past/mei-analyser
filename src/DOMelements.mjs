@@ -1,9 +1,4 @@
 /* --------------------- TOP/NAVBAR ELEMENTS --------------------- */
-/** @type {HTMLButtonElement} */
-export const searchModeButton = document.getElementById('search-mode-btn');
-
-/** @type {HTMLButtonElement} */
-export const crossComparisonModeButton = document.getElementById('cross-comparison-mode-btn');
 
 /** @type {HTMLElement} */
 export const clientStatus = document.getElementById('client-status');

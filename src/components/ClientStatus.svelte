@@ -2,9 +2,14 @@
     $: hidden = false;
     $: status = "Client status";
 
-    export function toggle() {
-        hidden = !hidden;
+    export function hideStatus() {
+        hidden = true;
     }
+
+    export function showStatus() {
+        hidden = false;
+    }
+    
     export function updateStatus(message) {
         status = String(message);
     }
