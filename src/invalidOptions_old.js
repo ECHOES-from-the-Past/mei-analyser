@@ -1,15 +1,7 @@
-import {
-    clientStatus,
-    aquitanianCheckbox, squareCheckbox,
-    modeCheckboxes, unknownModeCheckbox,
-    searchButton,
-} from './DOMelements.mjs';
-
 /**
 * Load predefined files when DOM is loaded
 */
 document.addEventListener("DOMContentLoaded", () => {
-
     invalidOptions();
 });
 

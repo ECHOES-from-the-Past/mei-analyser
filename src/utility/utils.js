@@ -21,7 +21,7 @@ export function displayCertainty(certaintyPercentage) {
 }
 
 /**
- * Load MEI file from its file path and set an order on the screen (1, 2)
+ * Load MEI file from its file path
  * @param {string} fileName link to the MEI (.mei) file to be rendered
  * @returns the content of the MEI file
  */
