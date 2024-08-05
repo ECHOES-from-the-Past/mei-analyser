@@ -6,9 +6,14 @@
     /** @type {function} the button's action */
     export let onClick;
     // let checked = localStorage.getItem(id) == null ? true : false;
+
+    let button;
+    export function click() {
+        button.click();
+    }
 </script>
 
-<button id={id} nonselectable={nonselectable} on:click={onClick}>
+<button id={id} nonselectable={nonselectable} on:click={onClick} bind:this={button}>
     <slot/>
 </button>
 

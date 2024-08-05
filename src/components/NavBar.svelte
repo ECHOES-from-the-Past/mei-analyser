@@ -1,4 +1,5 @@
 <script>
+    import { onMount } from "svelte";
     import Button from "./Button.svelte";
     import ClientStatus from "./ClientStatus.svelte";
     import ExternalLink from "./ExternalLink.svelte";
@@ -13,17 +14,6 @@
                 document.getElementById(panelID).hidden = false;
             }
         });
-    }
-
-    /** @type {ClientStatus} */
-    export let clientStatus;
-    function updateClientStatus(message = "Loading...") {
-        clientStatus.showStatus();
-        clientStatus.updateStatus(message);
-    }
-
-    function hideClientStatus() {
-        clientStatus.hideStatus();
     }
 </script>
 
@@ -44,11 +34,6 @@
     >
         <Button>Project Wiki</Button>
     </ExternalLink>
-
-    <ClientStatus bind:this={clientStatus} />
-
-    <span style="color: var(--button); margin-left: auto;" id="client-version"
-    ></span>
 </div>
 
 <style>

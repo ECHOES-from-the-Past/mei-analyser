@@ -1,3 +1,40 @@
+<script>
+    /*
+     * The result table takes in **a list of chants** as prop and construct everything there.
+     * Filters and such are processed in the Search Panel.
+     *
+     * Each chant/element of the chant list (called `chantList`) is the input to a ResultTableRow component.
+     */
+    import { Chant } from "../utility/components";
+    import ResultTableRow from "./ResultTableRow.svelte";
+
+    let tableHeaders = ["Title", "Music Script", "Text", "Source", "Options"];
+
+    /** @type {Chant[]} */
+    export let chantList;
+
+    $: numberOfResult = chantList.length;
+</script>
+
+<div>
+    <p>Found <b>{numberOfResult}</b> chants from the search options.</p>
+    {#if numberOfResult > 0}
+        <table id="result-table">
+            <thead>
+                {#each tableHeaders as th}
+                    <th scope="col"> {th} </th>
+                {/each}
+            </thead>
+
+            <tbody>
+                {#each chantList as chant}
+                    <ResultTableRow {chant} />
+                {/each}
+            </tbody>
+        </table>
+    {/if}
+</div>
+
 <style>
     #result-table {
         width: 100%;
@@ -10,13 +47,5 @@
         color: white;
         padding: 0.8rem;
         font-size: 1.2rem;
-    }
-
-    #result-table > tbody > tr > td,
-    #result-table > tbody > tr > a {
-        text-align: center;
-        padding: 0.5rem;
-        border: 1px solid hsla(101, 70%, 16%, 0.678);
-        height: inherit;
     }
 </style>
