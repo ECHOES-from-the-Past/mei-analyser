@@ -37,7 +37,8 @@ export async function loadMEIFile(fileName) {
 }
 
 /**
- * Draw the MEI content to the screen on a specific slot/order (1: left, 2: right)
+ * Draw the MEI content to the screen
+ * @async
  * @param {MEI_FileContent} meiContent file content of the MEI file
  * @returns {SVGElement} SVG content of the MEI file
  */

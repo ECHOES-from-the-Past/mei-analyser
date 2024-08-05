@@ -92,8 +92,8 @@
 h1,
 h2,
 h3 {
-  margin: 0 0 0.5rem 0;
-  padding: 0 0;
+  margin: 0 0 0.36rem 0;
+  padding: 0;
 }
 
 p {
@@ -121,18 +121,6 @@ g {
 .error {
   color: var(--text-error);
 }
-
-#mode-grid {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-}
-
-#mode-grid>* {
-  flex: 1 2 25%;
-}
-
-
 
 .nonselectable-text {
   -webkit-touch-callout: none;

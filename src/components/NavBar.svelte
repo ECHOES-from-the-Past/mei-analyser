@@ -1,7 +1,6 @@
 <script>
-    import { onMount } from "svelte";
+    import { env } from "../utility/utils";
     import Button from "./Button.svelte";
-    import ClientStatus from "./ClientStatus.svelte";
     import ExternalLink from "./ExternalLink.svelte";
 
     let panelIDs = ["search-panel", "experimental-panel"];
@@ -14,6 +13,14 @@
                 document.getElementById(panelID).hidden = false;
             }
         });
+    }
+
+    let clientVersion;
+    export function setVersion(version) {
+        clientVersion = version;
+        if(env == "development") {
+            clientVersion += " (development)";
+        }
     }
 </script>
 
@@ -34,6 +41,8 @@
     >
         <Button>Project Wiki</Button>
     </ExternalLink>
+
+    <p id="client-version"> Version: {clientVersion} </p>
 </div>
 
 <style>
@@ -44,5 +53,10 @@
         align-items: center;
         background-color: white;
         color: white;
+    }
+
+    #client-version {
+        color: var(--emerald-900);
+        margin-left: auto;
     }
 </style>

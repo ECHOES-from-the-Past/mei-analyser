@@ -3,9 +3,12 @@
      * A result table row display information about a chant.
      */
 
-    import { Chant } from "../utility/components";
+    import ChantDetails from "./ChantDetails.svelte";
+    import ChantVerovioRender from "./ChantVerovioRender.svelte";
     import ExternalLink from "./ExternalLink.svelte";
     import Button from "./Button.svelte";
+
+    import { Chant } from "../utility/components";
     /** @type {Chant} */
     export let chant;
 
@@ -233,15 +236,6 @@
     //         id: "display-chant-btn",
     //         text: "Display chant " + chant.fileName.match(fileNameRegex),
     //         onClick: async () => {
-    //             // Display the chant information (file name, notation type, mode, etc.)
-    //             await printChantInformation(chant);
-
-    //             // Set the box for the chant and draw the chant
-    //             chantSVG.style.boxShadow = "0 0 2px 3px #888";
-    //             chantSVG.innerHTML = await drawSVGFromMEIContent(chant.meiContent);
-
-    //             chantDisplay.scrollIntoView({ behavior: "smooth" });
-
     //             // Highlight search pattern
     //             let melodicPattern = [];
     //             if (contourRadio.isChecked()) {
@@ -285,14 +279,35 @@
 
     // })
 
-    // let tdLinks = createTableCell();
-    // let tdLinksDiv = document.createElement("div");
+    /**
+     * Display the chant's information to the screen
+     * @param {Chant} chant the chant which information is to be extracted and printed
+     */
+    async function printChantInformation(chant) {
+        let chantInfoDiv = document.getElementById("chant-info");
+        chantInfoDiv.innerHTML = "";
+        new ChantDetails({
+            target: chantInfoDiv,
+            props: {
+                chant: chant,
+            },
+        });
 
-    // tdLinksDiv.style =
-    //     "display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1rem;";
-    // tdLinksDiv.appendChild(displayChantBtn);
-    // tdLinksDiv.appendChild(pemLinkBtnDiv);
-    // tdLinks.appendChild(tdLinksDiv);
+        let chantSVGDiv = document.getElementById("chant-svg")
+        chantSVGDiv.innerHTML = "";
+        new ChantVerovioRender({
+            target: chantSVGDiv,
+            props: {
+                chant: chant,
+            },
+        });
+
+        // Add a little delay for Verovio to render the chant
+        setTimeout(() => {
+            const chantDisplay = document.getElementById("chant-display");
+            chantDisplay.scrollIntoView({ behavior: "smooth", block: "start", inline: "nearest" });
+        }, 300);
+    }
 </script>
 
 <tr>
@@ -315,23 +330,32 @@
         {chant.source}
     </td>
     <!-- Options column -->
-    <!-- <Button>
-        Display chant
-    </Button> -->
     <td>
-        {#each chant.pemDatabaseUrls as url}
-            <ExternalLink href={url}>
-                <Button>View image on PEM</Button>
-            </ExternalLink>
-        {/each}
+        <div id="options">
+            <Button onClick={() => printChantInformation(chant)}>Display chant</Button>
+            {#each chant.pemDatabaseUrls as url}
+                <ExternalLink href={url}>
+                    <Button>View image on PEM</Button>
+                </ExternalLink>
+            {/each}
+        </div>
     </td>
 </tr>
 
 <style>
     tr > td {
+        display: table-cell;
         text-align: center;
         padding: 0.5rem;
         border: 1px solid hsla(142, 72%, 29%, 0.699);
         height: inherit;
+    }
+
+    #options {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
     }
 </style>

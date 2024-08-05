@@ -18,6 +18,7 @@
 
 <div>
     <p>Found <b>{numberOfResult}</b> chants from the search options.</p>
+
     {#if numberOfResult > 0}
         <table id="result-table">
             <thead>

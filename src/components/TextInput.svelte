@@ -9,6 +9,10 @@
     function handleInputChanges() {
         persist(id, value);
     }
+
+    export function getValue() {
+        return value;
+    }
 </script>
 
 <input

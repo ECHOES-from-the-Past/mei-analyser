@@ -6,17 +6,20 @@
     import Section from "../components/Section.svelte";
     import TextInput from "../components/TextInput.svelte";
     import ClientStatus from "../components/ClientStatus.svelte";
+    import ResultTable from "../components/ResultTable.svelte";
+    import { onMount } from "svelte";
 
     import { persist, retrieve, env } from "../utility/utils";
     import {
         NeumeComponent,
-        NeumeComponentSQ,
-        toSeptenary,
         Chant,
         getNeumeComponentList,
     } from "../utility/components.js";
-    import ResultTable from "../components/ResultTable.svelte";
-    import { onMount } from "svelte";
+    import {
+        filterByMusicScript, filterByMelodicPattern,
+    } from "../functions/search.js";
+    import ChantDetails from "../components/ChantDetails.svelte";
+    import ChantVerovioRender from "../components/ChantVerovioRender.svelte";
 
     // DOM Element binding via `bind:this`
     let aquitanianCheckbox, squareCheckbox;
@@ -27,7 +30,7 @@
 
     onMount(() => {
         clientStatus.hideStatus();
-    })
+    });
 
     /**
      * Perform highlighting when user clicks on "Search" button
@@ -61,7 +64,12 @@
         // resultChantList = filterByModes(resultChantList, modeCheckboxes, unknownModeCheckbox);
 
         /* Forth layer of filtering: Pattern search */
-        // resultChantList = filterByMelodicPattern(resultChantList, patternInputBox.value, getMelodicPatternSearchMode())
+        let patternSearchMode = retrieve("search-query-option");
+        resultChantList = filterByMelodicPattern(
+            resultChantList,
+            patternInputBox.getValue(),
+            patternSearchMode,
+        );
 
         // Display the amount of chants that match the search options
 
@@ -73,30 +81,12 @@
          * - If chantA's file name is "less than" chantB's file name, return -1 to sort chantA before chantB
          * - Otherwise, return 1 to sort chantA after chantB
          */
-        // resultChantList.sort((chantA, chantB) =>
-        //     chantA.fileName < chantB.fileName ? -1 : 1,
-        // );
+        resultChantList.sort((chantA, chantB) =>
+            chantA.fileName < chantB.fileName ? -1 : 1,
+        );
 
         /* Return the result */
         return resultChantList;
-    }
-
-    /**
-     *
-     * @param {Chant[]} chantList The list of chants
-     * @param {{"aquitanian": boolean, "square": boolean}} musicScripts an array of chant types.
-     */
-    function filterByMusicScript(chantList, musicScripts) {
-        let filteredChantList = chantList.filter((chant) => {
-            if (musicScripts.aquitanian && chant.notationType == "aquitanian") {
-                return true;
-            } else if (musicScripts.square && chant.notationType == "square") {
-                return true;
-            }
-            return false;
-        });
-
-        return filteredChantList;
     }
 
     /**
@@ -158,82 +148,7 @@
         return resultChantList;
     }
 
-    /**
-     * Using regular expression to process the user's input
-     * (from the old parseSearchPattern function)
-     * Regex pattern: /-?\d/g
-     * - an optional negative `-` sign
-     * - a single digit
-     *
-     * Regex pattern: /[A-Ga-g]/g
-     * - all alphabetical letters in range A-G or a-g
-     *
-     * Search mode options:
-     * - `exact-pitch` ~ Square pitch pattern (alphabetical value)
-     * - `contour` ~ Aquitanian/Square contour pattern (numerical value)
-     * @param {Chant[]} chantList
-     * @param {string} searchPattern
-     * @param {string} searchMode
-     * @returns {Chant[]} list of chants that contains the melodic pattern
-     */
-    function filterByMelodicPattern(chantList, searchPattern, searchMode) {
-        // If search pattern is empty, return the original chant list regardless of the search mode
-        if (!searchPattern) {
-            return chantList;
-        }
-
-        let searchQueryList = [],
-            resultChantList = [];
-
-        try {
-            searchQueryList = processSearchPattern(searchPattern, searchMode);
-        } catch (error) {
-            console.error(error);
-            patternInputStatus.textContent =
-                "Invalid melodic pattern options/input. Please check your search mode selection or query.";
-            patternInputStatus.hidden = false;
-            return [];
-        }
-
-        if (searchQueryList.length === 0) {
-            patternInputStatus.hidden = false;
-            patternInputStatus.textContent =
-                "Invalid melodic pattern options/input. Please check your search mode selection or query.\n";
-            patternInputStatus.style.color = "red";
-            return [];
-        }
-
-        if (searchMode == "contour") {
-            for (let chant of chantList) {
-                let patterns = processContourMelodicPattern(
-                    chant,
-                    searchQueryList,
-                );
-                if (patterns.length > 0) {
-                    resultChantList.push(chant);
-                }
-            }
-        } else if (searchMode == "exact-pitch") {
-            for (let chant of chantList) {
-                if (chant.notationType == "square") {
-                    let patterns = processExactPitchMelodicPattern(
-                        chant,
-                        searchQueryList,
-                    );
-                    if (patterns.length > 0) {
-                        resultChantList.push(chant);
-                    }
-                }
-            }
-        } else {
-            console.error("Invalid search mode!");
-        }
-
-        return resultChantList;
-    }
-
     let searchResultDiv, chantInfoDiv, chantSVGDiv;
-
     export function clearSearchResultsAndInfo() {
         // Clear the search result display
         searchResultDiv.innerHTML = `<p>Search results will display here</p>`;
@@ -242,7 +157,7 @@
     }
 
     async function searchButtonAction() {
-        clientStatus.showStatus("Searching...")
+        clientStatus.showStatus("Searching...");
 
         clearSearchResultsAndInfo();
         searchResultDiv.innerHTML = "";
@@ -259,81 +174,6 @@
         clientStatus.hideStatus();
     }
 
-    /**
-     * Display the chant's information to the screen
-     * @param {Chant} chant the chant which information is to be extracted and printed
-     */
-    async function printChantInformation(chant) {
-        chantInfoDiv.innerHTML = "";
-
-        let info = {
-            Title: chant.title,
-            Source: chant.source,
-            "Music script": chant.notationType,
-            Mode: chant.mode == -1 ? "Unknown" : chant.mode,
-            "Mode Certainty": displayCertainty(chant.modeCertainty),
-            "Mode Description": chant.modeDescription,
-            "MEI File": chant.fileName,
-            "PEM Database URL": chant.pemDatabaseUrls,
-        };
-
-        for (let k in info) {
-            let p = document.createElement("p");
-            if (k == "PEM Database URL") {
-                // Special rendering for PEM Database URL
-                p.innerHTML = `<b>${k}</b>: `;
-                for (let url of info[k]) {
-                    let a = document.createElement("a");
-                    a.href = url;
-                    a.target = "_blank";
-                    a.innerText = url;
-                    p.appendChild(a);
-                    // Add "or" if it is not the last URL
-                    if (info[k].indexOf(url) != info[k].length - 1) {
-                        p.innerHTML += " or ";
-                    }
-                }
-            } else if (k == "MEI File") {
-                // Links to the GitHub MEI files
-                p.innerHTML = `<b>${k}</b>: `;
-                const rootGABCtoMEI =
-                    "https://github.com/ECHOES-from-the-Past/GABCtoMEI/blob/main/";
-
-                let fileName = chant.fileName;
-                let a = document.createElement("a");
-
-                a.href = rootGABCtoMEI + fileName;
-                a.target = "_blank";
-                a.innerText = `${fileName.split("/").pop()} (GitHub)`; // showing the file name only
-                p.appendChild(a);
-            } else {
-                // Default rendering
-                p.innerHTML = `<b>${k}</b>: ${info[k]}`;
-            }
-
-            chantInfo.appendChild(p);
-        }
-    }
-
-    /**
-     * @param {string} content raw string to be displayed in a table cell
-     * @returns {HTMLTableCellElement}
-     */
-    function createTableCell(content) {
-        let td = document.createElement("td");
-        td.textContent = content;
-        return td;
-    }
-
-    /**
-     * @param {any} content raw HTML content to be displayed in a table cell
-     * @returns {HTMLTableCellElement}
-     */
-    function createTableCellHTML(content) {
-        let td = document.createElement("td");
-        td.innerHTML = content;
-        return td;
-    }
 </script>
 
 <div id="search-panel">
@@ -506,7 +346,7 @@
                     <p>Search results will display here</p>
                 </div>
             </Section>
-            <Section>
+            <Section id="chant-display">
                 <h1>Chant Information</h1>
                 <div id="chant-info" bind:this={chantInfoDiv}>
                     <!-- Chant information goes here -->
@@ -562,5 +402,11 @@
 
     input[type="number"]::-webkit-inner-spin-button {
         -webkit-appearance: none;
+    }
+
+    #mode-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-evenly;
     }
 </style>

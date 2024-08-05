@@ -1,4 +1,8 @@
-<div class="section">
+<script>
+  export let id;
+</script>
+
+<div class="section" {id}>
     <slot/>
 </div>
 
