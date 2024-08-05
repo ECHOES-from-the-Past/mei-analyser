@@ -30,7 +30,6 @@
 
 <style>
     label:hover {
-        --label-hover: hsla(207, 100%, 84%, 0.459);
         cursor: pointer;
         background-color: var(--label-hover);
     }

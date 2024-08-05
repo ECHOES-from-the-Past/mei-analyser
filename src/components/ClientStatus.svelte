@@ -6,10 +6,11 @@
         hidden = true;
     }
 
-    export function showStatus() {
+    export function showStatus(message) {
         hidden = false;
+        status = String(message);
     }
-    
+
     export function updateStatus(message) {
         status = String(message);
     }

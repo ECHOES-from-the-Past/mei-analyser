@@ -5,6 +5,7 @@
     import Tooltip from "../components/Tooltip.svelte";
     import Section from "../components/Section.svelte";
     import TextInput from "../components/TextInput.svelte";
+    import ClientStatus from "../components/ClientStatus.svelte";
 
     import { persist, retrieve, env } from "../utility/utils";
     import {
@@ -22,6 +23,11 @@
     let liquescentCheckbox, quilismaCheckbox, oriscusCheckbox;
     let patternInputBox;
     let searchButton; // bind this with the "Search" button
+    let clientStatus;
+
+    onMount(() => {
+        clientStatus.hideStatus();
+    })
 
     /**
      * Perform highlighting when user clicks on "Search" button
@@ -72,7 +78,6 @@
         // );
 
         /* Return the result */
-        console.log(resultChantList);
         return resultChantList;
     }
 
@@ -237,7 +242,10 @@
     }
 
     async function searchButtonAction() {
+        clientStatus.showStatus("Searching...")
+
         clearSearchResultsAndInfo();
+        searchResultDiv.innerHTML = "";
         // Perform search and display the result
         await performSearch().then((resultChantList) => {
             new ResultTable({
@@ -247,20 +255,16 @@
                 },
             });
         });
+
+        clientStatus.hideStatus();
     }
-    /**
-     * Show the search result on the screen
-     * Guide for CSR: https://svelte.dev/docs/client-side-component-api
-     * @param {Chant[]} resultChantList list of chants that match the search query
-     */
-    async function createResultTable(resultChantList) {}
 
     /**
      * Display the chant's information to the screen
      * @param {Chant} chant the chant which information is to be extracted and printed
      */
     async function printChantInformation(chant) {
-        chantInfo.innerHTML = "";
+        chantInfoDiv.innerHTML = "";
 
         let info = {
             Title: chant.title,
@@ -393,17 +397,17 @@
                     Melodic Pattern Search Status
                 </p>
                 <hr />
-                <Button
-                    id="search-btn"
-                    bind:this={searchButton}
-                    onClick={async () => {
-                        await performSearch();
-                        await searchButtonAction();
-                    }}
-                >
-                    Search
-                </Button>
-                <br />
+                <div style="display:flex; gap: 12px;">
+                    <Button
+                        id="search-btn"
+                        bind:this={searchButton}
+                        onClick={async () => {
+                            await searchButtonAction();
+                        }}
+                    >
+                        Search
+                    </Button>
+                </div>
             </Section>
 
             <Section>
@@ -496,7 +500,7 @@
         <div id="search-panel-rightside">
             <Section>
                 <h1>Search Results</h1>
-                <p id="search-result-info"></p>
+                <ClientStatus bind:this={clientStatus} />
                 <div id="search-result" bind:this={searchResultDiv}>
                     <!-- Search results -->
                     <p>Search results will display here</p>
@@ -518,26 +522,6 @@
 </div>
 
 <style>
-    #search-panel {
-        --liquescent-text: hsl(216, 100%, 41%);
-        --quilisma-text: hsl(59, 78%, 28%);
-        --oriscus-text: hsl(318, 100%, 36%);
-        --unclear-text: hsl(0, 0%, 15%);
-
-        --melisma-text: hsl(115, 61%, 28%);
-        --melisma-background: hsla(138, 100%, 66%, 0.4);
-        --melisma-spotlight-fill: hsla(138, 100%, 72%, 0.2);
-        --melisma-spotlight-stroke: hsl(138, 100%, 72%);
-
-        /* Default highlighting colours */
-        --highlight-fill: hsl(276, 74%, 51%);
-        --highlight-stroke: hsl(276, 100%, 31%);
-        --melodic-pattern-gabc: hsla(276, 100%, 75%, 0.596);
-
-        --spotlight-fill: hsla(276, 74%, 51%, 0.075);
-        --spotlight-stroke: hsla(276, 100%, 31%, 0.466);
-    }
-
     #search-panel-grid {
         display: grid;
         grid-template-columns: 1fr 3fr;

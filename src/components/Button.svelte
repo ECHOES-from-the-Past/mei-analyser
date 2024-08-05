@@ -5,7 +5,7 @@
 
     /** @type {function} the button's action */
     export let onClick;
-    // let checked = localStorage.getItem(id) == null ? true : false;
+    export let disabled;
 
     let button;
     export function click() {
@@ -13,18 +13,11 @@
     }
 </script>
 
-<button id={id} nonselectable={nonselectable} on:click={onClick} bind:this={button}>
+<button id={id} nonselectable={nonselectable} on:click={onClick} bind:this={button} {disabled}>
     <slot/>
 </button>
 
 <style>
-    * {
-        --button: hsl(170, 100%, 16%);
-        --button-hover: hsla(182, 100%, 20%, 0.753);
-        --button-active: hsl(170, 100%, 12%);
-        --button-disabled: hsla(172, 38%, 16%, 0.288);
-    }
-
     /* Default button styles */
     button {
         border: 0px;

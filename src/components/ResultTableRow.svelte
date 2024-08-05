@@ -1,49 +1,13 @@
-<tr>
-    <td>
-        {chant.title}
-    </td>
-    <td>
-        {chant.notationType}
-    </td>
-    <td>
-        {#each chant.syllables as syl}
-            {`${syl.syllableWord.text} `}
-        {/each}
-    </td>
-    <td>
-        {chant.source}
-    </td>
-    <td>
-        {#each chant.pemDatabaseUrls as url}
-        <ExternalLink href={url}>
-            <Button>
-                View image on PEM
-            </Button>
-        </ExternalLink>
-        {/each}
-    </td>
-</tr>
-
-<style>
-    tr > td, tr > a {
-        text-align: center;
-        padding: 0.5rem;
-        border: 1px solid hsla(101, 70%, 16%, 0.678);
-        height: inherit;
-    }
-</style>
-
 <script>
     /*
      * A result table row display information about a chant.
-    */
-    
+     */
+
     import { Chant } from "../utility/components";
     import ExternalLink from "./ExternalLink.svelte";
     import Button from "./Button.svelte";
     /** @type {Chant} */
     export let chant;
-
 
     /** Regular expression to match the file name format
      * - Pattern: 3 digits, an underscore, a letter, and 2 digits
@@ -330,3 +294,44 @@
     // tdLinksDiv.appendChild(pemLinkBtnDiv);
     // tdLinks.appendChild(tdLinksDiv);
 </script>
+
+<tr>
+    <!-- Title column -->
+    <td>
+        {chant.title}
+    </td>
+    <!-- Music Script column -->
+    <td>
+        {chant.notationType}
+    </td>
+    <!-- Text column -->
+    <td>
+        {#each chant.syllables as syl}
+            {`${syl.syllableWord.text} `}
+        {/each}
+    </td>
+    <!-- Source column -->
+    <td>
+        {chant.source}
+    </td>
+    <!-- Options column -->
+    <!-- <Button>
+        Display chant
+    </Button> -->
+    <td>
+        {#each chant.pemDatabaseUrls as url}
+            <ExternalLink href={url}>
+                <Button>View image on PEM</Button>
+            </ExternalLink>
+        {/each}
+    </td>
+</tr>
+
+<style>
+    tr > td {
+        text-align: center;
+        padding: 0.5rem;
+        border: 1px solid hsla(142, 72%, 29%, 0.699);
+        height: inherit;
+    }
+</style>
