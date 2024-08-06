@@ -1,0 +1,21 @@
+<script>
+    import { drawSVGFromMEIContent } from "../utility/utils";
+    import { Chant } from "../utility/components";
+
+    /** @type {Chant} */
+    export let chant;
+</script>
+
+<div>
+    {#await drawSVGFromMEIContent(chant.meiContent)}
+        <p> Loading MEI Content and letting Verovio render the chant </p>
+    {:then svg}
+        {@html svg}
+    {/await}
+</div>
+
+<style>
+    div {
+        box-shadow: 0 0 2px 3px #888;
+    }
+</style>
