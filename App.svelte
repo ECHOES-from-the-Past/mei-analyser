@@ -31,7 +31,7 @@
 <NavBar bind:this={navbar}/>
 <div id="panels">
     <SearchPanel />
-    <ExperimentalPanel />
+    <ExperimentalPanel hidden />
 </div>
 <ScrollUpButton />
 

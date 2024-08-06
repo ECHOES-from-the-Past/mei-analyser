@@ -1,8 +1,9 @@
 <script>
     import { onMount } from "svelte";
     import { displayCertainty } from "../utility/utils";
+    import ChantFrequencyChart from "./ChantFrequencyChart.svelte";
     export let chant;
-    let chantInfoDiv;
+    let chantInfoDiv, chartFrequencyDiv;
 
     let info = {
         Title: chant.title,
@@ -52,7 +53,28 @@
 
             chantInfoDiv.appendChild(p);
         }
+
+        new ChantFrequencyChart({
+            target: chartFrequencyDiv,
+            props: {
+                chant: chant
+            }
+        })
     });
 </script>
 
-<div bind:this={chantInfoDiv}></div>
+<div id="chant-information">
+    <div bind:this={chantInfoDiv}></div>
+    <div>
+        <div bind:this={chartFrequencyDiv}> </div>
+        <div> Another chart </div>
+    </div>
+</div>
+
+<style>
+    #chant-information {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 2rem;
+    }
+</style>

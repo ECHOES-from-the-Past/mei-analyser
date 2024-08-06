@@ -18,8 +18,8 @@
     import {
         filterByMusicScript, filterByMelodicPattern,
     } from "../functions/search.js";
-    import ChantDetails from "../components/ChantDetails.svelte";
-    import ChantVerovioRender from "../components/ChantVerovioRender.svelte";
+
+    export let hidden = false;
 
     // DOM Element binding via `bind:this`
     let aquitanianCheckbox, squareCheckbox;
@@ -176,7 +176,7 @@
 
 </script>
 
-<div id="search-panel">
+<div id="search-panel" {hidden}>
     <div id="search-panel-grid">
         <!-- Start of leftside search panel -->
         <div id="search-filters">
