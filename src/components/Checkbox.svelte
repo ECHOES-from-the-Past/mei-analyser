@@ -4,11 +4,12 @@
     export let value;
     export let id = `${value}-checkbox`;
     export let onClick;
+    export let disabled = false;
 
     /** @type {boolean} */
     let check = retrieve(id) === true;
 
-    function updateLS() {
+    function update() {
         check = !check;
         persist(id, check);
     }
@@ -22,8 +23,9 @@
     <input
         type="checkbox" {id}
         on:click={onClick}
-        on:change={updateLS}
+        on:change={update}
         bind:checked={check}
+        {disabled}
     />
     <slot />
 </label>

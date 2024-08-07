@@ -19,24 +19,14 @@
 </script>
 
 <label>
-    {#if check}
-        <input
-            {id}
-            type="radio"
-            name={group}
-            on:change={updateLS}
-            {value}
-            checked
-        />
-    {:else}
-        <input
-            {id}
-            type="radio"
-            name={group}
-            on:change={updateLS}
-            {value}
-        />
-    {/if}
+    <input
+        {id}
+        type="radio"
+        name={group}
+        on:change={updateLS}
+        {value}
+        checked={check}
+    />
     <slot />
 </label>
 

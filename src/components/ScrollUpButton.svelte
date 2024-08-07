@@ -1,7 +1,7 @@
 <script>
     let scrollUpBtn;
     window.onscroll = () => {
-        if (window.scrollY > 650) {
+        if (window.scrollY > 500) {
             scrollUpBtn.style.display = "block";
         } else {
             scrollUpBtn.style.display = "none";

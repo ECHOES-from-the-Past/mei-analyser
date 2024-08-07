@@ -16,7 +16,8 @@
         getNeumeComponentList,
     } from "../utility/components.js";
     import {
-        filterByMusicScript, filterByMelodicPattern,
+        filterByMusicScript,
+        filterByMelodicPattern,
     } from "../functions/search.js";
 
     export let hidden = false;
@@ -24,7 +25,7 @@
     // DOM Element binding via `bind:this`
     let aquitanianCheckbox, squareCheckbox;
     let liquescentCheckbox, quilismaCheckbox, oriscusCheckbox;
-    let patternInputBox;
+    let patternInputBox, finalisInputBox;
     let searchButton; // bind this with the "Search" button
     let clientStatus;
 
@@ -70,10 +71,6 @@
             patternInputBox.getValue(),
             patternSearchMode,
         );
-
-        // Display the amount of chants that match the search options
-
-        // searchResultInfo.innerHTML = `Found <b>${resultChantList.length}</b> chants from the search options.`;
 
         /**
          * Sort chant list by file name
@@ -173,14 +170,13 @@
 
         clientStatus.hideStatus();
     }
-
 </script>
 
 <div id="search-panel" {hidden}>
     <div id="search-panel-grid">
         <!-- Start of leftside search panel -->
         <div id="search-filters">
-            <Section>
+            <Section id="search-filters">
                 <h1>Search Filters</h1>
                 <!-- Search by music script (notation type) -->
                 <p>Filter chants with the following music script:</p>
@@ -218,14 +214,13 @@
                 <RadioButton value="exact-pitch" group="search-query-option">
                     Exact Pitch
                 </RadioButton>
-                <br />
                 <RadioButton value="contour" group="search-query-option">
                     Contour (melodic intervals)
                 </RadioButton>
                 <br />
                 <TextInput
                     id="pattern-input-box"
-                    placeholder="e.g.: 1 +1 -2"
+                    placeholder="e.g.: '1 +1 -2' or 'a b a g'"
                     onKeydown={(e) => {
                         if (e.key == "Enter") {
                             searchButton.click();
@@ -233,26 +228,43 @@
                     }}
                     bind:this={patternInputBox}
                 />
+
                 <p id="pattern-input-status" hidden>
                     Melodic Pattern Search Status
                 </p>
                 <hr />
-                <div style="display:flex; gap: 12px;">
-                    <Button
-                        id="search-btn"
-                        bind:this={searchButton}
-                        onClick={async () => {
-                            await searchButtonAction();
-                        }}
-                    >
-                        Search
-                    </Button>
-                </div>
+                <p>Filter by finalis (the last note)</p>
+                <RadioButton group="finalis-filter" value="exact-pitch">
+                    Exact Pitch
+                </RadioButton>
+                <RadioButton group="finalis-filter" value="relative-location">
+                    Relative location
+                </RadioButton>
+                <TextInput
+                    id="finalis-input-box"
+                    placeholder="A number or a pitch"
+                    onKeydown={(e) => {
+                        if (e.key == "Enter") {
+                            searchButton.click();
+                        }
+                    }}
+                    bind:this={finalisInputBox}
+                />
+                <hr />
+                <Button
+                    id="search-btn"
+                    onClick={async () => {
+                        await searchButtonAction();
+                    }}
+                    bind:this={searchButton}
+                >
+                    Search
+                </Button>
             </Section>
 
-            <Section>
+            <Section id="other-options">
                 <h3>Other options</h3>
-                <Checkbox value="melisma"
+                <Checkbox value="melisma" disabled
                     >Enable <span class="melisma-word"
                         >melisma highlighting</span
                     ></Checkbox
@@ -270,6 +282,7 @@
                 </p>
                 <hr />
                 <Checkbox
+                    disabled
                     value="custom-gabc"
                     onClick={() => {
                         document
@@ -282,7 +295,7 @@
                     Toggle show pitch/location with the text
                 </Checkbox>
                 <br />
-                <Checkbox value="aquitanian-pitch">
+                <Checkbox value="aquitanian-pitch" disabled>
                     Show Aquitanian in pitch value with text (only for chants
                     with detected mode)
                 </Checkbox>
@@ -346,6 +359,7 @@
                     <p>Search results will display here</p>
                 </div>
             </Section>
+
             <Section id="chant-display">
                 <h1>Chant Information</h1>
                 <div id="chant-info" bind:this={chantInfoDiv}>

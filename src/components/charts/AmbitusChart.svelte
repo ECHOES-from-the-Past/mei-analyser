@@ -16,7 +16,7 @@
         let notes = getNeumeComponentList(chant.syllables);
         const pitchFrequency = notes.map((nc) => {
             if (chant.notationType == "aquitanian") return nc.loc;
-            if (chant.notationType == "square") return nc.pitch;
+            if (chant.notationType == "square") return `${nc.pitch}${nc.octave}`;
         });
 
         let counts = {};
@@ -29,26 +29,25 @@
             }
         });
 
+        let sortedKeys = Object.keys(counts).sort((a, b) => a - b);
+
+        let sortedCounts = new Map();
+        sortedKeys.forEach((e, i, arr) => {
+            let value = sortedKeys[i];
+            sortedCounts.set(`${e}`, counts[value]);
+        });
+
         const finalis = notes[notes.length - 1];
 
-        const rhumbus = notes.filter((nc) => nc.tilt == "se");
-        console.log(rhumbus);
+        const normalBg = "rgba(125, 179, 102, 0.2)", finalisBg = "rgba(75, 192, 192, 0.2)";
+        const normalBorder = "rgb(125, 179, 102)", finalisBorder = "rgb(75, 192, 192)";
 
-        const normalBg = "rgba(255, 99, 132, 0.2)",
-            finalisBg = "rgba(75, 192, 192, 0.2)";
-        const normalBorder = "rgb(255, 99, 132)",
-            finalisBorder = "rgb(75, 192, 192)";
 
         let chantData = {
             labels: [],
             datasets: [
                 {
-                    data: [],
-                    backgroundColor: [],
-                    borderColor: [],
-                    borderWidth: 1,
-                },
-                {
+                    label: 'Number of notes',
                     data: [],
                     backgroundColor: [],
                     borderColor: [],
@@ -57,10 +56,10 @@
             ],
         };
 
-        for (let key in counts) {
-            chantData.datasets[0].data.push(counts[key]);
+        for (let key of sortedCounts.keys()) {
+            chantData.datasets[0].data.push(sortedCounts.get(key));
 
-            if (key == finalis.loc || key == finalis.pitch) {
+            if (key == finalis.loc || key == `${finalis.pitch}${finalis.octave}`) {
                 chantData.labels.push(`${key} (finalis)`);
                 chantData.datasets[0].backgroundColor.push(finalisBg);
                 chantData.datasets[0].borderColor.push(finalisBorder);
@@ -78,20 +77,12 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: `Notes frequency chart (${chant.notationType})`,
+                        text: `Ambitus chart (${chant.notationType} music script)`,
                     },
                 },
                 responsive: true,
                 interaction: {
                     intersect: false,
-                },
-                scales: {
-                    x: {
-                        stacked: true,
-                    },
-                    y: {
-                        stacked: true,
-                    },
                 },
             },
         });
