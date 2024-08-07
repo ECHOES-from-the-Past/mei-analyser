@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
-    import { displayCertainty } from "../utility/utils";
-    import ChantFrequencyChart from "./ChantFrequencyChart.svelte";
+    import { displayCertainty } from "../../utility/utils";
+    import ChantFrequencyChart from "../charts/ChantFrequencyChart.svelte";
     export let chant;
     let chantInfoDiv, chartFrequencyDiv;
 

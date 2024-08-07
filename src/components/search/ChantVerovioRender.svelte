@@ -1,6 +1,6 @@
 <script>
-    import { drawSVGFromMEIContent } from "../utility/utils";
-    import { Chant } from "../utility/components";
+    import { drawSVGFromMEIContent } from "../../utility/utils";
+    import { Chant } from "../../utility/components";
 
     /** @type {Chant} */
     export let chant;

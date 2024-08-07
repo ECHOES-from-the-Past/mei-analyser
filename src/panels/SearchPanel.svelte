@@ -6,7 +6,7 @@
     import Section from "../components/Section.svelte";
     import TextInput from "../components/TextInput.svelte";
     import ClientStatus from "../components/ClientStatus.svelte";
-    import ResultTable from "../components/ResultTable.svelte";
+    import ResultTable from "../components/search/ResultTable.svelte";
     import { onMount } from "svelte";
 
     import { persist, retrieve, env } from "../utility/utils";

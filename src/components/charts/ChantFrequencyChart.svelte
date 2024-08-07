@@ -2,10 +2,9 @@
     /*
      * The chart analysis produces a chart that analyse an input chant
      */
-    import { Chant } from "../utility/components";
+    import { Chant } from "../../utility/components";
     import { Chart } from "chart.js/auto";
-    import Section from "./Section.svelte";
-    import { getNeumeComponentList } from "../utility/components";
+    import { getNeumeComponentList } from "../../utility/components";
     import { onMount } from "svelte";
     /** @type {Chant} */
     export let chant;
@@ -82,10 +81,10 @@
                         text: `Notes frequency chart (${chant.notationType})`,
                     },
                 },
-                // responsive: true,
-                // interaction: {
-                //     intersect: false,
-                // },
+                responsive: true,
+                interaction: {
+                    intersect: false,
+                },
                 scales: {
                     x: {
                         stacked: true,

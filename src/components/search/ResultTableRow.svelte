@@ -5,10 +5,10 @@
 
     import ChantDetails from "./ChantDetails.svelte";
     import ChantVerovioRender from "./ChantVerovioRender.svelte";
-    import ExternalLink from "./ExternalLink.svelte";
-    import Button from "./Button.svelte";
+    import ExternalLink from "../ExternalLink.svelte";
+    import Button from "../Button.svelte";
 
-    import { Chant } from "../utility/components";
+    import { Chant } from "../../utility/components";
     /** @type {Chant} */
     export let chant;
 

@@ -5,7 +5,7 @@
      *
      * Each chant/element of the chant list (called `chantList`) is the input to a ResultTableRow component.
      */
-    import { Chant } from "../utility/components";
+    import { Chant } from "../../utility/components";
     import ResultTableRow from "./ResultTableRow.svelte";
 
     let tableHeaders = ["Title", "Music Script", "Text", "Source", "Options"];
