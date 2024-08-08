@@ -1,8 +1,10 @@
 {
   "name": "mei-analyser",
-  "version": "0.4.7",
+  "version": "0.5.0",
   "devDependencies": {
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
     "@types/xml2js": "^0.4.14",
+    "svelte": "^4.2.18",
     "vite": ">=5.2.6"
   },
   "private": true,
@@ -16,6 +18,7 @@
   "type": "module",
   "dependencies": {
     "@octokit/core": "^6.1.2",
+    "chart.js": "^4.4.3",
     "verovio": "^4.2.0",
     "xml2js": "^0.6.2"
   }

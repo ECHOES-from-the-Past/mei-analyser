@@ -21,7 +21,7 @@ export function displayCertainty(certaintyPercentage) {
 }
 
 /**
- * Load MEI file from its file path and set an order on the screen (1, 2)
+ * Load MEI file from its file path
  * @param {string} fileName link to the MEI (.mei) file to be rendered
  * @returns the content of the MEI file
  */
@@ -37,7 +37,8 @@ export async function loadMEIFile(fileName) {
 }
 
 /**
- * Draw the MEI content to the screen on a specific slot/order (1: left, 2: right)
+ * Draw the MEI content to the screen
+ * @async
  * @param {MEI_FileContent} meiContent file content of the MEI file
  * @returns {SVGElement} SVG content of the MEI file
  */
