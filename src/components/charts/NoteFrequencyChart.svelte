@@ -2,10 +2,10 @@
     /*
      * The chart analysis produces a chart that analyse an input chant
      */
-    import { Chant } from "../../utility/components";
     import { Chart } from "chart.js/auto";
     import { getNeumeComponentList } from "../../utility/components";
     import { onMount } from "svelte";
+    import { Chant } from "../../utility/components";
     /** @type {Chant} */
     export let chant;
 
@@ -13,36 +13,59 @@
     let chart;
 
     onMount(() => {
-        let notes = getNeumeComponentList(chant.syllables);
-        const pitchFrequency = notes.map((nc) => {
-            if (chant.notationType == "aquitanian") return nc.loc;
-            if (chant.notationType == "square") return nc.pitch;
-        });
+        let neumeComponents = getNeumeComponentList(chant.syllables);
 
-        let counts = {};
-        // Count the frequency of each note
-        pitchFrequency.forEach((note) => {
-            if (counts[note] === undefined) {
-                counts[note] = 1;
+        let noteCounts = {
+            regular: {},
+            rhombus: {},
+        };
+
+        neumeComponents.map((nc) => {
+            let note;
+            if (chant.notationType == "aquitanian") {
+                note = nc.loc;
+            } else if (chant.notationType == "square") {
+                note = nc.pitch;
+            }
+
+            if (nc.tilt == "se") {
+                if (noteCounts.rhombus[note] === undefined) {
+                    noteCounts.rhombus[note] = 1;
+                } else {
+                    noteCounts.rhombus[note] += 1;
+                }
             } else {
-                counts[note] += 1;
+                if (noteCounts.regular[note] === undefined) {
+                    noteCounts.regular[note] = 1;
+                } else {
+                    noteCounts.regular[note] += 1;
+                }
             }
         });
 
-        // Sort the countings of pitches
-        let sortedKeys = Object.keys(counts).sort((a, b) => a - b);
+        let sortedCounts = {
+            regular: new Map(),
+            rhombus: new Map(),
+        };
 
-        let sortedCounts = new Map();
-        sortedKeys.forEach((e, i, arr) => {
-            let value = sortedKeys[i];
-            sortedCounts.set(`${e}`, counts[value]);
-        });
+        for (let i in noteCounts) {
+            console.log(noteCounts[i]);
+            // Sort the countings of pitches
+            let sortedKeys = Object.keys(noteCounts[i]).sort((a, b) => a - b);
 
-        const rhumbus = notes.filter((nc) => nc.tilt == "se");
-        // console.log(rhumbus);
+            let sortedMap = sortedCounts[i];
+            sortedKeys.forEach((e, idx, arr) => {
+                let value = sortedKeys[idx];
+                sortedMap.set(`${e}`, noteCounts[i][value]);
+            });
+        }
 
-        const normalBg = "rgba(255, 99, 132, 0.2)";
-        const normalBorder = "rgb(255, 99, 132)";
+        console.log(sortedCounts);
+
+        const normalBg = "rgba(255, 99, 132, 0.2)",
+            rhombusBg = "rgba(55, 99, 132, 0.2)";
+        const normalBorder = "rgb(255, 99, 132)",
+            rhombusBorder = "rgb(55, 99, 132)";
 
         let chantData = {
             labels: [],
@@ -56,7 +79,7 @@
                     stack: "0",
                 },
                 {
-                    label: "Rhumbus",
+                    label: "Rhombus",
                     data: [],
                     backgroundColor: [],
                     borderColor: [],
@@ -66,13 +89,24 @@
             ],
         };
 
-        for (let key of sortedCounts.keys()) {
-            chantData.datasets[0].data.push(sortedCounts.get(key));
+        Object.keys(sortedCounts).forEach((e, i, arr) => {
+            // e is 'regular' and 'rhombus'
+            for (let es of sortedCounts[e].keys()) {
+                if (!chantData.labels.includes(es)) {
+                    chantData.labels.push(es);
+                }
+                console.log(es);
+                chantData.datasets[i].data.push(sortedCounts[e].get(es));
+                chantData.datasets[i].backgroundColor.push(
+                    e == "regular" ? normalBg : rhombusBg,
+                );
+                chantData.datasets[i].borderColor.push(
+                    e == "regular" ? normalBorder : rhombusBorder,
+                );
+            }
+        });
 
-            chantData.labels.push(key);
-            chantData.datasets[0].backgroundColor.push(normalBg);
-            chantData.datasets[0].borderColor.push(normalBorder);
-        }
+        console.log(chantData);
 
         new Chart(chart, {
             type: "bar",
