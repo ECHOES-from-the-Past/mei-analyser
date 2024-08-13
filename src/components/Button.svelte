@@ -1,11 +1,10 @@
 <script>
     /** @type {String} the component id */
-    export let id;
-    export let nonselectable;
+    export let id = "button-id";
 
     /** @type {function} the button's action */
-    export let onClick;
-    export let disabled;
+    export let onClick = null;
+    export let disabled = false;
 
     let button;
     export function click() {
@@ -13,7 +12,7 @@
     }
 </script>
 
-<button id={id} nonselectable={nonselectable} on:click={onClick} bind:this={button} {disabled}>
+<button id={id} on:click={onClick} bind:this={button} {disabled}>
     <slot/>
 </button>
 

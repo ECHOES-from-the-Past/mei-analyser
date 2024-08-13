@@ -130,3 +130,25 @@ g {
   -ms-user-select: none;
   user-select: none;
 }
+
+.liquescent-word {
+  color: var(--liquescent-text);
+  font-weight: bold;
+  text-decoration: underline solid;
+}
+
+.quilisma-word {
+  color: var(--quilisma-text);
+  font-weight: bold;
+  text-decoration: underline wavy;
+}
+
+.oriscus-word {
+  color: var(--oriscus-text);
+  font-weight: bold;
+  text-decoration: underline dashed 0.1rem;
+}
+
+.melisma-word {
+  background-color: var(--melisma-background);
+}

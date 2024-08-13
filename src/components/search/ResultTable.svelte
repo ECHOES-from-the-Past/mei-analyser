@@ -13,6 +13,11 @@
     /** @type {Chant[]} */
     export let chantList;
 
+    /**
+     * @type {Object}
+     */
+    export let options;
+
     $: numberOfResult = chantList.length;
 </script>
 
@@ -29,7 +34,7 @@
 
             <tbody>
                 {#each chantList as chant}
-                    <ResultTableRow {chant} />
+                    <ResultTableRow {chant} {options}/>
                 {/each}
             </tbody>
         </table>

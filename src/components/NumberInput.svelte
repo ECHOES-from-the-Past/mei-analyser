@@ -3,8 +3,9 @@
     export let id = "textbox";
     export let placeholder = "Input here";
     export let onKeydown;
+    export let min, max;
 
-    let value = retrieve(id);
+    export let value = retrieve(id);
 
     function handleInputChanges() {
         persist(id, value);
@@ -16,9 +17,10 @@
 </script>
 
 <input
-    type="text"
+    type="number"
     {id}
     {placeholder}
+    {min} {max}
     bind:value
     on:input={handleInputChanges}
     on:keydown={onKeydown}
@@ -26,9 +28,16 @@
 
 <style>
     input {
-        width: 20rem;
-        height: 1.2rem;
-        margin: 0.3rem 0;
+        box-sizing: border-box;
+        border: 1px solid var(--button-active);
+        font-size: inherit;
+        text-align: center;
+        margin: 0 0.2rem;
+        width: 1.8rem;
+        height: 1.8rem;
     }
 
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+    }
 </style>

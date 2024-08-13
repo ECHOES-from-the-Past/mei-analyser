@@ -67,6 +67,7 @@ export async function drawSVGFromMEIContent(meiContent) {
   } catch (error) {
     console.error(error);
     console.log("Please reload the page and try again.");
+    throw new Error(`Please reload the page and try again. Error: ${error}.`);
   }
   return svg;
 }

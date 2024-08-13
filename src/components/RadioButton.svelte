@@ -16,6 +16,10 @@
     export function isChecked() {
         return check;
     }
+
+    export function getSelection() {
+        return retrieve(group);
+    }
 </script>
 
 <label>

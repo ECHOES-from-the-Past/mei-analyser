@@ -11,6 +11,9 @@
         <p> Loading MEI Content and letting Verovio render the chant </p>
     {:then svg}
         {@html svg}
+    {:catch error}
+        <p> Something went wrong, please try to reload the page! </p>
+        <p> Error: {error.message} b</p>
     {/await}
 </div>
 

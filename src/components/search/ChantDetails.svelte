@@ -1,8 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { displayCertainty } from "../../utility/utils";
-    import NoteFrequencyChart from "../charts/NoteFrequencyChart.svelte";
-    import AmbitusChart from "../charts/AmbitusChart.svelte";
+    import AnalysisChart from "./AnalysisChart.svelte";
     import Section from "../Section.svelte";
     export let chant;
     let chantInfoDiv;
@@ -61,11 +60,8 @@
 <div id="chant-information">
     <div bind:this={chantInfoDiv}></div>
     <div>
-        <Section id="chant-charts">
-            <NoteFrequencyChart {chant}></NoteFrequencyChart>
-        </Section>
         <Section>
-            <AmbitusChart {chant}></AmbitusChart>
+            <AnalysisChart {chant}></AnalysisChart>
         </Section>
     </div>
 </div>

@@ -5,6 +5,7 @@
     import Tooltip from "../components/Tooltip.svelte";
     import Section from "../components/Section.svelte";
     import TextInput from "../components/TextInput.svelte";
+    import NumberInput from "../components/NumberInput.svelte";
     import ClientStatus from "../components/ClientStatus.svelte";
     import ResultTable from "../components/search/ResultTable.svelte";
     import { onMount } from "svelte";
@@ -26,8 +27,10 @@
     let aquitanianCheckbox, squareCheckbox;
     let liquescentCheckbox, quilismaCheckbox, oriscusCheckbox;
     let patternInputBox, finalisInputBox;
+    let melismaHighlight, melismaInput;
     let searchButton; // bind this with the "Search" button
     let clientStatus;
+    let searchResultDiv, chantInfoDiv, chantSVGDiv;
 
     onMount(() => {
         clientStatus.hideStatus();
@@ -87,29 +90,6 @@
     }
 
     /**
-     * HELPER FUNCTION
-     * Check if a chant has a specific ornamental shape.
-     * This only check for the first occurrence of the ornamental shape in the chant
-     * and does not care for the location of the ornamental shape in the chant.
-     * @param {Chant} chant the chant to be checked
-     * @param {string} ornamentalType the type of ornamental shape to be checked
-     * @returns {boolean} `true` if the chant has the ornamental shape, `false` otherwise
-     */
-    function hasOrnamental(chant, ornamentalType) {
-        /** @type {NeumeComponent[]} */
-        let neumeComponents = getNeumeComponentList(chant.syllables);
-        for (let neume of neumeComponents) {
-            // TODO: Get the syllables from here
-            if (
-                neume.ornamental != null &&
-                neume.ornamental.type == ornamentalType
-            )
-                return true;
-        }
-        return false;
-    }
-
-    /**
      * Search by ornamental shapes (liquescent, quilisma, oriscus)
      * @param {Chant[]} chantList list of chants to be filtered
      * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
@@ -122,6 +102,29 @@
          * @type {Chant[]} resulting list of chants after filtering
          */
         let resultChantList = chantList;
+
+        /**
+         * HELPER FUNCTION
+         * Check if a chant has a specific ornamental shape.
+         * This only check for the first occurrence of the ornamental shape in the chant
+         * and does not care for the location of the ornamental shape in the chant.
+         * @param {Chant} chant the chant to be checked
+         * @param {string} ornamentalType the type of ornamental shape to be checked
+         * @returns {boolean} `true` if the chant has the ornamental shape, `false` otherwise
+         */
+        let hasOrnamental = (chant, ornamentalType) => {
+            /** @type {NeumeComponent[]} */
+            let neumeComponents = getNeumeComponentList(chant.syllables);
+            for (let neume of neumeComponents) {
+                // TODO: Get the syllables from here
+                if (
+                    neume.ornamental != null &&
+                    neume.ornamental.type == ornamentalType
+                )
+                    return true;
+            }
+            return false;
+        };
 
         // first filter for the liquescent option
         if (ornamentalOptions.liquescent) {
@@ -145,7 +148,6 @@
         return resultChantList;
     }
 
-    let searchResultDiv, chantInfoDiv, chantSVGDiv;
     export function clearSearchResultsAndInfo() {
         // Clear the search result display
         searchResultDiv.innerHTML = `<p>Search results will display here</p>`;
@@ -164,6 +166,18 @@
                 target: searchResultDiv,
                 props: {
                     chantList: resultChantList,
+                    options: {
+                        "musicScript": {
+                            aquitanian: aquitanianCheckbox.isChecked(),
+                            square: squareCheckbox.isChecked()
+                        },
+                        "melodicPatternSearch": [],
+                        "finalis": finalisInputBox.getValue(),
+                        "melisma": {
+                            highlight: melismaHighlight.isChecked(),
+                            number: melismaInput.getValue(),
+                        },
+                    }
                 },
             });
         });
@@ -265,18 +279,19 @@
             <Section id="other-options">
                 <h3>Other options</h3>
                 <Checkbox value="melisma" disabled
+                bind:this={melismaHighlight}
                     >Enable <span class="melisma-word"
                         >melisma highlighting</span
                     ></Checkbox
                 >
                 <p>
                     Melisma(s) with at least
-                    <input
-                        type="number"
+                    <NumberInput
                         id="melisma-input"
                         min="2"
                         max="20"
                         value="6"
+                        bind:this={melismaInput}
                     />
                     notes in a syllable
                 </p>
@@ -380,42 +395,6 @@
         display: grid;
         grid-template-columns: 1fr 3fr;
         gap: 1.2rem;
-    }
-
-    .liquescent-word {
-        color: var(--liquescent-text);
-        font-weight: bold;
-        text-decoration: underline solid;
-    }
-
-    .quilisma-word {
-        color: var(--quilisma-text);
-        font-weight: bold;
-        text-decoration: underline wavy;
-    }
-
-    .oriscus-word {
-        color: var(--oriscus-text);
-        font-weight: bold;
-        text-decoration: underline dashed 0.1rem;
-    }
-
-    .melisma-word {
-        background-color: var(--melisma-background);
-    }
-
-    #melisma-input {
-        box-sizing: border-box;
-        border: 1px solid var(--button-active);
-        font-size: inherit;
-        text-align: center;
-        margin: 0 0.2rem;
-        width: 1.8rem;
-        height: 1.8rem;
-    }
-
-    input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
     }
 
     #mode-grid {
