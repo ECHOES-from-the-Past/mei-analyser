@@ -28,6 +28,7 @@
     let liquescentCheckbox, quilismaCheckbox, oriscusCheckbox;
     let patternInputBox, finalisInputBox;
     let melismaHighlight, melismaInput;
+    let customGABCCheckbox, aquitanianPitchCustomGABC;
     let searchButton; // bind this with the "Search" button
     let clientStatus;
     let searchResultDiv, chantInfoDiv, chantSVGDiv;
@@ -155,6 +156,28 @@
         chantSVGDiv.innerHTML = `<p>Chant visual will appear here</p>`;
     }
 
+    /** In case the word is part of a melodic pattern
+     * @type {NeumeComponent[][]}
+     * */
+    let melodicPattern = [];
+    // if (contourRadio.isChecked()) {
+    //     melodicPattern = processContourMelodicPattern(
+    //         chant,
+    //         processSearchPattern(
+    //             patternInputBox.value,
+    //             getMelodicPatternSearchMode(),
+    //         ),
+    //     );
+    // } else if (exactPitchRadio.isChecked()) {
+    //     melodicPattern = processExactPitchMelodicPattern(
+    //         chant,
+    //         processSearchPattern(
+    //             patternInputBox.value,
+    //             getMelodicPatternSearchMode(),
+    //         ),
+    //     );
+    // }
+
     async function searchButtonAction() {
         clientStatus.showStatus("Searching...");
 
@@ -166,18 +189,17 @@
                 target: searchResultDiv,
                 props: {
                     chantList: resultChantList,
-                    options: {
-                        "musicScript": {
-                            aquitanian: aquitanianCheckbox.isChecked(),
-                            square: squareCheckbox.isChecked()
+                    textFormatOptions: {
+                        melodicPattern: melodicPattern,
+                        melisma: {
+                            enabled: melismaHighlight.isChecked(),
+                            value: melismaInput.getValue(),
                         },
-                        "melodicPatternSearch": [],
-                        "finalis": finalisInputBox.getValue(),
-                        "melisma": {
-                            highlight: melismaHighlight.isChecked(),
-                            number: melismaInput.getValue(),
+                        customGABC: {
+                            enabled: customGABCCheckbox.isChecked(),
+                            aquitanianPitch: aquitanianPitchCustomGABC.isChecked(),
                         },
-                    }
+                    },
                 },
             });
         });
@@ -278,8 +300,7 @@
 
             <Section id="other-options">
                 <h3>Other options</h3>
-                <Checkbox value="melisma" disabled
-                bind:this={melismaHighlight}
+                <Checkbox value="melisma" bind:this={melismaHighlight}
                     >Enable <span class="melisma-word"
                         >melisma highlighting</span
                     ></Checkbox
@@ -297,20 +318,20 @@
                 </p>
                 <hr />
                 <Checkbox
-                    disabled
                     value="custom-gabc"
                     onClick={() => {
-                        document
-                            .querySelectorAll(".custom-gabc")
-                            .forEach((element) => {
-                                element.hidden = !this.check; // does this work?
-                            });
+                        // document
+                        //     .querySelectorAll(".custom-gabc")
+                        //     .forEach((element) => {
+                        //         element.hidden = !customGABCCheckbox.isChecked();
+                        //     });
                     }}
+                    bind:this={customGABCCheckbox}
                 >
-                    Toggle show pitch/location with the text
+                    Show pitch/location with each syllable
                 </Checkbox>
                 <br />
-                <Checkbox value="aquitanian-pitch" disabled>
+                <Checkbox value="aquitanian-pitch" bind:this={aquitanianPitchCustomGABC}>
                     Show Aquitanian in pitch value with text (only for chants
                     with detected mode)
                 </Checkbox>

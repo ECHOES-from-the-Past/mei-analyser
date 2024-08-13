@@ -14,9 +14,9 @@
     export let chantList;
 
     /**
-     * @type {Object}
+     * @type {Object} see ResultTableRow::textFormatOptions
      */
-    export let options;
+    export let textFormatOptions;
 
     $: numberOfResult = chantList.length;
 </script>
@@ -34,7 +34,7 @@
 
             <tbody>
                 {#each chantList as chant}
-                    <ResultTableRow {chant} {options}/>
+                    <ResultTableRow {chant} {textFormatOptions}/>
                 {/each}
             </tbody>
         </table>
