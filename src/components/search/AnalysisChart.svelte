@@ -154,7 +154,7 @@
                 plugins: {
                     title: {
                         display: true,
-                        text: `Full-range notes chart (${chant.notationType} music script)`,
+                        text: `Frequency of the notes across the chant ambitus`,
                     },
                 },
                 scales: {
@@ -163,14 +163,14 @@
                         title: {
                             display: true,
                             padding: 1,
-                            text: "Location/Pitch",
+                            text: "Ambitus",
                         },
                     },
                     y: {
                         stacked: true,
                         title: {
                             display: true,
-                            text: "Number of notes",
+                            text: "Frequency",
                         },
                     },
                 },
