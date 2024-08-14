@@ -76,6 +76,9 @@
             patternSearchMode,
         );
 
+        /* Fifth layer of filtering: finals */
+        resultChantList = filterByFinalis(resultChantList, finalisInputBox.getValue());
+
         /**
          * Sort chant list by file name
          * Ternary operation explain:
@@ -149,6 +152,32 @@
         return resultChantList;
     }
 
+    /**
+     * Search by a finalis (the chant's last note)
+     * @param {Chant[]} chantList list of chants to be filtered
+     * @param {string | number} finalis the finalis that we are interested in
+     * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
+     */
+    function filterByFinalis(chantList, finalis) {
+        if(finalis == "" || !finalis) {
+            return chantList;
+        }
+        /** @type {Chant[]} */
+        let resultChantList = [];
+
+        for (let chant of chantList) {
+            let ncList = getNeumeComponentList(chant.syllables);
+            let chantFinalisNote =
+                chant.notationType == "aquitanian"
+                    ? ncList[ncList.length - 1].loc
+                    : ncList[ncList.length - 1].pitch;
+            if (chantFinalisNote == finalis) {
+                resultChantList.push(chant);
+            }
+        }
+        return resultChantList;
+    }
+
     export function clearSearchResultsAndInfo() {
         // Clear the search result display
         searchResultDiv.innerHTML = `<p>Search results will display here</p>`;
@@ -197,7 +226,8 @@
                         },
                         customGABC: {
                             enabled: customGABCCheckbox.isChecked(),
-                            aquitanianPitch: aquitanianPitchCustomGABC.isChecked(),
+                            aquitanianPitch:
+                                aquitanianPitchCustomGABC.isChecked(),
                         },
                     },
                 },
@@ -265,9 +295,6 @@
                     bind:this={patternInputBox}
                 />
 
-                <p id="pattern-input-status" hidden>
-                    Melodic Pattern Search Status
-                </p>
                 <hr />
                 <p>Filter by finalis (the last note)</p>
                 <RadioButton group="finalis-filter" value="exact-pitch">
@@ -331,7 +358,10 @@
                     Show pitch/location with each syllable
                 </Checkbox>
                 <br />
-                <Checkbox value="aquitanian-pitch" bind:this={aquitanianPitchCustomGABC}>
+                <Checkbox
+                    value="aquitanian-pitch"
+                    bind:this={aquitanianPitchCustomGABC}
+                >
                     Show Aquitanian in pitch value with text (only for chants
                     with detected mode)
                 </Checkbox>
