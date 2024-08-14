@@ -73,7 +73,6 @@
         };
 
         for (let i in noteCounts) {
-            console.log(noteCounts[i]);
             // Sort the countings of pitches
             let sortedKeys = Object.keys(noteCounts[i]).sort((a, b) => a - b);
 

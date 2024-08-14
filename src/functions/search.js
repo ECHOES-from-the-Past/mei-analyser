@@ -9,7 +9,7 @@ import { Chant } from "../utility/components.js";
   * @returns {string[] | number[]} list of pitches or contours in the search pattern.
   * If the search pattern is empty, return an empty list [].
   */
-function processSearchPattern(searchPattern, searchMode) {
+export function processSearchPattern(searchPattern, searchMode) {
   const numericMelodyRegex = /-?\d/g;
   const alphabetMelodicRegex = /[A-Ga-g]/g;
 
@@ -73,7 +73,7 @@ function filterByModes(chantList, modes) {
  * @param {string[]} searchQueryList in the form of ['A', 'B', 'C', 'D', 'E'] for example
  * @returns {NeumeComponentSQ[][]} a list of patterns (in list form) that match the search query
  */
-function processExactPitchMelodicPattern(chant, searchQueryList) {
+export function processExactPitchMelodicPattern(chant, searchQueryList) {
   /** @type {NeumeComponentSQ[]} */
   const ncArray = getNeumeComponentList(chant.syllables);
 
@@ -104,7 +104,7 @@ function processExactPitchMelodicPattern(chant, searchQueryList) {
  * @param {number[]} searchQueryList the list of numbers
  * @returns {NeumeComponent[][]} a list of patterns (in list form) that match the search query
  */
-function processContourMelodicPattern(chant, searchQueryList) {
+export function processContourMelodicPattern(chant, searchQueryList) {
   if (searchQueryList.length == 0) {
     return [];
   }

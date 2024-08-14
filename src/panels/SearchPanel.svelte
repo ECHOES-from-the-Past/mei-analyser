@@ -19,6 +19,7 @@
     import {
         filterByMusicScript,
         filterByMelodicPattern,
+        processSearchPattern,
     } from "../functions/search.js";
 
     export let hidden = false;
@@ -156,29 +157,13 @@
         chantSVGDiv.innerHTML = `<p>Chant visual will appear here</p>`;
     }
 
-    /** In case the word is part of a melodic pattern
-     * @type {NeumeComponent[][]}
-     * */
-    let melodicPattern = [];
-    // if (contourRadio.isChecked()) {
-    //     melodicPattern = processContourMelodicPattern(
-    //         chant,
-    //         processSearchPattern(
-    //             patternInputBox.value,
-    //             getMelodicPatternSearchMode(),
-    //         ),
-    //     );
-    // } else if (exactPitchRadio.isChecked()) {
-    //     melodicPattern = processExactPitchMelodicPattern(
-    //         chant,
-    //         processSearchPattern(
-    //             patternInputBox.value,
-    //             getMelodicPatternSearchMode(),
-    //         ),
-    //     );
-    // }
-
+    
+    
     async function searchButtonAction() {
+        /**  @type {string[] | number[]} */
+        let patternSearchMode = retrieve("search-query-option");
+        let searchPattern = processSearchPattern(patternInputBox.getValue(), patternSearchMode);
+
         clientStatus.showStatus("Searching...");
 
         clearSearchResultsAndInfo();
@@ -190,7 +175,10 @@
                 props: {
                     chantList: resultChantList,
                     textFormatOptions: {
-                        melodicPattern: melodicPattern,
+                        searchPattern: {
+                            list: searchPattern,
+                            mode: patternSearchMode
+                        },
                         melisma: {
                             enabled: melismaHighlight.isChecked(),
                             value: melismaInput.getValue(),

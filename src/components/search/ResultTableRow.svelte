@@ -9,15 +9,22 @@
     import Button from "../Button.svelte";
 
     import { Chant } from "../../utility/components";
+    import {
+        processContourMelodicPattern,
+        processExactPitchMelodicPattern,
+    } from "../../functions/search";
     /** @type {Chant} */
     export let chant;
 
     /** @type {{
-        "melodicPattern": [],
-            "melisma": {
-                enabled: boolean,
-                value: number,
-            },
+        "searchPattern": {
+            list: string[] | number [],
+            mode: string,
+        },
+        "melisma": {
+            enabled: boolean,
+            value: number,
+        },
         "customGABC": {
             enabled: boolean,
             aquitanianPitch: boolean
@@ -38,6 +45,16 @@
     let customGABC = [];
 
     let aquitanianPitchGABC = textFormatOptions.customGABC.aquitanianPitch;
+    let searchPattern = textFormatOptions.searchPattern.list;
+    let searchMode = textFormatOptions.searchPattern.mode;
+
+    console.log(searchPattern);
+    let melodicPattern;
+    if (searchMode == "contour") {
+        melodicPattern = processContourMelodicPattern(chant, searchPattern);
+    } else if (searchMode == "exact-pitch") {
+        melodicPattern = processExactPitchMelodicPattern(chant, searchPattern);
+    }
 
     for (let syllable of chant.syllables) {
         // Extract the syllable word and its position from each syllable
@@ -67,21 +84,21 @@
             }
         }
 
-        // if (melodicPattern.length > 0) {
-        //     for (let pattern of melodicPattern) {
-        //         // compare two list, if there's a match (the same element from both), add the class to the wordWrapper
-        //         for (let i = 0; i < pattern.length; i++) {
-        //             for (let j = 0; j < syllable.neumeComponents.length; j++) {
-        //                 if (
-        //                     JSON.stringify(pattern[i]) ===
-        //                     JSON.stringify(syllable.neumeComponents[j])
-        //                 ) {
-        //                     wordWrapper.classList.add("melodic-pattern-word");
-        //                 }
-        //             }
-        //         }
-        //     }
-        // }
+        if (melodicPattern.length > 0) {
+            for (let pattern of melodicPattern) {
+                // compare two list, if there's a match (the same element from both), add the class to the wordWrapper
+                for (let i = 0; i < pattern.length; i++) {
+                    for (let j = 0; j < syllable.neumeComponents.length; j++) {
+                        if (
+                            JSON.stringify(pattern[i]) ===
+                            JSON.stringify(syllable.neumeComponents[j])
+                        ) {
+                            wordWrapper.classList.add("melodic-pattern-word");
+                        }
+                    }
+                }
+            }
+        }
 
         wordWrapper.innerText = word;
         if (wordWrapper.classList.length > 0) {
@@ -97,11 +114,11 @@
                 customGABC.push(
                     `${word}(${syllable.neumeComponents
                         .map((nc) => {
-                            // for (let mp of melodicPattern) {
-                            //     if (mp.includes(nc)) {
-                            //         return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
-                            //     }
-                            // }
+                            for (let mp of melodicPattern) {
+                                if (mp.includes(nc)) {
+                                    return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
+                                }
+                            }
                             return nc.pitch;
                         })
                         .join("")})`,
@@ -116,11 +133,11 @@
                                 let outNc = octaveKeys.at(
                                     (nc.loc + 7 + gap) % 7,
                                 );
-                                // for (let mp of melodicPattern) {
-                                //     if (mp.includes(nc)) {
-                                //         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
-                                //     }
-                                // }
+                                for (let mp of melodicPattern) {
+                                    if (mp.includes(nc)) {
+                                        return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                                    }
+                                }
                                 return outNc;
                             })
                             .join("")})`,
@@ -130,11 +147,11 @@
                         `${word}(${syllable.neumeComponents
                             .map((nc) => {
                                 let outNc = nc.loc;
-                                // for (let mp of melodicPattern) {
-                                //     if (mp.includes(nc)) {
-                                //         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
-                                //     }
-                                // }
+                                for (let mp of melodicPattern) {
+                                    if (mp.includes(nc)) {
+                                        return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                                    }
+                                }
                                 return outNc;
                             })
                             .join("")})`,
@@ -149,11 +166,11 @@
                 customGABC[customGABC.length - 1] +=
                     `${word}(${syllable.neumeComponents
                         .map((nc) => {
-                            // for (let mp of melodicPattern) {
-                            //     if (mp.includes(nc)) {
-                            //         return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
-                            //     }
-                            // }
+                            for (let mp of melodicPattern) {
+                                if (mp.includes(nc)) {
+                                    return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
+                                }
+                            }
                             return nc.pitch;
                         })
                         .join("")})`;
@@ -167,11 +184,11 @@
                                 let outNc = octaveKeys.at(
                                     (nc.loc + 7 + gap) % 7,
                                 );
-                                // for (let mp of melodicPattern) {
-                                //     if (mp.includes(nc)) {
-                                //         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
-                                //     }
-                                // }
+                                for (let mp of melodicPattern) {
+                                    if (mp.includes(nc)) {
+                                        return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                                    }
+                                }
                                 return outNc;
                             })
                             .join("")})`;
@@ -180,11 +197,11 @@
                         `${word}(${syllable.neumeComponents
                             .map((nc) => {
                                 let outNc = nc.loc;
-                                // for (let mp of melodicPattern) {
-                                //     if (mp.includes(nc)) {
-                                //         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
-                                //     }
-                                // }
+                                for (let mp of melodicPattern) {
+                                    if (mp.includes(nc)) {
+                                        return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                                    }
+                                }
                                 return outNc;
                             })
                             .join("")})`;
@@ -218,8 +235,13 @@
             target: chantSVGDiv,
             props: {
                 chant: chant,
+                highlightOptions: {
+                    melodicPattern: melodicPattern,
+                    melismaPattern: []
+                }
             },
         });
+
 
         // Add a little delay for Verovio to render the chant
         setTimeout(() => {
@@ -233,29 +255,8 @@
 
         // Highlight characteristics on the chant when user selects 'Display chant'
         // async () => {
-        //     // Highlight search pattern
-        //     let melodicPattern = [];
-        //     if (contourRadio.isChecked()) {
-        //         melodicPattern = processContourMelodicPattern(
-        //             chant,
-        //             processSearchPattern(
-        //                 patternInputBox.value,
-        //                 getMelodicPatternSearchMode(),
-        //             ),
-        //         );
-        //     } else if (exactPitchRadio.isChecked()) {
-        //         melodicPattern = processExactPitchMelodicPattern(
-        //             chant,
-        //             processSearchPattern(
-        //                 patternInputBox.value,
-        //                 getMelodicPatternSearchMode(),
-        //             ),
-        //         );
-        //     }
 
-        //     for (let pattern of melodicPattern) {
-        //         highlightPattern(pattern);
-        //     }
+
 
         //     // Highlight the melisma on the chant
         //     if (melismaEnableCheckbox.isChecked()) {
