@@ -102,19 +102,20 @@
                     borderColor: [],
                     borderWidth: 1,
                 },
-                {
-                    label: "Rhombus",
-                    data: [],
-                    backgroundColor: [],
-                    borderColor: [],
-                    borderWidth: 1,
-                },
             ],
         };
 
-        for (let key of sortedCounts.keys()) {
-            chantData.datasets[0].data.push(sortedCounts.get(key));
+        if (chant.notationType == "aquitanian") {
+            chantData.datasets.push({
+                label: "Rhombus",
+                data: [],
+                backgroundColor: [],
+                borderColor: [],
+                borderWidth: 1,
+            });
+        }
 
+        for (let key of sortedCounts.keys()) {
             if (
                 key == finalis.loc ||
                 key == `${finalis.pitch}${finalis.octave}`
@@ -123,19 +124,23 @@
             } else {
                 chantData.labels.push(key);
             }
+            chantData.datasets[0].data.push(sortedCounts.get(key));
             chantData.datasets[0].backgroundColor.push(normalBg);
             chantData.datasets[0].borderColor.push(normalBorder);
         }
 
         // Adding rhombus
-        if(chant.notationType == "aquitanian") {
+        // TODO: Subtract the number of rhombus from the chart
+        if (chant.notationType == "aquitanian") {
             Object.keys(sortedCountsFreq).forEach((element, i, arr) => {
                 // e is 'regular' and 'rhombus'
                 for (let key of sortedCountsFreq[element].keys()) {
                     if (!chantData.labels.includes(key)) {
                         chantData.labels.push(`${key}`);
                     }
-                    chantData.datasets[i].data.push(sortedCountsFreq[element].get(key));
+                    chantData.datasets[i].data.push(
+                        sortedCountsFreq[element].get(key),
+                    );
                     chantData.datasets[i].backgroundColor.push(
                         element == "regular" ? normalBg : rhombusBg,
                     );

@@ -285,15 +285,10 @@
 
                 <hr />
                 <p>Filter by finalis (the last note)</p>
-                <RadioButton group="finalis-filter" value="exact-pitch">
-                    Exact Pitch
-                </RadioButton>
-                <RadioButton group="finalis-filter" value="relative-location">
-                    Relative location
-                </RadioButton>
+                <!-- TODO: Add a tooltip or suggestion -->
                 <TextInput
                     id="finalis-input-box"
-                    placeholder="A number or a pitch"
+                    placeholder="e.g.: '-1' or 'a'"
                     onKeydown={(e) => {
                         if (e.key == "Enter") {
                             searchButton.click();
