@@ -78,7 +78,10 @@
         );
 
         /* Fifth layer of filtering: finals */
-        resultChantList = filterByFinalis(resultChantList, finalisInputBox.getValue());
+        resultChantList = filterByFinalis(
+            resultChantList,
+            finalisInputBox.getValue(),
+        );
 
         /**
          * Sort chant list by file name
@@ -160,7 +163,7 @@
      * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
      */
     function filterByFinalis(chantList, finalis) {
-        if(finalis == "" || !finalis) {
+        if (finalis == "" || !finalis) {
             return chantList;
         }
         /** @type {Chant[]} */
@@ -186,12 +189,13 @@
         chantSVGDiv.innerHTML = `<p>Chant visual will appear here</p>`;
     }
 
-    
-    
     async function searchButtonAction() {
         /**  @type {string[] | number[]} */
         let patternSearchMode = retrieve("search-query-option");
-        let searchPattern = processSearchPattern(patternInputBox.getValue(), patternSearchMode);
+        let searchPattern = processSearchPattern(
+            patternInputBox.getValue(),
+            patternSearchMode,
+        );
 
         clientStatus.showStatus("Searching...");
 
@@ -206,7 +210,7 @@
                     textFormatOptions: {
                         searchPattern: {
                             list: searchPattern,
-                            mode: patternSearchMode
+                            mode: patternSearchMode,
                         },
                         melisma: {
                             enabled: melismaHighlight.isChecked(),
@@ -262,7 +266,26 @@
                 <p>
                     Filter chant(s) by
                     <span class="melodic-pattern-word"> melodic pattern </span>
-                    <Tooltip />
+                    <Tooltip id="melodic-pattern-search">
+                        <ul>
+                            <li>
+                                <b> Exact pitch (only for Square music script chants): </b>
+                                Enter pitch names of the melodic pattern. For
+                                example, "a b a f" will search for a melodic
+                                pattern that follows the sequence A-B-A-F.
+                            </li>
+                            <li>
+                                <b> Contour (Melodic intervals) </b> in the form
+                                of positive or negative integers (e.g., +1 indicates
+                                one step up - either a semitone or a tone - from
+                                the previous note; 0 indicates unison; and -2 indicates
+                                two steps down - either a major or minor third -
+                                from the previous note). When looking for a series
+                                of notes, the integers can be separated by a space
+                                (e.g., "0 +2 -1 +1 +1").
+                            </li>
+                        </ul>
+                    </Tooltip>
                 </p>
 
                 <RadioButton value="exact-pitch" group="search-query-option">
@@ -284,8 +307,15 @@
                 />
 
                 <hr />
-                <p>Filter by finalis (the last note)</p>
-                <!-- TODO: Add a tooltip or suggestion -->
+                <p>
+                    Filter by finalis (the last note)
+                    <Tooltip id="finalis-filter">
+                        Input a letter (e.g. "e") or a numeric value (e.g. "3")
+                        to filter Square or Aquitanian music script chants by their finalis (last note)
+                        respectively.
+                    </Tooltip>
+                </p>
+
                 <TextInput
                     id="finalis-input-box"
                     placeholder="e.g.: '-1' or 'a'"
