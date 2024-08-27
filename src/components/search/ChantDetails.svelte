@@ -1,17 +1,16 @@
 <script>
     import { onMount } from "svelte";
-    import { displayCertainty } from "../../utility/utils";
     import AnalysisChart from "./AnalysisChart.svelte";
     import Section from "../Section.svelte";
+    import { capitalizeFirstLetter } from "../../utility/utils";
     export let chant;
     let chantInfoDiv;
 
     let info = {
         Title: chant.title,
         Source: chant.source,
-        "Music script": chant.notationType,
-        Mode: chant.mode == -1 ? "Unknown" : chant.mode,
-        "Mode Certainty": displayCertainty(chant.modeCertainty),
+        "Music script": capitalizeFirstLetter(chant.notationType),
+        "Possible Mode": chant.mode == -1 ? "Unknown" : chant.mode,
         "Mode Description": chant.modeDescription,
         "MEI File": chant.fileName,
         "PEM Database URL": chant.pemDatabaseUrls,

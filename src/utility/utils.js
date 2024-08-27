@@ -21,6 +21,15 @@ export function displayCertainty(certaintyPercentage) {
 }
 
 /**
+ * @source https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+ * @param {string} str the string to be capitalized its first letter
+ * @returns the string with its first letter capitalized/to uppercase
+ */
+export function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
  * Load MEI file from its file path
  * @param {string} fileName link to the MEI (.mei) file to be rendered
  * @returns the content of the MEI file
