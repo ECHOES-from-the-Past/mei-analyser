@@ -2,7 +2,11 @@
     /*
      * The chart analysis produces a chart that analyse an input chant
      */
-    import { Chant, septenaryToPitchOctave, toSeptenary } from "../../utility/components";
+    import {
+        Chant,
+        septenaryToPitchOctave,
+        toSeptenary,
+    } from "../../utility/components";
     import { Chart } from "chart.js/auto";
     import { getNeumeComponentList } from "../../utility/components";
     import { NeumeComponent } from "../../utility/components";
@@ -14,11 +18,9 @@
     let chart;
 
     // Colours
-    const normalBg = "rgba(125, 179, 102, 0.2)";
-    const normalBorder = "rgb(125, 179, 102)";
-    const redBg = "rgba(255, 99, 132, 0.2)",
-        rhombusBg = "rgba(55, 99, 132, 0.2)";
-    const redBorder = "rgb(255, 99, 132)",
+    const normalBg = "rgba(125, 179, 102, 0.2)",
+        normalBorder = "rgb(125, 179, 102)";
+    const rhombusBg = "rgba(55, 99, 132, 0.2)",
         rhombusBorder = "rgb(55, 99, 132)";
 
     /**
@@ -47,24 +49,32 @@
             ],
         };
 
+        let maxLoc = -99,
+            minLoc = 99,
+            temp;
         const pitchList = chantNC.map((nc) => {
+            temp = nc.loc;
+            if (temp > maxLoc) maxLoc = temp;
+            if (temp < minLoc) minLoc = temp;
             return nc.loc;
         });
 
-        let noteCounts = {
-            rhombus: {},
-            regular: {},
-        };
+        // Construct empty objects of the entire ambitus
+        let counts = {},
+            rhombus = {};
+        for (let i = minLoc; i <= maxLoc; i++) {
+            counts[i] = 0;
+            rhombus[i] = 0;
+        }
 
+        // Count normal notes
+
+        // Count rhombuses
         chantNC.map((nc) => {
-            let note = nc.loc;
-
             if (nc.tilt == "se") {
-                if (noteCounts.rhombus[note] === undefined) {
-                    noteCounts.rhombus[note] = 1;
-                } else {
-                    noteCounts.rhombus[note] += 1;
-                }
+                rhombus[nc.loc] += 1;
+            } else {
+                counts[nc.loc] += 1;
             }
         });
 
@@ -73,40 +83,42 @@
             rhombus: new Map(),
         };
 
-        for (let i in noteCounts) {
-            // Sort the countings of pitches
-            let sortedKeys = Object.keys(noteCounts[i]).sort((a, b) => a - b);
+        // Sort the countings of pitches
+        let sortedKeys = Object.keys(counts).sort((a, b) => a - b);
 
-            let sortedMap = sortedCountsFreq[i];
-            sortedKeys.forEach((e, idx, arr) => {
-                let value = sortedKeys[idx];
-                sortedMap.set(`${e}`, noteCounts[i][value]);
-            });
-        }
+        sortedKeys.forEach((e, i, arr) => {
+            let value = sortedKeys[i];
+            sortedCountsFreq.regular.set(`${e}`, counts[value]);
+            sortedCountsFreq.rhombus.set(`${e}`, rhombus[value]);
+        });
+
+        console.log(sortedCountsFreq);
 
         const finalis = chantNC[chantNC.length - 1];
 
-        // Adding rhombus
-        // TODO: Subtract the number of rhombus from the chart
-        Object.keys(sortedCountsFreq).forEach((element, i, arr) => {
-            // e is 'regular' and 'rhombus'
-            for (let key of sortedCountsFreq[element].keys()) {
-                if (!chantData.labels.includes(key)) {
-                    chantData.labels.push(`${key}`);
-                }
-                chantData.datasets[i].data.push(
-                    sortedCountsFreq[element].get(key),
-                );
+        // Adding labels
+        for (let key of sortedCountsFreq.regular.keys()) {
+            if (key == finalis.loc) {
+                chantData.labels.push(`${key} (finalis)`);
+            } else {
+                chantData.labels.push(key);
+            }
+        }
+        // chantData.labels.push(`${sortedCountsFreq[e]}`);
+
+        // Adding colours
+        Object.keys(sortedCountsFreq).forEach((e, i, arr) => {
+            // e = 'regular' and 'rhombus'
+            for (let key of sortedCountsFreq[e].keys()) {
+                chantData.datasets[i].data.push(sortedCountsFreq[e].get(key));
                 chantData.datasets[i].backgroundColor.push(
-                    element == "regular" ? normalBg : rhombusBg,
+                    e == "regular" ? normalBg : rhombusBg,
                 );
                 chantData.datasets[i].borderColor.push(
-                    element == "regular" ? normalBorder : rhombusBorder,
+                    e == "regular" ? normalBorder : rhombusBorder,
                 );
             }
         });
-
-        chantNC.forEach((e, i, arr) => {});
 
         return chantData;
     }
@@ -130,19 +142,16 @@
             ],
         };
 
-        let counts = {}
-        let lowestSeptenary = 99, highestSeptenary = 0, temp;
+        let counts = {};
+        let lowestSeptenary = 99,
+            highestSeptenary = 0,
+            temp;
         let pitchList = chantNC.map((nc) => {
             temp = toSeptenary(nc);
             if (temp > highestSeptenary) highestSeptenary = temp;
             if (temp < lowestSeptenary) lowestSeptenary = temp;
             return `${nc.pitch}${nc.octave}`;
         });
-
-        console.log(septenaryToPitchOctave(lowestSeptenary), septenaryToPitchOctave(highestSeptenary))
-
-        let highestNote = septenaryToPitchOctave(highestSeptenary);
-        let lowestNote = septenaryToPitchOctave(lowestSeptenary);
 
         for (let i = lowestSeptenary; i <= highestSeptenary; i++) {
             let note = septenaryToPitchOctave(i);
@@ -157,7 +166,7 @@
 
         // Count the frequency of each note
         pitchList.forEach((note) => {
-                counts[note] += 1;
+            counts[note] += 1;
         });
 
         let ambitusCount = new Map();

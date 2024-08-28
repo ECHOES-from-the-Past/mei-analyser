@@ -48,7 +48,6 @@
     let searchPattern = textFormatOptions.searchPattern.list;
     let searchMode = textFormatOptions.searchPattern.mode;
 
-    console.log(searchPattern);
     let melodicPattern;
     if (searchMode == "contour") {
         melodicPattern = processContourMelodicPattern(chant, searchPattern);
