@@ -321,9 +321,8 @@
                 <p>
                     Filter by finalis (the last note)
                     <Tooltip id="finalis-filter">
-                        Input a letter (e.g. "e") or a numeric value (e.g. "3")
-                        to filter Square or Aquitanian music script chants by their finalis (last note)
-                        respectively.
+                        Filter chants by their finalis (last note) by entering <b>a pitch value</b> (from "a" to "g") for chants in square notes
+                        or <b>a location value</b> (from "-3" to "+4") for chants in Aquitanian neumes.
                     </Tooltip>
                 </p>
 
