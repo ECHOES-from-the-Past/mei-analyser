@@ -92,8 +92,6 @@
             sortedCountsFreq.rhombus.set(`${e}`, rhombus[value]);
         });
 
-        console.log(sortedCountsFreq);
-
         const finalis = chantNC[chantNC.length - 1];
 
         // Adding labels
