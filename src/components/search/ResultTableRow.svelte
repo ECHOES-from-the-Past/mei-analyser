@@ -48,7 +48,7 @@
     let searchPattern = textFormatOptions.searchPattern.list;
     let searchMode = textFormatOptions.searchPattern.mode;
 
-    let melodicPattern;
+    let melodicPattern = [];
     if (searchMode == "contour") {
         melodicPattern = processContourMelodicPattern(chant, searchPattern);
     } else if (searchMode == "exact-pitch") {
