@@ -22,7 +22,7 @@
     let navbar;
 
     /**
-     * TODO: Clear old local storage data for apps that uses version prior to 0.5.x
+     * Clear old local storage data for apps that uses version prior to 0.5.x
      * @param {string} localVersion
      */
     function clearOldLocalStorage(localVersion) {
@@ -45,7 +45,7 @@
 
     let searchPanel;
     /**
-     * TODO: Load default options for the Search Panel
+     * Load default options for the Search Panel
      */
     function loadDefaultOptions() {
         searchPanel.loadDefaultOptions();
