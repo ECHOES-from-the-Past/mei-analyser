@@ -21,7 +21,16 @@ export function displayCertainty(certaintyPercentage) {
 }
 
 /**
- * Load MEI file from its file path and set an order on the screen (1, 2)
+ * @source https://stackoverflow.com/questions/1026069/how-do-i-make-the-first-letter-of-a-string-uppercase-in-javascript
+ * @param {string} str the string to be capitalized its first letter
+ * @returns the string with its first letter capitalized/to uppercase
+ */
+export function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+/**
+ * Load MEI file from its file path
  * @param {string} fileName link to the MEI (.mei) file to be rendered
  * @returns the content of the MEI file
  */
@@ -37,7 +46,8 @@ export async function loadMEIFile(fileName) {
 }
 
 /**
- * Draw the MEI content to the screen on a specific slot/order (1: left, 2: right)
+ * Draw the MEI content to the screen
+ * @async
  * @param {MEI_FileContent} meiContent file content of the MEI file
  * @returns {SVGElement} SVG content of the MEI file
  */
@@ -66,6 +76,7 @@ export async function drawSVGFromMEIContent(meiContent) {
   } catch (error) {
     console.error(error);
     console.log("Please reload the page and try again.");
+    throw new Error(`Please reload the page and try again. Error: ${error}.`);
   }
   return svg;
 }

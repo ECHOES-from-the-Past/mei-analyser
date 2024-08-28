@@ -159,3 +159,15 @@ export function toSeptenary(ncSQ) {
   const sq_pitch = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
   return Number(sq_pitch.indexOf(ncSQ.pitch)) + Number(ncSQ.octave) * 7;
 }
+
+/**
+ * 
+ * @param {number} septenaryValue 
+ * @returns {string}
+ */
+export function septenaryToPitchOctave(septenaryValue) {
+  const sq_pitch = ['c', 'd', 'e', 'f', 'g', 'a', 'b'];
+  const octave = Math.floor(Number(septenaryValue) / 7);
+  const pitch = septenaryValue - octave * 7;
+  return `${sq_pitch[pitch]}${octave}`;
+}

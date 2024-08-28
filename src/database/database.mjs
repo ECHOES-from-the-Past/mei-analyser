@@ -473,7 +473,7 @@ function calculateSquareMode(syllables) {
     }
 
     // Conclude authentic repercussio:
-    repercussioAuthDesc += `Therefore, there is a <b>${displayRating(authenticRepercussioRating)}</b> probability of being in authentic mode.`;
+    // repercussioAuthDesc += `Therefore, there is a <b>${displayRating(authenticRepercussioRating)}</b> probability of being in authentic mode.`;
 
     // Conclude the repercussio description
     repercussioDesc += repercussioAuthDesc + "</li>";
@@ -500,13 +500,13 @@ function calculateSquareMode(syllables) {
             repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the third most repeated note (${counts[plagalRepercussioPitch]} times). `;
         } else if (sortedCounts[3] === plagalRepercussioPitch) { // case (v)
             plagalRepercussioRating += 0.125;
-            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is  the fourth most repeated note (${counts[plagalRepercussioPitch]} times). `;
+            repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is the fourth most repeated note (${counts[plagalRepercussioPitch]} times). `;
         } else {
             repercussioPlagDesc += `'${plagalRepercussioPitch.toUpperCase()}' is not among the most repeated notes. `;
         }
     }
     // Conclude plagal repercussio:
-    repercussioPlagDesc += `Therefore, there is a <b>${displayRating(plagalRepercussioRating)}</b> probability of being in plagal mode.`;
+    // repercussioPlagDesc += `Therefore, there is a <b>${displayRating(plagalRepercussioRating)}</b> probability of being in plagal mode.`;
 
     // Conclude the repercussio description
     repercussioDesc += repercussioPlagDesc + "</li>";
@@ -515,10 +515,10 @@ function calculateSquareMode(syllables) {
     let repercussioSuggestion = "<p>";
     if (authenticRepercussioRating > plagalRepercussioRating) {
         modeFromRepercussio = authenticMode;
-        repercussioSuggestion += `<b> Repercussio suggests authentic mode '${modeFromRepercussio}' with ${displayRating(authenticRepercussioRating)} certainty.</b>`;
+        repercussioSuggestion += `<b> Repercussio suggests authentic mode '${modeFromRepercussio}'.</b>`;
     } else {
         modeFromRepercussio = plagalMode;
-        repercussioSuggestion += `<b> Repercussio suggests plagal mode '${modeFromRepercussio}' with ${displayRating(plagalRepercussioRating)} certainty.</b>`;
+        repercussioSuggestion += `<b> Repercussio suggests plagal mode '${modeFromRepercussio}'.</b>`;
     }
     repercussioDesc += repercussioSuggestion + "</p>" + "</ul>"; // close the repercussio description
 
@@ -623,12 +623,10 @@ function calculateSquareMode(syllables) {
 
     if (ambitusAuthenticRating > ambitusPlagalRating) {
         modeFromAmbitus = authenticMode;
-        ambitusSuggestion += `<b> Ambitus suggests authentic mode '${modeFromAmbitus}' with ${displayRating(ambitusAuthenticRating)}\
-          certainty over plagal mode with ${displayRating(ambitusPlagalRating)} certainty</b>.`;
+        ambitusSuggestion += `<b> Ambitus suggests authentic mode '${modeFromAmbitus}'.</b>.`;
     } else {
         modeFromAmbitus = plagalMode;
-        ambitusSuggestion += `<b> Ambitus suggests plagal mode '${modeFromAmbitus}' with ${displayRating(ambitusPlagalRating)} `;
-        ambitusSuggestion += `certainty over authentic mode with ${displayRating(ambitusAuthenticRating)} certainty</b>.`;
+        ambitusSuggestion += `<b> Ambitus suggests plagal mode '${modeFromAmbitus}'</b>.`;
     }
 
     ambitusDesc += ambitusSuggestion + "</p>";
@@ -640,12 +638,12 @@ function calculateSquareMode(syllables) {
     let authenticRating = (authenticRepercussioRating + ambitusAuthenticRating) / 2;
     let plagalRating = (plagalRepercussioRating + ambitusPlagalRating) / 2;
 
-    let conclusion = "<li style='list-style-type: none;'>";
-    conclusion += `&emsp; <b><u> Authentic mode '${authenticMode}' has ${displayRating(authenticRating)} certainty | `;
-    conclusion += `Plagal mode '${plagalMode}' has ${displayRating(plagalRating)} certainty.</u></b>`;
-    conclusion += "</li>";
+    // let conclusion = "<li style='list-style-type: none;'>";
+    // conclusion += `&emsp; <b><u> Authentic mode '${authenticMode}' has ${displayRating(authenticRating)} certainty | `;
+    // conclusion += `Plagal mode '${plagalMode}' has ${displayRating(plagalRating)} certainty.</u></b>`;
+    // conclusion += "</li>";
 
-    modeDescription += conclusion;
+    // modeDescription += conclusion;
 
     // Calculate the final mode and rating
     if (authenticRating > plagalRating) {
