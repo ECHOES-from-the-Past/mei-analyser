@@ -228,6 +228,17 @@
 
         clientStatus.hideStatus();
     }
+
+    export function loadDefaultOptions() {
+        [aquitanianCheckbox, squareCheckbox].forEach((e) => e.setChecked());
+
+        [liquescentCheckbox, quilismaCheckbox, oriscusCheckbox].forEach((e) => e.setUnchecked());
+
+        melismaHighlight.setChecked();
+
+        patternInputBox.setValue("");
+        finalisInputBox.setValue("");
+    }
 </script>
 
 <div id="search-panel" {hidden}>

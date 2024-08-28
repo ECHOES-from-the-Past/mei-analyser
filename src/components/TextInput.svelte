@@ -13,6 +13,11 @@
     export function getValue() {
         return value;
     }
+
+    export function setValue(str) {
+        value = str;
+        persist(id, value);
+    }
 </script>
 
 <input

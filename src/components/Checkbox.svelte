@@ -17,11 +17,22 @@
     export function isChecked() {
         return check;
     }
+
+    export function setChecked() {
+        check = true;
+        persist(id, check);
+    }
+
+    export function setUnchecked() {
+        check = false;
+        persist(id, check);
+    }
 </script>
 
 <label>
     <input
-        type="checkbox" {id}
+        type="checkbox"
+        {id}
         on:click={onClick}
         on:change={update}
         bind:checked={check}
