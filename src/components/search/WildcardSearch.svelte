@@ -5,6 +5,7 @@
 
     let wildCardSearch;
     let displayText;
+    export let onKeydown;
 
     /**
      * Takes in the raw input string, output a list of recognizable query
@@ -21,7 +22,7 @@
             return [];
         }
 
-        let regexFilter = /\.?[A-Ga-g?*]\??/g;
+        let regexFilter = /[\.]\??|[A-Ga-g?*]\??/g;
         let parsedInput = inputStr.match(regexFilter);
         return parsedInput;
     }
@@ -40,7 +41,7 @@
 </script>
 
 <Section>
-    <TextInput bind:this={wildCardSearch} onInput={() => updateText()}
+    <TextInput bind:this={wildCardSearch} onInput={() => updateText()} {onKeydown}
     ></TextInput>
     <Section>
         <p>{displayText}</p>

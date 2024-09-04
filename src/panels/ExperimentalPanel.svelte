@@ -10,27 +10,29 @@
 
     let wildcard;
 
+    /**
+     * Possible entries in wildcardSearchList:
+     * - [ ] A dot `.` to search for one arbitrary pitch
+     * - [ ] A question mark `?` to search for an optional note. E.g.:
+     *   - "A F? B" searches for "A F B" and "A B"
+     *   - "A .? B", or "A ?. B" search for "A B", "A D B", etc.
+     * - [ ] An asterisk `*` to search for an arbritrary number of notes
+     * @param chant
+     * @param wildcardSearchList
+     */
     function processWildcardSearch(chant, wildcardSearchList) {
         const ncArray = getNeumeComponentList(chant.syllables);
         let patterns = [];
-        for (
-            let i_nc = 0;
-            i_nc < ncArray.length - wildcardSearchList.length;
-            i_nc++
-        ) {
+        for (let i = 0; i < ncArray.length - wildcardSearchList.length; i++) {
             let patternFound = [];
 
-            for (
-                let i_search = 0;
-                i_search < wildcardSearchList.length;
-                i_search++
-            ) {
-                // processing the search for Square notation, using the `septenary` value of the note
+            for (let j = 0; j < wildcardSearchList.length; j++) {
+                // processing the search
                 if (
-                    ncArray[i_nc + i_search].pitch ==
-                    wildcardSearchList[i_search]
+                    wildcardSearchList[j] == "." ||
+                    ncArray[i + j].pitch == wildcardSearchList[j].toLowerCase()
                 ) {
-                    patternFound.push(ncArray[i_nc + i_search]);
+                    patternFound.push(ncArray[i + j]);
                 } else {
                     patternFound = [];
                     break;
@@ -128,8 +130,16 @@
 
 <div id="experimental-panel" {hidden}>
     Experimental Panel
-    <WildcardSearch bind:this={wildcard} />
-    <Button onClick={reloadTable}>Reload Table</Button>
+    <WildcardSearch bind:this={wildcard} 
+    onKeydown={(e) => {
+        if (e.key == "Enter") {
+            reloadTable();
+        }
+    }}/>
+    <Button
+        onClick={reloadTable}
+        }>Reload Table</Button
+    >
     <Section>
         <div id="searchResultDiv"></div>
     </Section>
