@@ -12,7 +12,7 @@
 
     /**
      * Possible entries in wildcardSearchList:
-     * - [ ] A dot `.` to search for one arbitrary pitch
+     * - [x] A dot `.` to search for one arbitrary pitch
      * - [ ] A question mark `?` to search for an optional note. E.g.:
      *   - "A F? B" searches for "A F B" and "A B"
      *   - "A .? B", or "A ?. B" search for "A B", "A D B", etc.
@@ -54,21 +54,21 @@
 
         console.log(wildcardSearchList);
 
-        let resultChantList = [];
+        let resultChantList = [], patterns = [];
 
         chantList.forEach((chant) => {
-            let patterns = processWildcardSearch(chant, wildcardSearchList);
+            patterns = processWildcardSearch(chant, wildcardSearchList);
             if (patterns.length > 0) {
                 resultChantList.push(chant);
             }
         });
 
-        return resultChantList;
+        return [resultChantList, patterns];
     }
 
     /**
      * Perform highlighting when user clicks on "Search" button
-     * @return {Chant[]} list of chants that match the search query
+     * @return {[Chant[], String[]]} list of chants that match the search query
      */
     async function performFakeSearch() {
         const databaseURL =
@@ -78,10 +78,10 @@
 
         let resultChantList = await fetch(databaseURL).then((response) =>
             response.json(),
-        );
+        ), patterns = [];
 
         /* Filter by wildcard search */
-        resultChantList = filterByWildcardSearch(
+        [resultChantList, patterns] = filterByWildcardSearch(
             resultChantList,
             wildcard.getWildcardList(),
         );
@@ -93,20 +93,20 @@
         );
 
         /* Return the result */
-        return resultChantList;
+        return [resultChantList, patterns];
     }
 
     async function reloadTable() {
         document.getElementById("searchResultDiv").innerHTML = "";
 
-        await performFakeSearch().then((resultChantList) => {
+        await performFakeSearch().then(([resultChantList, patterns]) => {
             new ResultTable({
                 target: searchResultDiv,
                 props: {
                     chantList: resultChantList,
                     textFormatOptions: {
                         searchPattern: {
-                            list: [],
+                            list: patterns,
                             mode: "exact-pitch",
                         },
                         melisma: {
