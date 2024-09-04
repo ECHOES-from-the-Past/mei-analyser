@@ -3,6 +3,7 @@
     export let id = "textbox";
     export let placeholder = "Input here";
     export let onKeydown;
+    export let onInput;
 
     let value = retrieve(id);
 
@@ -26,6 +27,7 @@
     {placeholder}
     bind:value
     on:input={handleInputChanges}
+    on:input={onInput}
     on:keydown={onKeydown}
 />
 
