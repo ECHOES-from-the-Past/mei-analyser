@@ -189,7 +189,7 @@ function parseToSyllableArray(allSyllables, notationType) {
  * @returns {[number, number, string]} the mode, the certainty, and the descripion of the chant.
  */
 function calculateAquitanianMode(syllables) {
-    let mode = -1;
+    let possibleModes = [];
     let modeDescription = "";
     let modeCertainty = 0;
 
@@ -230,48 +230,62 @@ function calculateAquitanianMode(syllables) {
     const rhombus7 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != 3 && loc != -1)).length == 0;
 
     if (allWithSETiltLoc.length <= 0) {
-        mode = -1;
         modeDescription += "<li> <b> No rhombus shape </b> is detected in the chant. </li>";
     } else if (allWithSETiltLoc.length == 1) {
-        mode = -1;
         modeDescription += "<li> Only <b> one rhombus shape </b> is detected. </li>";
     } else {
         let rhombusDescription = [];
         if (lastNoteLoc == -2 && rhombus146) {
-            mode = 1;
+            possibleModes.push(1);
             rhombusDescription.push("three steps above the line (+3)");
             rhombusDescription.push("one step below the line (-1)");
-        } else if (lastNoteLoc == 0 && rhombus2) {
-            mode = 2;
+        }
+
+        if (lastNoteLoc == 0 && rhombus2) {
+            possibleModes.push(2);
             rhombusDescription.push("one step above the line (+1)");
             rhombusDescription.push("two steps below the line (-2)");
-        } else if (lastNoteLoc == -2 && rhombus38) {
-            mode = 3;
+        } 
+        
+        if (lastNoteLoc == -2 && rhombus38) {
+            possibleModes.push(3);
             rhombusDescription.push("two steps above the line (+2)");
             rhombusDescription.push("two steps below the line (-2)");
-        } else if (lastNoteLoc == -1 && rhombus146) {
-            mode = 4;
+        }
+        
+        if (lastNoteLoc == -1 && rhombus146) {
+            possibleModes.push(4);
             rhombusDescription.push("three steps above the line (+3)");
             rhombusDescription.push("one step below the line (-1)");
-        } else if (lastNoteLoc == 0 && rhombus4rare) { // rare case
-            mode = 4;
+        }
+        
+        if (lastNoteLoc == 0 && rhombus4rare) { // rare case
+            possibleModes.push(4);
             rhombusDescription.push("on the line (0)")
             rhombusDescription.push("four steps above the line (+4)");
             rhombusDescription.push("three steps below the line (-3)");
-        } else if (lastNoteLoc == -2 && rhombus5) {
-            mode = 5;
+        } 
+        
+        if (lastNoteLoc == -2 && rhombus5) {
+            possibleModes.push(5);
             rhombusDescription.push("one step above the line (+1)");
             rhombusDescription.push("three steps below the line (-3)");
-        } else if (lastNoteLoc == 0 && rhombus146) {
-            mode = 6;
+        } 
+        
+        if (lastNoteLoc == 0 && rhombus146) {
+            possibleModes.push(6);
             rhombusDescription.push("three steps above the line (+3)");
             rhombusDescription.push("one step below the line (-1)");
-        } else if (lastNoteLoc == -2 && rhombus7) {
-            mode = 7;
+        } 
+        
+        if (lastNoteLoc == -2 && rhombus7) {
+            possibleModes.push(7);
             rhombusDescription.push("on the line (0)");
             rhombusDescription.push("three steps above the line (+3)");
-        } else if (lastNoteLoc == 0 && rhombus38) {
-            mode = 8;
+        } 
+        
+        if (lastNoteLoc == 0 && rhombus38) {
+            possibleModes.push(8);
             rhombusDescription.push("two steps above the line (+2)");
             rhombusDescription.push("two steps below the line (-2)");
         }
@@ -296,22 +310,22 @@ function calculateAquitanianMode(syllables) {
 
     modeDescription += `<li> The <b>repeated notes</b> in descending order of appearance are at: ${sortedCount.map(loc => `${loc > 0 ? `+${loc}` : `${loc}`} (${count[loc]} ${count[loc] > 1 ? 'times' : 'time'})`).join(", ")}.</li>`;
 
-    modeCertainty = mode == -1 ? 0 : 1;
-
     const linePitch = {
         1: 'F', 2: 'D', 3: 'G', 4: 'F',
         5: 'A', 6: 'F', 7: 'B', 8: 'G'
     }
 
-    if (mode == -1) {
-        modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to detect a mode for the chant. The pitch of the line is unknown. </b> </u> </li>`;
+    if (possibleModes.length == 0) {
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to suggest a mode for the chant. The pitch of the line is unknown. </b> </u> </li>`;
     } else {
-        modeDescription += `<li style='list-style-type: none;'> <b> <u> Mode ${mode} is detected. The pitch of the line is '${linePitch[mode]}'. </b> </u>  </li>`;
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Possible mode include mode ${possibleModes.join(", mode ")}. The pitch of the line is '${possibleModes.forEach((mode) => {
+            return linePitch[mode];
+        })}'. </b> </u>  </li>`;
     }
 
     modeDescription += "</ul>";
 
-    return [mode, modeCertainty, modeDescription];
+    return [possibleModes, 0, modeDescription];
 }
 
 /**
@@ -727,5 +741,5 @@ for (let fileName of allMEIfiles) {
 }
 
 // Write all files/folder to database.json (a JSON list)
-// fs.writeFileSync(targetChantlist, JSON.stringify(allChants), 'utf8');
+fs.writeFileSync(targetChantlist, JSON.stringify(allChants), 'utf8');
 fs.writeFileSync("src/database/aquitanian.json", JSON.stringify(aquitanianRhombodialPunctum), 'utf8');
