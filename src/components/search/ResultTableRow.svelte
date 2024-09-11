@@ -88,10 +88,7 @@
                 // compare two list, if there's a match (the same element from both), add the class to the wordWrapper
                 for (let i = 0; i < pattern.length; i++) {
                     for (let j = 0; j < syllable.neumeComponents.length; j++) {
-                        if (
-                            JSON.stringify(pattern[i]) ===
-                            JSON.stringify(syllable.neumeComponents[j])
-                        ) {
+                        if (pattern[i] == syllable.neumeComponents[j]) {
                             wordWrapper.classList.add("melodic-pattern-word");
                         }
                     }
@@ -236,11 +233,10 @@
                 chant: chant,
                 highlightOptions: {
                     melodicPattern: melodicPattern,
-                    melismaPattern: []
-                }
+                    melismaPattern: [],
+                },
             },
         });
-
 
         // Add a little delay for Verovio to render the chant
         setTimeout(() => {
@@ -254,8 +250,6 @@
 
         // Highlight characteristics on the chant when user selects 'Display chant'
         // async () => {
-
-
 
         //     // Highlight the melisma on the chant
         //     if (melismaEnableCheckbox.isChecked()) {
