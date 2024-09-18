@@ -74,7 +74,6 @@ function filterByModes(chantList, modes) {
  * @returns {NeumeComponentSQ[][]} a list of patterns (in list form) that match the search query
  */
 export function processExactPitchMelodicPattern(chant, searchQueryList) {
-  console.log(searchQueryList)
   /** @type {NeumeComponentSQ[]} */
   const ncArray = getNeumeComponentList(chant.syllables);
 
