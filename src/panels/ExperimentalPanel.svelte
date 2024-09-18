@@ -26,78 +26,81 @@
      */
     function processWildcardSearch(chant, wildcardSearchList) {
         const ncArray = getNeumeComponentList(chant.syllables);
-        let wQuery = wildcardSearchList;
+        // let wQuery = wildcardSearchList;
 
-        /**
-         * @type {NeumeComponent[]}
-         */
-        let aString = ncArray;
+        // /**
+        //  * @type {NeumeComponent[]}
+        //  */
+        // let aString = ncArray;
 
-        let n = ncArray.length,
-            m = wildcardSearchList.length;
-        let dp = new Array(n + 1)
-            .fill(false)
-            .map(() => new Array(m + 1).fill(false));
-        let patterns = [];
+        // let n = ncArray.length,
+        //     m = wildcardSearchList.length;
+        // let dp = new Array(n + 1)
+        //     .fill(false)
+        //     .map(() => new Array(m + 1).fill(false));
+        // let patterns = [];
 
-        dp[0][0] = true;
-        if (chant.notationType == "aquitanian") {
-            return;
-        }
-        for (let i = 1; i <= n; i++) {
-            for (let j = 1; j <= m; j++) {
-                console.log(wQuery[j], aString[i].pitch);
-                if (wQuery[j - 1] === ".") {
-                    dp[i][j] = dp[i - 1][j - 1];
-                } else if (wQuery[j - 1] === "?") {
-                    dp[i][j] = dp[i - 1][j - 1] || dp[i - 1][j];
-                } else if (wQuery[j - 1] === "*") {
-                    dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
-                } else if (wQuery[j - 1] === "@") {
-                    // Check if the character before the @ is repeated
-                    const repeatedChar = aString[i - 2].pitch;
-                    let foundRepeated = false;
-                    for (let k = i - 3; k >= 0; k--) {
-                        if (aString[k].pitch !== repeatedChar) {
-                            break;
-                        }
-                        foundRepeated = true;
-                    }
-                    dp[i][j] = foundRepeated && dp[i - 2][j - 1];
-                } else {
-                    dp[i][j] =
-                        dp[i - 1][j - 1] &&
-                        aString[i - 1].pitch === wQuery[j - 1];
-                }
-            }
-        }
+        // dp[0][0] = true;
+        // if (chant.notationType == "aquitanian") {
+        //     return;
+        // }
+        // for (let i = 1; i <= n; i++) {
+        //     for (let j = 1; j <= m; j++) {
+        //         console.log(wQuery[j], aString[i].pitch);
+        //         if (wQuery[j - 1] === ".") {
+        //             dp[i][j] = dp[i - 1][j - 1];
+        //         } else if (wQuery[j - 1] === "?") {
+        //             dp[i][j] = dp[i - 1][j - 1] || dp[i - 1][j];
+        //         } else if (wQuery[j - 1] === "*") {
+        //             dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+        //         } else if (wQuery[j - 1] === "@") {
+        //             // Check if the character before the @ is repeated
+        //             const repeatedChar = aString[i - 2].pitch;
+        //             let foundRepeated = false;
+        //             for (let k = i - 3; k >= 0; k--) {
+        //                 if (aString[k].pitch !== repeatedChar) {
+        //                     break;
+        //                 }
+        //                 foundRepeated = true;
+        //             }
+        //             dp[i][j] = foundRepeated && dp[i - 2][j - 1];
+        //         } else {
+        //             dp[i][j] =
+        //                 dp[i - 1][j - 1] &&
+        //                 aString[i - 1].pitch === wQuery[j - 1];
+        //         }
+        //     }
+        // }
 
-        if (dp[n][m]) {
-            console.table(dp);
-        }
+        // if (dp[n][m]) {
+        //     console.table(dp);
+        // }
 
         // Match found: dp[n][m];
 
         // OLD CODE
-        // for (let i = 0; i < ncArray.length - wildcardSearchList.length; i++) {
-        //     let patternFound = [];
+        let patterns = [];
 
-        //     for (let j = 0; j < wildcardSearchList.length; j++) {
-        //         // processing the wildcard search
-        //         if (wildcardSearchList[j] == "." || ncArray[i + j].pitch == wildcardSearchList[j].toLowerCase()) {
-        //             patternFound.push(ncArray[i + j]);
-        //         } else if (wildcardSearchList[j] == "?") {
-        //             patternFound.push(ncArray[i + j]);
-        //         } else {
-        //             patternFound = [];
-        //             break;
-        //         }
-        //     }
+        for (let i = 0; i < ncArray.length - wildcardSearchList.length; i++) {
+            let patternFound = [];
 
-        //     if (patternFound.length > 0) {
-        //         patterns.push(patternFound);
-        //     }
-        // }
+            for (let j = 0; j < wildcardSearchList.length; j++) {
+                // processing the wildcard search
+                if (
+                    wildcardSearchList[j] == "." ||
+                    ncArray[i + j].pitch == wildcardSearchList[j].toLowerCase()
+                ) {
+                    patternFound.push(ncArray[i + j]);
+                } else {
+                    patternFound = [];
+                    break;
+                }
+            }
+
+            if (patternFound.length > 0) {
+                patterns.push(patternFound);
+            }
+        }
         return patterns;
     }
 
@@ -112,7 +115,6 @@
 
         chantList.forEach((chant) => {
             let pattern = processWildcardSearch(chant, wildcardSearchList);
-            console.log(pattern)
             if (pattern.length > 0) {
                 resultChantList.push(chant);
                 returnPatterns.push(pattern);
@@ -140,10 +142,12 @@
         resultChantList = filterByMusicScript(resultChantList, {
             aquitanian: false,
             square: true,
-        })[
-            /* Filter by wildcard search */
-            (resultChantList, patterns)
-        ] = filterByWildcardSearch(resultChantList, wildcard.getWildcardList());
+        });
+        /* Filter by wildcard search */
+        [resultChantList, patterns] = filterByWildcardSearch(
+            resultChantList,
+            wildcard.getWildcardList(),
+        );
 
         /** Sort chant list by file name */
         resultChantList.sort((chantA, chantB) =>

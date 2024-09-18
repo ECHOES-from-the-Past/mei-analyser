@@ -49,33 +49,50 @@
     <Tooltip>
         <ul>
             <li>
-                Use a dot . to search for one arbitrary pitch. Use a question
-                mark ? to search for an optional note.
+                Use a dot <code><b>. </b></code> to search for one arbitrary pitch
+            </li>
+            <!-- <li>
+                Use a question mark ? to search for an optional note.
                 <ul>
-
                     <li>
-                        
-                        For example, searching
-                    for d ? a could return the following sequences of notes: d a, d
-                    f a, d g a, d c a, etc.
-                </li>
-            </ul>
+                        E.g.: searching for d ? a could return the
+                        following sequences of notes: <code> d a </code>, 
+                        <code>
+                            d f a, d g a, d c a,
+                        </code>
+                        etc.
+                    </li>
+                </ul>
             </li>
             <li>
                 Or use the question mark ? after a particular pitch value to
-                make that note optional. For example, searching for d f? a could
-                return both the sequence d a and the sequenced f a.
+                make that note optional.
+                <ul>
+                    <li>
+                        For example, searching for d f? a could return both the
+                        sequence d a and the sequenced f a.
+                    </li>
+                </ul>
             </li>
             <li>
-                Use an asterisk * to search for an number of optional notes. For
-                example, searching for f * a could return the following
-                sequences: f a, f g a, f b g a, etc.
+                Use an asterisk * to search for an number of optional notes.
+                <ul>
+                    <li>
+                        For example, searching for f * a could return the
+                        following sequences: f a, f g a, f b g a, etc.
+                    </li>
+                </ul>
             </li>
             <li>
                 Use an at sign @ after a note to allow for repetitions of that
-                note. For example, searching for f a@ could return the following
-                sequences: f a, f a a, f a a a, etc.
-            </li>
+                note.
+                <ul>
+                    <li>
+                        For example, searching for f a@ could return the
+                        following sequences: f a, f a a, f a a a, etc.
+                    </li>
+                </ul>
+            </li> -->
         </ul>
     </Tooltip>
     <Section>
