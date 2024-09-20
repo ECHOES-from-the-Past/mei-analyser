@@ -76,12 +76,41 @@ export async function drawSVGFromMEIContent(meiContent) {
   } catch (error) {
     console.error(error);
     console.log("Please reload the page and try again.");
-    throw new Error(`Please reload the page and try again. Error: ${error}.`);
+    throw new Error(`Please reload the page and try again. Error(s): ${error}.`);
   }
   return svg;
 }
 
 /* ------------------------ HIGHLIGHTING SVGs --------------------------- */
+
+/**
+ * Put an SVG Element in a spotlight by surrounding it with a box.
+ * @param {SVGAElement} svgElementId the neume component to be spotlighted
+ * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
+ * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
+ */
+export function spotlightSVGElementById(svgElementId, color = 'var(--spotlight-fill)', stroke_color = 'var(--spotlight-stroke)') {
+  const nc_svg = document.querySelectorAll(`[id="${svgElementId}"]`);
+  nc_svg.forEach((nc) => {
+    const x_coord = nc.querySelector('text').attributes.getNamedItem('x').value;
+    const y_coord = nc.querySelector('text').attributes.getNamedItem('y').value;
+    const width = '300';
+    const height = '400';
+
+    // construct a spotlight rectangle to highlight the neume component
+    const spotlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    spotlight.setAttribute('class', 'spotlight-rect');
+    spotlight.setAttribute('x', x_coord - width / 3);
+    spotlight.setAttribute('y', y_coord - height / 2);
+    spotlight.setAttribute('width', width);
+    spotlight.setAttribute('height', height);
+    spotlight.setAttribute('fill', color);
+    spotlight.setAttribute('stroke', stroke_color);
+    spotlight.setAttribute('stroke-width', '30px');
+    // Display the spotlight rectangle
+    nc.appendChild(spotlight);
+  });
+}
 
 /**
  * Put the neume component in a spotlight by surrounding it with a box.
@@ -166,6 +195,16 @@ export function clearAllHighlights() {
 export function highlightPattern(pattern, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)'){
   for (const nc of pattern) {
     highlightNeumeComponent(nc, color, stroke_color);
+  }
+}
+
+/**
+ * Spotlight a pattern of neume components on the screen
+ * @param {NeumeComponent[]} pattern an array neume components
+ */
+export function spotlightPattern(pattern, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)'){
+  for (const nc of pattern) {
+    spotlightNeumeComponent(nc, color, stroke_color);
   }
 }
 

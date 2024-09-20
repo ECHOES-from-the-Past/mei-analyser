@@ -1,33 +1,67 @@
 <script>
-    import { drawSVGFromMEIContent } from "../../utility/utils";
-    import { Chant } from "../../utility/components";
-    import { highlightPattern } from "../../utility/utils";
+    import { drawSVGFromMEIContent, spotlightPattern, spotlightSVGElementById } from "../../utility/utils";
+    import { Chant, Syllable, NeumeComponent } from "../../utility/components";
+    import {
+        highlightPattern,
+        highlightSvgElementById,
+    } from "../../utility/utils";
+    import { onMount } from "svelte";
 
     /** @type {Chant} */
     export let chant;
     /** @type {{
-        melodicPattern: neumeComponents[][],
-        melismaPattern: neumeComponents[]
+        melodicPattern: NeumeComponents[][],
+        melismaPattern: Syllable[]
         }}}*/
     export let highlightOptions;
 
-    function highlightOnChant() {
+    function hightlightOnChant() {
         let melodicPattern = highlightOptions.melodicPattern;
         for (let pattern of melodicPattern) {
             highlightPattern(pattern);
         }
     }
+
+    function highlightMelismaOnChant() {
+        let melismaPattern = highlightOptions.melismaPattern;
+        console.log(melismaPattern);
+
+        spotlightSVGElementById(melismaPattern[0].syllableWord.id)
+        // spotlightPattern(
+        //     melismaPattern,
+        //     "var(--melisma-spotlight-fill)",
+        //     "var(--melisma-spotlight-stroke)",
+        // );
+        // highlightSvgElementById(
+        //     syllable.syllableWord.id,
+        //     "var(--melisma-text)",
+        //     "var(--melisma-background)",
+        // );
+    }
+
+    let svg, error;
+    onMount(async () => {
+        await drawSVGFromMEIContent(chant.meiContent)
+            .then((chantSVG) => {
+                // Set the chant to display
+                svg = chantSVG;
+            })
+            .then(() => {
+                hightlightOnChant();
+                highlightMelismaOnChant();
+            })
+            .catch((err) => {
+                error = err;
+            });
+    });
 </script>
 
 <div>
-    {#await drawSVGFromMEIContent(chant.meiContent)}
-        <p>Loading MEI Content and letting Verovio render the chant</p>
-    {:then svg}
-        {@html svg}
-    {:catch error}
-        <p>Something went wrong, please try to reload the page!</p>
-        <p>Error: {error.message} b</p>
-    {/await}
+    {@html svg}
+    {#if error}
+        <hr />
+        {error}
+    {/if}
 </div>
 
 <style>
