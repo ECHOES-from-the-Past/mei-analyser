@@ -186,12 +186,11 @@ function parseToSyllableArray(allSyllables, notationType) {
 /**
  * Helper function to calculate the mode of the Aquitanian chant.
  * Refer to https://github.com/ECHOES-from-the-Past/mei-analyser/issues/8 for Aquitanian mode detection
- * @returns {[number, number, string]} the mode, the certainty, and the descripion of the chant.
+ * @returns {[[number], number, string]} the possible mode(s), the certainty, and the descripion of the chant.
  */
 function calculateAquitanianMode(syllables) {
-    let mode = -1;
+    let possibleModes = [];
     let modeDescription = "";
-    let modeCertainty = 0;
 
     const neumeComponentList = getNeumeComponentList(syllables);
     // Checking last note
@@ -219,59 +218,70 @@ function calculateAquitanianMode(syllables) {
     let allWithSETiltLoc = allWithSETilt.map((nc) => nc.loc);
 
     // Checking the @loc value of all rhombus shapes to help determining the mode of the Aquitanian chant
-    // Example with "neg1pos3"
-    // - The False value of neg1pos3 indicates that there is at least one rhombus that is not located on either -1 or +3
-    // - The True value of neg1pos3 indicates that there are no other rhombuses other than the ones located at -1 or +3
-    const neg1pos3 = allWithSETiltLoc.filter((loc) => (loc != -1 && loc != 3)).length == 0;
-    const neg2pos2 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 2)).length == 0;
-    const neg3pos1 = allWithSETiltLoc.filter((loc) => (loc != -3 && loc != 1)).length == 0;
-    const zeropos3 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != 3)).length == 0;
-    const zeroneg3pos4 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != -3 && loc != 4)).length == 0;
-    const neg2pos1 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 1)).length == 0;
+    const rhombus146 = allWithSETiltLoc.filter((loc) => (loc != -1 && loc != 3 && loc != 2)).length == 0;
+    const rhombus2 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 1 && loc != -3)).length == 0;
+    const rhombus38 = allWithSETiltLoc.filter((loc) => (loc != -2 && loc != 2 && loc != 1)).length == 0;
+    const rhombus4rare = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != -3 && loc != 4 && loc != 3)).length == 0;
+    const rhombus5 = allWithSETiltLoc.filter((loc) => (loc != -3 && loc != 1 && loc != 0)).length == 0;
+    const rhombus7 = allWithSETiltLoc.filter((loc) => (loc != 0 && loc != 3 && loc != -1)).length == 0;
 
     if (allWithSETiltLoc.length <= 0) {
-        mode = -1;
         modeDescription += "<li> <b> No rhombus shape </b> is detected in the chant. </li>";
     } else if (allWithSETiltLoc.length == 1) {
-        mode = -1;
         modeDescription += "<li> Only <b> one rhombus shape </b> is detected. </li>";
     } else {
         let rhombusDescription = [];
-        if (lastNoteLoc == -2 && neg1pos3) {
-            mode = 1;
+        if (lastNoteLoc == -2 && rhombus146) {
+            possibleModes.push(1);
             rhombusDescription.push("three steps above the line (+3)");
             rhombusDescription.push("one step below the line (-1)");
-        } else if (lastNoteLoc == 0 && neg2pos1) {
-            mode = 2;
+        }
+
+        if (lastNoteLoc == 0 && rhombus2) {
+            possibleModes.push(2);
             rhombusDescription.push("one step above the line (+1)");
             rhombusDescription.push("two steps below the line (-2)");
-        } else if (lastNoteLoc == -2 && neg2pos2) {
-            mode = 3;
+        }
+
+        if (lastNoteLoc == -2 && rhombus38) {
+            possibleModes.push(3);
             rhombusDescription.push("two steps above the line (+2)");
             rhombusDescription.push("two steps below the line (-2)");
-        } else if (lastNoteLoc == -1 && neg1pos3) {
-            mode = 4;
+        }
+
+        if (lastNoteLoc == -1 && rhombus146) {
+            possibleModes.push(4);
             rhombusDescription.push("three steps above the line (+3)");
             rhombusDescription.push("one step below the line (-1)");
-        } else if (lastNoteLoc == 0 && zeroneg3pos4) { // rare case
-            mode = 4;
+        }
+
+        if (lastNoteLoc == 0 && rhombus4rare) { // rare case
+            possibleModes.push(4);
             rhombusDescription.push("on the line (0)")
             rhombusDescription.push("four steps above the line (+4)");
             rhombusDescription.push("three steps below the line (-3)");
-        } else if (lastNoteLoc == -2 && neg3pos1) {
-            mode = 5;
+        }
+
+        if (lastNoteLoc == -2 && rhombus5) {
+            possibleModes.push(5);
             rhombusDescription.push("one step above the line (+1)");
             rhombusDescription.push("three steps below the line (-3)");
-        } else if (lastNoteLoc == 0 && neg1pos3) {
-            mode = 6;
+        }
+
+        if (lastNoteLoc == 0 && rhombus146) {
+            possibleModes.push(6);
             rhombusDescription.push("three steps above the line (+3)");
             rhombusDescription.push("one step below the line (-1)");
-        } else if (lastNoteLoc == -2 && zeropos3) {
-            mode = 7;
+        }
+
+        if (lastNoteLoc == -2 && rhombus7) {
+            possibleModes.push(7);
             rhombusDescription.push("on the line (0)");
             rhombusDescription.push("three steps above the line (+3)");
-        } else if (lastNoteLoc == 0 && neg2pos2) {
-            mode = 8;
+        }
+
+        if (lastNoteLoc == 0 && rhombus38) {
+            possibleModes.push(8);
             rhombusDescription.push("two steps above the line (+2)");
             rhombusDescription.push("two steps below the line (-2)");
         }
@@ -296,22 +306,22 @@ function calculateAquitanianMode(syllables) {
 
     modeDescription += `<li> The <b>repeated notes</b> in descending order of appearance are at: ${sortedCount.map(loc => `${loc > 0 ? `+${loc}` : `${loc}`} (${count[loc]} ${count[loc] > 1 ? 'times' : 'time'})`).join(", ")}.</li>`;
 
-    modeCertainty = mode == -1 ? 0 : 1;
-
     const linePitch = {
         1: 'F', 2: 'D', 3: 'G', 4: 'F',
         5: 'A', 6: 'F', 7: 'B', 8: 'G'
     }
 
-    if (mode == -1) {
-        modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to detect a mode for the chant. The pitch of the line is unknown. </b> </u> </li>`;
+    if (possibleModes.length == 0) {
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to suggest a mode for the chant. The pitch of the line is unknown. </b> </u> </li>`;
     } else {
-        modeDescription += `<li style='list-style-type: none;'> <b> <u> Mode ${mode} is detected. The pitch of the line is '${linePitch[mode]}'. </b> </u>  </li>`;
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Possible mode include mode ${possibleModes.join(", mode ")}. The pitch of the line is '${possibleModes.forEach((mode) => {
+            return linePitch[mode];
+        })}'. </b> </u> </li>`;
     }
 
     modeDescription += "</ul>";
 
-    return [mode, modeCertainty, modeDescription];
+    return [possibleModes, 0, modeDescription];
 }
 
 /**
@@ -654,7 +664,7 @@ function calculateSquareMode(syllables) {
         rating = plagalRating;
     }
 
-    return [mode, rating, modeDescription];
+    return [[mode], rating, modeDescription];
 }
 
 /**
@@ -717,6 +727,7 @@ for (let fileName of allMEIfiles) {
 
     let pemDatabaseUrls = getDatabaseUrls(meiJSON);
     let chant = new Chant(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, clef, pemDatabaseUrls);
+
     allChants.push(chant);
 }
 

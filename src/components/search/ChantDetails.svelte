@@ -9,8 +9,8 @@
     let info = {
         Title: chant.title,
         Source: chant.source,
-        "Music script": capitalizeFirstLetter(chant.notationType),
-        "Possible Mode": chant.mode == -1 ? "Unknown" : chant.mode,
+        "Music Script": capitalizeFirstLetter(chant.notationType),
+        "Possible Mode(s)": chant.mode == -1 ? "Unknown" : chant.mode.join(", "),
         "Mode Description": chant.modeDescription,
         "MEI File": chant.fileName,
         "PEM Database URL": chant.pemDatabaseUrls,
