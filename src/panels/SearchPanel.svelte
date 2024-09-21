@@ -259,7 +259,7 @@
 
                 <!-- Search/filter by ornamental figures -->
                 <p>
-                    Filter chants that has ornamental figure(s): <br />
+                    Filter chants that have ornamental figure(s): <br />
                     (No selection will display all chants)
                 </p>
                 <Checkbox value="liquescent" bind:this={liquescentCheckbox}>
@@ -275,7 +275,7 @@
 
                 <!-- Search by melodic pattern -->
                 <p>
-                    Filter chant(s) by
+                    Filter chants by
                     <span class="melodic-pattern-word"> melodic pattern </span>
                     <Tooltip id="melodic-pattern-search">
                         <ul>
@@ -319,7 +319,7 @@
 
                 <hr />
                 <p>
-                    Filter by finalis (the last note)
+                    Filter chants by finalis (the last note)
                     <Tooltip id="finalis-filter">
                         Filter chants by their finalis (last note) by entering <b>a pitch value</b> (from "a" to "g") for chants in square notes
                         or <b>a location value</b> (from "-3" to "+4") for chants in Aquitanian neumes.

@@ -13,7 +13,7 @@
         processContourMelodicPattern,
         processExactPitchMelodicPattern,
     } from "../../functions/search";
-    import { highlightSvgElementById } from "../../utility/utils";
+    import { capitalizeFirstLetter, highlightSvgElementById } from "../../utility/utils";
 
     /** @type {Chant} */
     export let chant;
@@ -261,25 +261,6 @@
                 inline: "nearest",
             });
         }, 300);
-
-        // Highlight characteristics on the chant when user selects 'Display chant'
-        // async () => {
-
-        //     // Highlight the melisma on the chant
-        //     if (melismaEnableCheckbox.isChecked()) {
-        //         let melismaMin = melismaInput.value;
-        //         for (let syllable of chant.syllables) {
-        //             let tdLinks = createTableCell();
-        //             if (syllable.neumeComponents.length >= melismaMin) {
-        //                 highlightSvgElementById(
-        //                     syllable.syllableWord.id,
-        //                     "var(--melisma-text)",
-        //                     "var(--melisma-background)",
-        //                 );
-        //             }
-        //         }
-        //     }
-        // };
     }
 </script>
 
@@ -290,7 +271,7 @@
     </td>
     <!-- Music Script column -->
     <td>
-        {chant.notationType}
+        {capitalizeFirstLetter(chant.notationType)}
     </td>
     <!-- Text column -->
     <td>
