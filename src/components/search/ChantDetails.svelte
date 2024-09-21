@@ -9,7 +9,7 @@
     let modeCalcLink = document.createElement("a");
     modeCalcLink.rel = "external";
     modeCalcLink.target = "_blank";
-    if ((chant.notationType = "square")) {
+    if (chant.notationType == "square") {
         modeCalcLink.innerText = "Mode Detection for Square Script (github.com)";
         modeCalcLink.href =
             "https://github.com/ECHOES-from-the-Past/mei-analyser/wiki/Mode-Detection-for-Square-Script";
