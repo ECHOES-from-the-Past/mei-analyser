@@ -1,13 +1,17 @@
 <script>
-    import { drawSVGFromMEIContent } from "../../utility/utils";
-    import { Chant } from "../../utility/components";
-    import { highlightPattern } from "../../utility/utils";
+    import { drawSVGFromMEIContent, spotlightPattern, spotlightText } from "../../utility/utils";
+    import { Chant, Syllable, NeumeComponent } from "../../utility/components";
+    import {
+        highlightPattern,
+        highlightSvgElementById,
+    } from "../../utility/utils";
+    import { onMount } from "svelte";
 
     /** @type {Chant} */
     export let chant;
     /** @type {{
-        melodicPattern: neumeComponents[][],
-        melismaPattern: neumeComponents[]
+        melodicPattern: NeumeComponent[][],
+        melismaPattern: Syllable[]
         }}}*/
     export let highlightOptions;
 
@@ -17,17 +21,37 @@
             highlightPattern(pattern);
         }
     }
+
+    function highlightMelismaOnChant() {
+        let melismaPattern = highlightOptions.melismaPattern;
+        melismaPattern.forEach((mp) => {
+            spotlightText(mp.syllableWord)
+        })
+    }
+
+    let svg, error;
+    onMount(async () => {
+        await drawSVGFromMEIContent(chant.meiContent)
+            .then((chantSVG) => {
+                // Set the chant to display
+                svg = chantSVG;
+            })
+            .then(() => {
+                highlightOnChant();
+                highlightMelismaOnChant();
+            })
+            .catch((err) => {
+                error = err;
+            });
+    });
 </script>
 
 <div>
-    {#await drawSVGFromMEIContent(chant.meiContent)}
-        <p>Loading MEI Content and letting Verovio render the chant</p>
-    {:then svg}
-        {@html svg}
-    {:catch error}
-        <p>Something went wrong, please try to reload the page!</p>
-        <p>Error: {error.message} b</p>
-    {/await}
+    {@html svg}
+    {#if error}
+        <hr />
+        {error}
+    {/if}
 </div>
 
 <style>

@@ -1,4 +1,4 @@
-import { NeumeComponent } from './components.js';
+import { NeumeComponent, SyllableWord } from './components.js';
 import createVerovioModule from 'verovio/wasm';
 import { VerovioToolkit } from 'verovio/esm';
 
@@ -76,12 +76,29 @@ export async function drawSVGFromMEIContent(meiContent) {
   } catch (error) {
     console.error(error);
     console.log("Please reload the page and try again.");
-    throw new Error(`Please reload the page and try again. Error: ${error}.`);
+    throw new Error(`Please reload the page and try again. Error(s): ${error}.`);
   }
   return svg;
 }
 
 /* ------------------------ HIGHLIGHTING SVGs --------------------------- */
+/**
+ * Put an SVG Element in a spotlight by surrounding it with a box.
+ * @param {SyllableWord} syllableWord the syllable word (not the syllable) to be spotlighted
+ * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
+ * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
+ */
+export function spotlightText(syllableWord) {
+  let color = 'var(--melisma-text)';
+  const syllableWords = document.querySelectorAll(`[id="${syllableWord.id}"]`);
+  console.log(syllableWords)
+  syllableWords.forEach((text) => {
+    let tspan = text.querySelector('tspan');
+    console.log(tspan)
+    tspan.style.fill = color;
+    tspan.style.fontWeight = "600";
+  })
+}
 
 /**
  * Put the neume component in a spotlight by surrounding it with a box.
@@ -166,6 +183,16 @@ export function clearAllHighlights() {
 export function highlightPattern(pattern, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)'){
   for (const nc of pattern) {
     highlightNeumeComponent(nc, color, stroke_color);
+  }
+}
+
+/**
+ * Spotlight a pattern of neume components on the screen
+ * @param {NeumeComponent[]} pattern an array neume components
+ */
+export function spotlightPattern(pattern, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)'){
+  for (const nc of pattern) {
+    spotlightNeumeComponent(nc, color, stroke_color);
   }
 }
 
