@@ -29,7 +29,7 @@
         Source: chant.source,
         "Music Script": capitalizeFirstLetter(chant.notationType),
         "Possible Mode(s)":
-            chant.mode == -1 ? "Unknown" : chant.mode.join(", "),
+            chant.mode.length == 0 ? "Unknown" : chant.mode.join(", "),
         "Mode Description": chant.modeDescription + modeMoreInfoLink.outerHTML,
         "MEI File": chant.fileName,
         "PEM Database URL": chant.pemDatabaseUrls,
