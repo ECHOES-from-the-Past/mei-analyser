@@ -224,7 +224,6 @@
             }
         }
     }
-    console.log(melismaPatterns)
 
     /**
      * Display the chant's information to the screen

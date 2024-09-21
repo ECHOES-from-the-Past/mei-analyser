@@ -1,5 +1,5 @@
 <script>
-    import { drawSVGFromMEIContent, spotlightPattern, spotlightSVGElementById } from "../../utility/utils";
+    import { drawSVGFromMEIContent, spotlightPattern, spotlightText } from "../../utility/utils";
     import { Chant, Syllable, NeumeComponent } from "../../utility/components";
     import {
         highlightPattern,
@@ -10,12 +10,12 @@
     /** @type {Chant} */
     export let chant;
     /** @type {{
-        melodicPattern: NeumeComponents[][],
+        melodicPattern: NeumeComponent[][],
         melismaPattern: Syllable[]
         }}}*/
     export let highlightOptions;
 
-    function hightlightOnChant() {
+    function highlightOnChant() {
         let melodicPattern = highlightOptions.melodicPattern;
         for (let pattern of melodicPattern) {
             highlightPattern(pattern);
@@ -24,19 +24,9 @@
 
     function highlightMelismaOnChant() {
         let melismaPattern = highlightOptions.melismaPattern;
-        console.log(melismaPattern);
-
-        spotlightSVGElementById(melismaPattern[0].syllableWord.id)
-        // spotlightPattern(
-        //     melismaPattern,
-        //     "var(--melisma-spotlight-fill)",
-        //     "var(--melisma-spotlight-stroke)",
-        // );
-        // highlightSvgElementById(
-        //     syllable.syllableWord.id,
-        //     "var(--melisma-text)",
-        //     "var(--melisma-background)",
-        // );
+        melismaPattern.forEach((mp) => {
+            spotlightText(mp.syllableWord)
+        })
     }
 
     let svg, error;
@@ -47,7 +37,7 @@
                 svg = chantSVG;
             })
             .then(() => {
-                hightlightOnChant();
+                highlightOnChant();
                 highlightMelismaOnChant();
             })
             .catch((err) => {

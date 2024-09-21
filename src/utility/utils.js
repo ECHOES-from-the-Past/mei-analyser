@@ -1,4 +1,4 @@
-import { NeumeComponent } from './components.js';
+import { NeumeComponent, SyllableWord } from './components.js';
 import createVerovioModule from 'verovio/wasm';
 import { VerovioToolkit } from 'verovio/esm';
 
@@ -82,34 +82,22 @@ export async function drawSVGFromMEIContent(meiContent) {
 }
 
 /* ------------------------ HIGHLIGHTING SVGs --------------------------- */
-
 /**
  * Put an SVG Element in a spotlight by surrounding it with a box.
- * @param {SVGAElement} svgElementId the neume component to be spotlighted
+ * @param {SyllableWord} syllableWord the syllable word (not the syllable) to be spotlighted
  * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
  * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
  */
-export function spotlightSVGElementById(svgElementId, color = 'var(--spotlight-fill)', stroke_color = 'var(--spotlight-stroke)') {
-  const nc_svg = document.querySelectorAll(`[id="${svgElementId}"]`);
-  nc_svg.forEach((nc) => {
-    const x_coord = nc.querySelector('text').attributes.getNamedItem('x').value;
-    const y_coord = nc.querySelector('text').attributes.getNamedItem('y').value;
-    const width = '300';
-    const height = '400';
-
-    // construct a spotlight rectangle to highlight the neume component
-    const spotlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    spotlight.setAttribute('class', 'spotlight-rect');
-    spotlight.setAttribute('x', x_coord - width / 3);
-    spotlight.setAttribute('y', y_coord - height / 2);
-    spotlight.setAttribute('width', width);
-    spotlight.setAttribute('height', height);
-    spotlight.setAttribute('fill', color);
-    spotlight.setAttribute('stroke', stroke_color);
-    spotlight.setAttribute('stroke-width', '30px');
-    // Display the spotlight rectangle
-    nc.appendChild(spotlight);
-  });
+export function spotlightText(syllableWord) {
+  let color = 'var(--melisma-text)';
+  const syllableWords = document.querySelectorAll(`[id="${syllableWord.id}"]`);
+  console.log(syllableWords)
+  syllableWords.forEach((text) => {
+    let tspan = text.querySelector('tspan');
+    console.log(tspan)
+    tspan.style.fill = color;
+    tspan.style.fontWeight = "600";
+  })
 }
 
 /**
