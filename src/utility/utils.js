@@ -91,10 +91,8 @@ export async function drawSVGFromMEIContent(meiContent) {
 export function spotlightText(syllableWord) {
   let color = 'var(--melisma-text)';
   const syllableWords = document.querySelectorAll(`[id="${syllableWord.id}"]`);
-  console.log(syllableWords)
   syllableWords.forEach((text) => {
     let tspan = text.querySelector('tspan');
-    console.log(tspan)
     tspan.style.fill = color;
     tspan.style.fontWeight = "600";
   })

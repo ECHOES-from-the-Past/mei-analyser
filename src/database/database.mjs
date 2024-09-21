@@ -304,7 +304,7 @@ function calculateAquitanianMode(syllables) {
     }
     let sortedCount = Object.keys(count).sort((a, b) => count[b] - count[a]);
 
-    modeDescription += `<li> The <b>repeated notes</b> in descending order of appearance are at: ${sortedCount.map(loc => `${loc > 0 ? `+${loc}` : `${loc}`} (${count[loc]} ${count[loc] > 1 ? 'times' : 'time'})`).join(", ")}.</li>`;
+    // modeDescription += `<li> The <b>repeated notes</b> in descending order of appearance are at: ${sortedCount.map(loc => `${loc > 0 ? `+${loc}` : `${loc}`} (${count[loc]} ${count[loc] > 1 ? 'times' : 'time'})`).join(", ")}.</li>`;
 
     const linePitch = {
         1: 'F', 2: 'D', 3: 'G', 4: 'F',
@@ -314,7 +314,7 @@ function calculateAquitanianMode(syllables) {
     if (possibleModes.length == 0) {
         modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to suggest a mode for the chant. The pitch of the line is unknown. </b> </u> </li>`;
     } else {
-        modeDescription += `<li style='list-style-type: none;'> <b> <u> Possible mode include mode ${possibleModes.join(", mode ")}. The pitch of the line is '${possibleModes.forEach((mode) => {
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Possible mode(s) include mode ${possibleModes.join(", mode ")}. The pitch of the line is '${possibleModes.forEach((mode) => {
             return linePitch[mode];
         })}'. </b> </u> </li>`;
     }

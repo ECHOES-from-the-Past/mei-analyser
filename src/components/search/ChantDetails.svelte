@@ -6,12 +6,31 @@
     export let chant;
     let chantInfoDiv;
 
+    let modeCalcLink = document.createElement("a");
+    modeCalcLink.rel = "external";
+    modeCalcLink.target = "_blank";
+    if ((chant.notationType = "square")) {
+        modeCalcLink.innerText = "Mode Detection for Square Script (github.com)";
+        modeCalcLink.href =
+            "https://github.com/ECHOES-from-the-Past/mei-analyser/wiki/Mode-Detection-for-Square-Script";
+    } else if (chant.notationType == "aquitanian") {
+        modeCalcLink.innerText = "Mode Detection for Aquitanian Script (github.com)";
+        modeCalcLink.href +=
+            "https://github.com/ECHOES-from-the-Past/mei-analyser/wiki/Mode-Detection-for-Aquitanian-Script";
+    }
+
+    let modeMoreInfoLink = document.createElement("p");
+    modeMoreInfoLink.innerHTML =
+        "For more information, see ";
+    modeMoreInfoLink.append(modeCalcLink);
+
     let info = {
         Title: chant.title,
         Source: chant.source,
         "Music Script": capitalizeFirstLetter(chant.notationType),
-        "Possible Mode(s)": chant.mode == -1 ? "Unknown" : chant.mode.join(", "),
-        "Mode Description": chant.modeDescription,
+        "Possible Mode(s)":
+            chant.mode == -1 ? "Unknown" : chant.mode.join(", "),
+        "Mode Description": chant.modeDescription + modeMoreInfoLink.outerHTML,
         "MEI File": chant.fileName,
         "PEM Database URL": chant.pemDatabaseUrls,
     };
