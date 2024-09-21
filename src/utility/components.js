@@ -105,7 +105,7 @@ export class Chant {
    * @param {String} source the source of the chant
    * @param {String} notationType the notation type of the chant (either "aquitanian" or "square")
    * @param {Syllable[]} syllables an array of all the syllables in the chant
-   * @param {number} mode the mode of the chant
+   * @param {number[]} mode the possbile mode(s) of the chant
    * @param {number} modeCertainty the certainty of the mode detection
    * @param {String} modeDescription an explaination of the mode detection
    * @param {{line: number, shape: string}} clef the clef of the chant
