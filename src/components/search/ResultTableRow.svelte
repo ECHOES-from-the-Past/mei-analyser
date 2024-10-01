@@ -14,7 +14,11 @@
     import ExternalLink from "../ExternalLink.svelte";
     import Button from "../Button.svelte";
     import { Chant } from "../../utility/components";
-    import { capitalizeFirstLetter } from "../../utility/utils";
+    import {
+        processContourMelodicPattern,
+        processExactPitchMelodicPattern,
+    } from "../../functions/search";
+    import { capitalizeFirstLetter, highlightSvgElementById } from "../../utility/utils";
 
 
     /**
@@ -63,7 +67,7 @@
     </td>
     <!-- Music Script column -->
     <td>
-        {capitalizeFirstLetter(notationType)}
+        {capitalizeFirstLetter(chant.notationType)}
     </td>
     <!-- Text column -->
     <td>
