@@ -1,8 +1,8 @@
 <script>
     import NavBar from "./components/NavBar.svelte";
     import ScrollUpButton from "./components/ScrollUpButton.svelte";
-    import SearchPanel from "./panels/SearchPanel.svelte";
-    import ExperimentalPanel from "./panels/ExperimentalPanel.svelte";
+    import SearchPanel from "./components/panels/SearchPanel.svelte";
+    import ExperimentalPanel from "./components/panels/ExperimentalPanel.svelte";
 
     import packageJSON from "../package.json";
     import { env, persist, retrieve } from "./utility/utils";

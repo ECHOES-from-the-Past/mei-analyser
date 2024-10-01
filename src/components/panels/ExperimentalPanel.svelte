@@ -1,12 +1,12 @@
 <script>
-    import Button from "../components/Button.svelte";
+    import Button from "../Button.svelte";
     import { onMount } from "svelte";
-    import ResultTable from "../components/search/ResultTable.svelte";
-    import WildcardSearch from "../components/search/WildcardSearch.svelte";
-    import Section from "../components/Section.svelte";
-    import { env } from "../utility/utils";
-    import { getNeumeComponentList } from "../utility/components";
-    import { filterByMusicScript } from "../functions/search";
+    import ResultTable from "../search/ResultTable.svelte";
+    import WildcardSearch from "../search/WildcardSearch.svelte";
+    import Section from "../Section.svelte";
+    import { env } from "../../utility/utils";
+    import { getNeumeComponentList } from "../../utility/components";
+    import { filterByMusicScript } from "../../functions/search";
 
     export let hidden = false;
     let experimentalSearchResult;
@@ -161,28 +161,28 @@
     async function reloadTable() {
         experimentalSearchResult.innerHTML = "";
 
-        await performFakeSearch().then(([resultChantList, patterns]) => {
-            new ResultTable({
-                target: experimentalSearchResult,
-                props: {
-                    chantList: resultChantList,
-                    textFormatOptions: {
-                        searchPattern: {
-                            list: patterns,
-                            mode: "exact-pitch",
-                        },
-                        melisma: {
-                            enabled: false,
-                            value: 0,
-                        },
-                        customGABC: {
-                            enabled: true,
-                            aquitanianPitch: false,
-                        },
-                    },
-                },
-            });
-        });
+        // await performFakeSearch().then(([resultChantList, patterns]) => {
+        //     new ResultTable({
+        //         target: experimentalSearchResult,
+        //         props: {
+        //             chantList: resultChantList,
+        //             textFormatOptions: {
+        //                 searchPattern: {
+        //                     list: patterns,
+        //                     mode: "exact-pitch",
+        //                 },
+        //                 melisma: {
+        //                     enabled: false,
+        //                     value: 0,
+        //                 },
+        //                 customGABC: {
+        //                     enabled: true,
+        //                     aquitanianPitch: false,
+        //                 },
+        //             },
+        //         },
+        //     });
+        // });
     }
 
     onMount(async () => {

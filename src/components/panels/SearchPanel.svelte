@@ -1,26 +1,26 @@
 <script>
-    import Button from "../components/Button.svelte";
-    import Checkbox from "../components/Checkbox.svelte";
-    import RadioButton from "../components/RadioButton.svelte";
-    import Tooltip from "../components/Tooltip.svelte";
-    import Section from "../components/Section.svelte";
-    import TextInput from "../components/TextInput.svelte";
-    import NumberInput from "../components/NumberInput.svelte";
-    import ClientStatus from "../components/ClientStatus.svelte";
-    import ResultTable from "../components/search/ResultTable.svelte";
+    import Button from "../Button.svelte";
+    import Checkbox from "../Checkbox.svelte";
+    import RadioButton from "../RadioButton.svelte";
+    import Tooltip from "../Tooltip.svelte";
+    import Section from "../Section.svelte";
+    import TextInput from "../TextInput.svelte";
+    import NumberInput from "../NumberInput.svelte";
+    import ClientStatus from "../ClientStatus.svelte";
+    import ResultTable from "../search/ResultTable.svelte";
     import { onMount } from "svelte";
 
-    import { persist, retrieve, env } from "../utility/utils";
+    import { persist, retrieve, env } from "../../utility/utils";
     import {
         NeumeComponent,
         Chant,
         getNeumeComponentList,
-    } from "../utility/components.js";
+    } from "../../utility/components.js";
     import {
         filterByMusicScript,
         filterByMelodicPattern,
         processSearchPattern,
-    } from "../functions/search.js";
+    } from "../../functions/search.js";
 
     export let hidden = false;
 
@@ -203,11 +203,17 @@
         searchResultDiv.innerHTML = "";
         // Perform search and display the result
         await performSearch().then((resultChantList) => {
+            /* Constructing a result table from the chant list */
             new ResultTable({
                 target: searchResultDiv,
                 props: {
                     chantList: resultChantList,
                     textFormatOptions: {
+                        /*
+                            Note: Melodic pattern(s) can be unique to each chant
+                            or within that chant; hence, give the NeumeComponent
+                            pattern(s) instead of the [processed] input pattern;
+                        */
                         searchPattern: {
                             list: searchPattern,
                             mode: patternSearchMode,
@@ -232,7 +238,9 @@
     export function loadDefaultOptions() {
         [aquitanianCheckbox, squareCheckbox].forEach((e) => e.setChecked());
 
-        [liquescentCheckbox, quilismaCheckbox, oriscusCheckbox].forEach((e) => e.setUnchecked());
+        [liquescentCheckbox, quilismaCheckbox, oriscusCheckbox].forEach((e) =>
+            e.setUnchecked(),
+        );
 
         melismaHighlight.setChecked();
 
@@ -280,10 +288,13 @@
                     <Tooltip id="melodic-pattern-search">
                         <ul>
                             <li>
-                                <b> Exact pitch (only for Square music script chants): </b>
-                                Enter pitch names of the melodic pattern. For
-                                example, "a b a f" will search for a melodic
-                                pattern that follows the sequence A-B-A-F.
+                                <b>
+                                    Exact pitch (only for Square music script
+                                    chants):
+                                </b>
+                                Enter pitch names of the melodic pattern. For example,
+                                "a b a f" will search for a melodic pattern that
+                                follows the sequence A-B-A-F.
                             </li>
                             <li>
                                 <b> Contour (Melodic intervals) </b> in the form
@@ -321,8 +332,12 @@
                 <p>
                     Filter by finalis (the last note)
                     <Tooltip id="finalis-filter">
-                        Filter chants by their finalis (last note) by entering <b>a pitch value</b> (from "a" to "g") for chants in square notes
-                        or <b>a location value</b> (from "-3" to "+4") for chants in Aquitanian neumes.
+                        Filter chants by their finalis (last note) by entering <b
+                            >a pitch value</b
+                        >
+                        (from "a" to "g") for chants in square notes or
+                        <b>a location value</b> (from "-3" to "+4") for chants in
+                        Aquitanian neumes.
                     </Tooltip>
                 </p>
 
