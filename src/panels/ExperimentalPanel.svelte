@@ -2,7 +2,8 @@
     import Button from "../components/Button.svelte";
     import { onMount } from "svelte";
     import ResultTable from "../components/search/ResultTable.svelte";
-    import WildcardSearch from "../components/search/WildcardSearch.svelte";
+    import WildcardSearch from "../components/search/WildcardInput.svelte";
+    import Tooltip from "../components/Tooltip.svelte";
     import Section from "../components/Section.svelte";
     import { env } from "../utility/utils";
     import { Chant, getNeumeComponentList } from "../utility/components";
@@ -11,7 +12,7 @@
     export let hidden = false;
     let experimentalSearchResult;
 
-    let wildcard;
+    let wildcard, regex;
 
     /**
      * Possible entries in wildcardSearchList:
@@ -40,14 +41,12 @@
         let patterns = [];
 
         patternMatches.forEach((v, i) => {
-            // console.log(v, i)
             // v is the match pattern in the chant,
             // i is the index in ncArray that a match is found
             // patterns will take ncArray[i : i+v.length]
             patterns.push(ncArray.slice(i, i + v.length));
         });
 
-        console.log(patterns);
         return patterns;
     }
 
@@ -128,23 +127,75 @@
         });
     }
 
+    function updateRegex() {
+        regex = wildcard.getWildcardRegex();
+    }
+
     onMount(async () => {
+        updateRegex();
         await reloadTable();
     });
 </script>
 
 <div id="experimental-panel" {hidden}>
-    Experimental Panel
-    <WildcardSearch
-        bind:this={wildcard}
-        onKeydown={(e) => {
-            if (e.key == "Enter") {
-                reloadTable();
-            }
-        }}
-    />
+    <Section>
+        <WildcardSearch
+            bind:this={wildcard}
+            onKeydown={(e) => {
+                if (e.key == "Enter") {
+                    reloadTable();
+                }
+            }}
+            onInput={updateRegex}
+        />
 
-    <Button onClick={reloadTable}>Reload Table</Button>
+        <Tooltip id="wildcard-tooltip">
+            <p>
+                Wildcard search follows the <i>regular expression</i> POSIX standard.
+            </p>
+            <ul>
+                <li>
+                    Use a dot <b><code>.</code></b> to search for one arbitrary
+                    pitch
+                </li>
+                <li>
+                    Use a question mark <code>.?</code> to search for an
+                    optional note.
+                    <ul>
+                        <li>
+                            E.g.: searching for d ? a could return the following
+                            sequences of notes: <code>d a</code>,
+                            <code> d f a</code>, <code>d g a</code>, <code>d c a</code>,
+                            etc.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Or use the question mark <code>?</code> after a particular pitch value to
+                    make that note optional.
+                    <ul>
+                        <li>
+                            For example, searching for d f? a could return both
+                            the sequence d a and the sequenced f a.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    Use an asterisk * to search for an number of optional notes.
+                    <ul>
+                        <li>
+                            For example, searching for f * a could return the
+                            following sequences: f a, f g a, f b g a, etc.
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </Tooltip>
+        <br />
+        <p>Current regex: <code>{regex}</code></p>
+
+        <Button onClick={reloadTable}>Reload Table</Button>
+    </Section>
     <Section>
         <div bind:this={experimentalSearchResult}></div>
     </Section>

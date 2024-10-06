@@ -108,6 +108,14 @@ g {
   fill: hsl(0, 0%, 0%);
 }
 
+code {
+  /* background-color: rgba(from var(--emerald-700) r g b / 0.24); */
+  background-color: var(--emerald-800);
+  color: white;
+  padding: 3px;
+  border-radius: 4px;
+}
+
 .melodic-pattern-word {
   text-emphasis: triangle var(--highlight-fill);
   text-emphasis-position: under right;
