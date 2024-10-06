@@ -14,12 +14,14 @@
     import {
         NeumeComponent,
         Chant,
-        getNeumeComponentList,
+        SearchResult
     } from "../utility/components.js";
     import {
         filterByMusicScript,
+        filterByOrnamentalShapes,
         filterByMelodicPattern,
         processSearchPattern,
+        filterByFinalis,
     } from "../functions/search.js";
 
     export let hidden = false;
@@ -40,7 +42,7 @@
 
     /**
      * Perform highlighting when user clicks on "Search" button
-     * @return {Chant[]} list of chants that match the search query
+     * @return {SearchResult[]} list of search results (each contain a chant and a list of melodic pattern)
      */
     async function performSearch() {
         const databaseURL =
@@ -49,37 +51,37 @@
                 : "./database.json";
 
         /** Retrieving the locally stored list of chants */
-        let resultChantList = await fetch(databaseURL).then((response) =>
+        let listOfChants = await fetch(databaseURL).then((response) =>
             response.json(),
         );
 
         /* First layer of filtering: Notation type */
-        resultChantList = filterByMusicScript(resultChantList, {
+        listOfChants = filterByMusicScript(listOfChants, {
             aquitanian: aquitanianCheckbox.isChecked(),
             square: squareCheckbox.isChecked(),
         });
 
         /* Second layer of filtering: Ornamental shapes */
-        resultChantList = filterByOrnamentalShapes(resultChantList, {
+        listOfChants = filterByOrnamentalShapes(listOfChants, {
             liquescent: liquescentCheckbox.isChecked(),
             quilisma: quilismaCheckbox.isChecked(),
             oriscus: oriscusCheckbox.isChecked(),
         });
 
-        /* Third layer of filtering: Modes */
+        /* ~ layer of filtering: Modes (no longer in use) */
         // resultChantList = filterByModes(resultChantList, modeCheckboxes, unknownModeCheckbox);
 
-        /* Forth layer of filtering: Pattern search */
+        /* Third layer of filtering: Pattern search */
         let patternSearchMode = retrieve("search-query-option");
-        resultChantList = filterByMelodicPattern(
-            resultChantList,
+        listOfChants = filterByMelodicPattern(
+            listOfChants,
             patternInputBox.getValue(),
             patternSearchMode,
         );
 
         /* Fifth layer of filtering: finals */
-        resultChantList = filterByFinalis(
-            resultChantList,
+        listOfChants = filterByFinalis(
+            listOfChants,
             finalisInputBox.getValue(),
         );
 
@@ -89,97 +91,12 @@
          * - If chantA's file name is "less than" chantB's file name, return -1 to sort chantA before chantB
          * - Otherwise, return 1 to sort chantA after chantB
          */
-        resultChantList.sort((chantA, chantB) =>
+        listOfChants.sort((chantA, chantB) =>
             chantA.fileName < chantB.fileName ? -1 : 1,
         );
 
         /* Return the result */
-        return resultChantList;
-    }
-
-    /**
-     * Search by ornamental shapes (liquescent, quilisma, oriscus)
-     * @param {Chant[]} chantList list of chants to be filtered
-     * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
-     * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
-     */
-    function filterByOrnamentalShapes(chantList, ornamentalOptions) {
-        /**
-         * Filter the chants based on the options.
-         * If all the options are unchecked (`false`), return all the chants
-         * @type {Chant[]} resulting list of chants after filtering
-         */
-        let resultChantList = chantList;
-
-        /**
-         * HELPER FUNCTION
-         * Check if a chant has a specific ornamental shape.
-         * This only check for the first occurrence of the ornamental shape in the chant
-         * and does not care for the location of the ornamental shape in the chant.
-         * @param {Chant} chant the chant to be checked
-         * @param {string} ornamentalType the type of ornamental shape to be checked
-         * @returns {boolean} `true` if the chant has the ornamental shape, `false` otherwise
-         */
-        let hasOrnamental = (chant, ornamentalType) => {
-            /** @type {NeumeComponent[]} */
-            let neumeComponents = getNeumeComponentList(chant.syllables);
-            for (let neume of neumeComponents) {
-                // TODO: Get the syllables from here
-                if (
-                    neume.ornamental != null &&
-                    neume.ornamental.type == ornamentalType
-                )
-                    return true;
-            }
-            return false;
-        };
-
-        // first filter for the liquescent option
-        if (ornamentalOptions.liquescent) {
-            resultChantList = resultChantList.filter((chant) => {
-                if (hasOrnamental(chant, "liquescent")) return true;
-            });
-        }
-        // then filter for the quilisma option
-        if (ornamentalOptions.quilisma) {
-            resultChantList = resultChantList.filter((chant) => {
-                if (hasOrnamental(chant, "quilisma")) return true;
-            });
-        }
-        // then filter for the oriscus option
-        if (ornamentalOptions.oriscus) {
-            resultChantList = resultChantList.filter((chant) => {
-                if (hasOrnamental(chant, "oriscus")) return true;
-            });
-        }
-
-        return resultChantList;
-    }
-
-    /**
-     * Search by a finalis (the chant's last note)
-     * @param {Chant[]} chantList list of chants to be filtered
-     * @param {string | number} finalis the finalis that we are interested in
-     * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
-     */
-    function filterByFinalis(chantList, finalis) {
-        if (finalis == "" || !finalis) {
-            return chantList;
-        }
-        /** @type {Chant[]} */
-        let resultChantList = [];
-
-        for (let chant of chantList) {
-            let ncList = getNeumeComponentList(chant.syllables);
-            let chantFinalisNote =
-                chant.notationType == "aquitanian"
-                    ? ncList[ncList.length - 1].loc
-                    : ncList[ncList.length - 1].pitch;
-            if (chantFinalisNote == finalis) {
-                resultChantList.push(chant);
-            }
-        }
-        return resultChantList;
+        return listOfChants;
     }
 
     export function clearSearchResultsAndInfo() {
@@ -201,27 +118,29 @@
 
         clearSearchResultsAndInfo();
         searchResultDiv.innerHTML = "";
+
+        let rowOptions = {
+            searchPattern: {
+                list: searchPattern,
+                mode: patternSearchMode,
+            },
+            melisma: {
+                enabled: melismaHighlight.isChecked(),
+                value: melismaInput.getValue(),
+            },
+            customGABC: {
+                enabled: customGABCCheckbox.isChecked(),
+                aquitanianPitch: aquitanianPitchCustomGABC.isChecked(),
+            },
+        };
+
         // Perform search and display the result
         await performSearch().then((resultChantList) => {
             new ResultTable({
                 target: searchResultDiv,
                 props: {
                     chantList: resultChantList,
-                    textFormatOptions: {
-                        searchPattern: {
-                            list: searchPattern,
-                            mode: patternSearchMode,
-                        },
-                        melisma: {
-                            enabled: melismaHighlight.isChecked(),
-                            value: melismaInput.getValue(),
-                        },
-                        customGABC: {
-                            enabled: customGABCCheckbox.isChecked(),
-                            aquitanianPitch:
-                                aquitanianPitchCustomGABC.isChecked(),
-                        },
-                    },
+                    textFormatOptions: rowOptions,
                 },
             });
         });
@@ -231,11 +150,10 @@
 
     export function loadDefaultOptions() {
         [aquitanianCheckbox, squareCheckbox].forEach((e) => e.setChecked());
-
-        [liquescentCheckbox, quilismaCheckbox, oriscusCheckbox].forEach((e) => e.setUnchecked());
-
+        [liquescentCheckbox, quilismaCheckbox, oriscusCheckbox].forEach((e) =>
+            e.setUnchecked(),
+        );
         melismaHighlight.setChecked();
-
         patternInputBox.setValue("");
         finalisInputBox.setValue("");
     }
@@ -280,10 +198,13 @@
                     <Tooltip id="melodic-pattern-search">
                         <ul>
                             <li>
-                                <b> Exact pitch (only for Square music script chants): </b>
-                                Enter pitch names of the melodic pattern. For
-                                example, "a b a f" will search for a melodic
-                                pattern that follows the sequence A-B-A-F.
+                                <b>
+                                    Exact pitch (only for Square music script
+                                    chants):
+                                </b>
+                                Enter pitch names of the melodic pattern. For example,
+                                "a b a f" will search for a melodic pattern that
+                                follows the sequence A-B-A-F.
                             </li>
                             <li>
                                 <b> Contour (Melodic intervals) </b> in the form
@@ -299,7 +220,7 @@
                     </Tooltip>
                 </p>
 
-                <RadioButton value="exact-pitch" group="search-query-option">
+                <RadioButton value="exact-pitch" group="search-query-option" disabled>
                     Exact Pitch
                 </RadioButton>
                 <RadioButton value="contour" group="search-query-option">
@@ -321,8 +242,12 @@
                 <p>
                     Filter chants by finalis (the last note)
                     <Tooltip id="finalis-filter">
-                        Filter chants by their finalis (last note) by entering <b>a pitch value</b> (from "a" to "g") for chants in square notes
-                        or <b>a location value</b> (from "-3" to "+4") for chants in Aquitanian neumes.
+                        Filter chants by their finalis (last note) by entering <b
+                            >a pitch value</b
+                        >
+                        (from "a" to "g") for chants in square notes or
+                        <b>a location value</b> (from "-3" to "+4") for chants in
+                        Aquitanian neumes.
                     </Tooltip>
                 </p>
 

@@ -1,30 +1,29 @@
 <script>
-    import { drawSVGFromMEIContent, spotlightPattern, spotlightText } from "../../utility/utils";
+    import { drawSVGFromMEIContent, spotlightText } from "../../utility/utils";
     import { Chant, Syllable, NeumeComponent } from "../../utility/components";
     import {
         highlightPattern,
-        highlightSvgElementById,
     } from "../../utility/utils";
     import { onMount } from "svelte";
 
     /** @type {Chant} */
     export let chant;
     /** @type {{
-        melodicPattern: NeumeComponent[][],
-        melismaPattern: Syllable[]
+        melodicPatternNc: NeumeComponent[][],
+        melismaPatternSyl: Syllable[]
     }}
     */
     export let highlightOptions;
 
     function highlightOnChant() {
-        let melodicPattern = highlightOptions.melodicPattern;
+        let melodicPattern = highlightOptions.melodicPatternNc;
         for (let pattern of melodicPattern) {
             highlightPattern(pattern);
         }
     }
 
     function highlightMelismaOnChant() {
-        let melismaPattern = highlightOptions.melismaPattern;
+        let melismaPattern = highlightOptions.melismaPatternSyl;
         melismaPattern.forEach((mp) => {
             spotlightText(mp.syllableWord)
         })

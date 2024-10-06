@@ -69,6 +69,7 @@ function filterByModes(chantList, modes) {
 }
 
 /**
+ * @deprecated
  * @param {Chant} chant The chant object, assuming it's in Square notation
  * @param {string[]} searchQueryList in the form of ['A', 'B', 'C', 'D', 'E'] for example
  * @returns {NeumeComponentSQ[][]} a list of patterns (in list form) that match the search query
@@ -98,6 +99,57 @@ export function processExactPitchMelodicPattern(chant, searchQueryList) {
   }
 
   return patterns;
+}
+
+/**
+ * @param {Chant} chant
+ * @param {string[]} wildcardRegex
+ */
+function processWildcardSearch(chant, wildcardRegex) {
+  const ncArray = getNeumeComponentList(chant.syllables);
+
+  const ncPitchStr = ncArray
+    .map((nc) => {
+      if (chant.notationType == "aquitanian") {
+        return nc.loc;
+      } else if (chant.notationType == "square") {
+        return nc.pitch;
+      }
+    })
+    .join("");
+
+  let patternMatches = ncPitchStr.matchAll(wildcardRegex);
+  let patterns = [];
+
+  patternMatches.forEach((v, i) => {
+    // v is the match pattern in the chant,
+    // i is the index in ncArray that a match is found
+    // patterns will take ncArray[i : i+v.length]
+    patterns.push(ncArray.slice(i, i + v.length));
+  });
+
+  return patterns;
+}
+
+/**
+ * 
+ * @param {Chant[]} chantList 
+ * @param {RegExp} wildcardRegex 
+ * @returns 
+ */
+export function filterByWildcardSearch(chantList, wildcardRegex) {
+  let resultChantList = [],
+    returnPatterns = [];
+
+  chantList.forEach((chant) => {
+    let pattern = processWildcardSearch(chant, wildcardRegex);
+    if (pattern.length > 0) {
+      resultChantList.push(chant);
+      returnPatterns.push(pattern);
+    }
+  });
+
+  return [resultChantList, returnPatterns];
 }
 
 /**
@@ -179,17 +231,10 @@ export function filterByMelodicPattern(chantList, searchPattern, searchMode) {
     searchQueryList = processSearchPattern(searchPattern, searchMode);
   } catch (error) {
     console.error(error);
-    // patternInputStatus.textContent =
-    //     "Invalid melodic pattern options/input. Please check your search mode selection or query.";
-    // patternInputStatus.hidden = false;
     return [];
   }
 
   if (searchQueryList.length === 0) {
-    // patternInputStatus.hidden = false;
-    // patternInputStatus.textContent =
-    //     "Invalid melodic pattern options/input. Please check your search mode selection or query.\n";
-    // patternInputStatus.style.color = "red";
     return [];
   }
 
@@ -252,4 +297,89 @@ function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
   }
 
   return patterns;
+}
+
+/**
+ * Search by ornamental shapes (liquescent, quilisma, oriscus)
+ * @param {Chant[]} chantList list of chants to be filtered
+ * @param {{liquescent: boolean, quilisma: boolean, oriscus: boolean}} ornamentalOptions options for the ornamental search
+ * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
+ */
+export function filterByOrnamentalShapes(chantList, ornamentalOptions) {
+  /**
+   * Filter the chants based on the options.
+   * If all the options are unchecked (`false`), return all the chants
+   * @type {Chant[]} resulting list of chants after filtering
+   */
+  let resultChantList = chantList;
+
+  /**
+   * HELPER FUNCTION
+   * Check if a chant has a specific ornamental shape.
+   * This only check for the first occurrence of the ornamental shape in the chant
+   * and does not care for the location of the ornamental shape in the chant.
+   * @param {Chant} chant the chant to be checked
+   * @param {string} ornamentalType the type of ornamental shape to be checked
+   * @returns {boolean} `true` if the chant has the ornamental shape, `false` otherwise
+   */
+  let hasOrnamental = (chant, ornamentalType) => {
+    /** @type {NeumeComponent[]} */
+    let neumeComponents = getNeumeComponentList(chant.syllables);
+    for (let neume of neumeComponents) {
+      // TODO: Get the syllables from here
+      if (
+        neume.ornamental != null &&
+        neume.ornamental.type == ornamentalType
+      )
+        return true;
+    }
+    return false;
+  };
+
+  // first filter for the liquescent option
+  if (ornamentalOptions.liquescent) {
+    resultChantList = resultChantList.filter((chant) => {
+      if (hasOrnamental(chant, "liquescent")) return true;
+    });
+  }
+  // then filter for the quilisma option
+  if (ornamentalOptions.quilisma) {
+    resultChantList = resultChantList.filter((chant) => {
+      if (hasOrnamental(chant, "quilisma")) return true;
+    });
+  }
+  // then filter for the oriscus option
+  if (ornamentalOptions.oriscus) {
+    resultChantList = resultChantList.filter((chant) => {
+      if (hasOrnamental(chant, "oriscus")) return true;
+    });
+  }
+
+  return resultChantList;
+}
+
+/**
+ * Search by a finalis (the chant's last note)
+ * @param {Chant[]} chantList list of chants to be filtered
+ * @param {string | number} finalis the finalis that we are interested in
+ * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
+ */
+export function filterByFinalis(chantList, finalis) {
+  if (finalis == "" || !finalis) {
+    return chantList;
+  }
+  /** @type {Chant[]} */
+  let resultChantList = [];
+
+  for (let chant of chantList) {
+    let ncList = getNeumeComponentList(chant.syllables);
+    let chantFinalisNote =
+      chant.notationType == "aquitanian"
+        ? ncList[ncList.length - 1].loc
+        : ncList[ncList.length - 1].pitch;
+    if (chantFinalisNote == finalis) {
+      resultChantList.push(chant);
+    }
+  }
+  return resultChantList;
 }
