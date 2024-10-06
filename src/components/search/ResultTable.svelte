@@ -34,7 +34,7 @@
 
             <tbody>
                 {#each chantList as chant}
-                    <ResultTableRow {chant} {textFormatOptions}/>
+                    <ResultTableRow {chant} rowOptions={textFormatOptions}/>
                 {/each}
             </tbody>
         </table>

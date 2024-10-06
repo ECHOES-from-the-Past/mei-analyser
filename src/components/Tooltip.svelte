@@ -1,10 +1,10 @@
 <script>
     export let id;
-    let popovertarget = `${id}-tooltip`;
+    let popovertarget = `${id}-tooltip-popover`;
 </script>
 
 <button
-    {id}
+    id={`${id}-button`}
     {popovertarget}
 >
     ⓘ

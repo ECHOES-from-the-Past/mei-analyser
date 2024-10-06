@@ -3,6 +3,7 @@
     export let value;
     export const id = `${value}-radio`;
     export let group;
+    export let disabled = false;
 
     /** @type {boolean} */
     let prevSelection = retrieve(group);
@@ -30,6 +31,7 @@
         on:change={updateLS}
         {value}
         checked={check}
+        {disabled}
     />
     <slot />
 </label>

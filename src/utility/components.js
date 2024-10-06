@@ -112,17 +112,29 @@ export class Chant {
    * @param {String[]} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
    */
   constructor(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, clef, pemDatabaseUrls) {
-      this.meiContent = meiContent;
-      this.fileName = fileName;
-      this.title = title;
-      this.source = source;
-      this.notationType = notationType;
-      this.syllables = syllables;
-      this.mode = mode;
-      this.modeCertainty = modeCertainty;
-      this.modeDescription = modeDescription;
-      this.clef = clef;
-      this.pemDatabaseUrls = pemDatabaseUrls;
+    this.meiContent = meiContent;
+    this.fileName = fileName;
+    this.title = title;
+    this.source = source;
+    this.notationType = notationType;
+    this.syllables = syllables;
+    this.mode = mode;
+    this.modeCertainty = modeCertainty;
+    this.modeDescription = modeDescription;
+    this.clef = clef;
+    this.pemDatabaseUrls = pemDatabaseUrls;
+  }
+}
+
+export class SearchResult {
+  /**
+   * 
+   * @param {Chant} chant a Chant object
+   * @param {NeumeComponent[][]} melodicPatternNc an array of Neume Component lists where each list is a melodic pattern
+   */
+  constructor(chant, melodicPatternNc) {
+    this.chant = chant;
+    this.melodicPatternNc = melodicPatternNc;
   }
 }
 
