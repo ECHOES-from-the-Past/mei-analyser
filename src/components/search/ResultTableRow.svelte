@@ -1,8 +1,4 @@
 <script>
-    /*
-     * A result table row display information about a chant.
-     */
-
     import ChantDetails from "./ChantDetails.svelte";
     import ChantVerovioRender from "./ChantVerovioRender.svelte";
     import ExternalLink from "../ExternalLink.svelte";
@@ -13,7 +9,9 @@
         processContourMelodicPattern,
         processExactPitchMelodicPattern,
     } from "../../functions/search";
-    import { capitalizeFirstLetter, highlightSvgElementById } from "../../utility/utils";
+    import {
+        capitalizeFirstLetter,
+    } from "../../utility/utils";
 
     /** @type {Chant} */
     export let chant;
@@ -214,7 +212,8 @@
     customGABCDiv.innerHTML = "<hr>" + customGABC.join(" ");
 
     // Extract the melisma pattern for hightlighting on chant
-    let melismaPatterns = [], melismaOptions = textFormatOptions.melisma;
+    let melismaPatterns = [],
+        melismaOptions = textFormatOptions.melisma;
 
     if (melismaOptions.enabled) {
         let melismaMin = melismaOptions.value;

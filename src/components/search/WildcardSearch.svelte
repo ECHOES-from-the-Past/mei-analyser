@@ -5,7 +5,6 @@
     import Tooltip from "../Tooltip.svelte";
 
     let wildCardSearch;
-    let displayText;
     export let onKeydown;
 
     /**
@@ -17,33 +16,47 @@
      * @param {string} inputStr the raw input string
      * @return {string[]}
      */
-    function parseInput(inputStr) {
+    function filterValidInput(inputStr) {
         if (!inputStr) {
             return [];
         }
 
         let regexFilter = /[\.]\??|[A-Ga-g?*]\??/g;
-        let parsedInput = inputStr.match(regexFilter);
-        return parsedInput;
+        let filteredInput = inputStr.match(regexFilter);
+        return filteredInput;
     }
 
-    function updateText() {
-        displayText = parseInput(wildCardSearch.getValue()).join("  ");
+    /**
+     *  
+     * @param {string[]} inputCharList a list of valid characters
+     * @return 
+     */
+    function constructMatchingRegexp(inputCharList) {
+        let matchingRegex = new RegExp(inputCharList.join(""), "gi");
+        return matchingRegex;
     }
 
-    export function getWildcardList() {
-        return parseInput(wildCardSearch.getValue());
+    function getWildcardList() {
+        return filterValidInput(wildCardSearch.getValue());
+    }
+
+    /**
+     * @return {RegExp} regular expression
+     */
+    export function getWildcardRegex() {
+        return constructMatchingRegexp(getWildcardList());
     }
 
     onMount(() => {
-        updateText();
     });
 </script>
 
 <Section>
     <TextInput
         bind:this={wildCardSearch}
-        onInput={() => updateText()}
+        onInput={() => {
+            console.log(getWildcardRegex())
+        }}
         {onKeydown}
     ></TextInput>
     <Tooltip>
@@ -95,7 +108,4 @@
             </li> -->
         </ul>
     </Tooltip>
-    <Section>
-        <p>{displayText}</p>
-    </Section>
 </Section>

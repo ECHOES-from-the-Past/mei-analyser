@@ -12,7 +12,8 @@
     /** @type {{
         melodicPattern: NeumeComponent[][],
         melismaPattern: Syllable[]
-        }}}*/
+    }}
+    */
     export let highlightOptions;
 
     function highlightOnChant() {

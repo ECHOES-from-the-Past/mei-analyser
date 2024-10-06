@@ -5,12 +5,11 @@
     import WildcardSearch from "../components/search/WildcardSearch.svelte";
     import Section from "../components/Section.svelte";
     import { env } from "../utility/utils";
-    import { getNeumeComponentList } from "../utility/components";
+    import { Chant, getNeumeComponentList } from "../utility/components";
     import { filterByMusicScript } from "../functions/search";
 
     export let hidden = false;
     let experimentalSearchResult;
-    let allPatternsFound;
 
     let wildcard;
 
@@ -22,99 +21,42 @@
      *   - "A .? B", or "A ?. B" search for "A B", "A D B", etc.
      * - [ ] An asterisk `*` to search for an arbritrary number of notes
      * @param {Chant} chant
-     * @param {string[]} wildcardSearchList
+     * @param {string[]} wildcardRegex
      */
-    function processWildcardSearch(chant, wildcardSearchList) {
+    function processWildcardSearch(chant, wildcardRegex) {
         const ncArray = getNeumeComponentList(chant.syllables);
-        // let wQuery = wildcardSearchList;
 
-        // /**
-        //  * @type {NeumeComponent[]}
-        //  */
-        // let aString = ncArray;
+        const ncPitchStr = ncArray
+            .map((nc) => {
+                if (chant.notationType == "aquitanian") {
+                    return nc.loc;
+                } else if (chant.notationType == "square") {
+                    return nc.pitch;
+                }
+            })
+            .join("");
 
-        // let n = ncArray.length,
-        //     m = wildcardSearchList.length;
-        // let dp = new Array(n + 1)
-        //     .fill(false)
-        //     .map(() => new Array(m + 1).fill(false));
-        // let patterns = [];
-
-        // dp[0][0] = true;
-        // if (chant.notationType == "aquitanian") {
-        //     return;
-        // }
-        // for (let i = 1; i <= n; i++) {
-        //     for (let j = 1; j <= m; j++) {
-        //         console.log(wQuery[j], aString[i].pitch);
-        //         if (wQuery[j - 1] === ".") {
-        //             dp[i][j] = dp[i - 1][j - 1];
-        //         } else if (wQuery[j - 1] === "?") {
-        //             dp[i][j] = dp[i - 1][j - 1] || dp[i - 1][j];
-        //         } else if (wQuery[j - 1] === "*") {
-        //             dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
-        //         } else if (wQuery[j - 1] === "@") {
-        //             // Check if the character before the @ is repeated
-        //             const repeatedChar = aString[i - 2].pitch;
-        //             let foundRepeated = false;
-        //             for (let k = i - 3; k >= 0; k--) {
-        //                 if (aString[k].pitch !== repeatedChar) {
-        //                     break;
-        //                 }
-        //                 foundRepeated = true;
-        //             }
-        //             dp[i][j] = foundRepeated && dp[i - 2][j - 1];
-        //         } else {
-        //             dp[i][j] =
-        //                 dp[i - 1][j - 1] &&
-        //                 aString[i - 1].pitch === wQuery[j - 1];
-        //         }
-        //     }
-        // }
-
-        // if (dp[n][m]) {
-        //     console.table(dp);
-        // }
-
-        // Match found: dp[n][m];
-
-        // OLD CODE
+        let patternMatches = ncPitchStr.matchAll(wildcardRegex);
         let patterns = [];
 
-        for (let i = 0; i < ncArray.length - wildcardSearchList.length; i++) {
-            let patternFound = [];
+        patternMatches.forEach((v, i) => {
+            // console.log(v, i)
+            // v is the match pattern in the chant,
+            // i is the index in ncArray that a match is found
+            // patterns will take ncArray[i : i+v.length]
+            patterns.push(ncArray.slice(i, i + v.length));
+        });
 
-            for (let j = 0; j < wildcardSearchList.length; j++) {
-                // processing the wildcard search
-                if (
-                    wildcardSearchList[j] == "." ||
-                    ncArray[i + j].pitch == wildcardSearchList[j].toLowerCase()
-                ) {
-                    patternFound.push(ncArray[i + j]);
-                } else {
-                    patternFound = [];
-                    break;
-                }
-            }
-
-            if (patternFound.length > 0) {
-                patterns.push(patternFound);
-            }
-        }
+        console.log(patterns);
         return patterns;
     }
 
-    function filterByWildcardSearch(chantList, wildcardSearchList) {
-        // If search pattern is empty, return the original chant list regardless of the search mode
-        if (!wildcardSearchList) {
-            return chantList;
-        }
-
+    function filterByWildcardSearch(chantList, wildcardRegex) {
         let resultChantList = [],
             returnPatterns = [];
 
         chantList.forEach((chant) => {
-            let pattern = processWildcardSearch(chant, wildcardSearchList);
+            let pattern = processWildcardSearch(chant, wildcardRegex);
             if (pattern.length > 0) {
                 resultChantList.push(chant);
                 returnPatterns.push(pattern);
@@ -138,6 +80,7 @@
                 response.json(),
             ),
             patterns;
+
         /* Temporary: filter by square notation */
         resultChantList = filterByMusicScript(resultChantList, {
             aquitanian: false,
@@ -146,7 +89,7 @@
         /* Filter by wildcard search */
         [resultChantList, patterns] = filterByWildcardSearch(
             resultChantList,
-            wildcard.getWildcardList(),
+            wildcard.getWildcardRegex(),
         );
 
         /** Sort chant list by file name */
@@ -201,10 +144,6 @@
         }}
     />
 
-    <Section>
-        Patterns found includes:
-        <div bind:this={allPatternsFound}></div>
-    </Section>
     <Button onClick={reloadTable}>Reload Table</Button>
     <Section>
         <div bind:this={experimentalSearchResult}></div>
