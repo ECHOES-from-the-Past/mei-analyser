@@ -1,7 +1,7 @@
 <script>
     import { retrieve, persist } from "../utility/utils";
     export let value;
-    export const id = `${value}-radio`;
+    const id = `${value}-radio`;
     export let group;
     export let disabled = false;
 

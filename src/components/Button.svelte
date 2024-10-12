@@ -19,16 +19,17 @@
 <style>
     /* Default button styles */
     button {
+        /* width: max-content; */
         border: 0px;
         border-radius: 8px;
         color: white;
-        padding: 0.6rem 1.2rem;
+        padding: 0.54rem 1rem;
         font-size: 1rem;
         font-weight: 500;
         font-family: inherit;
         background-color: var(--button);
         cursor: pointer;
-        transition: background-color 0.2s;
+        transition: background-color 0.3s;
     }
 
     button:hover {

@@ -1,7 +1,6 @@
 <script>
-    import Button from "../components/Button.svelte";
     import { onMount } from "svelte";
-    import WildcardSearch from "../components/search/WildcardInput.svelte";
+    import MelodicPatternInput from "../components/search/MelodicPatternInput.svelte";
     import Tooltip from "../components/Tooltip.svelte";
     import Section from "../components/Section.svelte";
 
@@ -13,15 +12,14 @@
         regex = wildcard.getWildcardRegex();
     }
 
-    onMount(async () => {
+    onMount(() => {
         updateRegex();
-        await reloadTable();
     });
 </script>
 
 <div id="experimental-panel" {hidden}>
     <Section>
-        <WildcardSearch
+        <MelodicPatternInput
             bind:this={wildcard}
             onInput={updateRegex}
         />

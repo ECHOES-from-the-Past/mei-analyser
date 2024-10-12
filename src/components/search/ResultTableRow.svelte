@@ -6,7 +6,7 @@
 
     import { Chant } from "../../utility/components";
     import {
-        processContourMelodicPattern,
+        matchChantWithContour,
         processExactPitchMelodicPattern,
     } from "../../functions/search";
     import { capitalizeFirstLetter } from "../../utility/utils";

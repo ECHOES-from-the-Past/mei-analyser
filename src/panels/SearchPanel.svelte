@@ -1,40 +1,49 @@
 <script>
     import Button from "../components/Button.svelte";
     import Checkbox from "../components/Checkbox.svelte";
-    import RadioButton from "../components/RadioButton.svelte";
     import Tooltip from "../components/Tooltip.svelte";
     import Section from "../components/Section.svelte";
     import TextInput from "../components/TextInput.svelte";
     import NumberInput from "../components/NumberInput.svelte";
     import ClientStatus from "../components/ClientStatus.svelte";
     import ResultTable from "../components/search/ResultTable.svelte";
-    import { onMount } from "svelte";
+    import MelodicPatternInput from "../components/search/MelodicPatternInput.svelte";
 
-    import { persist, retrieve, env } from "../utility/utils";
-    import {
-        NeumeComponent,
-        Chant,
-        SearchResult
-    } from "../utility/components.js";
+    import { Chant, SearchResult } from "../utility/components.js";
     import {
         filterByMusicScript,
         filterByOrnamentalShapes,
         filterByMelodicPattern,
-        processSearchPattern,
         filterByFinalis,
     } from "../functions/search.js";
+
+    import { onMount } from "svelte";
+    import { persist, retrieve, env } from "../utility/utils";
 
     export let hidden = false;
 
     // DOM Element binding via `bind:this`
-    let aquitanianCheckbox, squareCheckbox;
-    let liquescentCheckbox, quilismaCheckbox, oriscusCheckbox;
-    let patternInputBox, finalisInputBox;
-    let melismaHighlight, melismaInput;
-    let customGABCCheckbox, aquitanianPitchCustomGABC;
-    let searchButton; // bind this with the "Search" button
-    let clientStatus;
-    let searchResultDiv, chantInfoDiv, chantSVGDiv;
+
+    let /** @type {Checkbox} */ aquitanianCheckbox,
+        /** @type {Checkbox} */ squareCheckbox,
+        /** @type {Checkbox} */ liquescentCheckbox,
+        /** @type {Checkbox} */ quilismaCheckbox,
+        /** @type {Checkbox} */ oriscusCheckbox;
+
+    let /** @type {MelodicPatternInput} */ melodicPatternInput;
+
+    let /** @type {TextInput} */ finalisInputBox;
+    let /** @type {Checkbox}  */ melismaHighlight,
+        /** @type {TextInput} */ melismaInput;
+    let /** @type {Checkbox}  */ customGABCCheckbox,
+        /** @type {Checkbox}  */ aquitanianPitchCustomGABC;
+
+    let /** @type {Button}  */ searchButton; // bind this with the "Search" button
+    let /** @type {ClientStatus} */ clientStatus;
+
+    let /** @type {HTMLDivElement}*/ searchResultDiv,
+        /** @type {HTMLDivElement}*/ chantInfoDiv,
+        /** @type {HTMLDivElement}*/ chantSVGDiv;
 
     onMount(() => {
         clientStatus.hideStatus();
@@ -50,7 +59,10 @@
                 ? "src/database/database.json"
                 : "./database.json";
 
-        /** Retrieving the locally stored list of chants */
+        /**
+         * Retrieving the "locally" stored list of chants
+         * @type {Chant[]}
+         */
         let listOfChants = await fetch(databaseURL).then((response) =>
             response.json(),
         );
@@ -72,11 +84,10 @@
         // resultChantList = filterByModes(resultChantList, modeCheckboxes, unknownModeCheckbox);
 
         /* Third layer of filtering: Pattern search */
-        let patternSearchMode = retrieve("search-query-option");
-        listOfChants = filterByMelodicPattern(
+        [listOfChants, melodicPattern] = filterByMelodicPattern(
             listOfChants,
-            patternInputBox.getValue(),
-            patternSearchMode,
+            melodicPatternInput.getMelodicPatternRegex(),
+            retrieve("search-query-option"),
         );
 
         /* Fifth layer of filtering: finals */
@@ -108,22 +119,12 @@
 
     async function searchButtonAction() {
         /**  @type {string[] | number[]} */
-        let patternSearchMode = retrieve("search-query-option");
-        let searchPattern = processSearchPattern(
-            patternInputBox.getValue(),
-            patternSearchMode,
-        );
-
         clientStatus.showStatus("Searching...");
 
         clearSearchResultsAndInfo();
         searchResultDiv.innerHTML = "";
 
         let rowOptions = {
-            searchPattern: {
-                list: searchPattern,
-                mode: patternSearchMode,
-            },
             melisma: {
                 enabled: melismaHighlight.isChecked(),
                 value: melismaInput.getValue(),
@@ -135,12 +136,11 @@
         };
 
         // Perform search and display the result
-        await performSearch().then((resultChantList) => {
+        await performSearch().then((searchResultList) => {
             new ResultTable({
                 target: searchResultDiv,
                 props: {
-                    chantList: resultChantList,
-                    textFormatOptions: rowOptions,
+                    searchResultList: searchResultList,
                 },
             });
         });
@@ -156,6 +156,16 @@
         melismaHighlight.setChecked();
         patternInputBox.setValue("");
         finalisInputBox.setValue("");
+    }
+
+    /**
+     *
+     * @param {KeyboardEvent} e
+     */
+    function searchOnEnter(e) {
+        if (e.key == "Enter") {
+            searchButton.click();
+        }
     }
 </script>
 
@@ -193,50 +203,11 @@
 
                 <!-- Search by melodic pattern -->
                 <p>
-                    Filter chants by
-                    <span class="melodic-pattern-word"> melodic pattern </span>
-                    <Tooltip id="melodic-pattern-search">
-                        <ul>
-                            <li>
-                                <b>
-                                    Exact pitch (only for Square music script
-                                    chants):
-                                </b>
-                                Enter pitch names of the melodic pattern. For example,
-                                "a b a f" will search for a melodic pattern that
-                                follows the sequence A-B-A-F.
-                            </li>
-                            <li>
-                                <b> Contour (Melodic intervals) </b> in the form
-                                of positive or negative integers (e.g., +1 indicates
-                                one step up - either a semitone or a tone - from
-                                the previous note; 0 indicates unison; and -2 indicates
-                                two steps down - either a major or minor third -
-                                from the previous note). When looking for a series
-                                of notes, the integers can be separated by a space
-                                (e.g., "0 +2 -1 +1 +1").
-                            </li>
-                        </ul>
-                    </Tooltip>
+                    <MelodicPatternInput
+                        bind:this={melodicPatternInput}
+                        onKeydown={searchOnEnter}
+                    />
                 </p>
-
-                <RadioButton value="exact-pitch" group="search-query-option" disabled>
-                    Exact Pitch
-                </RadioButton>
-                <RadioButton value="contour" group="search-query-option">
-                    Contour (melodic intervals)
-                </RadioButton>
-                <br />
-                <TextInput
-                    id="pattern-input-box"
-                    placeholder="e.g.: '1 +1 -2' or 'a b a g'"
-                    onKeydown={(e) => {
-                        if (e.key == "Enter") {
-                            searchButton.click();
-                        }
-                    }}
-                    bind:this={patternInputBox}
-                />
 
                 <hr />
                 <p>
@@ -271,15 +242,28 @@
                 >
                     Search
                 </Button>
+                <Button
+                    id="reset-search-button"
+                    onClick={() => {
+                        loadDefaultOptions();
+                    }}
+                >
+                    Reset
+                </Button>
+                <Button
+                    id="clear-search-result"
+                    onClick={clearSearchResultsAndInfo}
+                >
+                    Clear results
+                </Button>
             </Section>
 
             <Section id="other-options">
                 <h3>Other options</h3>
-                <Checkbox value="melisma" bind:this={melismaHighlight}
-                    >Enable <span class="melisma-word"
-                        >melisma highlighting</span
-                    ></Checkbox
-                >
+                <Checkbox value="melisma" bind:this={melismaHighlight}>
+                    Enable
+                    <span class="melisma-word"> melisma highlighting </span>
+                </Checkbox>
                 <p>
                     Melisma(s) with at least
                     <NumberInput
