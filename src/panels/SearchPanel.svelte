@@ -9,7 +9,11 @@
     import ResultTable from "../components/search/ResultTable.svelte";
     import MelodicPatternInput from "../components/search/MelodicPatternInput.svelte";
 
-    import { Chant, SearchResult } from "../utility/components.js";
+    import {
+        Chant,
+        SearchResult,
+        NeumeComponent,
+    } from "../utility/components.js";
     import {
         filterByMusicScript,
         filterByOrnamentalShapes,
@@ -66,6 +70,8 @@
         let listOfChants = await fetch(databaseURL).then((response) =>
             response.json(),
         );
+        /** @type {NeumeComponent[][]}*/
+        let melodicPattern;
 
         /* First layer of filtering: Notation type */
         listOfChants = filterByMusicScript(listOfChants, {
@@ -83,13 +89,6 @@
         /* ~ layer of filtering: Modes (no longer in use) */
         // resultChantList = filterByModes(resultChantList, modeCheckboxes, unknownModeCheckbox);
 
-        /* Third layer of filtering: Pattern search */
-        [listOfChants, melodicPattern] = filterByMelodicPattern(
-            listOfChants,
-            melodicPatternInput.getMelodicPatternRegex(),
-            retrieve("search-query-option"),
-        );
-
         /* Fifth layer of filtering: finals */
         listOfChants = filterByFinalis(
             listOfChants,
@@ -106,8 +105,15 @@
             chantA.fileName < chantB.fileName ? -1 : 1,
         );
 
+        /* Pattern search */
+        let melodicPatternResults = filterByMelodicPattern(
+            listOfChants,
+            melodicPatternInput.getMelodicPatternRegex(),
+            retrieve("search-query-option"),
+        );
+
         /* Return the result */
-        return listOfChants;
+        return melodicPatternResults;
     }
 
     export function clearSearchResultsAndInfo() {
@@ -136,11 +142,12 @@
         };
 
         // Perform search and display the result
-        await performSearch().then((searchResultList) => {
+        await performSearch().then((/**@type {SearchResult[]}*/ result) => {
             new ResultTable({
                 target: searchResultDiv,
                 props: {
-                    searchResultList: searchResultList,
+                    searchResult: result,
+                    otherOptions: rowOptions
                 },
             });
         });
@@ -154,7 +161,7 @@
             e.setUnchecked(),
         );
         melismaHighlight.setChecked();
-        patternInputBox.setValue("");
+        melodicPatternInput.reset();
         finalisInputBox.setValue("");
     }
 

@@ -5,277 +5,173 @@
     import Button from "../Button.svelte";
 
     import { Chant } from "../../utility/components";
-    import {
-        matchChantWithContour,
-        processExactPitchMelodicPattern,
-    } from "../../functions/search";
     import { capitalizeFirstLetter } from "../../utility/utils";
 
     /** @type {Chant} */
     export let chant;
+    /** @type {NeumeComponents[][]} */
+    export let melodicPatterns;
 
     /** @type {{
-        "melodicPatternNc": NeumeComponents[][],
-        "melismaPatternSyl": Syllable[],
+        "melisma": {
+            enabled: boolean,
+            value: number
+        },
         "customGABC": {
             enabled: boolean,
             aquitanianPitch: boolean
         },
     }}
      */
-    export let rowOptions;
+    export let otherOptions;
 
     /* Constructing the text column  */
     let syllablesContent = [];
     let customGABC = [];
 
-    let aquitanianPitchGABC = rowOptions.customGABC.aquitanianPitch;
-    let melodicPatterns = rowOptions.melodicPatternNc;
-
-    // let searchPattern = rowOptions.searchPattern.list;
-    // let searchMode = rowOptions.searchPattern.mode;
-    // if (searchMode == "contour") {
-    //     melodicPatterns = processContourMelodicPattern(chant, searchPattern);
-    // } else if (searchMode == "exact-pitch") {
-    //     melodicPatterns = processExactPitchMelodicPattern(chant, searchPattern);
-    // }
-
-    // for (let syllable of chant.syllables) {
-    //     // Extract the syllable word and its position from each syllable
-    //     let word = syllable.syllableWord.text;
-    //     let position = syllable.syllableWord.position;
-    //     let ornamentalNC;
-    //     for (let nc of syllable.neumeComponents) {
-    //         if (nc.ornamental != null) {
-    //             ornamentalNC = nc.ornamental.type;
-    //             break;
-    //         }
-    //     }
-    //     const wordWrapper = document.createElement("span");
-
-    //     // Construct the text for the syllables
-    //     if (ornamentalNC != null) {
-    //         wordWrapper.classList.add(ornamentalNC + "-word"); // for CSS styling
-    //     }
-
-    //     let melismaEnable = textFormatOptions.melisma.enabled;
-    //     let melismaValue = textFormatOptions.melisma.value;
-    //     if (melismaEnable) {
-    //         // Detect melismas with neume components
-    //         let melismaMin = melismaValue;
-    //         if (syllable.neumeComponents.length >= melismaMin) {
-    //             wordWrapper.classList.add("melisma-word");
-    //         }
-    //     }
-
-    //     if (melodicPatterns.length > 0) {
-    //         for (let pattern of melodicPatterns) {
-    //             // compare two list, if there's a match (the same element from both), add the class to the wordWrapper
-    //             for (let i = 0; i < pattern.length; i++) {
-    //                 for (let j = 0; j < syllable.neumeComponents.length; j++) {
-    //                     if (pattern[i] == syllable.neumeComponents[j]) {
-    //                         wordWrapper.classList.add("melodic-pattern-word");
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //     }
-
-    //     wordWrapper.innerText = word;
-    //     if (wordWrapper.classList.length > 0) {
-    //         word = wordWrapper.outerHTML;
-    //     }
-
-    //     const octaveKeys = ["c", "d", "e", "f", "g", "a", "b"];
-    //     if (position == "s" || position == "i") {
-    //         // standalone or initial syllable
-    //         syllablesContent.push(word);
-    //         if (chant.notationType == "square") {
-    //             customGABC.push(
-    //                 `${word}(${syllable.neumeComponents
-    //                     .map((nc) => {
-    //                         for (let mp of melodicPatterns) {
-    //                             if (mp.includes(nc)) {
-    //                                 return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
-    //                             }
-    //                         }
-    //                         return nc.pitch;
-    //                     })
-    //                     .join("")})`,
-    //             );
-    //         } else if (chant.notationType == "aquitanian") {
-    //             if (aquitanianPitchGABC && chant.clef.shape != null) {
-    //                 const clef = chant.clef.shape;
-    //                 const gap = octaveKeys.indexOf(clef.toLowerCase());
-    //                 customGABC.push(
-    //                     `${word}(${syllable.neumeComponents
-    //                         .map((nc) => {
-    //                             let outNc = octaveKeys.at(
-    //                                 (nc.loc + 7 + gap) % 7,
-    //                             );
-    //                             for (let mp of melodicPatterns) {
-    //                                 if (mp.includes(nc)) {
-    //                                     return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
-    //                                 }
-    //                             }
-    //                             return outNc;
-    //                         })
-    //                         .join("")})`,
-    //                 );
-    //             } else if (!aquitanianPitchGABC) {
-    //                 customGABC.push(
-    //                     `${word}(${syllable.neumeComponents
-    //                         .map((nc) => {
-    //                             let outNc = nc.loc;
-    //                             for (let mp of melodicPatterns) {
-    //                                 if (mp.includes(nc)) {
-    //                                     return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
-    //                                 }
-    //                             }
-    //                             return outNc;
-    //                         })
-    //                         .join("")})`,
-    //                 );
-    //             }
-    //         }
-    //     } else if (position == "m" || position == "t") {
-    //         // medial syllable, add to the last syllable
-    //         // terminal syllable, add to the last syllable
-    //         syllablesContent[syllablesContent.length - 1] += word;
-    //         if (chant.notationType == "square") {
-    //             customGABC[customGABC.length - 1] +=
-    //                 `${word}(${syllable.neumeComponents
-    //                     .map((nc) => {
-    //                         for (let mp of melodicPatterns) {
-    //                             if (mp.includes(nc)) {
-    //                                 return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
-    //                             }
-    //                         }
-    //                         return nc.pitch;
-    //                     })
-    //                     .join("")})`;
-    //         } else if (chant.notationType == "aquitanian") {
-    //             if (aquitanianPitchGABC && chant.clef.shape != null) {
-    //                 const clef = chant.clef.shape;
-    //                 const gap = octaveKeys.indexOf(clef.toLowerCase());
-    //                 customGABC[customGABC.length - 1] +=
-    //                     `${word}(${syllable.neumeComponents
-    //                         .map((nc) => {
-    //                             let outNc = octaveKeys.at(
-    //                                 (nc.loc + 7 + gap) % 7,
-    //                             );
-    //                             for (let mp of melodicPatterns) {
-    //                                 if (mp.includes(nc)) {
-    //                                     return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
-    //                                 }
-    //                             }
-    //                             return outNc;
-    //                         })
-    //                         .join("")})`;
-    //             } else if (!aquitanianPitchGABC) {
-    //                 customGABC[customGABC.length - 1] +=
-    //                     `${word}(${syllable.neumeComponents
-    //                         .map((nc) => {
-    //                             let outNc = nc.loc;
-    //                             for (let mp of melodicPatterns) {
-    //                                 if (mp.includes(nc)) {
-    //                                     return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
-    //                                 }
-    //                             }
-    //                             return outNc;
-    //                         })
-    //                         .join("")})`;
-    //             }
-    //         }
-    //     }
-    // }
-
-    function processNeumeComponents(
-        neumeComponents,
-        melodicPatterns,
-        clefGap = null,
-    ) {
-        return neumeComponents
-            .map((nc) => {
-                let outNc =
-                    clefGap !== null
-                        ? octaveKeys.at((nc.loc + 7 + clefGap) % 7)
-                        : nc.pitch;
-                for (let mp of melodicPatterns) {
-                    if (mp.includes(nc)) {
-                        return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
-                    }
-                }
-                return outNc;
-            })
-            .join("");
-    }
-
-    const octaveKeys = ["c", "d", "e", "f", "g", "a", "b"];
-    const melismaEnable = rowOptions.melisma.enabled;
-    const melismaMin = rowOptions.melisma.value;
-    const clefGap =
-        chant.clef && chant.clef.shape
-            ? octaveKeys.indexOf(chant.clef.shape.toLowerCase())
-            : null;
+    let aquitanianPitchGABC = otherOptions.customGABC.aquitanianPitch;
 
     for (let syllable of chant.syllables) {
+        // Extract the syllable word and its position from each syllable
         let word = syllable.syllableWord.text;
         let position = syllable.syllableWord.position;
 
-        let ornamentalNC =
-            syllable.neumeComponents.find((nc) => nc.ornamental)?.ornamental
-                .type || null;
         const wordWrapper = document.createElement("span");
-
-        // Apply CSS classes for ornamental and melisma
-        if (ornamentalNC) wordWrapper.classList.add(`${ornamentalNC}-word`);
-        if (melismaEnable && syllable.neumeComponents.length >= melismaMin) {
-            wordWrapper.classList.add("melisma-word");
+        for (let nc of syllable.neumeComponents) {
+            if (nc.ornamental != null) {
+                // for Ornamental Neume CSS styling
+                wordWrapper.classList.add(nc.ornamental.type + "-word"); 
+                break;
+            }
         }
 
-        // Check for melodic patterns
-        for (let pattern of melodicPatterns) {
-            if (syllable.neumeComponents.some((nc) => pattern.includes(nc))) {
-                wordWrapper.classList.add("melodic-pattern-word");
-                break; // No need to check further patterns
+        // Construct the text for the syllables
+        if (otherOptions.melisma.enabled) {
+            // Detect melismas with neume components
+            let melismaMin = otherOptions.melisma.value;
+            if (syllable.neumeComponents.length >= melismaMin) {
+                wordWrapper.classList.add("melisma-word");
+            }
+        }
+
+        if (melodicPatterns.length > 0) {
+            for (let pattern of melodicPatterns) {
+                // compare two list, if there's a match (the same element from both), add the class to the wordWrapper
+                for (let i = 0; i < pattern.length; i++) {
+                    for (let j = 0; j < syllable.neumeComponents.length; j++) {
+                        if (pattern[i] == syllable.neumeComponents[j]) {
+                            wordWrapper.classList.add("melodic-pattern-word");
+                        }
+                    }
+                }
             }
         }
 
         wordWrapper.innerText = word;
-        if (wordWrapper.classList.length > 0) word = wordWrapper.outerHTML;
+        if (wordWrapper.classList.length > 0) {
+            word = wordWrapper.outerHTML;
+        }
 
-        // Generate customGABC based on position and notation type
-        if (position === "s" || position === "i") {
+        const octaveKeys = ["c", "d", "e", "f", "g", "a", "b"];
+        if (position == "s" || position == "i") {
+            // standalone or initial syllable
             syllablesContent.push(word);
-
-            const neumeComponentText = processNeumeComponents(
-                syllable.neumeComponents,
-                melodicPatterns,
-                clefGap,
-            );
-
-            if (chant.notationType === "square") {
-                customGABC.push(`${word}(${neumeComponentText})`);
-            } else if (chant.notationType === "aquitanian") {
-                customGABC.push(`${word}(${neumeComponentText})`);
+            if (chant.notationType == "square") {
+                customGABC.push(
+                    `${word}(${syllable.neumeComponents
+                        .map((nc) => {
+                            for (let mp of melodicPatterns) {
+                                if (mp.includes(nc)) {
+                                    return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
+                                }
+                            }
+                            return nc.pitch;
+                        })
+                        .join("")})`,
+                );
+            } else if (chant.notationType == "aquitanian") {
+                if (aquitanianPitchGABC && chant.clef.shape != null) {
+                    const clef = chant.clef.shape;
+                    const gap = octaveKeys.indexOf(clef.toLowerCase());
+                    customGABC.push(
+                        `${word}(${syllable.neumeComponents
+                            .map((nc) => {
+                                let outNc = octaveKeys.at(
+                                    (nc.loc + 7 + gap) % 7,
+                                );
+                                for (let mp of melodicPatterns) {
+                                    if (mp.includes(nc)) {
+                                        return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                                    }
+                                }
+                                return outNc;
+                            })
+                            .join("")})`,
+                    );
+                } else if (!aquitanianPitchGABC) {
+                    customGABC.push(
+                        `${word}(${syllable.neumeComponents
+                            .map((nc) => {
+                                let outNc = nc.loc;
+                                for (let mp of melodicPatterns) {
+                                    if (mp.includes(nc)) {
+                                        return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                                    }
+                                }
+                                return outNc;
+                            })
+                            .join("")})`,
+                    );
+                }
             }
-        } else if (position === "m" || position === "t") {
-            // Append to the last syllable for medial or terminal positions
+        } else if (position == "m" || position == "t") {
+            // medial syllable, add to the last syllable
+            // terminal syllable, add to the last syllable
             syllablesContent[syllablesContent.length - 1] += word;
-
-            const neumeComponentText = processNeumeComponents(
-                syllable.neumeComponents,
-                melodicPatterns,
-                clefGap,
-            );
-
-            if (chant.notationType === "square") {
+            if (chant.notationType == "square") {
                 customGABC[customGABC.length - 1] +=
-                    `${word}(${neumeComponentText})`;
-            } else if (chant.notationType === "aquitanian") {
-                customGABC[customGABC.length - 1] +=
-                    `${word}(${neumeComponentText})`;
+                    `${word}(${syllable.neumeComponents
+                        .map((nc) => {
+                            for (let mp of melodicPatterns) {
+                                if (mp.includes(nc)) {
+                                    return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
+                                }
+                            }
+                            return nc.pitch;
+                        })
+                        .join("")})`;
+            } else if (chant.notationType == "aquitanian") {
+                if (aquitanianPitchGABC && chant.clef.shape != null) {
+                    const clef = chant.clef.shape;
+                    const gap = octaveKeys.indexOf(clef.toLowerCase());
+                    customGABC[customGABC.length - 1] +=
+                        `${word}(${syllable.neumeComponents
+                            .map((nc) => {
+                                let outNc = octaveKeys.at(
+                                    (nc.loc + 7 + gap) % 7,
+                                );
+                                for (let mp of melodicPatterns) {
+                                    if (mp.includes(nc)) {
+                                        return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                                    }
+                                }
+                                return outNc;
+                            })
+                            .join("")})`;
+                } else if (!aquitanianPitchGABC) {
+                    customGABC[customGABC.length - 1] +=
+                        `${word}(${syllable.neumeComponents
+                            .map((nc) => {
+                                let outNc = nc.loc;
+                                for (let mp of melodicPatterns) {
+                                    if (mp.includes(nc)) {
+                                        return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
+                                    }
+                                }
+                                return outNc;
+                            })
+                            .join("")})`;
+                }
             }
         }
     }
@@ -288,7 +184,7 @@
 
     // Extract the melisma pattern for hightlighting on chant
     let melismaPatterns = [],
-        melismaOptions = rowOptions.melisma;
+        melismaOptions = otherOptions.melisma;
 
     if (melismaOptions.enabled) {
         let melismaMin = melismaOptions.value;
@@ -350,7 +246,7 @@
     <!-- Text column -->
     <td>
         {@html tdSyllables}
-        {#if rowOptions.customGABC.enabled}
+        {#if otherOptions.customGABC.enabled}
             {@html customGABCDiv.outerHTML}
         {/if}
     </td>

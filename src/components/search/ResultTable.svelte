@@ -1,24 +1,33 @@
 <script>
+    import { onMount } from "svelte";
     /*
      * The result table takes in **a list of chants** as prop and construct everything there.
      * Filters and such are processed in the Search Panel.
      *
      * Each chant/element of the chant list (called `chantList`) is the input to a ResultTableRow component.
      */
-    import { Chant } from "../../utility/components";
+    import { SearchResult } from "../../utility/components";
     import ResultTableRow from "./ResultTableRow.svelte";
 
     let tableHeaders = ["Title", "Music Script", "Text", "Source", "Options"];
 
-    /** @type {Chant[]} */
-    export let chantList;
-
+    /** @type {SearchResult[]} */
+    export let searchResult;
     /**
-     * @type {Object} see ResultTableRow::textFormatOptions
-     */
-    export let textFormatOptions;
+     * @type {{
+        "melisma": {
+            enabled: boolean,
+            value: number
+        },
+        "customGABC": {
+            enabled: boolean,
+            aquitanianPitch: boolean
+        },
+    }}
+    */
+    export let otherOptions;
 
-    $: numberOfResult = chantList.length;
+    $: numberOfResult = searchResult.length;
 </script>
 
 <div>
@@ -33,8 +42,12 @@
             </thead>
 
             <tbody>
-                {#each chantList as chant}
-                    <ResultTableRow {chant} rowOptions={textFormatOptions}/>
+                {#each searchResult as sr}
+                    <ResultTableRow
+                        chant={sr.chant}
+                        melodicPatterns={sr.melodicPatternNc}
+                        {otherOptions}
+                    />
                 {/each}
             </tbody>
         </table>

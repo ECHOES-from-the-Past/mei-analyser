@@ -1,4 +1,5 @@
 <script>
+    import { controllers } from "chart.js";
     import RadioButton from "../RadioButton.svelte";
     import TextInput from "../TextInput.svelte";
     import Tooltip from "../Tooltip.svelte";
@@ -9,6 +10,10 @@
     let patternInputBox,
         error = "",
         placeholder = "e.g.: 1 +1 -2 a b? a* g";
+
+    let
+        /** @type {RadioButton} */ contourButton,
+        /** @type {RadioButton} */ wildcardButton;
     export let onKeydown;
     export let onInput;
 
@@ -28,7 +33,7 @@
 
         // TODO: filter input for contour
         let melodyList = [];
-        if (searchMode == 'wildcard') {
+        if (searchMode == "wildcard") {
             melodyList = filteredInput.map((pitch) => pitch.toLowerCase());
         } else if (searchMode == "contour") {
             melodyList = inputStr.match(numericMelodyRegex);
@@ -71,6 +76,10 @@
         return new Error(error);
     }
 
+    export function reset() {
+        patternInputBox.setValue("");
+    }
+
     export function getMelodicPatternRegex() {
         return getWildcardRegex();
     }
@@ -85,7 +94,9 @@
     Exact Pitch
 </RadioButton> -->
 
-<RadioButton value="wildcard" {group}>Pitch (wildcards)</RadioButton>
+<RadioButton value="wildcard" {group} bind:this={wildcardButton}>
+    Pitch (wildcards)
+</RadioButton>
 <Tooltip id="wildcard-tooltip">
     <p>
         Wildcard search follows the <i>regular expression</i> POSIX standard.
@@ -109,7 +120,7 @@
 </Tooltip>
 <br />
 
-<RadioButton value="contour" group="search-query-option">
+<RadioButton value="contour" {group} bind:this={contourButton}>
     Contour (melodic intervals)
 </RadioButton>
 <Tooltip id="melodic-pattern-search">
