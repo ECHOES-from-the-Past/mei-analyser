@@ -10,7 +10,7 @@
     /** @type {Chant} */
     export let chant;
     /** @type {NeumeComponents[][]} */
-    export let melodicPatterns;
+    export let melodicPatternNc;
 
     /** @type {{
         "melisma": {
@@ -54,8 +54,8 @@
             }
         }
 
-        if (melodicPatterns.length > 0) {
-            for (let pattern of melodicPatterns) {
+        if (melodicPatternNc.length > 0) {
+            for (let pattern of melodicPatternNc) {
                 // compare two list, if there's a match (the same element from both), add the class to the wordWrapper
                 for (let i = 0; i < pattern.length; i++) {
                     for (let j = 0; j < syllable.neumeComponents.length; j++) {
@@ -80,7 +80,7 @@
                 customGABC.push(
                     `${word}(${syllable.neumeComponents
                         .map((nc) => {
-                            for (let mp of melodicPatterns) {
+                            for (let mp of melodicPatternNc) {
                                 if (mp.includes(nc)) {
                                     return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
                                 }
@@ -99,7 +99,7 @@
                                 let outNc = octaveKeys.at(
                                     (nc.loc + 7 + gap) % 7,
                                 );
-                                for (let mp of melodicPatterns) {
+                                for (let mp of melodicPatternNc) {
                                     if (mp.includes(nc)) {
                                         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
                                     }
@@ -113,7 +113,7 @@
                         `${word}(${syllable.neumeComponents
                             .map((nc) => {
                                 let outNc = nc.loc;
-                                for (let mp of melodicPatterns) {
+                                for (let mp of melodicPatternNc) {
                                     if (mp.includes(nc)) {
                                         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
                                     }
@@ -132,7 +132,7 @@
                 customGABC[customGABC.length - 1] +=
                     `${word}(${syllable.neumeComponents
                         .map((nc) => {
-                            for (let mp of melodicPatterns) {
+                            for (let mp of melodicPatternNc) {
                                 if (mp.includes(nc)) {
                                     return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
                                 }
@@ -150,7 +150,7 @@
                                 let outNc = octaveKeys.at(
                                     (nc.loc + 7 + gap) % 7,
                                 );
-                                for (let mp of melodicPatterns) {
+                                for (let mp of melodicPatternNc) {
                                     if (mp.includes(nc)) {
                                         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
                                     }
@@ -163,7 +163,7 @@
                         `${word}(${syllable.neumeComponents
                             .map((nc) => {
                                 let outNc = nc.loc;
-                                for (let mp of melodicPatterns) {
+                                for (let mp of melodicPatternNc) {
                                     if (mp.includes(nc)) {
                                         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
                                     }
@@ -183,14 +183,14 @@
     customGABCDiv.innerHTML = "<hr>" + customGABC.join(" ");
 
     // Extract the melisma pattern for hightlighting on chant
-    let melismaPatterns = [],
+    let melismaPatternSyl = [],
         melismaOptions = otherOptions.melisma;
 
     if (melismaOptions.enabled) {
         let melismaMin = melismaOptions.value;
         for (let syllable of chant.syllables) {
             if (syllable.neumeComponents.length >= melismaMin) {
-                melismaPatterns.push(syllable);
+                melismaPatternSyl.push(syllable);
             }
         }
     }
@@ -216,8 +216,8 @@
             props: {
                 chant: chant,
                 highlightOptions: {
-                    melodicPattern: melodicPatterns,
-                    melismaPattern: melismaPatterns,
+                    melodicPatternNc: melodicPatternNc,
+                    melismaPatternSyl: melismaPatternSyl,
                 },
             },
         });

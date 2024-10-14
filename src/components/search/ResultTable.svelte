@@ -45,7 +45,7 @@
                 {#each searchResult as sr}
                     <ResultTableRow
                         chant={sr.chant}
-                        melodicPatterns={sr.melodicPatternNc}
+                        melodicPatternNc={sr.melodicPatternNc}
                         {otherOptions}
                     />
                 {/each}

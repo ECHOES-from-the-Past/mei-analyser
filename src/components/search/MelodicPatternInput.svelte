@@ -125,7 +125,6 @@
 >
     Pitch (wildcards)
 </RadioButton>
-{searchModeSelection}
 <Tooltip id="wildcard-tooltip">
     <p>
         <!-- <li>
