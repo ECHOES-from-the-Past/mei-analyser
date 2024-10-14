@@ -25,22 +25,13 @@
      * Clear old local storage data for apps that uses version prior to 0.5.x
      * @param {string} localVersion
      */
-    function clearOldLocalStorage(localVersion) {
-        if (localVersion == undefined) {
-            console.log("Loading default options on the search panel!");
-            loadDefaultOptions();
-            return;
-        }
-
-        // Getting the 2nd number in the version numbering
-        if (localVersion.split(".")[1] < 5) {
-            console.log("Clearing localStorage from version prior to 0.5.0...");
-            localStorage.clear();
-            console.log(
-                "Finished clearing, loading default options for the search panel!",
-            );
-            loadDefaultOptions();
-        }
+    function clearOldLocalStorage() {
+        console.log("Clearing localStorage from version prior to 0.5.4...");
+        localStorage.clear();
+        console.log(
+            "Finished clearing, loading default options for the search panel!",
+        );
+        loadDefaultOptions();
     }
 
     let searchPanel;
@@ -53,11 +44,18 @@
 
     onMount(() => {
         let localVersion = retrieve("version");
-        clearOldLocalStorage(localVersion);
-
+        if (localVersion == undefined) {
+            console.log("Loading default options on the search panel!");
+            loadDefaultOptions();
+        } else if (
+            localVersion.split(".")[1] < 5 ||
+            localVersion.split(".")[2] < 4
+        ) {
+            // Force clear localStorage for versions lower than 0.5.4
+            clearOldLocalStorage();
+        }
         let version = packageJSON.version;
         navbar.setVersion(version);
-
         persist("version", version);
     });
 </script>
