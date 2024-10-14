@@ -42,7 +42,7 @@
 
   --button: var(--emerald-900);
   --button-hover: var(--emerald-700);
-  --button-active: var(--emerald-800);
+  --button-active: var(--emerald-500);
   --button-disabled: hsla(172, 38%, 16%, 0.288);
   --background: var(--white);
   --background-hover: hsla(147, 100%, 66%, 0.377);
@@ -106,6 +106,14 @@ ul {
 
 g {
   fill: hsl(0, 0%, 0%);
+}
+
+code {
+  /* background-color: rgba(from var(--emerald-700) r g b / 0.24); */
+  background-color: var(--emerald-800);
+  color: white;
+  padding: 3px;
+  border-radius: 4px;
 }
 
 .melodic-pattern-word {

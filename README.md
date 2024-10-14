@@ -13,7 +13,8 @@
 
 # Dependencies
 - Frontend development:
-  - [Vite](https://vitejs.dev) - frontend tooling (dev, build)
+  - [Vite](https://vitejs.dev) - Frontend toolchain (dev, build)
+  - [Svelte](https://svelte.dev) - Frontend component framework
   - [Verovio](https://github.com/rism-digital/verovio) - render chants onto the browser 
 - Backend/database development:
   - [xml2js](https://github.com/Leonidas-from-XIV/node-xml2js) - Parse XML documents into JSON

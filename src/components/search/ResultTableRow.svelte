@@ -1,31 +1,21 @@
 <script>
-    /*
-     * A result table row display information about a chant.
-     */
-
     import ChantDetails from "./ChantDetails.svelte";
     import ChantVerovioRender from "./ChantVerovioRender.svelte";
     import ExternalLink from "../ExternalLink.svelte";
     import Button from "../Button.svelte";
 
     import { Chant } from "../../utility/components";
-    import {
-        processContourMelodicPattern,
-        processExactPitchMelodicPattern,
-    } from "../../functions/search";
-    import { capitalizeFirstLetter, highlightSvgElementById } from "../../utility/utils";
+    import { capitalizeFirstLetter } from "../../utility/utils";
 
     /** @type {Chant} */
     export let chant;
+    /** @type {NeumeComponents[][]} */
+    export let melodicPatternNc;
 
     /** @type {{
-        "searchPattern": {
-            list: string[] | number [],
-            mode: string,
-        },
         "melisma": {
             enabled: boolean,
-            value: number,
+            value: number
         },
         "customGABC": {
             enabled: boolean,
@@ -33,60 +23,39 @@
         },
     }}
      */
-    export let textFormatOptions;
-
-    /** Regular expression to match the file name format
-     * - Pattern: 3 digits, an underscore, a letter, and 2 digits
-     * - Example: 092_F26
-     * @type {RegExp}
-     * */
-    const fileNameRegex = /\d{3}_\w{1}\d{2}/;
+    export let otherOptions;
 
     /* Constructing the text column  */
     let syllablesContent = [];
     let customGABC = [];
 
-    let aquitanianPitchGABC = textFormatOptions.customGABC.aquitanianPitch;
-    let searchPattern = textFormatOptions.searchPattern.list;
-    let searchMode = textFormatOptions.searchPattern.mode;
-
-    let melodicPatterns = [];
-    if (searchMode == "contour") {
-        melodicPatterns = processContourMelodicPattern(chant, searchPattern);
-    } else if (searchMode == "exact-pitch") {
-        melodicPatterns = processExactPitchMelodicPattern(chant, searchPattern);
-    }
+    let aquitanianPitchGABC = otherOptions.customGABC.aquitanianPitch;
 
     for (let syllable of chant.syllables) {
         // Extract the syllable word and its position from each syllable
         let word = syllable.syllableWord.text;
         let position = syllable.syllableWord.position;
-        let ornamentalNC;
+
+        const wordWrapper = document.createElement("span");
         for (let nc of syllable.neumeComponents) {
             if (nc.ornamental != null) {
-                ornamentalNC = nc.ornamental.type;
+                // for Ornamental Neume CSS styling
+                wordWrapper.classList.add(nc.ornamental.type + "-word"); 
                 break;
             }
         }
-        const wordWrapper = document.createElement("span");
 
         // Construct the text for the syllables
-        if (ornamentalNC != null) {
-            wordWrapper.classList.add(ornamentalNC + "-word"); // for CSS styling
-        }
-
-        let melismaEnable = textFormatOptions.melisma.enabled;
-        let melismaValue = textFormatOptions.melisma.value;
-        if (melismaEnable) {
+        if (otherOptions.melisma.enabled) {
             // Detect melismas with neume components
-            let melismaMin = melismaValue;
+            let melismaMin = otherOptions.melisma.value;
             if (syllable.neumeComponents.length >= melismaMin) {
                 wordWrapper.classList.add("melisma-word");
             }
         }
 
-        if (melodicPatterns.length > 0) {
-            for (let pattern of melodicPatterns) {
+        if (melodicPatternNc.length > 0) {
+            for (let pattern of melodicPatternNc) {
                 // compare two list, if there's a match (the same element from both), add the class to the wordWrapper
                 for (let i = 0; i < pattern.length; i++) {
                     for (let j = 0; j < syllable.neumeComponents.length; j++) {
@@ -105,14 +74,13 @@
 
         const octaveKeys = ["c", "d", "e", "f", "g", "a", "b"];
         if (position == "s" || position == "i") {
-            // standard syllable
-            // initial syllable
+            // standalone or initial syllable
             syllablesContent.push(word);
             if (chant.notationType == "square") {
                 customGABC.push(
                     `${word}(${syllable.neumeComponents
                         .map((nc) => {
-                            for (let mp of melodicPatterns) {
+                            for (let mp of melodicPatternNc) {
                                 if (mp.includes(nc)) {
                                     return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
                                 }
@@ -131,7 +99,7 @@
                                 let outNc = octaveKeys.at(
                                     (nc.loc + 7 + gap) % 7,
                                 );
-                                for (let mp of melodicPatterns) {
+                                for (let mp of melodicPatternNc) {
                                     if (mp.includes(nc)) {
                                         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
                                     }
@@ -145,7 +113,7 @@
                         `${word}(${syllable.neumeComponents
                             .map((nc) => {
                                 let outNc = nc.loc;
-                                for (let mp of melodicPatterns) {
+                                for (let mp of melodicPatternNc) {
                                     if (mp.includes(nc)) {
                                         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
                                     }
@@ -164,7 +132,7 @@
                 customGABC[customGABC.length - 1] +=
                     `${word}(${syllable.neumeComponents
                         .map((nc) => {
-                            for (let mp of melodicPatterns) {
+                            for (let mp of melodicPatternNc) {
                                 if (mp.includes(nc)) {
                                     return `<span class="melodic-pattern-word-gabc">${nc.pitch}</span>`;
                                 }
@@ -182,7 +150,7 @@
                                 let outNc = octaveKeys.at(
                                     (nc.loc + 7 + gap) % 7,
                                 );
-                                for (let mp of melodicPatterns) {
+                                for (let mp of melodicPatternNc) {
                                     if (mp.includes(nc)) {
                                         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
                                     }
@@ -195,7 +163,7 @@
                         `${word}(${syllable.neumeComponents
                             .map((nc) => {
                                 let outNc = nc.loc;
-                                for (let mp of melodicPatterns) {
+                                for (let mp of melodicPatternNc) {
                                     if (mp.includes(nc)) {
                                         return `<span class="melodic-pattern-word-gabc">${outNc}</span>`;
                                     }
@@ -207,6 +175,7 @@
             }
         }
     }
+
     let tdSyllables = syllablesContent.join(" ");
 
     let customGABCDiv = document.createElement("div");
@@ -214,13 +183,14 @@
     customGABCDiv.innerHTML = "<hr>" + customGABC.join(" ");
 
     // Extract the melisma pattern for hightlighting on chant
-    let melismaPatterns = [], melismaOptions = textFormatOptions.melisma;
+    let melismaPatternSyl = [],
+        melismaOptions = otherOptions.melisma;
 
     if (melismaOptions.enabled) {
         let melismaMin = melismaOptions.value;
         for (let syllable of chant.syllables) {
             if (syllable.neumeComponents.length >= melismaMin) {
-                melismaPatterns.push(syllable);
+                melismaPatternSyl.push(syllable);
             }
         }
     }
@@ -246,8 +216,8 @@
             props: {
                 chant: chant,
                 highlightOptions: {
-                    melodicPattern: melodicPatterns,
-                    melismaPattern: melismaPatterns,
+                    melodicPatternNc: melodicPatternNc,
+                    melismaPatternSyl: melismaPatternSyl,
                 },
             },
         });
@@ -276,7 +246,7 @@
     <!-- Text column -->
     <td>
         {@html tdSyllables}
-        {#if textFormatOptions.customGABC.enabled}
+        {#if otherOptions.customGABC.enabled}
             {@html customGABCDiv.outerHTML}
         {/if}
     </td>
@@ -287,9 +257,9 @@
     <!-- Options column -->
     <td>
         <div id="options">
-            <Button onClick={() => printChantInformation(chant)}
-                >Display chant</Button
-            >
+            <Button onClick={() => printChantInformation(chant)}>
+                Display chant
+            </Button>
             {#each chant.pemDatabaseUrls as url}
                 <ExternalLink href={url}>
                     <Button>View image on PEM</Button>
