@@ -137,16 +137,38 @@
     </p>
     <ul>
         <li>
-            Use a dot <b><code>.</code></b> to search for one arbitrary pitch
-        </li>
-        <li>
-            Use a question mark <code>.?</code> to search for an optional note.
+            Use a dot <b><code>.</code></b> to search for one arbitrary note.
             <ul>
                 <li>
-                    E.g.: searching for <code>d .? a</code> could return the
-                    following sequences of notes: <code>d a</code>,
-                    <code> d f a</code>, <code>d g a</code>,
-                    <code>d c a</code>, etc.
+                    E.g.: searching for <code>d . a</code> could return the
+                    following sequences of notes: <code>d f a</code>,
+                    <code> d a a</code>, etc.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Use a question mark <code>?</code> <b> after a note or a dot </b>
+            <code>.</code> to search for an optional note.
+            <ul>
+                <li>
+                    E.g.: searching for <code>f d? a</code> could return the
+                    following sequences of notes: <code>f d a</code>, or
+                    <code>f a</code>.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Use an asterisk <code>*</code> <b> after a note </b>
+            to search for matches of zero or repeating notes (0 or more occurrences).
+            <ul>
+                <li>
+                    E.g.: searching for <code>f d* a</code> could return the
+                    following sequences of notes: <code>f a</code>, or
+                    <code>f d a</code>, <code>f d d a</code>, etc.
+                </li>
+                <li>
+                    Note that <code>.*</code> will search for every note at all possible
+                    occurrences, i.e., everything.
                 </li>
             </ul>
         </li>
