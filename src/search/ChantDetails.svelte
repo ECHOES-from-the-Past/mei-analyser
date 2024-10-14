@@ -1,8 +1,8 @@
 <script>
     import { onMount } from "svelte";
-    import AnalysisChart from "./AnalysisChart.svelte";
-    import Section from "../Section.svelte";
-    import { capitalizeFirstLetter } from "../../utility/utils";
+    import AnalysisChart from "@search/AnalysisChart.svelte";
+    import Section from "@/components/Section.svelte";
+    import { capitalizeFirstLetter } from "@utility/utils";
     export let chant;
     let chantInfoDiv;
 

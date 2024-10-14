@@ -1,28 +1,28 @@
 <script>
-    import Button from "../components/Button.svelte";
-    import Checkbox from "../components/Checkbox.svelte";
-    import Tooltip from "../components/Tooltip.svelte";
-    import Section from "../components/Section.svelte";
-    import TextInput from "../components/TextInput.svelte";
-    import NumberInput from "../components/NumberInput.svelte";
-    import ClientStatus from "../components/ClientStatus.svelte";
-    import ResultTable from "../components/search/ResultTable.svelte";
-    import MelodicPatternInput from "../components/search/MelodicPatternInput.svelte";
+    import Button from "@components/Button.svelte";
+    import Checkbox from "@components/Checkbox.svelte";
+    import Tooltip from "@components/Tooltip.svelte";
+    import Section from "@components/Section.svelte";
+    import TextInput from "@components/TextInput.svelte";
+    import NumberInput from "@components/NumberInput.svelte";
+    import ClientStatus from "@components/ClientStatus.svelte";
+    import ResultTable from "@search/ResultTable.svelte";
+    import MelodicPatternInput from "@search/MelodicPatternInput.svelte";
 
     import {
         Chant,
         SearchResult,
         NeumeComponent,
-    } from "../utility/components.js";
+    } from "@utility/components.js";
     import {
         filterByMusicScript,
         filterByOrnamentalShapes,
         filterByMelodicPattern,
         filterByFinalis,
-    } from "../functions/search.js";
+    } from "@functions/search.js";
 
     import { onMount } from "svelte";
-    import { persist, retrieve, env } from "../utility/utils";
+    import { persist, retrieve, env } from "@utility/utils";
 
     export let hidden = false;
 

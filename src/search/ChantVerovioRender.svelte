@@ -1,9 +1,9 @@
 <script>
-    import { drawSVGFromMEIContent, spotlightText } from "../../utility/utils";
-    import { Chant, Syllable, NeumeComponent } from "../../utility/components";
+    import { drawSVGFromMEIContent, spotlightText } from "@utility/utils";
+    import { Chant, Syllable, NeumeComponent } from "@utility/components";
     import {
         highlightPattern,
-    } from "../../utility/utils";
+    } from "@utility/utils";
     import { onMount } from "svelte";
 
     /** @type {Chant} */

@@ -1,9 +1,9 @@
 <script>
     import { onMount } from "svelte";
-    import { retrieve } from "../../utility/utils";
-    import RadioButton from "../RadioButton.svelte";
-    import TextInput from "../TextInput.svelte";
-    import Tooltip from "../Tooltip.svelte";
+    import { retrieve } from "@utility/utils";
+    import RadioButton from "@components/RadioButton.svelte";
+    import TextInput from "@components/TextInput.svelte";
+    import Tooltip from "@components/Tooltip.svelte";
 
     export let onKeydown;
     export let onInput;

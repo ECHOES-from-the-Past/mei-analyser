@@ -1,11 +1,11 @@
 <script>
-    import ChantDetails from "./ChantDetails.svelte";
-    import ChantVerovioRender from "./ChantVerovioRender.svelte";
-    import ExternalLink from "../ExternalLink.svelte";
-    import Button from "../Button.svelte";
+    import ChantDetails from "@search/ChantDetails.svelte";
+    import ChantVerovioRender from "@search/ChantVerovioRender.svelte";
+    import ExternalLink from "@components/ExternalLink.svelte";
+    import Button from "@components/Button.svelte";
 
-    import { Chant } from "../../utility/components";
-    import { capitalizeFirstLetter } from "../../utility/utils";
+    import { Chant } from "@utility/components";
+    import { capitalizeFirstLetter } from "@utility/utils";
 
     /** @type {Chant} */
     export let chant;

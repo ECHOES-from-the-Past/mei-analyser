@@ -1,8 +1,8 @@
 <script>
     import { onMount } from "svelte";
-    import MelodicPatternInput from "../components/search/MelodicPatternInput.svelte";
-    import Tooltip from "../components/Tooltip.svelte";
-    import Section from "../components/Section.svelte";
+    import MelodicPatternInput from "@search/MelodicPatternInput.svelte";
+    import Tooltip from "@components/Tooltip.svelte";
+    import Section from "@components/Section.svelte";
 
     export let hidden = false;
 

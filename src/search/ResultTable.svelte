@@ -1,13 +1,12 @@
 <script>
-    import { onMount } from "svelte";
     /*
      * The result table takes in **a list of chants** as prop and construct everything there.
      * Filters and such are processed in the Search Panel.
      *
      * Each chant/element of the chant list (called `chantList`) is the input to a ResultTableRow component.
      */
-    import { SearchResult } from "../../utility/components";
-    import ResultTableRow from "./ResultTableRow.svelte";
+    import { SearchResult } from "@utility/components";
+    import ResultTableRow from "@search/ResultTableRow.svelte";
 
     let tableHeaders = ["Title", "Music Script", "Text", "Source", "Options"];
 

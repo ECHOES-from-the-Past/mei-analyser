@@ -6,10 +6,10 @@
         Chant,
         septenaryToPitchOctave,
         toSeptenary,
-    } from "../../utility/components";
+    } from "@utility/components";
     import { Chart } from "chart.js/auto";
-    import { getNeumeComponentList } from "../../utility/components";
-    import { NeumeComponent } from "../../utility/components";
+    import { getNeumeComponentList } from "@utility/components";
+    import { NeumeComponent } from "@utility/components";
     import { onMount } from "svelte";
     /** @type {Chant} */
     export let chant;
