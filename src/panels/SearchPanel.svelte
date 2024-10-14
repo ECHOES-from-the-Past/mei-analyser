@@ -108,8 +108,8 @@
         /* Pattern search */
         let melodicPatternResults = filterByMelodicPattern(
             listOfChants,
-            melodicPatternInput.getMelodicPatternRegex(),
-            retrieve("search-query-option"),
+            melodicPatternInput.getMelodicPatternInput(),
+            melodicPatternInput.getMelodicPatternSearchMode(),
         );
 
         /* Return the result */
@@ -130,7 +130,7 @@
         clearSearchResultsAndInfo();
         searchResultDiv.innerHTML = "";
 
-        let rowOptions = {
+        let otherOptions = {
             melisma: {
                 enabled: melismaHighlight.isChecked(),
                 value: melismaInput.getValue(),
@@ -147,7 +147,7 @@
                 target: searchResultDiv,
                 props: {
                     searchResult: result,
-                    otherOptions: rowOptions
+                    otherOptions: otherOptions
                 },
             });
         });
@@ -300,6 +300,7 @@
                 <Checkbox
                     value="aquitanian-pitch"
                     bind:this={aquitanianPitchCustomGABC}
+                    disabled
                 >
                     Show Aquitanian in pitch value with text (only for chants
                     with detected mode)

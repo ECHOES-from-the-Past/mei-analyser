@@ -44,7 +44,7 @@
     }
 
     #client-status {
-        color: green;
+        color: var(--emerald-700);
     }
 
     @-webkit-keyframes spin {

@@ -41,39 +41,6 @@ function filterByModes(chantList, modes) {
 }
 
 /**
- * @deprecated
- * @param {Chant} chant The chant object, assuming it's in Square notation
- * @param {string[]} searchQueryList in the form of ['A', 'B', 'C', 'D', 'E'] for example
- * @returns {NeumeComponentSQ[][]} a list of patterns (in list form) that match the search query
- */
-export function processExactPitchMelodicPattern(chant, searchQueryList) {
-    /** @type {NeumeComponentSQ[]} */
-    const ncArray = getNeumeComponentList(chant.syllables);
-
-    let patterns = [];
-
-    for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
-        let patternFound = [];
-
-        for (let i_search = 0; i_search < searchQueryList.length; i_search++) {
-            // processing the search for Square notation, using the `septenary` value of the note
-            if (ncArray[i_nc + i_search].pitch == searchQueryList[i_search]) {
-                patternFound.push(ncArray[i_nc + i_search]);
-            } else {
-                patternFound = [];
-                break;
-            }
-        }
-
-        if (patternFound.length > 0) {
-            patterns.push(patternFound);
-        }
-    }
-
-    return patterns;
-}
-
-/**
  * @param {Chant} chant
  * @param {RegExp} wildcardRegex
  * @returns {NeumeComponent[][]} A list of patterns that matches the wildcard regex
@@ -105,34 +72,12 @@ function matchChantWithWildcards(chant, wildcardRegex) {
 }
 
 /**
- * 
- * @param {Chant[]} chantList 
- * @param {RegExp} wildcardRegex 
- * @returns 
- */
-export function filterByWildcardSearch(chantList, wildcardRegex) {
-    let resultChantList = [],
-        returnPatterns = [];
-
-    chantList.forEach((chant) => {
-        let pattern = matchChantWithWildcards(chant, wildcardRegex);
-        if (pattern.length > 0) {
-            resultChantList.push(chant);
-            returnPatterns.push(pattern);
-        }
-    });
-
-    return [resultChantList, returnPatterns];
-}
-
-/**
  * @param {Chant} chant a Chant object
- * @param {RegExp} contourRegex the list of numbers
+ * @param {Number[]} contourArray the list of numbers
  * @returns {NeumeComponent[][]} a list of patterns (in list form) that match the search query
- * @TODO: fix contour search
  */
-export function matchChantWithContour(chant, contourRegex) {
-    if (contourRegex.length == 0) {
+export function matchChantWithContour(chant, contourArray) {
+    if (contourArray.length == 0) {
         return [];
     }
 
@@ -141,14 +86,14 @@ export function matchChantWithContour(chant, contourRegex) {
 
     let patterns = [];
 
-    for (let i_nc = 0; i_nc < ncArray.length - contourRegex.length; i_nc++) {
+    for (let i_nc = 0; i_nc < ncArray.length - contourArray.length; i_nc++) {
         let patternFound = [];
         patternFound.push(ncArray[i_nc]);
 
         if (chantNotationType == "aquitanian") {
-            for (let i_sq = 0; i_sq < contourRegex.length; i_sq++) {
+            for (let i_sq = 0; i_sq < contourArray.length; i_sq++) {
                 // processing the search for Aquitanian notation, using the `loc` attribute
-                if (ncArray[i_nc + i_sq].loc + contourRegex[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
+                if (ncArray[i_nc + i_sq].loc + contourArray[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
                     patternFound.push(ncArray[i_nc + i_sq + 1]);
                 } else {
                     patternFound = [];
@@ -157,9 +102,9 @@ export function matchChantWithContour(chant, contourRegex) {
             }
         }
         else if (chantNotationType == "square") {
-            for (let i_search = 0; i_search < contourRegex.length; i_search++) {
+            for (let i_search = 0; i_search < contourArray.length; i_search++) {
                 // processing the search for Square notation, using the `septenary` value of the note
-                if (toSeptenary(ncArray[i_nc + i_search]) + contourRegex[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
+                if (toSeptenary(ncArray[i_nc + i_search]) + contourArray[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
                     patternFound.push(ncArray[i_nc + i_search + 1]);
                 } else {
                     patternFound = [];
@@ -176,89 +121,48 @@ export function matchChantWithContour(chant, contourRegex) {
 
 /**
  * Using regular expression to process the user's input
- * (from the old parseSearchPattern function)
- * Regex pattern: /-?\d/g
- * - an optional negative `-` sign
- * - a single digit
- *
- * Regex pattern: /[A-Ga-g]/g
- * - all alphabetical letters in range A-G or a-g
  *
  * Search mode options:
  * - `wildcard` ~ Square pitch pattern (alphabetical value)
  * - `contour` ~ Aquitanian/Square contour pattern (numerical value)
  * @param {Chant[]} chantList
- * @param {RegExp} searchRegex a search regular expression pattern to match with the extracted pitch/location from each chants
+ * @param {RegExp | Number[]} searchInput a search regular expression pattern to match with the pitches, or contour array
  * @param {string} searchMode `wildcard` & `contour`
  * @returns {SearchResult[]} list of SearchResult object, each contains the chant and its detected melodic pattern
  */
-export function filterByMelodicPattern(chantList, searchRegex, searchMode) {
-    // If search pattern is empty, return the original chant list regardless of the search mode
-    if (!searchRegex) {
-        return chantList;
-    }
-
+export function filterByMelodicPattern(chantList, searchInput, searchMode) {
     let searchResults = [];
 
-    let
-        /** @type {NeumeComponent[][]} */
-        patterns;
+    let /** @type {NeumeComponent[][]} */ patterns = [];
+    console.log(searchInput)
 
-    for (let chant of chantList) {
-        switch (searchMode) {
-            case 'wildcard': {
-                patterns = matchChantWithWildcards(chant, searchRegex);
-                break;
+    if (searchInput.length == 0 || String(searchInput) == String(RegExp("", "gi"))) {
+        chantList.forEach((chant) => searchResults.push(new SearchResult(chant, [])));
+    } else {
+        for (let chant of chantList) {
+            switch (searchMode) {
+                case 'wildcard': {
+                    patterns = matchChantWithWildcards(chant, searchInput);
+                    break;
+                }
+                case 'contour': {
+                    patterns = matchChantWithContour(chant, searchInput);
+                    break;
+                }
+                default: {
+                    console.error("Invalid search mode!");
+                    break;
+                }
             }
-            case 'contour': {
-                patterns = matchChantWithContour(chant, searchQueryList);
-                break;
+            if (patterns.length > 0) {
+                searchResults.push(new SearchResult(chant, patterns));
             }
-            default: {
-                console.error("Invalid search mode!");
-                break;
-            }
-        }
-
-        if (patterns.length > 0) {
-            searchResults.push(new SearchResult(chant, patterns));
         }
     }
 
     return searchResults;
 }
 
-/**
- * @deprecated
- * Only works for Aquitanian notation chants
- * @param {Chant} chant The chant object, assuming it's in Aquitanian notation
- * @param {string[]} searchQueryList in the form of [-1, 1, 0, -1, 2] for example
- * @returns {NeumeComponent[][]} a list of patterns (in list form) that match the search query
- */
-function processIndefinitePitchMelodicPattern(chant, searchQueryList) {
-    const ncArray = getNeumeComponentList(chant.syllables);
-
-    let patterns = [];
-
-    for (let i_nc = 0; i_nc < ncArray.length - searchQueryList.length; i_nc++) {
-        let patternFound = [];
-
-        for (let i_sq = 0; i_sq < searchQueryList.length; i_sq++) {
-            if (ncArray[i_nc + i_sq].loc == searchQueryList[i_sq]) {
-                patternFound.push(ncArray[i_nc + i_sq]);
-            } else {
-                patternFound = [];
-                break;
-            }
-        }
-
-        if (patternFound.length > 0) {
-            patterns.push(patternFound);
-        }
-    }
-
-    return patterns;
-}
 
 /**
  * Search by ornamental shapes (liquescent, quilisma, oriscus)

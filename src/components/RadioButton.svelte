@@ -1,38 +1,24 @@
 <script>
-    import { retrieve, persist } from "../utility/utils";
+    import { persist, retrieve } from "../utility/utils";
+
     export let value;
-    const id = `${value}-radio`;
-    export let group;
+    export let name;
+    export let onChange;
     export let disabled = false;
+    $: checked = retrieve(name) == value;
 
-    /** @type {boolean} */
-    let prevSelection = retrieve(group);
-
-    $: check = value == prevSelection;
-
-    function updateLS() {
-        persist(group, value);
+    function updateLocalStorageWhenChange() {
+        persist(name, value);
     }
 
-    export function isChecked() {
-        return check;
-    }
-
-    export function getSelection() {
-        return retrieve(group);
+    export function setCheck() {
+        checked = true;
+        updateLocalStorageWhenChange();
     }
 </script>
 
 <label>
-    <input
-        {id}
-        type="radio"
-        name={group}
-        on:change={updateLS}
-        {value}
-        checked={check}
-        {disabled}
-    />
+    <input {name} type="radio" on:change={onChange} on:change={updateLocalStorageWhenChange} {disabled} {checked}/>
     <slot />
 </label>
 

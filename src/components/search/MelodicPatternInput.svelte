@@ -1,51 +1,58 @@
 <script>
-    import { controllers } from "chart.js";
+    import { onMount } from "svelte";
+    import { retrieve } from "../../utility/utils";
     import RadioButton from "../RadioButton.svelte";
     import TextInput from "../TextInput.svelte";
     import Tooltip from "../Tooltip.svelte";
 
-    let id = "melodic-pattern-input";
-    export let group = "search-query-option";
+    export let onKeydown;
+    export let onInput;
+    let searchModeSelection; // this will be the bind:group of the radio buttons
+    let patternInput = `melodic-pattern-input`;
+    let searchModeName = "search-mode";
 
     let patternInputBox,
         error = "",
         placeholder = "e.g.: 1 +1 -2 a b? a* g";
 
-    let
-        /** @type {RadioButton} */ contourButton,
+    let /** @type {RadioButton} */ contourButton,
         /** @type {RadioButton} */ wildcardButton;
-    export let onKeydown;
-    export let onInput;
 
     /**
-     * Takes in the raw input string, output a list of recognizable query
+     * Takes in the raw input string, output a list of recognizable token
      * @param {string} inputStr the raw input string
-     * @param {string} searchMode 'exact-pitch' or 'contour'
      * @return {string[]}
      */
-    function filterValidInput(inputStr, searchMode) {
-        if (!inputStr) {
+    function filterValidWildcardInput(inputStr) {
+        const wildcardInputFilter = /[\.]\??|[A-Ga-g?*]\??/gi;
+        let filteredInput = inputStr.match(wildcardInputFilter);
+
+        if (filteredInput != null) {
+            return filteredInput;
+        } else {
             return [];
         }
-        const validInputFilter = /[\.]\??|[A-Ga-g?*]\??/gi;
-        const numericMelodyRegex = /\+?\-?\d/g;
-        let filteredInput = inputStr.match(validInputFilter);
+    }
 
-        // TODO: filter input for contour
-        let melodyList = [];
-        if (searchMode == "wildcard") {
-            melodyList = filteredInput.map((pitch) => pitch.toLowerCase());
-        } else if (searchMode == "contour") {
-            melodyList = inputStr.match(numericMelodyRegex);
-            melodyList = filteredInput.map(Number);
+    /**
+     * Takes in the raw input string, output a list of valid numerical values
+     * @param {string} inputStr the raw input string
+     * @return {number[]}
+     */
+    function filterValidContourInput(inputStr) {
+        const numericInputFilter = /\+?\-?\d/g;
+        let melodyList = inputStr.match(numericInputFilter);
+
+        if (melodyList != null) {
+            return melodyList.map(Number);
+        } else {
+            return [];
         }
-
-        return filteredInput;
     }
 
     /**
      * @param {string[]} inputCharList a list of valid characters
-     * @return
+     * @return {RegExp} Regular Expression from the input token list (global, case insensitive)
      */
     function constructMatchingRegexp(inputCharList) {
         if (!inputCharList) {
@@ -65,7 +72,7 @@
      */
     export function getWildcardRegex() {
         return constructMatchingRegexp(
-            filterValidInput(patternInputBox.getValue()),
+            filterValidWildcardInput(patternInputBox.getValue()),
         );
     }
 
@@ -78,11 +85,31 @@
 
     export function reset() {
         patternInputBox.setValue("");
+        wildcardButton.setCheck();
     }
 
-    export function getMelodicPatternRegex() {
-        return getWildcardRegex();
+    export function getMelodicPatternSearchMode() {
+        return retrieve(searchModeName);
     }
+
+    /**
+     * @return {RegExp | Number[]}
+     */
+    export function getMelodicPatternInput() {
+        let searchMode = retrieve(searchModeName);
+        if (searchMode == "wildcard") {
+            return constructMatchingRegexp(
+                filterValidWildcardInput(patternInputBox.getValue()),
+            );
+        } else if (searchMode == "contour") {
+            // Contour pattern input does not need the RegExp construction step!
+            return filterValidContourInput(patternInputBox.getValue());
+        }
+    }
+
+    onMount(() => {
+        patternInputBox.setValue(retrieve(patternInput));
+    });
 </script>
 
 <p>
@@ -90,15 +117,22 @@
     <span class="melodic-pattern-word"> melodic pattern </span>
 </p>
 
-<!-- <RadioButton value="exact-pitch" group="search-query-option" disabled>
-    Exact Pitch
-</RadioButton> -->
-
-<RadioButton value="wildcard" {group} bind:this={wildcardButton}>
+<RadioButton
+    name={searchModeName}
+    value="wildcard"
+    bind:this={wildcardButton}
+    bind:group={searchModeSelection}
+>
     Pitch (wildcards)
 </RadioButton>
+{searchModeSelection}
 <Tooltip id="wildcard-tooltip">
     <p>
+        <!-- <li>
+            <b> Exact pitch (only for Square music script chants): </b>
+            Enter pitch names of the melodic pattern. For example, "a b a f" will
+            search for a melodic pattern that follows the sequence A-B-A-F.
+        </li> -->
         Wildcard search follows the <i>regular expression</i> POSIX standard.
     </p>
     <ul>
@@ -120,16 +154,16 @@
 </Tooltip>
 <br />
 
-<RadioButton value="contour" {group} bind:this={contourButton}>
+<RadioButton
+    bind:group={searchModeSelection}
+    name={searchModeName}
+    value="contour"
+    bind:this={contourButton}
+>
     Contour (melodic intervals)
 </RadioButton>
 <Tooltip id="melodic-pattern-search">
     <ul>
-        <!-- <li>
-            <b> Exact pitch (only for Square music script chants): </b>
-            Enter pitch names of the melodic pattern. For example, "a b a f" will
-            search for a melodic pattern that follows the sequence A-B-A-F.
-        </li> -->
         <li>
             <b> Contour (Melodic intervals) </b> in the form of positive or negative
             integers (e.g., +1 indicates one step up - either a semitone or a tone
@@ -143,10 +177,11 @@
 <br />
 
 <TextInput
-    bind:this={patternInputBox}
+    id={patternInput}
     {onKeydown}
     {onInput}
-    id="pattern-input-box"
     {placeholder}
+    bind:this={patternInputBox}
 />
+
 {error}
