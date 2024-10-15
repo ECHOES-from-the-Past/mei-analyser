@@ -34,7 +34,7 @@
         loadDefaultOptions();
     }
 
-    let searchPanel;
+    let /** @type {SearchPanel} */ searchPanel;
     /**
      * Load default options for the Search Panel
      */

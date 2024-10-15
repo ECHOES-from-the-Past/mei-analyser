@@ -167,6 +167,7 @@
         melismaHighlight.setChecked();
         melodicPatternInput.reset();
         finalisInputBox.setValue("");
+        verovioRendition.setChecked();
     }
 
     /**
