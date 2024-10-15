@@ -12,7 +12,8 @@
     /** @type {NeumeComponents[][]} */
     export let melodicPatternNc;
 
-    /** @type {{
+    /**
+     * @type {{
         "melisma": {
             enabled: boolean,
             value: number
@@ -21,8 +22,11 @@
             enabled: boolean,
             aquitanianPitch: boolean
         },
+        "verovioRendition": {
+            enabled: boolean
+        }
     }}
-     */
+    */
     export let otherOptions;
 
     /* Constructing the text column  */
@@ -40,7 +44,7 @@
         for (let nc of syllable.neumeComponents) {
             if (nc.ornamental != null) {
                 // for Ornamental Neume CSS styling
-                wordWrapper.classList.add(nc.ornamental.type + "-word"); 
+                wordWrapper.classList.add(nc.ornamental.type + "-word");
                 break;
             }
         }
@@ -211,16 +215,18 @@
 
         let chantSVGDiv = document.getElementById("chant-svg");
         chantSVGDiv.innerHTML = "";
-        new ChantVerovioRender({
-            target: chantSVGDiv,
-            props: {
-                chant: chant,
-                highlightOptions: {
-                    melodicPatternNc: melodicPatternNc,
-                    melismaPatternSyl: melismaPatternSyl,
+        if (otherOptions.verovioRendition.enabled) {
+            new ChantVerovioRender({
+                target: chantSVGDiv,
+                props: {
+                    chant: chant,
+                    highlightOptions: {
+                        melodicPatternNc: melodicPatternNc,
+                        melismaPatternSyl: melismaPatternSyl,
+                    },
                 },
-            },
-        });
+            });
+        }
 
         // Add a little delay for Verovio to render the chant
         setTimeout(() => {

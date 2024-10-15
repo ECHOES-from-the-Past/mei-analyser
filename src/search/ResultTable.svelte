@@ -12,18 +12,7 @@
 
     /** @type {SearchResult[]} */
     export let searchResult;
-    /**
-     * @type {{
-        "melisma": {
-            enabled: boolean,
-            value: number
-        },
-        "customGABC": {
-            enabled: boolean,
-            aquitanianPitch: boolean
-        },
-    }}
-    */
+    /** See ResultTableRow::otherOptions */
     export let otherOptions;
 
     $: numberOfResult = searchResult.length;

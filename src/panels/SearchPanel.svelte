@@ -40,7 +40,8 @@
     let /** @type {Checkbox}  */ melismaHighlight,
         /** @type {TextInput} */ melismaInput;
     let /** @type {Checkbox}  */ customGABCCheckbox,
-        /** @type {Checkbox}  */ aquitanianPitchCustomGABC;
+        /** @type {Checkbox}  */ aquitanianPitchCustomGABC,
+        /** @type {Checkbox}  */ verovioRendition;
 
     let /** @type {Button}  */ searchButton; // bind this with the "Search" button
     let /** @type {ClientStatus} */ clientStatus;
@@ -139,6 +140,9 @@
                 enabled: customGABCCheckbox.isChecked(),
                 aquitanianPitch: aquitanianPitchCustomGABC.isChecked(),
             },
+            verovioRendition: {
+                enabled: verovioRendition.isChecked(),
+            },
         };
 
         // Perform search and display the result
@@ -147,7 +151,7 @@
                 target: searchResultDiv,
                 props: {
                     searchResult: result,
-                    otherOptions: otherOptions
+                    otherOptions: otherOptions,
                 },
             });
         });
@@ -304,6 +308,13 @@
                 >
                     Show Aquitanian in pitch value with text (only for chants
                     with detected mode)
+                </Checkbox>
+                <hr />
+                <Checkbox
+                    value="veriovio-rendition"
+                    bind:this={verovioRendition}
+                >
+                    Enable modern rendition of chants (Verovio)
                 </Checkbox>
                 <hr />
                 <!-- Search/filter by mode -->
