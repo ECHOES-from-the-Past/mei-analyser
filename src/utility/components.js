@@ -109,9 +109,10 @@ export class Chant {
    * @param {number} modeCertainty the certainty of the mode detection
    * @param {String} modeDescription an explaination of the mode detection
    * @param {{line: number, shape: string}} clef the clef of the chant
-   * @param {String[]} pemDatabaseUrls the URL of the file on the PEM (Portuguese Early Music) database
+   * @param {String[]} pemUrls the URL of the file on the PEM (Portuguese Early Music) database
+   * @param {String} cantusId the Cantus ID of the chant
    */
-  constructor(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, clef, pemDatabaseUrls) {
+  constructor(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, clef, pemUrls, cantusId) {
     this.meiContent = meiContent;
     this.fileName = fileName;
     this.title = title;
@@ -122,7 +123,8 @@ export class Chant {
     this.modeCertainty = modeCertainty;
     this.modeDescription = modeDescription;
     this.clef = clef;
-    this.pemDatabaseUrls = pemDatabaseUrls;
+    this.pemUrls = pemUrls;
+    this.cantusId = cantusId;
   }
 }
 

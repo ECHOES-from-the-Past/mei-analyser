@@ -51,7 +51,7 @@ function getNotationType(meiJSON) {
  * Obtain the URL of the file on the PEM (Portuguese Early Music database)
  * @returns {string[]} the URL of the file on the PEM
  */
-function getDatabaseUrls(meiJSON) {
+function getPEMUrls(meiJSON) {
     const urls = meiJSON.mei.meiHead[0].manifestationList[0].manifestation[0].itemList[0].item[0].$.target;
     const url = urls.split('and');
     return url;
@@ -86,9 +86,27 @@ function getClefInformation(meiJSON, notationType, modeDescription) {
  * @returns {string} the title of the chant
  */
 function getChantTitle(meiJSON) {
-    const title = meiJSON.mei.meiHead[0].fileDesc[0].titleStmt[0].title[0];
+    const title = meiJSON.mei.meiHead[0].fileDesc[0].titleStmt[0].title[0]._;
     return title;
 }
+
+
+/**
+ * 
+ * @param {JSON} meiJSON 
+ */
+function getCantusId(meiJSON) {
+    const cantusIdInfo = meiJSON.mei.meiHead[0].fileDesc[0].titleStmt[0].title[0].identifier[0];
+
+    let cantusId = "";
+    // Making sure that the information is type "CantusID"
+    if (cantusIdInfo.$.type == "CantusID") {
+        cantusId = cantusIdInfo._
+    }
+    console.log(meiJSON.mei.meiHead[0].fileDesc[0].titleStmt[0].title[0].identifier[0]._);
+    return cantusId;
+}
+
 
 /**
  * Get the source of the chant
@@ -725,8 +743,9 @@ for (let fileName of allMEIfiles) {
     }
     let clef = getClefInformation(meiJSON, notationType, modeDescription);
 
-    let pemDatabaseUrls = getDatabaseUrls(meiJSON);
-    let chant = new Chant(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, clef, pemDatabaseUrls);
+    let pemUrls = getPEMUrls(meiJSON);
+    let cantusId = getCantusId(meiJSON);
+    let chant = new Chant(meiContent, fileName, title, source, notationType, syllables, mode, modeCertainty, modeDescription, clef, pemUrls, cantusId);
 
     allChants.push(chant);
 }

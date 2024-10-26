@@ -266,7 +266,7 @@
             <Button onClick={() => printChantInformation(chant)}>
                 Display chant
             </Button>
-            {#each chant.pemDatabaseUrls as url}
+            {#each chant.pemUrls as url}
                 <ExternalLink href={url}>
                     <Button>View image on PEM</Button>
                 </ExternalLink>

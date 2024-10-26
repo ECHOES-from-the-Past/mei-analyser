@@ -3,6 +3,9 @@
     import AnalysisChart from "@search/AnalysisChart.svelte";
     import Section from "@/components/Section.svelte";
     import { capitalizeFirstLetter } from "@utility/utils";
+    import { Chant } from "@/utility/components";
+    
+    /** @type {Chant} */
     export let chant;
     let chantInfoDiv;
 
@@ -25,14 +28,15 @@
     modeMoreInfoLink.append(modeCalcLink);
 
     let info = {
-        Title: chant.title,
-        Source: chant.source,
+        "Title": chant.title,
+        "Source": chant.source,
+        "Cantus ID": chant.cantusId,
+        "PEM Database URL": chant.pemUrls,
         "Music Script": capitalizeFirstLetter(chant.notationType),
         "Possible Mode(s)":
             chant.mode.length == 0 ? "Unknown" : chant.mode.join(", "),
         "Mode Description": chant.modeDescription + modeMoreInfoLink.outerHTML,
         "MEI File": chant.fileName,
-        "PEM Database URL": chant.pemDatabaseUrls,
     };
 
     onMount(() => {
