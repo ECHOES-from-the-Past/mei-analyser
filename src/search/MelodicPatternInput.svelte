@@ -154,16 +154,21 @@
                     following sequences of notes: <code>f d a</code>, or
                     <code>f a</code>.
                 </li>
+                <li>
+                    E.g.: searching for <code>f .? a</code> could return the
+                    following sequences of notes: <code>f d a</code>,
+                    <code>f f a</code>, <code>f g a</code>, or <code>f a</code>, etc.
+                </li>
             </ul>
         </li>
         <li>
             Use an asterisk <code>*</code> <b> after a note </b>
-            to search for matches of zero or repeating notes (0 or more occurrences).
+            to search for any number of repetition of that note (0 or more occurrences).
             <ul>
                 <li>
                     E.g.: searching for <code>f d* a</code> could return the
                     following sequences of notes: <code>f a</code>, or
-                    <code>f d a</code>, <code>f d d a</code>, etc.
+                    <code>f d a</code>, <code>f d d a</code>, <code>f d d d a</code>, etc.
                 </li>
                 <li>
                     Note that <code>.*</code> will search for every note at all possible
