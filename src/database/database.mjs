@@ -103,7 +103,6 @@ function getCantusId(meiJSON) {
     if (cantusIdInfo.$.type == "CantusID") {
         cantusId = cantusIdInfo._
     }
-    console.log(meiJSON.mei.meiHead[0].fileDesc[0].titleStmt[0].title[0].identifier[0]._);
     return cantusId;
 }
 
