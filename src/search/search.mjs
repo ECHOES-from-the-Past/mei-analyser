@@ -226,7 +226,7 @@ export function filterByOrnamentalShapes(chantList, ornamentalOptions) {
  * Search by a finalis (the chant's last note)
  * @param {Chant[]} chantList list of chants to be filtered
  * @param {string | number} finalis the finalis that we are interested in
- * @returns {Chant[]} list of chants that has the selected ornamental shapes. If no options are selected, return all the chants.
+ * @returns {Chant[]} list of chants that has the finalis. Returns all chants if no finalis is determined.
  */
 export function filterByFinalis(chantList, finalis) {
     if (finalis == "" || !finalis) {
@@ -242,6 +242,34 @@ export function filterByFinalis(chantList, finalis) {
                 ? ncList[ncList.length - 1].loc
                 : ncList[ncList.length - 1].pitch;
         if (chantFinalisNote == finalis) {
+            resultChantList.push(chant);
+        }
+    }
+    return resultChantList;
+}
+
+/**
+ * Search by text
+ * @param {Chant[]} chantList list of chants to be filtered
+ * @param {string} pieceOfText the piece of text that we are interested in
+ * @returns {Chant[]} list of chants that has the queried text.
+ */
+export function filterByText(chantList, pieceOfText) {
+    if (pieceOfText == "" || !pieceOfText) {
+        return chantList;
+    }
+
+    /** @type {Chant[]} */
+    let resultChantList = [];
+
+    for (let chant of chantList) {
+        let allWords = chant.syllables.map((syllable) => {
+            return syllable.syllableWord.text;
+        }).join('').toLowerCase();
+
+        let wordRegex = new RegExp(pieceOfText, 'gi');
+        let matches = allWords.match(wordRegex);
+        if (matches != null && matches.length > 0) {
             resultChantList.push(chant);
         }
     }
