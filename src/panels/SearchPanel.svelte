@@ -19,6 +19,7 @@
         filterByOrnamentalShapes,
         filterByMelodicPattern,
         filterByFinalis,
+        filterByText,
     } from "@/search/search.mjs";
 
     import { onMount } from "svelte";
@@ -96,6 +97,12 @@
         listOfChants = filterByFinalis(
             listOfChants,
             finalisInputBox.getValue(),
+        );
+
+        /* Sixth layer of filtering: Text */
+        listOfChants = filterByText(
+            listOfChants,
+            textInputBox.getValue(),
         );
 
         /**
@@ -253,10 +260,10 @@
 
                 <!-- Search by finalis -->
                 <p>
-                    Filter chants by text
-                    <Tooltip id="text-filter">
+                    Filter chants by text (case insensitive)
+                    <!-- <Tooltip id="text-filter">
                         Filter chants by their text.
-                    </Tooltip>
+                    </Tooltip> -->
                 </p>
 
                 <TextInput
