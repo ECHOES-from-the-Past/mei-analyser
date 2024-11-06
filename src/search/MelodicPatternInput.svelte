@@ -24,7 +24,13 @@
      * @return {string[]}
      */
     function filterValidWildcardInput(inputStr) {
-        const wildcardInputFilter = /[\.]\??|[A-Ga-g?*]\??/gi;
+        /**
+         * @type {RegExp} A filter for valid wildcard input
+         * Group 1: [.*A-Ga-g]\{(\d+\,)?\d+\} - search for a{3}, .{2}, or f{2,4}
+         * Group 2: [\.]\??|[A-Ga-g?*]\??
+         */
+        const wildcardInputFilter =
+            /([.*A-Ga-g]\{(\d+\,)?\d+\})|([\.]\??|[A-Ga-g?*]\??)/gi;
         let filteredInput = inputStr.match(wildcardInputFilter);
 
         if (filteredInput != null) {
@@ -127,12 +133,7 @@
 </RadioButton>
 <Tooltip id="wildcard-tooltip">
     <p>
-        <!-- <li>
-            <b> Exact pitch (only for Square music script chants): </b>
-            Enter pitch names of the melodic pattern. For example, "a b a f" will
-            search for a melodic pattern that follows the sequence A-B-A-F.
-        </li> -->
-        Wildcard search follows the <i>regular expression</i> POSIX standard.
+        Wildcard search follows the <i>regular expression</i> POSIX standard. Search query is <i>case insensitive</i>, i.e., "A" is treated similarly as "a".
     </p>
     <ul>
         <li>
@@ -157,7 +158,8 @@
                 <li>
                     E.g.: searching for <code>f .? a</code> could return the
                     following sequences of notes: <code>f d a</code>,
-                    <code>f f a</code>, <code>f g a</code>, or <code>f a</code>, etc.
+                    <code>f f a</code>, <code>f g a</code>, or <code>f a</code>,
+                    etc.
                 </li>
             </ul>
         </li>
@@ -168,11 +170,36 @@
                 <li>
                     E.g.: searching for <code>f d* a</code> could return the
                     following sequences of notes: <code>f a</code>, or
-                    <code>f d a</code>, <code>f d d a</code>, <code>f d d d a</code>, etc.
+                    <code>f d a</code>, <code>f d d a</code>,
+                    <code>f d d d a</code>, etc.
                 </li>
                 <li>
                     Note that <code>.*</code> will search for every note at all possible
                     occurrences, i.e., everything.
+                </li>
+            </ul>
+        </li>
+        <li>
+            Use curly brackets and numerical value(s) <b> after a note </b>
+            to search for a specific number or range of repetitions for that note.
+            <ul>
+                <li>
+                    Syntax: <code>{`c{2}`}</code>, <code>{`a{2, 4}`}</code>, or
+                    <code> {`.{3}`} </code>
+                </li>
+                <li>
+                    E.g.: Searching <code> {`f c{2} a`} </code> would return all
+                    occurences of <code> f c c a </code>
+                </li>
+                <li>
+                    E.g.: Searching <code> {`f c{1, 5} a`} </code> would return
+                    all occurences of <code> f </code> that follows by
+                    <b>1 to 5</b> <code>c</code>, and ends with <code>a</code>.
+                </li>
+                <li>
+                    E.g.: Searching <code> {`f .{2, 4} a`} </code> would return
+                    all occurences of <code> f </code> that follows by
+                    <b>1 to 5</b> of any notes, and ends with <code>a</code>.
                 </li>
             </ul>
         </li>

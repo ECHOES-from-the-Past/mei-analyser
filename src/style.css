@@ -97,7 +97,7 @@ h3 {
 }
 
 p {
-  margin: 0.5rem 0;
+  margin: 0.4rem 0;
 }
 
 ul {
@@ -112,9 +112,10 @@ code {
   /* background-color: rgba(from var(--emerald-700) r g b / 0.24); */
   background-color: var(--emerald-800);
   color: white;
-  padding: 3px;
-  border-radius: 4px;
-  margin: 2px 1px;
+  padding: 2.4px 4px;
+  border-radius: 6px;
+  border: 1px var(--emerald-500) solid;
+  margin: 2px 2px;
 }
 
 .melodic-pattern-word {
