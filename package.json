@@ -1,6 +1,6 @@
 {
   "name": "mei-analyser",
-  "version": "0.5.5",
+  "version": "0.5.6",
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^3.1.2",
     "@types/verovio": "^3.13.4",
