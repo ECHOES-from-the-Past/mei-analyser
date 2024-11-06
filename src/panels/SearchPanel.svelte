@@ -23,6 +23,7 @@
 
     import { onMount } from "svelte";
     import { persist, retrieve, env } from "@utility/utils";
+    import SearchDropdown from "@/components/SearchDropdown.svelte";
 
     export let hidden = false;
 
@@ -244,6 +245,16 @@
                     }}
                     bind:this={finalisInputBox}
                 />
+                <!-- Metadata search filter -->
+                <hr />
+                <p>Filter chants by metadata:</p>
+                <SearchDropdown
+                    id = "metadata-search"
+                    allOptions={
+                        ["Apple", "Coffee", "Tea", "Apple Vinegar"]
+                    }>
+                </SearchDropdown>
+
                 <hr />
                 <Button
                     id="search-btn"
