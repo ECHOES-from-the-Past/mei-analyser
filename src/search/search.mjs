@@ -1,6 +1,6 @@
-import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList, SearchResult } from "../utility/components.js";
+import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList, SearchResult } from "@utility/components.js";
 
-import { Chant } from "../utility/components.js";
+import { Chant } from "@utility/components.js";
 
 /**
  * @param {Chant[]} chantList The list of chants

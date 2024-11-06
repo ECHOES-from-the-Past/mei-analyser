@@ -11,7 +11,6 @@ export default defineConfig({
       '@search': path.resolve(__dirname, './src/search'),
       '@panels': path.resolve(__dirname, './src/panels'),
       '@utility': path.resolve(__dirname, './src/utility'),
-      '@functions': path.resolve(__dirname, './src/functions'),
     },
   },
   plugins: [svelte()],
