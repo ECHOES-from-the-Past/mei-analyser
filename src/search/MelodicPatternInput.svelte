@@ -133,7 +133,7 @@
 </RadioButton>
 <Tooltip id="wildcard-tooltip">
     <p>
-        Wildcard search follows the <i>regular expression</i> POSIX standard. Search query is <i>case insensitive</i>, i.e., "A" is treated similarly as "a".
+        Wildcard search follows the <i>regular expression</i> POSIX standard.
     </p>
     <ul>
         <li>
@@ -168,14 +168,16 @@
             to search for any number of repetition of that note (0 or more occurrences).
             <ul>
                 <li>
-                    E.g.: searching for <code>f d* a</code> could return the
+                    E.g.: Searching for <code>f d* a</code> could return the
                     following sequences of notes: <code>f a</code>, or
                     <code>f d a</code>, <code>f d d a</code>,
                     <code>f d d d a</code>, etc.
                 </li>
                 <li>
-                    Note that <code>.*</code> will search for every note at all possible
-                    occurrences, i.e., everything.
+                    E.g.: Searching for <code>f .* a</code> will search for
+                    sequences starting with
+                    <code>f</code> and ending with <code>a</code>, with any
+                    number of notes in between.
                 </li>
             </ul>
         </li>
@@ -193,17 +195,23 @@
                 </li>
                 <li>
                     E.g.: Searching <code> {`f c{1, 5} a`} </code> would return
-                    all occurences of <code> f </code> that follows by
-                    <b>1 to 5</b> <code>c</code>, and ends with <code>a</code>.
+                    all occurences of <code>f</code>, followed by
+                    <b>1 to 5</b> <code>c</code>, and ending with
+                    <code>a</code>.
                 </li>
                 <li>
                     E.g.: Searching <code> {`f .{2, 4} a`} </code> would return
-                    all occurences of <code> f </code> that follows by
-                    <b>1 to 5</b> of any notes, and ends with <code>a</code>.
+                    all occurences of <code>f</code>, followed by
+                    <b>2 to 4</b> arbitrary notes, and ending with
+                    <code>a</code>.
                 </li>
             </ul>
         </li>
     </ul>
+    <p>
+        Note that the search query is <i>case insensitive</i> (i.e., "A" is treated
+        similarly as "a") and spaces between characters are optional.
+    </p>
 </Tooltip>
 <br />
 
