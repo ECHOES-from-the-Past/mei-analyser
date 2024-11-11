@@ -13,8 +13,7 @@
             "@search/*": ["src/search/*"],
             "@panels/*": ["src/panels/*"],
             "@utility/*": ["src/utility/*"],
-            "@functions/*": ["src/functions/*"],
-          },
+         },
     },
     "exclude": [
         "node_modules",

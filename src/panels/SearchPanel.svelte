@@ -19,7 +19,8 @@
         filterByOrnamentalShapes,
         filterByMelodicPattern,
         filterByFinalis,
-    } from "@functions/search.js";
+        filterByText,
+    } from "@/search/search.mjs";
 
     import { onMount } from "svelte";
     import { persist, retrieve, env } from "@utility/utils";
@@ -37,7 +38,9 @@
 
     let /** @type {MelodicPatternInput} */ melodicPatternInput;
 
-    let /** @type {TextInput} */ finalisInputBox;
+    let /** @type {TextInput} */ finalisInputBox,
+        /** @type {TextInput} */ textInputBox;
+
     let /** @type {Checkbox}  */ melismaHighlight,
         /** @type {TextInput} */ melismaInput;
     let /** @type {Checkbox}  */ customGABCCheckbox,
@@ -95,6 +98,12 @@
         listOfChants = filterByFinalis(
             listOfChants,
             finalisInputBox.getValue(),
+        );
+
+        /* Sixth layer of filtering: Text */
+        listOfChants = filterByText(
+            listOfChants,
+            textInputBox.getValue(),
         );
 
         /**
@@ -223,6 +232,8 @@
                 </p>
 
                 <hr />
+
+                <!-- Search by finalis -->
                 <p>
                     Filter chants by finalis (the last note)
                     <Tooltip id="finalis-filter">
@@ -256,6 +267,29 @@
                 </SearchDropdown>
 
                 <hr />
+
+                <!-- Search by finalis -->
+                <p>
+                    Filter chants by text (case insensitive)
+                    <!-- <Tooltip id="text-filter">
+                        Filter chants by their text.
+                    </Tooltip> -->
+                </p>
+
+                <TextInput
+                    id="text-input-box"
+                    placeholder="e.g.: 'dominici'"
+                    onKeydown={(e) => {
+                        if (e.key == "Enter") {
+                            searchButton.click();
+                        }
+                    }}
+                    bind:this={textInputBox}
+                />
+
+                <hr />
+
+                <!-- Search, Reset, and Clear Results buttons -->
                 <Button
                     id="search-btn"
                     onClick={async () => {
@@ -281,6 +315,7 @@
                 </Button>
             </Section>
 
+            <!-- OTHER OPTIONS -->
             <Section id="other-options">
                 <h3>Other options</h3>
                 <Checkbox value="melisma" bind:this={melismaHighlight}>
