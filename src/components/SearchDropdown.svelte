@@ -25,7 +25,6 @@
     {placeholder}
     onInput={filterOptions}
     onFocus={() => {
-        console.log("FOCUS")
         active = true;
     }}
     onBlur={() => {
