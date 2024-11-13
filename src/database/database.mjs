@@ -112,7 +112,7 @@ function getCantusId(meiJSON) {
  * @returns {string} the source of the chant
  */
 function getSource(meiJSON) {
-    const source = meiJSON.mei.meiHead[0].manifestationList[0].manifestation[0].itemList[0].item[0].identifier;
+    const source = meiJSON.mei.meiHead[0].manifestationList[0].manifestation[0].itemList[0].item[0].identifier[0];
     return source;
 }
 

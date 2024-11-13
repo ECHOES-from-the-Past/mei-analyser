@@ -3,6 +3,16 @@
     export let id = "textbox";
     export let placeholder = "Input here";
     export let onKeydown;
+    export let onFocus, onBlur;
+    export let autocomplete = "off";
+
+    /**
+     * @description
+     * Behaviour of the text input box when the user types something in.
+     * Able to use getValue() here for spontaneous retrieval of the value
+     * without any delays
+     * @type {Function}
+     */
     export let onInput;
 
     let value = retrieve(id);
@@ -29,6 +39,9 @@
     on:input={handleInputChanges}
     on:input={onInput}
     on:keydown={onKeydown}
+    on:focus={onFocus}
+    on:blur={onBlur}
+    autocomplete={autocomplete}
 />
 
 <style>

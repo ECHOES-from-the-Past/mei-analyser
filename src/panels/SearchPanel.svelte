@@ -20,11 +20,25 @@
         filterByMelodicPattern,
         filterByFinalis,
         filterByText,
-    } from "@/search/search.mjs";
+    } from "@search/search.mjs";
 
     import { onMount } from "svelte";
     import { persist, retrieve, env } from "@utility/utils";
     import SearchDropdown from "@/components/SearchDropdown.svelte";
+
+    const databaseURL =
+        env == "development" ? "src/database/database.json" : "./database.json";
+    let listOfChants = [];
+
+    onMount(async () => {
+        /**
+         * Retrieving the "locally" stored list of chants
+         * @type {Chant[]}
+         */
+        listOfChants = await fetch(databaseURL).then((response) =>
+            response.json(),
+        );
+    });
 
     export let hidden = false;
 
@@ -54,6 +68,8 @@
         /** @type {HTMLDivElement}*/ chantInfoDiv,
         /** @type {HTMLDivElement}*/ chantSVGDiv;
 
+    let /** @type {String[]}*/ listOfTitle;
+
     onMount(() => {
         clientStatus.hideStatus();
     });
@@ -63,21 +79,6 @@
      * @return {SearchResult[]} list of search results (each contain a chant and a list of melodic pattern)
      */
     async function performSearch() {
-        const databaseURL =
-            env == "development"
-                ? "src/database/database.json"
-                : "./database.json";
-
-        /**
-         * Retrieving the "locally" stored list of chants
-         * @type {Chant[]}
-         */
-        let listOfChants = await fetch(databaseURL).then((response) =>
-            response.json(),
-        );
-        /** @type {NeumeComponent[][]}*/
-        let melodicPattern;
-
         /* First layer of filtering: Notation type */
         listOfChants = filterByMusicScript(listOfChants, {
             aquitanian: aquitanianCheckbox.isChecked(),
@@ -101,10 +102,7 @@
         );
 
         /* Sixth layer of filtering: Text */
-        listOfChants = filterByText(
-            listOfChants,
-            textInputBox.getValue(),
-        );
+        listOfChants = filterByText(listOfChants, textInputBox.getValue());
 
         /**
          * Sort chant list by file name
@@ -116,7 +114,9 @@
             chantA.fileName < chantB.fileName ? -1 : 1,
         );
 
-        /* Pattern search */
+        /**
+         * Pattern search
+         */
         let melodicPatternResults = filterByMelodicPattern(
             listOfChants,
             melodicPatternInput.getMelodicPatternInput(),
@@ -258,13 +258,46 @@
                 />
                 <!-- Metadata search filter -->
                 <hr />
-                <p>Filter chants by metadata:</p>
+                <p>
+                    Filter chants by metadata <br /><i>
+                        (Title, Source, Cantus ID)</i
+                    >
+                </p>
                 <SearchDropdown
-                    id = "metadata-search"
-                    allOptions={
-                        ["Apple", "Coffee", "Tea", "Apple Vinegar"]
-                    }>
-                </SearchDropdown>
+                    id="title-dropdown-filter"
+                    placeholder="Search a title"
+                    allOptions={[
+                        ...new Set(
+                            listOfChants.map(
+                                (/** @type {Chant} */ chant) => chant.title,
+                            ),
+                        ),
+                    ]}
+                />
+
+                <SearchDropdown
+                    id="source-dropdown-filter"
+                    placeholder="Enter a chant's source"
+                    allOptions={[
+                        ...new Set(
+                            listOfChants.map((/** @type {Chant} */ chant) => {
+                                return chant.source;
+                            }),
+                        ),
+                    ]}
+                />
+
+                <SearchDropdown
+                    id="cantusid-dropdown-filter"
+                    placeholder="Search a Cantus ID"
+                    allOptions={[
+                        ...new Set(
+                            listOfChants.map(
+                                (/** @type {Chant} */ chant) => chant.cantusId,
+                            ),
+                        ),
+                    ]}
+                />
 
                 <hr />
 
