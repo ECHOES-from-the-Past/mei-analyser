@@ -30,16 +30,6 @@
         env == "development" ? "src/database/database.json" : "./database.json";
     let listOfChants = [];
 
-    onMount(async () => {
-        /**
-         * Retrieving the "locally" stored list of chants
-         * @type {Chant[]}
-         */
-        listOfChants = await fetch(databaseURL).then((response) =>
-            response.json(),
-        );
-    });
-
     export let hidden = false;
 
     // DOM Element binding via `bind:this`
@@ -70,23 +60,38 @@
 
     let /** @type {String[]}*/ listOfTitle;
 
-    onMount(() => {
-        clientStatus.hideStatus();
+    onMount(async () => {
+        clientStatus.showStatus("Loading list of chants...");
+        /**
+         * Retrieving the "locally" stored list of chants
+         * @type {Chant[]}
+         */
+        listOfChants = await fetch(databaseURL)
+            .then((response) => response.json())
+            .finally(() => {
+                clientStatus.hideStatus();
+            })
+            .catch(() => {
+                clientStatus.showStatus(
+                    "Error loading list of chants, please reload the page.",
+                );
+            });
     });
 
     /**
      * Perform highlighting when user clicks on "Search" button
      * @return {SearchResult[]} list of search results (each contain a chant and a list of melodic pattern)
      */
-    async function performSearch() {
+    function performSearch() {
+        let resultListOfChants = listOfChants;
         /* First layer of filtering: Notation type */
-        listOfChants = filterByMusicScript(listOfChants, {
+        resultListOfChants = filterByMusicScript(listOfChants, {
             aquitanian: aquitanianCheckbox.isChecked(),
             square: squareCheckbox.isChecked(),
         });
 
         /* Second layer of filtering: Ornamental shapes */
-        listOfChants = filterByOrnamentalShapes(listOfChants, {
+        resultListOfChants = filterByOrnamentalShapes(resultListOfChants, {
             liquescent: liquescentCheckbox.isChecked(),
             quilisma: quilismaCheckbox.isChecked(),
             oriscus: oriscusCheckbox.isChecked(),
@@ -96,13 +101,16 @@
         // resultChantList = filterByModes(resultChantList, modeCheckboxes, unknownModeCheckbox);
 
         /* Fifth layer of filtering: finals */
-        listOfChants = filterByFinalis(
-            listOfChants,
+        resultListOfChants = filterByFinalis(
+            resultListOfChants,
             finalisInputBox.getValue(),
         );
 
         /* Sixth layer of filtering: Text */
-        listOfChants = filterByText(listOfChants, textInputBox.getValue());
+        resultListOfChants = filterByText(
+            resultListOfChants,
+            textInputBox.getValue(),
+        );
 
         /**
          * Sort chant list by file name
@@ -110,7 +118,7 @@
          * - If chantA's file name is "less than" chantB's file name, return -1 to sort chantA before chantB
          * - Otherwise, return 1 to sort chantA after chantB
          */
-        listOfChants.sort((chantA, chantB) =>
+        resultListOfChants.sort((chantA, chantB) =>
             chantA.fileName < chantB.fileName ? -1 : 1,
         );
 
@@ -118,7 +126,7 @@
          * Pattern search
          */
         let melodicPatternResults = filterByMelodicPattern(
-            listOfChants,
+            resultListOfChants,
             melodicPatternInput.getMelodicPatternInput(),
             melodicPatternInput.getMelodicPatternSearchMode(),
         );
@@ -134,7 +142,7 @@
         chantSVGDiv.innerHTML = `<p>Chant visual will appear here</p>`;
     }
 
-    async function searchButtonAction() {
+    function searchButtonAction() {
         /**  @type {string[] | number[]} */
         clientStatus.showStatus("Searching...");
 
@@ -156,7 +164,11 @@
         };
 
         // Perform search and display the result
-        await performSearch().then((/**@type {SearchResult[]}*/ result) => {
+        let /**@type {SearchResult[]}*/ result = performSearch();
+
+        // Add a time delay for a feedback, since this is really fast
+        var delayMs = 1000; //1 second
+        setTimeout(() => {
             new ResultTable({
                 target: searchResultDiv,
                 props: {
@@ -164,9 +176,9 @@
                     otherOptions: otherOptions,
                 },
             });
-        });
-
-        clientStatus.hideStatus();
+            clientStatus.hideStatus();
+            console.debug("Done Search");
+        }, delayMs);
     }
 
     export function loadDefaultOptions() {

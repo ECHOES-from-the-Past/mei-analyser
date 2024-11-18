@@ -1,4 +1,5 @@
 <script>
+    import { onMount } from "svelte";
     import DropdownMenu from "./DropdownMenu.svelte";
     import TextInput from "./TextInput.svelte";
 
@@ -10,13 +11,17 @@
     export let placeholder = "input-something-here";
 
     export let allOptions = ["Placeholder 1", "Placeholder 2"];
-    let availableOptions = [];
+    let availableOptions;
 
     function filterOptions() {
         availableOptions = allOptions.filter((item) =>
             item.toLowerCase().includes(inputbox.getValue().toLowerCase()),
         );
     }
+
+    onMount(() => {
+        availableOptions = allOptions;
+    })
 </script>
 
 <TextInput
@@ -40,10 +45,12 @@
 {#if active}
     <DropdownMenu options={availableOptions} />
 {/if}
-<!-- {#each allOptions as i}
-    {`${i}, `}
-{/each}
-<br />
+<!-- {#each availableOptions as i}
+    <option value="">
+        {`${i}`}
+    </option>
+{/each} -->
+<!-- <br />
 {#each availableOptions as i}
     {`${i}, `}
 {/each} -->

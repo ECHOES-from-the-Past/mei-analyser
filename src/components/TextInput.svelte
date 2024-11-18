@@ -35,12 +35,12 @@
     type="text"
     {id}
     {placeholder}
-    bind:value
-    on:input={handleInputChanges}
-    on:input={onInput}
-    on:keydown={onKeydown}
     on:focus={onFocus}
     on:blur={onBlur}
+    bind:value
+    on:input={onInput}
+    on:input={handleInputChanges}
+    on:keydown={onKeydown}
     autocomplete={autocomplete}
 />
 

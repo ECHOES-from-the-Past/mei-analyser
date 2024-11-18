@@ -8,9 +8,7 @@
 <div class="dropdown">
     <div class="dropdown-menu">
       {#each options as option}
-        <div class="dropdown-item">
-          {option}
-        </div>
+        <p class="dropdown-item"> {option} </p>
       {/each}
     </div>
 </div>
