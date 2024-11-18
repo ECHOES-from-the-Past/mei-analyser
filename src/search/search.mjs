@@ -1,4 +1,4 @@
-import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList, SearchResult } from "@utility/components.js";
+import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList, SearchResult, Syllable } from "@utility/components.js";
 
 import { Chant } from "@utility/components.js";
 
@@ -263,15 +263,24 @@ export function filterByText(chantList, pieceOfText) {
     let resultChantList = [];
 
     for (let chant of chantList) {
-        let allWords = chant.syllables.map((syllable) => {
-            return syllable.syllableWord.text;
-        }).join('').toLowerCase();
-
-        let wordRegex = new RegExp(pieceOfText, 'gi');
-        let matches = allWords.match(wordRegex);
-        if (matches != null && matches.length > 0) {
-            resultChantList.push(chant);
+        let chantText = "";
+        chant.syllables.forEach((/** @type {Syllable} */ syllable) => {
+            let word = syllable.syllableWord;
+            if (word.position == "i" || word.position == "m") {
+            chantText += word.text;
+        } else if (word.position == "s" || word.position == "t") {
+            chantText += word.text + " ";
         }
+    });
+
+    chantText = chantText.toLowerCase();
+    pieceOfText = pieceOfText.toLowerCase();
+
+    let wordRegex = new RegExp(pieceOfText, 'gi');
+    let matches = chantText.match(wordRegex);
+    if (matches != null && matches.length > 0) {
+        resultChantList.push(chant);
     }
-    return resultChantList;
+}
+return resultChantList;
 }
