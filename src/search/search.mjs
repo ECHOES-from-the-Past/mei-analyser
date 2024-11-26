@@ -73,13 +73,15 @@ function matchChantWithWildcards(chant, wildcardRegex) {
 
 /**
  * @param {Chant} chant a Chant object
- * @param {Number[]} contourArray the list of numbers
+ * @param {Iterable} contourArray the list of numbers, or general contours (https://github.com/ECHOES-from-the-Past/mei-analyser/issues/95)
  * @returns {NeumeComponent[][]} a list of patterns (in list form) that match the search query
  */
 export function matchChantWithContour(chant, contourArray) {
     if (contourArray.length == 0) {
         return [];
     }
+    console.log(contourArray);
+    
 
     const ncArray = getNeumeComponentList(chant.syllables);
     const chantNotationType = chant.notationType;
@@ -93,7 +95,11 @@ export function matchChantWithContour(chant, contourArray) {
         if (chantNotationType == "aquitanian") {
             for (let i_sq = 0; i_sq < contourArray.length; i_sq++) {
                 // processing the search for Aquitanian notation, using the `loc` attribute
-                if (ncArray[i_nc + i_sq].loc + contourArray[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
+                if (ncArray[i_nc + i_sq].loc + contourArray[i_sq] == ncArray[i_nc + i_sq + 1].loc
+                    || (contourArray[i_sq] == "u" && ncArray[i_nc + i_sq + 1].loc > ncArray[i_nc + i_sq].loc)
+                    || (contourArray[i_sq] == "d" && ncArray[i_nc + i_sq + 1].loc < ncArray[i_nc + i_sq].loc)
+                    || (contourArray[i_sq] == "s" && ncArray[i_nc + i_sq + 1].loc == ncArray[i_nc + i_sq].loc)
+                ) {
                     patternFound.push(ncArray[i_nc + i_sq + 1]);
                 } else {
                     patternFound = [];
@@ -104,7 +110,11 @@ export function matchChantWithContour(chant, contourArray) {
         else if (chantNotationType == "square") {
             for (let i_search = 0; i_search < contourArray.length; i_search++) {
                 // processing the search for Square notation, using the `septenary` value of the note
-                if (toSeptenary(ncArray[i_nc + i_search]) + contourArray[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
+                if (toSeptenary(ncArray[i_nc + i_search]) + contourArray[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])
+                || (contourArray[i_search] == "u" && toSeptenary(ncArray[i_nc + i_search + 1]) > toSeptenary(ncArray[i_nc + i_search]))
+                || (contourArray[i_search] == "d" && toSeptenary(ncArray[i_nc + i_search + 1]) < toSeptenary(ncArray[i_nc + i_search]))
+                || (contourArray[i_search] == "s" && toSeptenary(ncArray[i_nc + i_search + 1]) == toSeptenary(ncArray[i_nc + i_search]))
+            ) {
                     patternFound.push(ncArray[i_nc + i_search + 1]);
                 } else {
                     patternFound = [];
