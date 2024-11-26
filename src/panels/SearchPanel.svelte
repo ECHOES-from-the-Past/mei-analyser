@@ -88,7 +88,7 @@
     function performSearch() {
         let resultListOfChants = listOfChants;
         /* First layer of filtering: Notation type */
-        resultListOfChants = filterByMusicScript(listOfChants, {
+        resultListOfChants = filterByMusicScript(resultListOfChants, {
             aquitanian: aquitanianCheckbox.isChecked(),
             square: squareCheckbox.isChecked(),
         });
