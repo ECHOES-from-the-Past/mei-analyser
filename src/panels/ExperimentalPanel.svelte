@@ -1,7 +1,7 @@
 <script>
     export let hidden = true;
     import Section from "@components/Section.svelte";
-    import SearchDropdown from "@components/SearchDropdown.svelte";
+    import ComboBox from "@/components/ComboBox.svelte";
     import { onMount } from "svelte";
     let allOptions = [];
     onMount(() => {
@@ -21,7 +21,7 @@
 
 <div id="experimental-panel" {hidden}>
     <Section>
-        <SearchDropdown
+        <ComboBox
             id="experimental-dropdown"
             {allOptions}
             placeholder="Search for chant title..."

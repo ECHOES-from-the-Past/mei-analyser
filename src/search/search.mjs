@@ -275,3 +275,67 @@ export function filterByText(chantList, pieceOfText) {
     }
     return resultChantList;
 }
+
+/**
+ * Search by title
+ * @param {Chant[]} chantList 
+ * @param {String} title 
+ * @returns 
+ */
+export function filterByTitle(chantList, title) {
+    if (title == "" || !title) {
+        return chantList;
+    }
+
+    /** @type {Chant[]} */
+    let resultChantList = [];
+
+    for (let chant of chantList) {
+        if (chant.title.toLowerCase().includes(title.toLowerCase())) {
+            resultChantList.push(chant);
+        }
+    }
+    return resultChantList;
+}
+
+/**
+ * Search by source on PEM
+ * @param {Chant[]} chantList
+ * @param {String} source
+ */
+export function filterBySource(chantList, source) {
+    if (source == "" || !source) {
+        return chantList;
+    }
+
+    /** @type {Chant[]} */
+    let resultChantList = [];
+
+    for (let chant of chantList) {
+        if (chant.source.toLowerCase().includes(source.toLowerCase())) {
+            resultChantList.push(chant);
+        }
+    }
+    return resultChantList;
+}
+
+/**
+ * Search by Cantus ID
+ * @param {Chant[]} chantList
+ * @param {String} cantusId
+ */
+export function filterByCantusId(chantList, cantusId) {
+    if (cantusId == "" || !cantusId) {
+        return chantList;
+    }
+
+    /** @type {Chant[]} */
+    let resultChantList = [];
+
+    for (let chant of chantList) {
+        if (chant.cantusId.toLowerCase().includes(cantusId.toLowerCase())) {
+            resultChantList.push(chant);
+        }
+    }
+    return resultChantList;
+}

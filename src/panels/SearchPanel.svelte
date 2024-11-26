@@ -20,11 +20,14 @@
         filterByMelodicPattern,
         filterByFinalis,
         filterByText,
+        filterByTitle,
+        filterBySource,
+        filterByCantusId,
     } from "@search/search.mjs";
 
     import { onMount } from "svelte";
     import { persist, retrieve, env } from "@utility/utils";
-    import SearchDropdown from "@/components/SearchDropdown.svelte";
+    import ComboBox from "@components/ComboBox.svelte";
 
     const databaseURL =
         env == "development" ? "src/database/database.json" : "./database.json";
@@ -110,6 +113,22 @@
         resultListOfChants = filterByText(
             resultListOfChants,
             textInputBox.getValue(),
+        );
+
+        /* Seventh layer of filtering: Metadata */
+        resultListOfChants = filterByTitle(
+            resultListOfChants,
+            document.getElementById("title-dropdown-filter").value,
+        );
+
+        resultListOfChants = filterBySource(
+            resultListOfChants,
+            document.getElementById("source-dropdown-filter").value,
+        );
+
+        resultListOfChants = filterByCantusId(
+            resultListOfChants,
+            document.getElementById("cantusid-dropdown-filter").value,
         );
 
         /**
@@ -275,7 +294,7 @@
                         (Title, Source, Cantus ID)</i
                     >
                 </p>
-                <SearchDropdown
+                <ComboBox
                     id="title-dropdown-filter"
                     placeholder="Search a title"
                     allOptions={[
@@ -287,7 +306,7 @@
                     ]}
                 />
 
-                <SearchDropdown
+                <ComboBox
                     id="source-dropdown-filter"
                     placeholder="Enter a chant's source"
                     allOptions={[
@@ -299,7 +318,7 @@
                     ]}
                 />
 
-                <SearchDropdown
+                <ComboBox
                     id="cantusid-dropdown-filter"
                     placeholder="Search a Cantus ID"
                     allOptions={[
@@ -337,8 +356,8 @@
                 <!-- Search, Reset, and Clear Results buttons -->
                 <Button
                     id="search-btn"
-                    onClick={async () => {
-                        await searchButtonAction();
+                    onClick={() => {
+                        searchButtonAction();
                     }}
                     bind:this={searchButton}
                 >
