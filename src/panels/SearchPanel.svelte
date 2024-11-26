@@ -100,10 +100,7 @@
         );
 
         /* Sixth layer of filtering: Text */
-        listOfChants = filterByText(
-            listOfChants,
-            textInputBox.getValue(),
-        );
+        listOfChants = filterByText(listOfChants, textInputBox.getValue());
 
         /**
          * Sort chant list by file name
@@ -176,7 +173,7 @@
         finalisInputBox.setValue("");
         textInputBox.setValue("");
         melodicPatternInput.reset();
-        
+
         melismaHighlight.setUnchecked();
         verovioRendition.setChecked();
     }
@@ -264,14 +261,17 @@
                 <p>
                     Filter chants by text
                     <Tooltip id="text-filter">
-                        This filter searches for chants that contain the text input by the user.
-                        Note that, this filter is:
+                        This filter searches for chants that contain the text
+                        input by the user. Note that, this filter is:
                         <ul>
                             <li>
-                                Case insensitive (e.g., <code>BENE</code> is the same as <code>bene</code>)
+                                Case insensitive (e.g., <code>BENE</code> is the
+                                same as <code>bene</code>)
                             </li>
                             <li>
-                                Space sensitive (e.g., <code>te om</code> will search for all occurrences of <b>"te om"</b> with the space)
+                                Space sensitive (e.g., <code>te om</code> will
+                                search for all occurrences of <b>"te om"</b> with
+                                the space)
                             </li>
                         </ul>
                     </Tooltip>

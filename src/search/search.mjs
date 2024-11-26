@@ -80,8 +80,6 @@ export function matchChantWithContour(chant, contourArray) {
     if (contourArray.length == 0) {
         return [];
     }
-    console.log(contourArray);
-    
 
     const ncArray = getNeumeComponentList(chant.syllables);
     const chantNotationType = chant.notationType;
@@ -111,10 +109,10 @@ export function matchChantWithContour(chant, contourArray) {
             for (let i_search = 0; i_search < contourArray.length; i_search++) {
                 // processing the search for Square notation, using the `septenary` value of the note
                 if (toSeptenary(ncArray[i_nc + i_search]) + contourArray[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])
-                || (contourArray[i_search] == "u" && toSeptenary(ncArray[i_nc + i_search + 1]) > toSeptenary(ncArray[i_nc + i_search]))
-                || (contourArray[i_search] == "d" && toSeptenary(ncArray[i_nc + i_search + 1]) < toSeptenary(ncArray[i_nc + i_search]))
-                || (contourArray[i_search] == "s" && toSeptenary(ncArray[i_nc + i_search + 1]) == toSeptenary(ncArray[i_nc + i_search]))
-            ) {
+                    || (contourArray[i_search] == "u" && toSeptenary(ncArray[i_nc + i_search + 1]) > toSeptenary(ncArray[i_nc + i_search]))
+                    || (contourArray[i_search] == "d" && toSeptenary(ncArray[i_nc + i_search + 1]) < toSeptenary(ncArray[i_nc + i_search]))
+                    || (contourArray[i_search] == "s" && toSeptenary(ncArray[i_nc + i_search + 1]) == toSeptenary(ncArray[i_nc + i_search]))
+                ) {
                     patternFound.push(ncArray[i_nc + i_search + 1]);
                 } else {
                     patternFound = [];
@@ -277,20 +275,20 @@ export function filterByText(chantList, pieceOfText) {
         chant.syllables.forEach((/** @type {Syllable} */ syllable) => {
             let word = syllable.syllableWord;
             if (word.position == "i" || word.position == "m") {
-            chantText += word.text;
-        } else if (word.position == "s" || word.position == "t") {
-            chantText += word.text + " ";
+                chantText += word.text;
+            } else if (word.position == "s" || word.position == "t") {
+                chantText += word.text + " ";
+            }
+        });
+
+        chantText = chantText.toLowerCase();
+        pieceOfText = pieceOfText.toLowerCase();
+
+        let wordRegex = new RegExp(pieceOfText, 'gi');
+        let matches = chantText.match(wordRegex);
+        if (matches != null && matches.length > 0) {
+            resultChantList.push(chant);
         }
-    });
-
-    chantText = chantText.toLowerCase();
-    pieceOfText = pieceOfText.toLowerCase();
-
-    let wordRegex = new RegExp(pieceOfText, 'gi');
-    let matches = chantText.match(wordRegex);
-    if (matches != null && matches.length > 0) {
-        resultChantList.push(chant);
     }
-}
-return resultChantList;
+    return resultChantList;
 }
