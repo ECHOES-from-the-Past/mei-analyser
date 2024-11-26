@@ -46,7 +46,10 @@
     let /** @type {MelodicPatternInput} */ melodicPatternInput;
 
     let /** @type {TextInput} */ finalisInputBox,
-        /** @type {TextInput} */ textInputBox;
+        /** @type {TextInput} */ textInputBox,
+        /** @type {ComboBox} */ titleComboBox,
+        /** @type {ComboBox} */ sourceComboBox,
+        /** @type {ComboBox} */ cantusIdComboBox;
 
     let /** @type {Checkbox}  */ melismaHighlight,
         /** @type {TextInput} */ melismaInput;
@@ -118,17 +121,17 @@
         /* Seventh layer of filtering: Metadata */
         resultListOfChants = filterByTitle(
             resultListOfChants,
-            document.getElementById("title-dropdown-filter").value,
+            titleComboBox.getInputValue(),
         );
 
         resultListOfChants = filterBySource(
             resultListOfChants,
-            document.getElementById("source-dropdown-filter").value,
+            sourceComboBox.getInputValue(),
         );
 
         resultListOfChants = filterByCantusId(
             resultListOfChants,
-            document.getElementById("cantusid-dropdown-filter").value,
+            cantusIdComboBox.getInputValue(),
         );
 
         /**
@@ -186,7 +189,7 @@
         let /**@type {SearchResult[]}*/ result = performSearch();
 
         // Add a time delay for a feedback, since this is really fast
-        var delayMs = 1000; //1 second
+        var delayMs = 60; // ms
         setTimeout(() => {
             new ResultTable({
                 target: searchResultDiv,
@@ -295,6 +298,7 @@
                     >
                 </p>
                 <ComboBox
+                    bind:this={titleComboBox}
                     id="title-dropdown-filter"
                     placeholder="Search a title"
                     allOptions={[
@@ -304,9 +308,11 @@
                             ),
                         ),
                     ]}
+                    onKeydown={searchOnEnter}
                 />
 
                 <ComboBox
+                    bind:this={sourceComboBox}
                     id="source-dropdown-filter"
                     placeholder="Enter a chant's source"
                     allOptions={[
@@ -316,9 +322,11 @@
                             }),
                         ),
                     ]}
+                    onKeydown={searchOnEnter}
                 />
 
                 <ComboBox
+                    bind:this={cantusIdComboBox}
                     id="cantusid-dropdown-filter"
                     placeholder="Search a Cantus ID"
                     allOptions={[
@@ -328,6 +336,7 @@
                             ),
                         ),
                     ]}
+                    onKeydown={searchOnEnter}
                 />
 
                 <hr />

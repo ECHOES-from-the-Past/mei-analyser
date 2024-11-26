@@ -6,6 +6,7 @@
     /** @type {TextInput} */
     let inputbox;
     let active;
+    export let onKeydown;
 
     export let id = "search-dropdown";
     export let placeholder = "input-something-here";
@@ -21,6 +22,10 @@
             }
             return item.toLowerCase().includes(inputbox.getValue().toLowerCase());
         });
+    }
+
+    export function getInputValue() {
+        return inputbox.getValue();
     }
 
     onMount(() => {
@@ -40,6 +45,7 @@
         active = false;
     }}
     autocomplete="off"
+    {onKeydown}
 />
 <br />
 
