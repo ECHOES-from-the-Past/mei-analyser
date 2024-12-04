@@ -208,9 +208,11 @@
         [liquescentCheckbox, quilismaCheckbox, oriscusCheckbox].forEach((e) =>
             e.setUnchecked(),
         );
-        melismaHighlight.setChecked();
-        melodicPatternInput.reset();
         finalisInputBox.setValue("");
+        textInputBox.setValue("");
+        melodicPatternInput.reset();
+
+        melismaHighlight.setUnchecked();
         verovioRendition.setChecked();
     }
 
@@ -343,10 +345,22 @@
 
                 <!-- Search by finalis -->
                 <p>
-                    Filter chants by text (case insensitive)
-                    <!-- <Tooltip id="text-filter">
-                        Filter chants by their text.
-                    </Tooltip> -->
+                    Filter chants by text
+                    <Tooltip id="text-filter">
+                        This filter searches for chants that contain the text
+                        input by the user. Note that, this filter is:
+                        <ul>
+                            <li>
+                                Case insensitive (e.g., <code>BENE</code> is the
+                                same as <code>bene</code>)
+                            </li>
+                            <li>
+                                Space sensitive (e.g., <code>te om</code> will
+                                search for all occurrences of <b>"te om"</b> with
+                                the space)
+                            </li>
+                        </ul>
+                    </Tooltip>
                 </p>
 
                 <TextInput

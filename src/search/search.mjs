@@ -1,4 +1,4 @@
-import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList, SearchResult } from "@utility/components.js";
+import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList, SearchResult, Syllable } from "@utility/components.js";
 
 import { Chant } from "@utility/components.js";
 
@@ -73,7 +73,7 @@ function matchChantWithWildcards(chant, wildcardRegex) {
 
 /**
  * @param {Chant} chant a Chant object
- * @param {Number[]} contourArray the list of numbers
+ * @param {Iterable} contourArray the list of numbers, or general contours (https://github.com/ECHOES-from-the-Past/mei-analyser/issues/95)
  * @returns {NeumeComponent[][]} a list of patterns (in list form) that match the search query
  */
 export function matchChantWithContour(chant, contourArray) {
@@ -93,7 +93,11 @@ export function matchChantWithContour(chant, contourArray) {
         if (chantNotationType == "aquitanian") {
             for (let i_sq = 0; i_sq < contourArray.length; i_sq++) {
                 // processing the search for Aquitanian notation, using the `loc` attribute
-                if (ncArray[i_nc + i_sq].loc + contourArray[i_sq] == ncArray[i_nc + i_sq + 1].loc) {
+                if (ncArray[i_nc + i_sq].loc + contourArray[i_sq] == ncArray[i_nc + i_sq + 1].loc
+                    || (contourArray[i_sq] == "u" && ncArray[i_nc + i_sq + 1].loc > ncArray[i_nc + i_sq].loc)
+                    || (contourArray[i_sq] == "d" && ncArray[i_nc + i_sq + 1].loc < ncArray[i_nc + i_sq].loc)
+                    || (contourArray[i_sq] == "s" && ncArray[i_nc + i_sq + 1].loc == ncArray[i_nc + i_sq].loc)
+                ) {
                     patternFound.push(ncArray[i_nc + i_sq + 1]);
                 } else {
                     patternFound = [];
@@ -104,7 +108,11 @@ export function matchChantWithContour(chant, contourArray) {
         else if (chantNotationType == "square") {
             for (let i_search = 0; i_search < contourArray.length; i_search++) {
                 // processing the search for Square notation, using the `septenary` value of the note
-                if (toSeptenary(ncArray[i_nc + i_search]) + contourArray[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])) {
+                if (toSeptenary(ncArray[i_nc + i_search]) + contourArray[i_search] == toSeptenary(ncArray[i_nc + i_search + 1])
+                    || (contourArray[i_search] == "u" && toSeptenary(ncArray[i_nc + i_search + 1]) > toSeptenary(ncArray[i_nc + i_search]))
+                    || (contourArray[i_search] == "d" && toSeptenary(ncArray[i_nc + i_search + 1]) < toSeptenary(ncArray[i_nc + i_search]))
+                    || (contourArray[i_search] == "s" && toSeptenary(ncArray[i_nc + i_search + 1]) == toSeptenary(ncArray[i_nc + i_search]))
+                ) {
                     patternFound.push(ncArray[i_nc + i_search + 1]);
                 } else {
                     patternFound = [];
@@ -263,12 +271,21 @@ export function filterByText(chantList, pieceOfText) {
     let resultChantList = [];
 
     for (let chant of chantList) {
-        let allWords = chant.syllables.map((syllable) => {
-            return syllable.syllableWord.text;
-        }).join('').toLowerCase();
+        let chantText = "";
+        chant.syllables.forEach((/** @type {Syllable} */ syllable) => {
+            let word = syllable.syllableWord;
+            if (word.position == "i" || word.position == "m") {
+                chantText += word.text;
+            } else if (word.position == "s" || word.position == "t") {
+                chantText += word.text + " ";
+            }
+        });
+
+        chantText = chantText.toLowerCase();
+        pieceOfText = pieceOfText.toLowerCase();
 
         let wordRegex = new RegExp(pieceOfText, 'gi');
-        let matches = allWords.match(wordRegex);
+        let matches = chantText.match(wordRegex);
         if (matches != null && matches.length > 0) {
             resultChantList.push(chant);
         }

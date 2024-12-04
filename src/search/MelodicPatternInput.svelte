@@ -46,11 +46,13 @@
      * @return {number[]}
      */
     function filterValidContourInput(inputStr) {
-        const numericInputFilter = /\+?\-?\d/g;
+        const numericInputFilter = /\+?\-?\d|[uds]/g;
         let melodyList = inputStr.match(numericInputFilter);
 
         if (melodyList != null) {
-            return melodyList.map(Number);
+            return melodyList.map((item) => {
+                return isNaN(item) ? item : Number(item);
+            });
         } else {
             return [];
         }
@@ -224,14 +226,57 @@
     Contour (melodic intervals)
 </RadioButton>
 <Tooltip id="melodic-pattern-search">
+    <h3><b> Contour (melodic intervals) </b> in the form of:</h3>
     <ul>
         <li>
-            <b> Contour (Melodic intervals) </b> in the form of positive or negative
-            integers (e.g., +1 indicates one step up - either a semitone or a tone
-            - from the previous note; 0 indicates unison; and -2 indicates two steps
-            down - either a major or minor third - from the previous note). When
-            looking for a series of notes, the integers can be separated by a space
-            (e.g., "0 +2 -1 +1 +1").
+            <b> Positive or negative integers </b>,
+            the integers can be separated optionally by a space
+            <ul>
+                <li>
+                    E.g., <code>+1</code> indicates one step up - either a semitone
+                    or a tone - from the previous note
+                </li>
+                <li>
+                    E.g., <code>-2</code> indicates two steps down - either a major
+                    or minor third - from the previous note
+                </li>
+                <li>
+                    E.g., <code>0</code> indicates unison
+                </li>
+                <li>
+                    Example of a search query:
+                    <code>+2 -1 0 +1 +1</code> will search for patterns that go two
+                    steps up, one step down, unison, two steps up, and one step up.
+                </li>
+            </ul>
+        </li>
+        <li>
+            <b>General contour</b> (<i>case insensitive</i>, optional spaces):
+            <ul>
+                <li>
+                    <code>u</code> for upward contour (ascending pitches)
+                </li>
+                <li>
+                    <code>d</code> for downward contour (decending pitches)
+                </li>
+                <li>
+                    <code>s</code> for the same note (unison)
+                </li>
+                <li>
+                    Example of a search query:
+                    <code>u d s u d</code> will search for a contour pattern that
+                    goes up, down, same, up, down.
+                </li>
+            </ul>
+        </li>
+        <li>
+            A mix of both integers and general contour is allowed.
+            <ul>
+                <li>
+                    E.g., <code>u -2 0 +1</code> will search for a pattern that goes
+                    up, two steps down, unison, and one step up.
+                </li>
+            </ul>
         </li>
     </ul>
 </Tooltip>
