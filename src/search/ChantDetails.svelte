@@ -35,7 +35,7 @@
         "Music Script": capitalizeFirstLetter(chant.notationType),
         "Possible Mode(s)":
             chant.mode.length == 0 ? "Unknown" : chant.mode.join(", "),
-        "Mode Description": chant.modeDescription + modeMoreInfoLink.outerHTML,
+        "Mode Analysis": chant.modeDescription + modeMoreInfoLink.outerHTML,
         "MEI File": chant.fileName,
     };
 
@@ -69,6 +69,11 @@
                 a.target = "_blank";
                 a.innerText = `${fileName.split("/").pop()} (GitHub)`; // showing the file name only
                 p.appendChild(a);
+            } else if (k == "Possible Mode(s)") {
+                // Remove mode suggestion for square notation
+                if (chant.notationType == "square") {
+                    continue;
+                }
             } else {
                 // Default rendering
                 p.innerHTML = `<b>${k}</b>: ${info[k]}`;
