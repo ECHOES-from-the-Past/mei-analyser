@@ -28,6 +28,10 @@
         return inputbox.getValue();
     }
 
+    export function reset() {
+        inputbox.setValue("");
+    }
+
     onMount(() => {
         availableOptions = allOptions;
     });

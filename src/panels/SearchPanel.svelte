@@ -214,6 +214,9 @@
 
         melismaHighlight.setUnchecked();
         verovioRendition.setChecked();
+        [titleComboBox, sourceComboBox, cantusIdComboBox].forEach((e) =>
+            e.reset(),
+        );
     }
 
     /**
@@ -302,7 +305,7 @@
                 <ComboBox
                     bind:this={titleComboBox}
                     id="title-dropdown-filter"
-                    placeholder="Search a title"
+                    placeholder="Search by a title"
                     allOptions={[
                         ...new Set(
                             listOfChants.map(
@@ -316,7 +319,7 @@
                 <ComboBox
                     bind:this={sourceComboBox}
                     id="source-dropdown-filter"
-                    placeholder="Enter a chant's source"
+                    placeholder="Search by a chant's source"
                     allOptions={[
                         ...new Set(
                             listOfChants.map((/** @type {Chant} */ chant) => {
@@ -330,7 +333,7 @@
                 <ComboBox
                     bind:this={cantusIdComboBox}
                     id="cantusid-dropdown-filter"
-                    placeholder="Search a Cantus ID"
+                    placeholder="Search by Cantus ID"
                     allOptions={[
                         ...new Set(
                             listOfChants.map(
