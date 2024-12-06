@@ -12,7 +12,7 @@
     let searchModeName = "search-mode";
 
     let patternInputBox,
-        error = "",
+        /** Global error message */ error = "",
         placeholder = "e.g.: 1 +1 -2 a b? a* g";
 
     let /** @type {RadioButton} */ contourButton,
@@ -24,15 +24,37 @@
      * @return {string[]}
      */
     function filterValidWildcardInput(inputStr) {
+        const characterGroup = `([A-Ga-g.]|(\+?-?\d))`;
+        const bracketsGroup = `(\{(\d+\,)?\d+\})`;
+        const postGroup = "([\?*]?)"; 
+        const flags = `gi`;
         /**
          * @type {RegExp} A filter for valid wildcard input
-         * Group 1: [.*A-Ga-g]\{(\d+\,)?\d+\} - search for a{3}, .{2}, or f{2,4}
-         * Group 2: [\.]\??|[A-Ga-g*]\??: search for .?, a?, f?, etc.
-         * Group 3: \+?-?\d
+         * - As of version 0.5.9: /([A-Ga-g.]|(\+?-?\d))((\{(\d+\,)?\d+\})|([\?*]?))/gi
          */
-        const wildcardInputFilter =
-            /([.*A-Ga-g]\{(\d+\,)?\d+\})|([\.]\??|[A-Ga-g*]\??)|(\+?-?\d)/gi;
+        const wildcardInputFilter = /([A-Ga-g.]|(\+?-?\d))((\{(\d+\,)?\d+\})|([\?*]?))/gi;
+
+        /**
+         * @type {string[] | null} filteredInput
+         * It contains the list of valid tokens all in string format.
+         *
+         * - For note heights (numerical values), they would need to be converted into a different format
+         * for string matching.
+         *   - Zero and positive numbers: `\+0`, `\+1`, `\+2`, `\+3`
+         *   - Negative numbers: `-1`, `-2`, `-3`
+         */
         let filteredInput = inputStr.match(wildcardInputFilter);
+
+        for (let i = 0; i < filteredInput.length; i++) {
+            // If a token is not a number
+            if (!isNaN(filteredInput[i])) {
+                // If the number is zero or positive, add a \+ in front of the number for regexp construction
+                if (Number(filteredInput[i]) >= 0) {
+                    filteredInput[i] = `\\+${Number(filteredInput[i])}`;
+                }
+            }
+            // Do nothing if the token is a negative number or a different type of token
+        }
 
         if (filteredInput != null) {
             return filteredInput;
@@ -67,6 +89,7 @@
         if (!inputCharList) {
             return new RegExp("");
         }
+
         try {
             let matchingRegex = new RegExp(inputCharList.join(""), "gi");
             error = "";
@@ -230,8 +253,8 @@
     <h3><b> Contour (melodic intervals) </b> in the form of:</h3>
     <ul>
         <li>
-            <b> Positive or negative integers </b>,
-            the integers can be separated optionally by a space
+            <b> Positive or negative integers </b>, the integers can be
+            separated optionally by a space
             <ul>
                 <li>
                     E.g., <code>+1</code> indicates one step up - either a semitone

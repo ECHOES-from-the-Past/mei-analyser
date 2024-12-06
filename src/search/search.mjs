@@ -50,13 +50,13 @@ function matchChantWithWildcards(chant, wildcardRegex) {
 
     const ncPitchStr = ncArray
         .map((nc) => {
-            if (chant.notationType == "aquitanian") {
-                return nc.loc;
+            if (chant.notationType == "aquitanian") {               
+                return nc.loc < 0 ? nc.loc : `+${nc.loc}`;
             } else if (chant.notationType == "square") {
                 return nc.pitch;
             }
         })
-        .join("");
+        .join("");    
 
     let patternMatches = ncPitchStr.matchAll(wildcardRegex);
     let patterns = [];
@@ -65,7 +65,11 @@ function matchChantWithWildcards(chant, wildcardRegex) {
         // matchIter.index = matching pattern starting index
         // matchIter[0] = the matching pattern
         // slice: takes in the starting index and the ending index (starting + pattern's length)
-        patterns.push(ncArray.slice(matchIter.index, matchIter.index + matchIter[0].length));
+        if (chant.notationType == "aquitanian") {
+            patterns.push(ncArray.slice(matchIter.index/2, matchIter.index/2 + matchIter[0].length/2));
+        } else if (chant.notationType == "square") {
+            patterns.push(ncArray.slice(matchIter.index, matchIter.index + matchIter[0].length));
+        }
     });
 
     return patterns;
@@ -76,7 +80,7 @@ function matchChantWithWildcards(chant, wildcardRegex) {
  * @param {Iterable} contourArray the list of numbers, or general contours (https://github.com/ECHOES-from-the-Past/mei-analyser/issues/95)
  * @returns {NeumeComponent[][]} a list of patterns (in list form) that match the search query
  */
-export function matchChantWithContour(chant, contourArray) {
+function matchChantWithContour(chant, contourArray) {
     if (contourArray.length == 0) {
         return [];
     }
@@ -139,6 +143,7 @@ export function matchChantWithContour(chant, contourArray) {
  * @returns {SearchResult[]} list of SearchResult object, each contains the chant and its detected melodic pattern
  */
 export function filterByMelodicPattern(chantList, searchInput, searchMode) {
+    console.log("searchInput: ", searchInput);
     let searchResults = [];
 
     let /** @type {NeumeComponent[][]} */ patterns = [];

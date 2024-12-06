@@ -146,12 +146,12 @@
 
         /**
          * Pattern search
-         */
+         */       
         let melodicPatternResults = filterByMelodicPattern(
             resultListOfChants,
             melodicPatternInput.getMelodicPatternInput(),
             melodicPatternInput.getMelodicPatternSearchMode(),
-        );
+        );        
 
         /* Return the result */
         return melodicPatternResults;
@@ -199,7 +199,6 @@
                 },
             });
             clientStatus.hideStatus();
-            console.debug("Done Search");
         }, delayMs);
     }
 
