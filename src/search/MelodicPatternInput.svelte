@@ -27,10 +27,11 @@
         /**
          * @type {RegExp} A filter for valid wildcard input
          * Group 1: [.*A-Ga-g]\{(\d+\,)?\d+\} - search for a{3}, .{2}, or f{2,4}
-         * Group 2: [\.]\??|[A-Ga-g?*]\??
+         * Group 2: [\.]\??|[A-Ga-g*]\??: search for .?, a?, f?, etc.
+         * Group 3: \+?-?\d
          */
         const wildcardInputFilter =
-            /([.*A-Ga-g]\{(\d+\,)?\d+\})|([\.]\??|[A-Ga-g?*]\??)/gi;
+            /([.*A-Ga-g]\{(\d+\,)?\d+\})|([\.]\??|[A-Ga-g*]\??)|(\+?-?\d)/gi;
         let filteredInput = inputStr.match(wildcardInputFilter);
 
         if (filteredInput != null) {
