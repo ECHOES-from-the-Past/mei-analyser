@@ -24,10 +24,6 @@
      * @return {string[]}
      */
     function filterValidWildcardInput(inputStr) {
-        const characterGroup = `([A-Ga-g.]|(\+?-?\d))`;
-        const bracketsGroup = `(\{(\d+\,)?\d+\})`;
-        const postGroup = "([?*]?)";
-        const flags = `gi`;
         /**
          * @type {RegExp} A filter for valid wildcard input
          * - As of version 0.5.9: /([A-Ga-g.]|(\+?-?\d))((\{(\d+\,)?\d+\})|([\?*]?))/gi
@@ -47,8 +43,9 @@
         let filteredInput = inputStr.match(wildcardInputFilter);
 
         for (let i = 0; i < filteredInput.length; i++) {
-            // If a token is a number with a +, -, or no sign:     
-            filteredInput[i] = filteredInput[i].replace(/(\+|\-|)\d/, (match) => {
+            // If a token is a number with a +, -, or no sign
+            // The value cannot be inside curly brackets as it is a quantifier
+            filteredInput[i] = filteredInput[i].replace(/(?<!\{)(\+|\-|)\d(?!\})/, (match) => {
                 if (Number(match) >= 0) {
                     return `\(\\+${Number(match)}\)`;
                 } else {
@@ -60,9 +57,7 @@
             // - A-G, a-g: square note pitch 
             // - 0-9: Aquitanian note height
             // Note: \\ is important to create regex escape character
-            filteredInput[i] = filteredInput[i].replace(/\./, (match) => {
-                return `\([A-Ga-g]|(\\\+?-?\\d)\)`;
-            });
+            filteredInput[i] = filteredInput[i].replace(/\./, `\([A-Ga-g]|(\\\+?-?\\d)\)`);
         }
         console.log(filteredInput);
         
