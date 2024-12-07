@@ -26,13 +26,14 @@
     function filterValidWildcardInput(inputStr) {
         const characterGroup = `([A-Ga-g.]|(\+?-?\d))`;
         const bracketsGroup = `(\{(\d+\,)?\d+\})`;
-        const postGroup = "([\?*]?)"; 
+        const postGroup = "([?*]?)";
         const flags = `gi`;
         /**
          * @type {RegExp} A filter for valid wildcard input
          * - As of version 0.5.9: /([A-Ga-g.]|(\+?-?\d))((\{(\d+\,)?\d+\})|([\?*]?))/gi
          */
-        const wildcardInputFilter = /([A-Ga-g.]|(\+?-?\d))((\{(\d+\,)?\d+\})|([\?*]?))/gi;
+        const wildcardInputFilter =
+            /([A-Ga-g.]|(\+?-?\d))((\{(\d+\,)?\d+\})|([\?*]?))/gi;
 
         /**
          * @type {string[] | null} filteredInput
@@ -46,15 +47,25 @@
         let filteredInput = inputStr.match(wildcardInputFilter);
 
         for (let i = 0; i < filteredInput.length; i++) {
-            // If a token is not a number
-            if (!isNaN(filteredInput[i])) {
-                // If the number is zero or positive, add a \+ in front of the number for regexp construction
-                if (Number(filteredInput[i]) >= 0) {
-                    filteredInput[i] = `\\+${Number(filteredInput[i])}`;
+            // If a token is a number with a +, -, or no sign:     
+            filteredInput[i] = filteredInput[i].replace(/(\+|\-|)\d/, (match) => {
+                if (Number(match) >= 0) {
+                    return `\(\\+${Number(match)}\)`;
+                } else {
+                    return `\(${match}\)`;
                 }
-            }
-            // Do nothing if the token is a negative number or a different type of token
+            });
+
+            // If a token is a dot: the value can match anything including:
+            // - A-G, a-g: square note pitch 
+            // - 0-9: Aquitanian note height
+            // Note: \\ is important to create regex escape character
+            filteredInput[i] = filteredInput[i].replace(/\./, (match) => {
+                return `\([A-Ga-g]|(\\\+?-?\\d)\)`;
+            });
         }
+        console.log(filteredInput);
+        
 
         if (filteredInput != null) {
             return filteredInput;
