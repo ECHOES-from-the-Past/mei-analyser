@@ -42,7 +42,10 @@
          *   - Negative numbers: `-1`, `-2`, `-3`
          */
         let filteredInput = inputStr.match(wildcardInputFilter);
-
+        if (filteredInput == null) {
+            return [];
+        }
+        
         for (let i = 0; i < filteredInput.length; i++) {
             // If a token is a number with a +, -, or no sign
             // The value cannot be inside curly brackets as it is a quantifier
@@ -66,13 +69,7 @@
                 `\([A-Ga-g]|(\\\+?-?\\d)\)`,
             );
         }
-        console.log(filteredInput);
-
-        if (filteredInput != null) {
-            return filteredInput;
-        } else {
-            return [];
-        }
+        return filteredInput;
     }
 
     /**
