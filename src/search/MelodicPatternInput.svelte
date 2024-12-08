@@ -45,22 +45,27 @@
         for (let i = 0; i < filteredInput.length; i++) {
             // If a token is a number with a +, -, or no sign
             // The value cannot be inside curly brackets as it is a quantifier
-            filteredInput[i] = filteredInput[i].replace(/(?<!\{)(\+|\-|)\d(?!\})/, (match) => {
-                if (Number(match) >= 0) {
-                    return `\(\\+${Number(match)}\)`;
-                } else {
-                    return `\(${match}\)`;
-                }
-            });
+            filteredInput[i] = filteredInput[i].replace(
+                /(?<!\{)(\+|\-|)\d(?!\})/,
+                (match) => {
+                    if (Number(match) >= 0) {
+                        return `\(\\+${Number(match)}\)`;
+                    } else {
+                        return `\(${match}\)`;
+                    }
+                },
+            );
 
             // If a token is a dot: the value can match anything including:
-            // - A-G, a-g: square note pitch 
+            // - A-G, a-g: square note pitch
             // - 0-9: Aquitanian note height
             // Note: \\ is important to create regex escape character
-            filteredInput[i] = filteredInput[i].replace(/\./, `\([A-Ga-g]|(\\\+?-?\\d)\)`);
+            filteredInput[i] = filteredInput[i].replace(
+                /\./,
+                `\([A-Ga-g]|(\\\+?-?\\d)\)`,
+            );
         }
         console.log(filteredInput);
-        
 
         if (filteredInput != null) {
             return filteredInput;
@@ -164,86 +169,92 @@
     Pitch (wildcards)
 </RadioButton>
 <Tooltip id="wildcard-tooltip">
+    <h1>Wildcard tooltip</h1>
     <p>
         Wildcard search follows the <i>regular expression</i> POSIX standard.
+        <br />
+        The following rules applies to both <b>square music script's pitches</b>
+        (<code>A-G</code> or <code>a-g</code>, <i>case insensitive</i>) and
+        <b>Aquitanian script's relative location to the line</b>
+        (e.g., <code>-1</code>, <code>0</code>, <code>+2</code>,
+        <code>3</code>).
+        <br>
+            Note that spaces between characters are optional.
     </p>
     <ul>
         <li>
             Use a dot <b><code>.</code></b> to search for one arbitrary note.
+            E.g.:
             <ul>
                 <li>
-                    E.g.: searching for <code>d . a</code> could return the
-                    following sequences of notes: <code>d f a</code>,
-                    <code> d a a</code>, etc.
+                    <code>d . a</code> will look for the following sequences of
+                    notes: <code>d f a</code>,
+                    <code> d a a</code>, <code> d c a</code>, etc.
                 </li>
             </ul>
         </li>
         <li>
             Use a question mark <code>?</code> <b> after a note or a dot </b>
-            <code>.</code> to search for an optional note.
+            <code>.</code> to search for an optional note. E.g.:
             <ul>
                 <li>
-                    E.g.: searching for <code>f d? a</code> could return the
-                    following sequences of notes: <code>f d a</code>, or
+                    <code>f d? a</code> will look for the following sequences of
+                    notes: <code>f d a</code>, or
                     <code>f a</code>.
                 </li>
                 <li>
-                    E.g.: searching for <code>f .? a</code> could return the
-                    following sequences of notes: <code>f d a</code>,
-                    <code>f f a</code>, <code>f g a</code>, or <code>f a</code>,
-                    etc.
+                    <code>-2 .? 1</code> will look for the following sequences of
+                    notes: <code>-2 +1</code>, <code>-2 +1 +1</code>, <code>-2 0 +1</code>,
+                    or <code>-2 -3 +1</code>, etc.
                 </li>
             </ul>
         </li>
         <li>
             Use an asterisk <code>*</code> <b> after a note </b>
             to search for any number of repetition of that note (0 or more occurrences).
+            E.g.:
             <ul>
                 <li>
-                    E.g.: Searching for <code>f d* a</code> could return the
-                    following sequences of notes: <code>f a</code>, or
+                    <code>f d* a</code> will look for the following sequences of
+                    notes: <code>f a</code>, or
                     <code>f d a</code>, <code>f d d a</code>,
                     <code>f d d d a</code>, etc.
                 </li>
                 <li>
-                    E.g.: Searching for <code>f .* a</code> will search for
-                    sequences starting with
-                    <code>f</code> and ending with <code>a</code>, with any
-                    number of notes in between.
+                    <code>f .* a</code> will look for the sequences starting
+                    with <code>f</code>
+                    and ending with <code>a</code>, with any number of notes in
+                    between.
                 </li>
             </ul>
         </li>
         <li>
             Use curly brackets and numerical value(s) <b> after a note </b>
             to search for a specific number or range of repetitions for that note.
+            <br />
+            For example:
             <ul>
                 <li>
-                    Syntax: <code>{`c{2}`}</code>, <code>{`a{2, 4}`}</code>, or
-                    <code> {`.{3}`} </code>
+                    Syntax: <code>{`c{2}`}</code>, <code>{`a{2,4}`}</code>,
+                    <code>{`2{1,5}`}</code>, or <code> {`.{3}`} </code>
                 </li>
                 <li>
-                    E.g.: Searching <code> {`f c{2} a`} </code> would return all
-                    occurences of <code> f c c a </code>
+                    <code> {`2 1{2} -1`} </code> would search for all occurences
+                    of <code> +2 +1 +1 -1 </code>
                 </li>
                 <li>
-                    E.g.: Searching <code> {`f c{1, 5} a`} </code> would return
-                    all occurences of <code>f</code>, followed by
-                    <b>1 to 5</b> <code>c</code>, and ending with
-                    <code>a</code>.
+                    <code> {`f c{1, 5} a`} </code> would search for all
+                    occurences of <code>f</code>, followed by <b>1 to 5</b>
+                    <code>c</code>, and ending with <code>a</code>.
                 </li>
                 <li>
-                    E.g.: Searching <code> {`f .{2, 4} a`} </code> would return
-                    all occurences of <code>f</code>, followed by
-                    <b>2 to 4</b> arbitrary notes, and ending with
-                    <code>a</code>.
+                    <code> {`-1 .{2,4} 3`} </code> would search for all
+                    occurences of <code>-1</code>, followed by <b>2 to 4</b>
+                    <i> arbitrary notes</i>, and ending with <code>+3</code>.
                 </li>
             </ul>
         </li>
     </ul>
-    <p>
-        Note that the search query is <i>case insensitive</i> (i.e., "A" is treated
-        similarly as "a") and spaces between characters are optional.
-    </p>
 </Tooltip>
 <br />
 
