@@ -5,15 +5,16 @@
     import TextInput from "@components/TextInput.svelte";
     import Tooltip from "@components/Tooltip.svelte";
 
+    const melodicPatternInputId = `melodic-pattern-input`; // unique, assuming only one instance of this component
+    const placeholder = `E.g.: "1{2} +1 -2" or "a b? a* g"`;
+
     export let onKeydown;
     export let onInput;
     let searchModeSelection; // this will be the bind:group of the radio buttons
-    let patternInput = `melodic-pattern-input`;
     let searchModeName = "search-mode";
 
     let patternInputBox,
-        /** Global error message */ error = "",
-        placeholder = "e.g.: 1 +1 -2 a b? a* g";
+        /** Global error message */ error = "";
 
     let /** @type {RadioButton} */ contourButton,
         /** @type {RadioButton} */ wildcardButton;
@@ -151,7 +152,7 @@
     }
 
     onMount(() => {
-        patternInputBox.setValue(retrieve(patternInput));
+        patternInputBox.setValue(retrieve(melodicPatternInputId));
     });
 </script>
 
@@ -169,22 +170,23 @@
     Pitch (wildcards)
 </RadioButton>
 <Tooltip id="wildcard-tooltip">
-    <h1>Wildcard tooltip</h1>
+    <h2>Wildcard tooltip</h2>
     <p>
         Wildcard search follows the <i>regular expression</i> POSIX standard.
-        <br />
         The following rules applies to both <b>square music script's pitches</b>
-        (<code>A-G</code> or <code>a-g</code>, <i>case insensitive</i>) and
+        (<code>A</code>/<code>a</code> to <code>G</code>/<code>g</code>,
+        <i>case insensitive</i>) and
         <b>Aquitanian script's relative location to the line</b>
         (e.g., <code>-1</code>, <code>0</code>, <code>+2</code>,
         <code>3</code>).
-        <br>
-            Note that spaces between characters are optional.
+        Note that blank space between characters is <i> optional </i>.
     </p>
+    <hr>
     <ul>
         <li>
             Use a dot <b><code>.</code></b> to search for one arbitrary note.
-            E.g.:
+            <br />
+            For example:
             <ul>
                 <li>
                     <code>d . a</code> will look for the following sequences of
@@ -195,7 +197,7 @@
         </li>
         <li>
             Use a question mark <code>?</code> <b> after a note or a dot </b>
-            <code>.</code> to search for an optional note. E.g.:
+            <code>.</code> to search for an optional note. For example:
             <ul>
                 <li>
                     <code>f d? a</code> will look for the following sequences of
@@ -203,16 +205,17 @@
                     <code>f a</code>.
                 </li>
                 <li>
-                    <code>-2 .? 1</code> will look for the following sequences of
-                    notes: <code>-2 +1</code>, <code>-2 +1 +1</code>, <code>-2 0 +1</code>,
-                    or <code>-2 -3 +1</code>, etc.
+                    <code>-2 .? 1</code> will look for the following sequences
+                    of notes: <code>-2 +1</code>, <code>-2 +1 +1</code>,
+                    <code>-2 0 +1</code>, or <code>-2 -3 +1</code>, etc.
                 </li>
             </ul>
         </li>
         <li>
             Use an asterisk <code>*</code> <b> after a note </b>
             to search for any number of repetition of that note (0 or more occurrences).
-            E.g.:
+            <br />
+            For example:
             <ul>
                 <li>
                     <code>f d* a</code> will look for the following sequences of
@@ -324,7 +327,7 @@
 <br />
 
 <TextInput
-    id={patternInput}
+    id={melodicPatternInputId}
     {onKeydown}
     {onInput}
     {placeholder}
