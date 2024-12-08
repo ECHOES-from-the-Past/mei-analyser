@@ -112,7 +112,7 @@
                             })
                             .join("")})`,
                     );
-                } else if (!aquitanianPitchGABC) {
+                } else {
                     customGABC.push(
                         `${word}(${syllable.neumeComponents
                             .map((nc) => {

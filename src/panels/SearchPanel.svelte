@@ -440,10 +440,9 @@
                 <Checkbox
                     value="aquitanian-pitch"
                     bind:this={aquitanianPitchCustomGABC}
-                    disabled
                 >
-                    Show Aquitanian in pitch value with text (only for chants
-                    with detected mode)
+                    Show Aquitanian in pitch value (only available
+                    for chants with detected mode)
                 </Checkbox>
                 <hr />
                 <Checkbox

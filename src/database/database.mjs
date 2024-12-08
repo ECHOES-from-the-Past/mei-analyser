@@ -331,9 +331,10 @@ function calculateAquitanianMode(syllables) {
     if (possibleModes.length == 0) {
         modeDescription += `<li style='list-style-type: none;'> <b> <u> Unable to suggest a mode for the chant. The pitch of the line is unknown. </b> </u> </li>`;
     } else {
-        modeDescription += `<li style='list-style-type: none;'> <b> <u> Possible mode(s) include mode ${possibleModes.join(", mode ")}. The pitch of the line is '${possibleModes.forEach((mode) => {
+        modeDescription += `<li style='list-style-type: none;'> <b> <u> Possible mode(s) include mode ${possibleModes.join(", mode ")}. The pitch of the line is '${possibleModes.map((mode) => {
             return linePitch[mode];
-        })}'. </b> </u> </li>`;
+        })
+        }'. </b> </u> </li>`;
     }
 
     modeDescription += "</ul>";

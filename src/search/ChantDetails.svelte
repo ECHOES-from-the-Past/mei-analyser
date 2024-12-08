@@ -69,11 +69,9 @@
                 a.target = "_blank";
                 a.innerText = `${fileName.split("/").pop()} (GitHub)`; // showing the file name only
                 p.appendChild(a);
-            } else if (k == "Possible Mode(s)") {
+            } else if (chant.notationType == "square" && k == "Possible Mode(s)") {
                 // Remove mode suggestion for square notation
-                if (chant.notationType == "square") {
-                    continue;
-                }
+                continue;
             } else {
                 // Default rendering
                 p.innerHTML = `<b>${k}</b>: ${info[k]}`;
