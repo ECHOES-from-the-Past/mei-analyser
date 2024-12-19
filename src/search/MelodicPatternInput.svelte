@@ -274,18 +274,18 @@
     <ul>
         <li>
             <b> Positive or negative integers </b>, the integers can be
-            separated optionally by a space
+            separated optionally by a space. For example:
             <ul>
                 <li>
-                    E.g., <code>+1</code> indicates one step up - either a semitone
+                    <code>+1</code> indicates one step up - either a semitone
                     or a tone - from the previous note
                 </li>
                 <li>
-                    E.g., <code>-2</code> indicates two steps down - either a major
+                    <code>-2</code> indicates two steps down - either a major
                     or minor third - from the previous note
                 </li>
                 <li>
-                    E.g., <code>0</code> indicates unison
+                    <code>0</code> indicates unison
                 </li>
                 <li>
                     Example of a search query:

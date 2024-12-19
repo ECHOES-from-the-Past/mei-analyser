@@ -41,14 +41,12 @@
     }
 
     .tooltip {
-        position: absolute;
-        z-index: 10;
         width: 80%;
         padding: 2rem;
         background-color: var(--background);
         border: 4px solid var(--button);
         border-radius: 0.5rem;
-        margin: 10rem;
+        margin: auto;
     }
 
     .tooltip-content {
