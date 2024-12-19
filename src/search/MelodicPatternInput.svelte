@@ -169,14 +169,13 @@
 <Tooltip id="wildcard-tooltip">
     <h2>Wildcard tooltip</h2>
     <p>
-        Wildcard search follows the <i>regular expression</i> POSIX standard.
         The following rules applies to both <b>square music script's pitches</b>
         (<code>A</code>/<code>a</code> to <code>G</code>/<code>g</code>,
         <i>case insensitive</i>) and
         <b>Aquitanian script's relative location to the line</b>
         (e.g., <code>-1</code>, <code>0</code>, <code>+2</code>,
-        <code>3</code>).
-        Note that blank space between characters is <i> optional </i>.
+        <code>+3</code>). Note that blank space between characters and 
+        the plus sign "+" for positive integers are <i> optional </i>.
     </p>
     <hr>
     <ul>
@@ -202,7 +201,7 @@
                     <code>f a</code>.
                 </li>
                 <li>
-                    <code>-2 .? 1</code> will look for the following sequences
+                    <code>-2 .? +1</code> will look for the following sequences
                     of notes: <code>-2 +1</code>, <code>-2 +1 +1</code>,
                     <code>-2 0 +1</code>, or <code>-2 -3 +1</code>, etc.
                 </li>
@@ -236,10 +235,10 @@
             <ul>
                 <li>
                     Syntax: <code>{`c{2}`}</code>, <code>{`a{2,4}`}</code>,
-                    <code>{`2{1,5}`}</code>, or <code> {`.{3}`} </code>
+                    <code>{`+2{1,5}`}</code>, or <code> {`.{3}`} </code>
                 </li>
                 <li>
-                    <code> {`2 1{2} -1`} </code> would search for all occurences
+                    <code> {`+2 +1{2} -1`} </code> would search for all occurences
                     of <code> +2 +1 +1 -1 </code>
                 </li>
                 <li>
@@ -248,13 +247,17 @@
                     <code>c</code>, and ending with <code>a</code>.
                 </li>
                 <li>
-                    <code> {`-1 .{2,4} 3`} </code> would search for all
+                    <code> {`-1 .{2,4} +3`} </code> would search for all
                     occurences of <code>-1</code>, followed by <b>2 to 4</b>
                     <i> arbitrary notes</i>, and ending with <code>+3</code>.
                 </li>
             </ul>
         </li>
     </ul>
+    <hr>
+    <p>
+        The wildcards follows the conventional <i>regular expression</i> standard.
+    </p>
 </Tooltip>
 <br />
 
