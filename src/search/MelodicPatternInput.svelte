@@ -256,7 +256,7 @@
     </ul>
     <hr>
     <p>
-        The wildcards follows the conventional <i>regular expression</i> standard.
+        The wildcards follow the conventional <i>regular expression</i> standard.
     </p>
 </Tooltip>
 <br />
