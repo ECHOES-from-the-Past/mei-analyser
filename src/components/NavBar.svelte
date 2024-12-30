@@ -29,13 +29,6 @@
         Corpus Search</Button
     >
 
-    <Button
-        id="experimental-btn"
-        onClick={() => showPanel("experimental-panel")}
-    >
-        Experimental
-    </Button>
-
     <ExternalLink
         href="https://github.com/ECHOES-from-the-Past/mei-analyser/wiki"
     >

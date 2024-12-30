@@ -2,7 +2,6 @@
     import NavBar from "@components/NavBar.svelte";
     import ScrollUpButton from "@components/ScrollUpButton.svelte";
     import SearchPanel from "@panels/SearchPanel.svelte";
-    import ExperimentalPanel from "@panels/ExperimentalPanel.svelte";
 
     import packageJSON from "../package.json";
     import { env, persist, retrieve } from "@utility/utils";
@@ -63,7 +62,6 @@
 <NavBar bind:this={navbar} />
 <div id="panels">
     <SearchPanel bind:this={searchPanel} />
-    <ExperimentalPanel hidden />
 </div>
 <ScrollUpButton />
 
