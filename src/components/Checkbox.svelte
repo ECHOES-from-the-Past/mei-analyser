@@ -1,9 +1,10 @@
 <script>
+    import { Checkbox, Label } from "bits-ui";
     import { persist, retrieve } from "../utility/utils";
 
     export let value;
     export let id = `${value}-checkbox`;
-    export let onClick;
+    const label = `${value}-label`;
     export let disabled = false;
 
     /** @type {boolean} */
@@ -29,21 +30,30 @@
     }
 </script>
 
-<label>
-    <input
-        type="checkbox"
-        {id}
-        on:click={onClick}
-        on:change={update}
-        bind:checked={check}
-        {disabled}
-    />
-    <slot />
-</label>
+<Checkbox.Root
+    {id}
+    aria-labelledby={label}
+    class="peer inline-flex size-[25px] items-center justify-center rounded-md border border-muted bg-foreground transition-all duration-150 ease-in-out active:scale-98 data-[state=unchecked]:border-border-input data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40"
+    {check}
+    {disabled}
+    bind:checked={check}
+    on:change={update}
+>
+    <Checkbox.Indicator
 
-<style>
-    label:hover {
-        cursor: pointer;
-        background-color: var(--label-hover);
-    }
-</style>
+        class="inline-flex items-center justify-center text-background"
+    >
+        {#if check}
+            ✓
+        {:else}
+            ⠀
+        {/if}
+    </Checkbox.Indicator>
+</Checkbox.Root>
+<Label.Root
+    id={label}
+    for={id}
+    class="hover:cursor-pointer hover:bg-emerald-100 transition-all duration-150 ease-in-out"
+>
+    <slot />
+</Label.Root>

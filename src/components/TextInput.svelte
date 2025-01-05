@@ -44,11 +44,10 @@
     autocomplete={autocomplete}
 />
 
-<style>
+<style lang=postcss>
     input {
-        width: 20rem;
-        height: 1.2rem;
-        margin: 0.3rem 0;
+        @apply w-full border-2 border-emerald-400 rounded-md p-2 my-2;
+        @apply focus-visible:border-emerald-800;
     }
 
 </style>

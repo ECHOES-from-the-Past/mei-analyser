@@ -1,6 +1,9 @@
 /* Global stylesheet */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-:root {
+* {
   font-size: 16px;
   font-family: system-ui, ui-sans-serif, Helvetica, sans-serif;
   line-height: 1.48;
@@ -92,8 +95,7 @@
 h1,
 h2,
 h3 {
-  margin: 0 0 0.36rem 0;
-  padding: 0;
+  @apply font-bold;
 }
 
 p {
@@ -101,7 +103,7 @@ p {
 }
 
 ul {
-  margin: 0;
+  @apply m-0;
 }
 
 g {

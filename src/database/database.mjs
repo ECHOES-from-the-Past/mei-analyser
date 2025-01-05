@@ -86,7 +86,11 @@ function getClefInformation(meiJSON, notationType, modeDescription) {
  * @returns {string} the title of the chant
  */
 function getChantTitle(meiJSON) {
-    const title = meiJSON.mei.meiHead[0].fileDesc[0].titleStmt[0].title[0]._;
+    let title = meiJSON.mei.meiHead[0].fileDesc[0].titleStmt[0].title[0]._;
+    // Remove all white spaces
+    const whitespaces = /[\n\t\r]/g;
+    title = title.replace(whitespaces, "");
+    
     return title;
 }
 

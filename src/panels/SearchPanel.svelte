@@ -8,6 +8,7 @@
     import ClientStatus from "@components/ClientStatus.svelte";
     import ResultTable from "@search/ResultTable.svelte";
     import MelodicPatternInput from "@search/MelodicPatternInput.svelte";
+    import ComboBox from "@components/ComboBox.svelte";
 
     import {
         Chant,
@@ -27,7 +28,6 @@
 
     import { onMount } from "svelte";
     import { persist, retrieve, env } from "@utility/utils";
-    import ComboBox from "@components/ComboBox.svelte";
 
     const databaseURL =
         env == "development" ? "src/database/database.json" : "./database.json";
@@ -146,12 +146,12 @@
 
         /**
          * Pattern search
-         */       
+         */
         let melodicPatternResults = filterByMelodicPattern(
             resultListOfChants,
             melodicPatternInput.getMelodicPatternInput(),
             melodicPatternInput.getMelodicPatternSearchMode(),
-        );        
+        );
 
         /* Return the result */
         return melodicPatternResults;
@@ -274,13 +274,15 @@
                 <!-- Search by finalis -->
                 <p>
                     Filter chants by finalis (the last note)
-                    <Tooltip id="finalis-filter">
-                        Filter chants by their finalis (last note) by entering <b
-                            >a pitch value</b
-                        >
-                        (from "a" to "g") for chants in square notes or
-                        <b>a location value</b> (from "-3" to "+4") for chants in
-                        Aquitanian neumes.
+                    <Tooltip>
+                        <p slot="title">Finalis filter</p>
+                        <div slot="content">
+                            Filter chants by their finalis (last note) by
+                            entering <b>a pitch value</b>
+                            (from "a" to "g") for chants in square notes or
+                            <b>a location value</b> (from "-3" to "+4") for chants
+                            in Aquitanian neumes.
+                        </div>
                     </Tooltip>
                 </p>
 
@@ -348,20 +350,23 @@
                 <!-- Search by finalis -->
                 <p>
                     Filter chants by text
-                    <Tooltip id="text-filter">
-                        This filter searches for chants that contain the text
-                        input by the user. Note that, this filter is:
-                        <ul>
-                            <li>
-                                Case insensitive (e.g., <code>BENE</code> is the
-                                same as <code>bene</code>)
-                            </li>
-                            <li>
-                                Space sensitive (e.g., <code>te om</code> will
-                                search for all occurrences of <b>"te om"</b> with
-                                the space)
-                            </li>
-                        </ul>
+                    <Tooltip>
+                        <p slot="title">Text filter</p>
+                        <div slot="content">
+                            This filter searches for chants that contain the
+                            text input by the user. Note that, this filter is:
+                            <ul>
+                                <li>
+                                    Case insensitive (e.g., <code>BENE</code> is
+                                    the same as <code>bene</code>)
+                                </li>
+                                <li>
+                                    Space sensitive (e.g., <code>te om</code>
+                                    will search for all occurrences of
+                                    <b>"te om"</b> with the space)
+                                </li>
+                            </ul>
+                        </div>
                     </Tooltip>
                 </p>
 
@@ -423,17 +428,7 @@
                     notes in a syllable
                 </p>
                 <hr />
-                <Checkbox
-                    value="custom-gabc"
-                    onClick={() => {
-                        // document
-                        //     .querySelectorAll(".custom-gabc")
-                        //     .forEach((element) => {
-                        //         element.hidden = !customGABCCheckbox.isChecked();
-                        //     });
-                    }}
-                    bind:this={customGABCCheckbox}
-                >
+                <Checkbox value="custom-gabc" bind:this={customGABCCheckbox}>
                     Show pitch/location with each syllable
                 </Checkbox>
                 <br />
@@ -441,8 +436,8 @@
                     value="aquitanian-pitch"
                     bind:this={aquitanianPitchCustomGABC}
                 >
-                    Show Aquitanian in pitch value (only available
-                    for chants with detected mode)
+                    Show Aquitanian in pitch value (only available for chants
+                    with detected mode)
                 </Checkbox>
                 <hr />
                 <Checkbox
@@ -466,33 +461,7 @@
                         <Checkbox value="mode-7">Mode 7</Checkbox>
                         <Checkbox value="mode-8">Mode 8</Checkbox>
 
-                        <Checkbox
-                            value="all-mode"
-                            onClick={() => {
-                                const allModeCheckbox =
-                                    document.getElementById(
-                                        "all-mode-checkbox",
-                                    );
-
-                                for (let i = 1; i <= 8; i++) {
-                                    let checkbox = document.getElementById(
-                                        `mode-${i}-checkbox`,
-                                    );
-
-                                    checkbox.checked = allModeCheckbox.checked;
-
-                                    persist(
-                                        `mode-${i}-checkbox`,
-                                        checkbox.checked,
-                                    );
-                                }
-
-                                persist(
-                                    "all-mode-checkbox",
-                                    allModeCheckbox.checked,
-                                );
-                            }}>All Modes</Checkbox
-                        >
+                        <Checkbox value="all-mode">All Modes</Checkbox>
                         <Checkbox value="unknown-mode">Unknown</Checkbox>
                     </div>
                     <hr />

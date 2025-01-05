@@ -2,18 +2,6 @@
   export let id;
 </script>
 
-<div class="section" {id}>
-    <slot/>
+<div {id} class="border-2 border-emerald-800 rounded-xl p-4 my-4 mx-2 shadow-md bg-white h-fit">
+  <slot />
 </div>
-
-<style>
-
-.section {
-  /* border: 1px solid hsl(0, 0%, 0%); */
-  border-radius: 12px;
-  padding: 1rem;
-  margin: 1rem 0;
-  box-shadow: 1px 1px 4px hsl(0, 0%, 0%);
-  height: fit-content;
-}
-</style>

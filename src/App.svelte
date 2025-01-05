@@ -6,6 +6,7 @@
     import packageJSON from "../package.json";
     import { env, persist, retrieve } from "@utility/utils";
     import { onMount } from "svelte";
+    import './style.css';
 
     /* Dynamically redraw the MEI content when the window is resized
      * See: https://www.geeksforgeeks.org/how-to-wait-resize-end-event-and-then-perform-an-action-using-javascript/
