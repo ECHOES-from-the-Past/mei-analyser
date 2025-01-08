@@ -1,6 +1,7 @@
 <script>
-    $: hidden = false;
-    $: status = "Client status";
+    let hidden = $state(false);
+
+    let status = $state("Client status");
 
     export function hideStatus() {
         hidden = true;

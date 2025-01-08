@@ -1,19 +1,28 @@
 <script>
-    /** @type {String} the component id */
-    export let id = "button-id";
+    /**
+     * @typedef {Object} Props
+     * @property {String} [id]
+     * @property {function} [onClick]
+     * @property {boolean} [disabled]
+     * @property {import('svelte').Snippet} [children]
+     */
 
-    /** @type {function} the button's action */
-    export let onClick = null;
-    export let disabled = false;
+    /** @type {Props} */
+    let {
+        id = "button-id",
+        onClick = null,
+        disabled = false,
+        children,
+    } = $props();
 
-    let button;
+    let button = $state();
     export function click() {
         button.click();
     }
 </script>
 
-<button id={id} on:click={onClick} bind:this={button} {disabled}>
-    <slot/>
+<button {id} onclick={onClick} bind:this={button} {disabled}>
+    {@render children?.()}
 </button>
 
 <style lang="postcss">

@@ -11,11 +11,17 @@
     import { getNeumeComponentList } from "@utility/components";
     import { NeumeComponent } from "@utility/components";
     import { onMount } from "svelte";
-    /** @type {Chant} */
-    export let chant;
+    
+    /**
+     * @typedef {Object} Props
+     * @property {Chant} chant
+     */
+
+    /** @type {Props} */
+    let { chant } = $props();
 
     // The place for the chart
-    let chart;
+    let chart = $state();
 
     // Colours
     const normalBg = "rgba(125, 179, 102, 0.2)",

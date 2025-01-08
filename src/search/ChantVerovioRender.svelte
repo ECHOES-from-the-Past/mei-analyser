@@ -6,14 +6,16 @@
     } from "@utility/utils";
     import { onMount } from "svelte";
 
-    /** @type {Chant} */
-    export let chant;
-    /** @type {{
-        melodicPatternNc: NeumeComponent[][],
-        melismaPatternSyl: Syllable[]
-    }}
-    */
-    export let highlightOptions;
+    
+    
+    /**
+     * @typedef {Object} Props
+     * @property {Chant} chant
+     * @property {any} highlightOptions
+     */
+
+    /** @type {Props} */
+    let { chant, highlightOptions } = $props();
 
     function highlightOnChant() {
         let melodicPattern = highlightOptions.melodicPatternNc;
@@ -29,7 +31,7 @@
         })
     }
 
-    let svg, error;
+    let svg = $state(), error = $state();
     onMount(async () => {
         await drawSVGFromMEIContent(chant.meiContent)
             .then((chantSVG) => {

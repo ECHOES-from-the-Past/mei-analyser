@@ -5,9 +5,15 @@
     import { capitalizeFirstLetter } from "@utility/utils";
     import { Chant } from "@/utility/components";
     
-    /** @type {Chant} */
-    export let chant;
-    let chantInfoDiv;
+    
+    /**
+     * @typedef {Object} Props
+     * @property {Chant} chant
+     */
+
+    /** @type {Props} */
+    let { chant } = $props();
+    let chantInfoDiv = $state();
 
     let modeCalcLink = document.createElement("a");
     modeCalcLink.rel = "external";

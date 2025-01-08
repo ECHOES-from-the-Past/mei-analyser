@@ -1,21 +1,29 @@
 <script>
     import { persist, retrieve } from "../utility/utils";
-    export let id = "textbox";
-    export let placeholder = "Input here";
-    export let onKeydown;
-    export let onFocus, onBlur;
-    export let autocomplete = "off";
 
     /**
-     * @description
-     * Behaviour of the text input box when the user types something in.
-     * Able to use getValue() here for spontaneous retrieval of the value
-     * without any delays
-     * @type {Function}
+     * @typedef {Object} Props
+     * @property {string} [id]
+     * @property {string} [placeholder]
+     * @property {any} onKeydown
+     * @property {any} onFocus
+     * @property {any} onBlur
+     * @property {string} [autocomplete]
+     * @property {Function} onInput
      */
-    export let onInput;
 
-    let value = retrieve(id);
+    /** @type {Props} */
+    let {
+        id = "textbox",
+        placeholder = "Input here",
+        onKeydown,
+        onFocus,
+        onBlur,
+        autocomplete = "off",
+        onInput,
+    } = $props();
+
+    let value = $state(retrieve(id));
 
     function handleInputChanges() {
         persist(id, value);
@@ -35,19 +43,20 @@
     type="text"
     {id}
     {placeholder}
-    on:focus={onFocus}
-    on:blur={onBlur}
+    onfocus={onFocus}
+    onblur={onBlur}
     bind:value
-    on:input={onInput}
-    on:input={handleInputChanges}
-    on:keydown={onKeydown}
-    autocomplete={autocomplete}
+    oninput={() => {
+        onInput();
+        handleInputChanges();
+    }}
+    onkeydown={onKeydown}
+    {autocomplete}
 />
 
-<style lang=postcss>
+<style lang="postcss">
     input {
         @apply w-full border-2 border-emerald-400 rounded-md p-2 my-2;
         @apply focus-visible:border-emerald-800;
     }
-
 </style>

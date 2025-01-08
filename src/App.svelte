@@ -19,7 +19,7 @@
         }, 500);
     };
 
-    let navbar;
+    let navbar = $state();
 
     /**
      * Clear old local storage data for apps that uses version prior to 0.5.x
@@ -34,7 +34,7 @@
         loadDefaultOptions();
     }
 
-    let /** @type {SearchPanel} */ searchPanel;
+    let /** @type {SearchPanel} */ searchPanel = $state();
     /**
      * Load default options for the Search Panel
      */

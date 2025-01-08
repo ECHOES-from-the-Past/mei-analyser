@@ -1,7 +1,7 @@
 <script>
-    import { retrieve, persist } from "../utility/utils";
-    export let type;
-    let melismaInput = document.getElementById('melisma-input');
+    import { persist } from "../utility/utils";
+    let { type } = $props();
+    let melismaInput = document.getElementById("melisma-input");
 
     function stepUp() {
         melismaInput.stepUp();
@@ -15,9 +15,9 @@
 </script>
 
 {#if type == "up"}
-    <button on:click={stepUp}> &gt; </button>
+    <button onclick={stepUp}> &gt; </button>
 {:else if type == "down"}
-    <button on:click={stepDown}> &lt; </button>
+    <button onclick={stepDown}> &lt; </button>
 {/if}
 
 <style>

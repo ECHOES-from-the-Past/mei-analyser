@@ -1,11 +1,25 @@
 <script>
     import { persist, retrieve } from "../utility/utils";
-    export let id = "textbox";
-    export let placeholder = "Input here";
-    export let onKeydown;
-    export let min, max;
 
-    export let value = retrieve(id);
+    /**
+     * @typedef {Object} Props
+     * @property {string} [id]
+     * @property {string} [placeholder]
+     * @property {any} onKeydown
+     * @property {any} min
+     * @property {any} max
+     * @property {any} [value]
+     */
+
+    /** @type {Props} */
+    let {
+        id = "textbox",
+        placeholder = "Input here",
+        onKeydown,
+        min,
+        max,
+        value = $bindable(retrieve(id)),
+    } = $props();
 
     function handleInputChanges() {
         persist(id, value);
@@ -20,10 +34,11 @@
     type="number"
     {id}
     {placeholder}
-    {min} {max}
+    {min}
+    {max}
     bind:value
-    on:input={handleInputChanges}
-    on:keydown={onKeydown}
+    oninput={handleInputChanges}
+    onkeydown={onKeydown}
 />
 
 <style>

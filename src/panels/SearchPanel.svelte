@@ -26,43 +26,49 @@
         filterByCantusId,
     } from "@search/search.mjs";
 
-    import { onMount } from "svelte";
+    import { onMount, mount } from "svelte";
     import { persist, retrieve, env } from "@utility/utils";
 
     const databaseURL =
         env == "development" ? "src/database/database.json" : "./database.json";
-    let listOfChants = [];
+    let listOfChants = $state([]);
 
-    export let hidden = false;
+    /**
+     * @typedef {Object} Props
+     * @property {boolean} [hidden]
+     */
+
+    /** @type {Props} */
+    let { hidden = false } = $props();
 
     // DOM Element binding via `bind:this`
 
-    let /** @type {Checkbox} */ aquitanianCheckbox,
-        /** @type {Checkbox} */ squareCheckbox,
-        /** @type {Checkbox} */ liquescentCheckbox,
-        /** @type {Checkbox} */ quilismaCheckbox,
-        /** @type {Checkbox} */ oriscusCheckbox;
+    let /** @type {Checkbox} */ aquitanianCheckbox = $state(),
+        /** @type {Checkbox} */ squareCheckbox = $state(),
+        /** @type {Checkbox} */ liquescentCheckbox = $state(),
+        /** @type {Checkbox} */ quilismaCheckbox = $state(),
+        /** @type {Checkbox} */ oriscusCheckbox = $state();
 
-    let /** @type {MelodicPatternInput} */ melodicPatternInput;
+    let /** @type {MelodicPatternInput} */ melodicPatternInput = $state();
 
-    let /** @type {TextInput} */ finalisInputBox,
-        /** @type {TextInput} */ textInputBox,
-        /** @type {ComboBox} */ titleComboBox,
-        /** @type {ComboBox} */ sourceComboBox,
-        /** @type {ComboBox} */ cantusIdComboBox;
+    let /** @type {TextInput} */ finalisInputBox = $state(),
+        /** @type {TextInput} */ textInputBox = $state(),
+        /** @type {ComboBox} */ titleComboBox = $state(),
+        /** @type {ComboBox} */ sourceComboBox = $state(),
+        /** @type {ComboBox} */ cantusIdComboBox = $state();
 
-    let /** @type {Checkbox}  */ melismaHighlight,
-        /** @type {TextInput} */ melismaInput;
-    let /** @type {Checkbox}  */ customGABCCheckbox,
-        /** @type {Checkbox}  */ aquitanianPitchCustomGABC,
-        /** @type {Checkbox}  */ verovioRendition;
+    let /** @type {Checkbox}  */ melismaHighlight = $state(),
+        /** @type {TextInput} */ melismaInput = $state();
+    let /** @type {Checkbox}  */ customGABCCheckbox = $state(),
+        /** @type {Checkbox}  */ aquitanianPitchCustomGABC = $state(),
+        /** @type {Checkbox}  */ verovioRendition = $state();
 
-    let /** @type {Button}  */ searchButton; // bind this with the "Search" button
-    let /** @type {ClientStatus} */ clientStatus;
+    let /** @type {Button}  */ searchButton = $state(); // bind this with the "Search" button
+    let /** @type {ClientStatus} */ clientStatus = $state();
 
-    let /** @type {HTMLDivElement}*/ searchResultDiv,
-        /** @type {HTMLDivElement}*/ chantInfoDiv,
-        /** @type {HTMLDivElement}*/ chantSVGDiv;
+    let /** @type {HTMLDivElement}*/ searchResultDiv = $state(),
+        /** @type {HTMLDivElement}*/ chantInfoDiv = $state(),
+        /** @type {HTMLDivElement}*/ chantSVGDiv = $state();
 
     let /** @type {String[]}*/ listOfTitle;
 
@@ -191,13 +197,13 @@
         // Add a time delay for a feedback, since this is really fast
         var delayMs = 60; // ms
         setTimeout(() => {
-            new ResultTable({
-                target: searchResultDiv,
-                props: {
-                    searchResult: result,
-                    otherOptions: otherOptions,
-                },
-            });
+            mount(ResultTable, {
+                            target: searchResultDiv,
+                            props: {
+                                searchResult: result,
+                                otherOptions: otherOptions,
+                            },
+                        });
             clientStatus.hideStatus();
         }, delayMs);
     }
@@ -275,14 +281,18 @@
                 <p>
                     Filter chants by finalis (the last note)
                     <Tooltip>
-                        <p slot="title">Finalis filter</p>
-                        <div slot="content">
-                            Filter chants by their finalis (last note) by
-                            entering <b>a pitch value</b>
-                            (from "a" to "g") for chants in square notes or
-                            <b>a location value</b> (from "-3" to "+4") for chants
-                            in Aquitanian neumes.
-                        </div>
+                        {#snippet title()}
+                                                <p >Finalis filter</p>
+                                            {/snippet}
+                        {#snippet content()}
+                                                <div >
+                                Filter chants by their finalis (last note) by
+                                entering <b>a pitch value</b>
+                                (from "a" to "g") for chants in square notes or
+                                <b>a location value</b> (from "-3" to "+4") for chants
+                                in Aquitanian neumes.
+                            </div>
+                                            {/snippet}
                     </Tooltip>
                 </p>
 
@@ -351,22 +361,26 @@
                 <p>
                     Filter chants by text
                     <Tooltip>
-                        <p slot="title">Text filter</p>
-                        <div slot="content">
-                            This filter searches for chants that contain the
-                            text input by the user. Note that, this filter is:
-                            <ul>
-                                <li>
-                                    Case insensitive (e.g., <code>BENE</code> is
-                                    the same as <code>bene</code>)
-                                </li>
-                                <li>
-                                    Space sensitive (e.g., <code>te om</code>
-                                    will search for all occurrences of
-                                    <b>"te om"</b> with the space)
-                                </li>
-                            </ul>
-                        </div>
+                        {#snippet title()}
+                                                <p >Text filter</p>
+                                            {/snippet}
+                        {#snippet content()}
+                                                <div >
+                                This filter searches for chants that contain the
+                                text input by the user. Note that, this filter is:
+                                <ul>
+                                    <li>
+                                        Case insensitive (e.g., <code>BENE</code> is
+                                        the same as <code>bene</code>)
+                                    </li>
+                                    <li>
+                                        Space sensitive (e.g., <code>te om</code>
+                                        will search for all occurrences of
+                                        <b>"te om"</b> with the space)
+                                    </li>
+                                </ul>
+                            </div>
+                                            {/snippet}
                     </Tooltip>
                 </p>
 

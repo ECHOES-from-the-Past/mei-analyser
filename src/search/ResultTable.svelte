@@ -10,12 +10,18 @@
 
     let tableHeaders = ["Title", "Music Script", "Text", "Source", "Options"];
 
-    /** @type {SearchResult[]} */
-    export let searchResult;
-    /** See ResultTableRow::otherOptions */
-    export let otherOptions;
+    
+    
+    /**
+     * @typedef {Object} Props
+     * @property {SearchResult[]} searchResult
+     * @property {any} otherOptions - See ResultTableRow::otherOptions
+     */
 
-    $: numberOfResult = searchResult.length;
+    /** @type {Props} */
+    let { searchResult, otherOptions } = $props();
+
+    let numberOfResult = $derived(searchResult.length);
 </script>
 
 <div>

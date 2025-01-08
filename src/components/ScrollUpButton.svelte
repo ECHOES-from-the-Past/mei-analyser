@@ -1,5 +1,5 @@
 <script>
-    let scrollUpBtn;
+    let scrollUpBtn = $state();
     window.onscroll = () => {
         if (window.scrollY > 500) {
             scrollUpBtn.style.display = "block";
@@ -12,11 +12,11 @@
     }
 </script>
 
-<button id="scroll-up-btn" bind:this={scrollUpBtn} on:click={scrollToTop}>
+<button id="scroll-up-btn" bind:this={scrollUpBtn} onclick={scrollToTop}>
     Back to top ▲
 </button>
 
-<style lang=postcss>
+<style lang="postcss">
     button {
         @apply hidden fixed bottom-4 left-4 z-50;
 

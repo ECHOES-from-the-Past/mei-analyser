@@ -6,28 +6,21 @@
 
     import { Chant } from "@utility/components";
     import { capitalizeFirstLetter } from "@utility/utils";
+import { mount } from "svelte";
 
-    /** @type {Chant} */
-    export let chant;
-    /** @type {NeumeComponents[][]} */
-    export let melodicPatternNc;
+    
+    
 
+    
     /**
-     * @type {{
-        "melisma": {
-            enabled: boolean,
-            value: number
-        },
-        "customGABC": {
-            enabled: boolean,
-            aquitanianPitch: boolean
-        },
-        "verovioRendition": {
-            enabled: boolean
-        }
-    }}
-    */
-    export let otherOptions;
+     * @typedef {Object} Props
+     * @property {Chant} chant
+     * @property {NeumeComponents[][]} melodicPatternNc
+     * @property {any} otherOptions
+     */
+
+    /** @type {Props} */
+    let { chant, melodicPatternNc, otherOptions } = $props();
 
     /* Constructing the text column  */
     let syllablesContent = [];
@@ -182,7 +175,7 @@
 
     let tdSyllables = syllablesContent.join(" ");
 
-    let customGABCDiv = document.createElement("div");
+    let customGABCDiv = $state(document.createElement("div"));
     customGABCDiv.classList.add("custom-gabc");
     customGABCDiv.innerHTML = "<hr>" + customGABC.join(" ");
 
@@ -206,26 +199,26 @@
     async function printChantInformation(chant) {
         let chantInfoDiv = document.getElementById("chant-info");
         chantInfoDiv.innerHTML = "";
-        new ChantDetails({
-            target: chantInfoDiv,
-            props: {
-                chant: chant,
-            },
-        });
+        mount(ChantDetails, {
+                    target: chantInfoDiv,
+                    props: {
+                        chant: chant,
+                    },
+                });
 
         let chantSVGDiv = document.getElementById("chant-svg");
         chantSVGDiv.innerHTML = "";
         if (otherOptions.verovioRendition.enabled) {
-            new ChantVerovioRender({
-                target: chantSVGDiv,
-                props: {
-                    chant: chant,
-                    highlightOptions: {
-                        melodicPatternNc: melodicPatternNc,
-                        melismaPatternSyl: melismaPatternSyl,
-                    },
-                },
-            });
+            mount(ChantVerovioRender, {
+                            target: chantSVGDiv,
+                            props: {
+                                chant: chant,
+                                highlightOptions: {
+                                    melodicPatternNc: melodicPatternNc,
+                                    melismaPatternSyl: melismaPatternSyl,
+                                },
+                            },
+                        });
         }
 
         // Add a little delay for Verovio to render the chant

@@ -1,11 +1,20 @@
 <script>
+    import { run, handlers } from "svelte/legacy";
+
     import { persist, retrieve } from "../utility/utils";
 
-    export let value;
-    export let name;
-    export let onChange;
-    export let disabled = false;
-    $: checked = retrieve(name) == value;
+    /**
+     * @typedef {Object} Props
+     * @property {any} value
+     * @property {any} name
+     * @property {any} onChange
+     * @property {boolean} [disabled]
+     * @property {import('svelte').Snippet} [children]
+     */
+
+    /** @type {Props} */
+    let { value, name, onChange, disabled = false, children } = $props();
+    let checked = $state(retrieve(name) == value);
 
     function updateLocalStorageWhenChange() {
         persist(name, value);
@@ -18,8 +27,14 @@
 </script>
 
 <label>
-    <input {name} type="radio" on:change={onChange} on:change={updateLocalStorageWhenChange} {disabled} {checked}/>
-    <slot />
+    <input
+        {name}
+        type="radio"
+        onchange={handlers(onChange, updateLocalStorageWhenChange)}
+        {disabled}
+        {checked}
+    />
+    {@render children?.()}
 </label>
 
 <style>
