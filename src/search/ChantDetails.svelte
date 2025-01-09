@@ -4,8 +4,7 @@
     import Section from "@/components/Section.svelte";
     import { capitalizeFirstLetter } from "@utility/utils";
     import { Chant } from "@/utility/components";
-    
-    
+
     /**
      * @typedef {Object} Props
      * @property {Chant} chant
@@ -19,23 +18,24 @@
     modeCalcLink.rel = "external";
     modeCalcLink.target = "_blank";
     if (chant.notationType == "square") {
-        modeCalcLink.innerText = "Mode Detection for Square Script (github.com)";
+        modeCalcLink.innerText =
+            "Mode Detection for Square Script (github.com)";
         modeCalcLink.href =
             "https://github.com/ECHOES-from-the-Past/mei-analyser/wiki/Mode-Detection-for-Square-Script";
     } else if (chant.notationType == "aquitanian") {
-        modeCalcLink.innerText = "Mode Detection for Aquitanian Script (github.com)";
+        modeCalcLink.innerText =
+            "Mode Detection for Aquitanian Script (github.com)";
         modeCalcLink.href +=
             "https://github.com/ECHOES-from-the-Past/mei-analyser/wiki/Mode-Detection-for-Aquitanian-Script";
     }
 
     let modeMoreInfoLink = document.createElement("p");
-    modeMoreInfoLink.innerHTML =
-        "For more information, see ";
+    modeMoreInfoLink.innerHTML = "For more information, see ";
     modeMoreInfoLink.append(modeCalcLink);
 
     let info = {
-        "Title": chant.title,
-        "Source": chant.source,
+        Title: chant.title,
+        Source: chant.source,
         "Cantus ID": chant.cantusId,
         "PEM Database URL": chant.pemUrls,
         "Music Script": capitalizeFirstLetter(chant.notationType),
@@ -75,7 +75,10 @@
                 a.target = "_blank";
                 a.innerText = `${fileName.split("/").pop()} (GitHub)`; // showing the file name only
                 p.appendChild(a);
-            } else if (chant.notationType == "square" && k == "Possible Mode(s)") {
+            } else if (
+                chant.notationType == "square" &&
+                k == "Possible Mode(s)"
+            ) {
                 // Remove mode suggestion for square notation
                 continue;
             } else {

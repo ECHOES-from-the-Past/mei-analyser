@@ -1,10 +1,10 @@
 <script>
     import NavBar from "@components/NavBar.svelte";
     import ScrollUpButton from "@components/ScrollUpButton.svelte";
-    import SearchPanel from "@panels/SearchPanel.svelte";
+    import SearchPanel from "./SearchPanel.svelte";
 
     import packageJSON from "../package.json";
-    import { env, persist, retrieve } from "@utility/utils";
+    import { persist, retrieve } from "@utility/utils";
     import { onMount } from "svelte";
     import './style.css';
 
@@ -42,22 +42,22 @@
         searchPanel.loadDefaultOptions();
     }
 
-    onMount(() => {
-        let localVersion = retrieve("version");
-        if (localVersion == undefined) {
-            console.log("Loading default options on the search panel!");
-            loadDefaultOptions();
-        } else if (
-            localVersion.split(".")[1] < 5 ||
-            localVersion.split(".")[2] < 4
-        ) {
-            // Force clear localStorage for versions lower than 0.5.4
-            clearOldLocalStorage();
-        }
-        let version = packageJSON.version;
-        navbar.setVersion(version);
-        persist("version", version);
-    });
+    // onMount(() => {
+    //     let localVersion = retrieve("version");
+    //     if (localVersion == undefined) {
+    //         console.log("Loading default options on the search panel!");
+    //         loadDefaultOptions();
+    //     } else if (
+    //         localVersion.split(".")[1] < 5 ||
+    //         localVersion.split(".")[2] < 4
+    //     ) {
+    //         // Force clear localStorage for versions lower than 0.5.4
+    //         clearOldLocalStorage();
+    //     }
+    //     let version = packageJSON.version;
+    //     navbar.setVersion(version);
+    //     persist("version", version);
+    // });
 </script>
 
 <NavBar bind:this={navbar} />

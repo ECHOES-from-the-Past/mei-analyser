@@ -40,7 +40,6 @@
 
     onMount(() => {
         availableOptions = allOptions;
-        console.log(availableOptions);
     });
 </script>
 
@@ -48,7 +47,7 @@
     <Combobox.Input
         {placeholder}
         aria-label={placeholder}
-        class="w-full border-2 border-emerald-400 rounded-md p-2 my-1"
+        class="w-full border-2 border-emerald-600 rounded-md p-2 my-1"
     />
 
     <Combobox.Content

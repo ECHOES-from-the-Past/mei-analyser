@@ -1,13 +1,9 @@
 <script>
     import { drawSVGFromMEIContent, spotlightText } from "@utility/utils";
     import { Chant, Syllable, NeumeComponent } from "@utility/components";
-    import {
-        highlightPattern,
-    } from "@utility/utils";
+    import { highlightPattern } from "@utility/utils";
     import { onMount } from "svelte";
 
-    
-    
     /**
      * @typedef {Object} Props
      * @property {Chant} chant
@@ -27,11 +23,12 @@
     function highlightMelismaOnChant() {
         let melismaPattern = highlightOptions.melismaPatternSyl;
         melismaPattern.forEach((mp) => {
-            spotlightText(mp.syllableWord)
-        })
+            spotlightText(mp.syllableWord);
+        });
     }
 
-    let svg = $state(), error = $state();
+    let svg = $state(),
+        error = $state();
     onMount(async () => {
         await drawSVGFromMEIContent(chant.meiContent)
             .then((chantSVG) => {

@@ -6,12 +6,9 @@
 
     import { Chant } from "@utility/components";
     import { capitalizeFirstLetter } from "@utility/utils";
-import { mount } from "svelte";
+    import { mount } from "svelte";
+    import { fly } from "svelte/transition";
 
-    
-    
-
-    
     /**
      * @typedef {Object} Props
      * @property {Chant} chant
@@ -200,25 +197,25 @@ import { mount } from "svelte";
         let chantInfoDiv = document.getElementById("chant-info");
         chantInfoDiv.innerHTML = "";
         mount(ChantDetails, {
-                    target: chantInfoDiv,
-                    props: {
-                        chant: chant,
-                    },
-                });
+            target: chantInfoDiv,
+            props: {
+                chant: chant,
+            },
+        });
 
         let chantSVGDiv = document.getElementById("chant-svg");
         chantSVGDiv.innerHTML = "";
         if (otherOptions.verovioRendition.enabled) {
             mount(ChantVerovioRender, {
-                            target: chantSVGDiv,
-                            props: {
-                                chant: chant,
-                                highlightOptions: {
-                                    melodicPatternNc: melodicPatternNc,
-                                    melismaPatternSyl: melismaPatternSyl,
-                                },
-                            },
-                        });
+                target: chantSVGDiv,
+                props: {
+                    chant: chant,
+                    highlightOptions: {
+                        melodicPatternNc: melodicPatternNc,
+                        melismaPatternSyl: melismaPatternSyl,
+                    },
+                },
+            });
         }
 
         // Add a little delay for Verovio to render the chant
@@ -233,7 +230,7 @@ import { mount } from "svelte";
     }
 </script>
 
-<tr>
+<tr transition:fly|global>
     <!-- Title column -->
     <td>
         {chant.title}
@@ -255,33 +252,23 @@ import { mount } from "svelte";
     </td>
     <!-- Options column -->
     <td>
-        <div id="options">
+        <div
+            id="options"
+            class="flex flex-row items-center justify-center gap-x-2"
+        >
             <Button onClick={() => printChantInformation(chant)}>
-                Display chant
+                More Details
             </Button>
-            {#each chant.pemUrls as url}
-                <ExternalLink href={url}>
-                    <Button>View image on PEM</Button>
-                </ExternalLink>
-            {/each}
         </div>
     </td>
 </tr>
 
-<style>
-    tr > td {
-        display: table-cell;
-        text-align: center;
-        padding: 0.5rem;
-        border: 1px solid hsla(142, 72%, 29%, 0.699);
-        height: inherit;
+<style lang="postcss">
+    tr {
+        @apply table-row;
     }
 
-    #options {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
+    tr > td {
+        @apply table-cell text-center p-2 border-2 border-emerald-500 w-fit;
     }
 </style>

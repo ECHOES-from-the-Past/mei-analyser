@@ -56,7 +56,7 @@
 
 <style lang="postcss">
     input {
-        @apply w-full border-2 border-emerald-400 rounded-md p-2 my-2;
+        @apply w-full border-2 border-emerald-600 rounded-md px-2 py-1 my-2;
         @apply focus-visible:border-emerald-800;
     }
 </style>

@@ -9,11 +9,12 @@
      * @property {any} name
      * @property {any} onChange
      * @property {boolean} [disabled]
+     * @property {string} [group] - The name of the radio group
      * @property {import('svelte').Snippet} [children]
      */
 
     /** @type {Props} */
-    let { value, name, onChange, disabled = false, children } = $props();
+    let { value, name, disabled = false, children, group = $bindable() } = $props();
     let checked = $state(retrieve(name) == value);
 
     function updateLocalStorageWhenChange() {
@@ -30,9 +31,10 @@
     <input
         {name}
         type="radio"
-        onchange={handlers(onChange, updateLocalStorageWhenChange)}
+        onchange={updateLocalStorageWhenChange()}
         {disabled}
         {checked}
+        {group}
     />
     {@render children?.()}
 </label>

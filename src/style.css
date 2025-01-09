@@ -18,49 +18,6 @@
   /* Reference for the attribute below: https://youtu.be/cH8VbLM1958 */
   min-width: 0;
 
-  --no-color: hsla(0, 0%, 0%, 0);
-  --white: hsl(0, 0%, 100%);
-
-  /* Colour scheme */  
-  --emerald-500: #10b981;
-  --emerald-600: #059669;
-  --emerald-700: #047857;
-  --emerald-800: #065f46;
-  --emerald-900: #064e3b;
-  --emerald-950: #022c22;
-
-  --cyan-100: #cffafe;
-  --cyan-200: #a5f3fc;
-  --sky-600: #0284c7;
-  --sky-700: #0369a1;
-
-  --amber-600: #d97706;
-  --amber-700: #b45309;
-
-  --violet-600: #7c3aed;
-  --violet-700: #6d28d9;
-
-  --fuchsia-600: #c026d3;
-  --fuchsia-700: #a21caf;
-
-  --button: var(--emerald-900);
-  --button-hover: var(--emerald-700);
-  --button-active: var(--emerald-500);
-  --button-disabled: hsla(172, 38%, 16%, 0.288);
-  --background: var(--white);
-  --background-hover: hsla(147, 100%, 66%, 0.377);
-
-
-  --label-hover: var(--cyan-100);
-  
-  /* Ornamental colours */
-  /* --liquescent-text: hsl(216, 100%, 41%); */
-  /* --quilisma-text: hsl(59, 78%, 28%); */
-  /* --oriscus-text: hsl(318, 100%, 36%); */
-  --liquescent-text: var(--sky-600);
-  --quilisma-text: var(--amber-600);
-  --oriscus-text: var(--fuchsia-600);
-
   --melisma-text: hsl(115, 61%, 28%);
   --melisma-background: hsla(138, 100%, 66%, 0.4);
   --melisma-spotlight-fill: hsla(138, 100%, 72%, 0.2);
@@ -85,9 +42,6 @@
   --mismatch-stroke: hsl(240, 100%, 50%);
   --mismatch-fill-box: hsla(240, 100%, 50%, 0.12);
   --mismatch-stroke-box: hsla(240, 100%, 50%, 0.4);
-
-  /* Text */
-  --text-error: hsl(0, 78%, 57%);
 }
 
 /* Custom button styles */
@@ -95,11 +49,7 @@
 h1,
 h2,
 h3 {
-  @apply font-bold;
-}
-
-p {
-  margin: 0.4rem 0;
+  @apply font-bold text-2xl my-2;
 }
 
 ul {
@@ -107,17 +57,11 @@ ul {
 }
 
 g {
-  fill: hsl(0, 0%, 0%);
+  @apply fill-current;
 }
 
 code {
-  /* background-color: rgba(from var(--emerald-700) r g b / 0.24); */
-  background-color: var(--emerald-800);
-  color: white;
-  padding: 2.4px 4px;
-  border-radius: 6px;
-  border: 1px var(--emerald-500) solid;
-  margin: 2px 2px;
+  @apply font-mono text-white bg-emerald-700 p-1 rounded-lg border-[0.5px] border-emerald-200;
 }
 
 .melodic-pattern-word {
@@ -131,36 +75,30 @@ code {
 }
 
 .error {
-  color: var(--text-error);
+  @apply text-red-700;
 }
 
 .nonselectable-text {
-  -webkit-touch-callout: none;
+  @apply select-none;
+  /* -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  -ms-user-select: none; */
 }
 
 .liquescent-word {
-  color: var(--liquescent-text);
-  font-weight: bold;
-  text-decoration: underline solid;
+  @apply font-bold underline decoration-solid text-blue-700;
 }
 
 .quilisma-word {
-  color: var(--quilisma-text);
-  font-weight: bold;
-  text-decoration: underline wavy;
+  @apply font-bold underline decoration-wavy text-amber-700;
 }
 
 .oriscus-word {
-  color: var(--oriscus-text);
-  font-weight: bold;
-  text-decoration: underline dashed 0.1rem;
+  @apply font-bold underline decoration-dashed text-fuchsia-700;
 }
 
 .melisma-word {
-  background-color: var(--melisma-background);
+  @apply bg-emerald-300;
 }

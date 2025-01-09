@@ -167,10 +167,10 @@
 </RadioButton>
 <Tooltip id="wildcard-tooltip">
     {#snippet title()}
-        <h2 >Wildcard tooltip</h2>
+        <h2>Wildcard tooltip</h2>
     {/snippet}
     {#snippet content()}
-        <div >
+        <div>
             <p>
                 The following rules applies to both <b
                     >square music script's pitches</b
@@ -179,8 +179,8 @@
                 <i>case insensitive</i>) and
                 <b>Aquitanian script's relative location to the line</b>
                 (e.g., <code>-1</code>, <code>0</code>, <code>+2</code>,
-                <code>+3</code>). Note that blank space between characters and the
-                plus sign "+" for positive integers are <i> optional </i>.
+                <code>+3</code>). Note that blank space between characters and
+                the plus sign "+" for positive integers are <i> optional </i>.
             </p>
             <hr />
             <ul>
@@ -191,8 +191,8 @@
                     For example:
                     <ul>
                         <li>
-                            <code>d . a</code> will look for the following sequences
-                            of notes: <code>d f a</code>,
+                            <code>d . a</code> will look for the following
+                            sequences of notes: <code>d f a</code>,
                             <code> d a a</code>, <code> d c a</code>, etc.
                         </li>
                     </ul>
@@ -217,7 +217,8 @@
                 </li>
                 <li>
                     Use an asterisk <code>*</code> <b> after a note </b>
-                    to search for any number of repetition of that note (0 or more occurrences).
+                    to search for any number of repetition of that note (0 or more
+                    occurrences).
                     <br />
                     For example:
                     <ul>
@@ -228,22 +229,25 @@
                             <code>f d d d a</code>, etc.
                         </li>
                         <li>
-                            <code>f .* a</code> will look for the sequences starting
-                            with <code>f</code>
-                            and ending with <code>a</code>, with any number of notes
-                            in between.
+                            <code>f .* a</code> will look for the sequences
+                            starting with <code>f</code>
+                            and ending with <code>a</code>, with any number of
+                            notes in between.
                         </li>
                     </ul>
                 </li>
                 <li>
-                    Use curly brackets and numerical value(s) <b> after a note </b>
+                    Use curly brackets and numerical value(s) <b>
+                        after a note
+                    </b>
                     to search for a specific number or range of repetitions for that
                     note.
                     <br />
                     For example:
                     <ul>
                         <li>
-                            Syntax: <code>{`c{2}`}</code>, <code>{`a{2,4}`}</code>,
+                            Syntax: <code>{`c{2}`}</code>,
+                            <code>{`a{2,4}`}</code>,
                             <code>{`+2{1,5}`}</code>, or <code> {`.{3}`} </code>
                         </li>
                         <li>
@@ -252,12 +256,14 @@
                         </li>
                         <li>
                             <code> {`f c{1, 5} a`} </code> would search for all
-                            occurences of <code>f</code>, followed by <b>1 to 5</b>
+                            occurences of <code>f</code>, followed by
+                            <b>1 to 5</b>
                             <code>c</code>, and ending with <code>a</code>.
                         </li>
                         <li>
                             <code> {`-1 .{2,4} +3`} </code> would search for all
-                            occurences of <code>-1</code>, followed by <b>2 to 4</b>
+                            occurences of <code>-1</code>, followed by
+                            <b>2 to 4</b>
                             <i> arbitrary notes</i>, and ending with
                             <code>+3</code>.
                         </li>
@@ -283,10 +289,10 @@
 </RadioButton>
 <Tooltip>
     {#snippet title()}
-        <h2 >Contour tooltip</h2>
+        <h2>Contour tooltip</h2>
     {/snippet}
     {#snippet content()}
-        <div >
+        <div>
             <b> Contour (melodic intervals) </b> in the form of:
             <ul>
                 <li>
@@ -307,8 +313,8 @@
                         <li>
                             Example of a search query:
                             <code>+2 -1 0 +1 +1</code> will search for patterns that
-                            go two steps up, one step down, unison, two steps up, and
-                            one step up.
+                            go two steps up, one step down, unison, two steps up,
+                            and one step up.
                         </li>
                     </ul>
                 </li>
@@ -336,8 +342,8 @@
                     A mix of both integers and general contour is allowed.
                     <ul>
                         <li>
-                            E.g., <code>u -2 0 +1</code> will search for a pattern that
-                            goes up, two steps down, unison, and one step up.
+                            E.g., <code>u -2 0 +1</code> will search for a pattern
+                            that goes up, two steps down, unison, and one step up.
                         </li>
                     </ul>
                 </li>

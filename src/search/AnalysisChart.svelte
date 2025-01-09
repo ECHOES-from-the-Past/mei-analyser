@@ -11,7 +11,7 @@
     import { getNeumeComponentList } from "@utility/components";
     import { NeumeComponent } from "@utility/components";
     import { onMount } from "svelte";
-    
+
     /**
      * @typedef {Object} Props
      * @property {Chant} chant

@@ -39,20 +39,12 @@
     bind:value
     oninput={handleInputChanges}
     onkeydown={onKeydown}
+    aria-describedby="number-input"
+    data-input-counter
 />
 
-<style>
+<style lang="postcss">
     input {
-        box-sizing: border-box;
-        border: 1px solid var(--button-active);
-        font-size: inherit;
-        text-align: center;
-        margin: 0 0.2rem;
-        width: 1.8rem;
-        height: 1.8rem;
-    }
-
-    input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
+        @apply box-border border-2 border-emerald-600 rounded-md py-1 m-auto text-center;
     }
 </style>
