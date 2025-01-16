@@ -20,10 +20,9 @@
         onFocus,
         onBlur,
         autocomplete = "off",
-        onInput,
     } = $props();
 
-    let value = $state(retrieve(id));
+    let value = $state(retrieve(id)?.value || "");
 
     function handleInputChanges() {
         persist(id, value);
@@ -45,9 +44,8 @@
     {placeholder}
     onfocus={onFocus}
     onblur={onBlur}
-    bind:value
+    bind:value={value}
     oninput={() => {
-        onInput();
         handleInputChanges();
     }}
     onkeydown={onKeydown}

@@ -47,15 +47,17 @@
     <Checkbox.Root
         {id}
         aria-labelledby={label}
-        class="inline-flex size-6 items-center justify-center rounded-md border border-emerald-800 my-2"
+        class="flex items-center justify-center rounded-md border border-emerald-800 size-6 my-2 mx-1"
         {disabled}
         bind:checked={check}
         on:click={update}
     >
-        <Checkbox.Indicator class="inline-flex items-center justify-center ">
+        <Checkbox.Indicator
+            class="inline-flex items-center justify-center"
+        >
             <span
                 transition:blur|global
-                class="text-emerald-800 font-semibold text-xl"
+                class="text-emerald-800 font-semibold"
             >
                 {#if check}
                     ✓
@@ -68,7 +70,7 @@
     <Label.Root
         id={label}
         for={id}
-        class="hover:cursor-pointer hover:bg-green-100 transition-all duration-150 ease-in-out py-2 px-1"
+        class="inline hover:cursor-pointer hover:bg-green-100 transition-all duration-150 ease-in-out py-2 break-normal"
     >
         {@render children?.()}
     </Label.Root>

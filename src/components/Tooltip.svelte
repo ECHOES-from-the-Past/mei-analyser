@@ -41,7 +41,7 @@
         <Dialog.Overlay />
         <Dialog.Content
             transition={fly}
-            class="fixed left-[50%] top-[50%] z-50 w-[80%] translate-x-[-50%] translate-y-[-50%] border-4 border-emerald-700 bg-white p-5"
+            class="fixed left-[50%] top-[50%] z-50 w-[80%] translate-x-[-50%] translate-y-[-50%] border-4 border-emerald-700 bg-white p-5 rounded-lg shadow-lg"
         >
             <Dialog.Title
                 class="flex w-full items-center justify-center text-lg font-semibold tracking-tight"
@@ -60,9 +60,11 @@
                 {/if}
             </Dialog.Description>
 
-            <Dialog.Close>
-                <Button>Close</Button>
-            </Dialog.Close>
+            <div class="flex w-full justify-center mt-5">
+                <Dialog.Close>
+                    <Button>Close</Button>
+                </Dialog.Close>
+            </div>
         </Dialog.Content>
     </Dialog.Portal>
 </Dialog.Root>

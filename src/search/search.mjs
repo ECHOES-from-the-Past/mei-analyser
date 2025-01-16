@@ -148,7 +148,7 @@ export function filterByMelodicPattern(chantList, searchInput, searchMode) {
 
     let /** @type {NeumeComponent[][]} */ patterns = [];
 
-    if (searchInput.length == 0 || String(searchInput) == String(RegExp("", "gi"))) {
+    if (!searchInput || searchInput.length == 0 || String(searchInput) == String(RegExp("", "gi"))) {
         chantList.forEach((chant) => searchResults.push(new SearchResult(chant, [])));
     } else {
         for (let chant of chantList) {

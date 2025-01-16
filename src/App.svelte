@@ -20,6 +20,7 @@
     };
 
     let navbar = $state();
+    let /** @type {SearchPanel} */ searchPanel = $state();
 
     /**
      * Clear old local storage data for apps that uses version prior to 0.5.x
@@ -31,33 +32,25 @@
         console.log(
             "Finished clearing, loading default options for the search panel!",
         );
-        loadDefaultOptions();
-    }
-
-    let /** @type {SearchPanel} */ searchPanel = $state();
-    /**
-     * Load default options for the Search Panel
-     */
-    function loadDefaultOptions() {
         searchPanel.loadDefaultOptions();
     }
 
-    // onMount(() => {
-    //     let localVersion = retrieve("version");
-    //     if (localVersion == undefined) {
-    //         console.log("Loading default options on the search panel!");
-    //         loadDefaultOptions();
-    //     } else if (
-    //         localVersion.split(".")[1] < 5 ||
-    //         localVersion.split(".")[2] < 4
-    //     ) {
-    //         // Force clear localStorage for versions lower than 0.5.4
-    //         clearOldLocalStorage();
-    //     }
-    //     let version = packageJSON.version;
-    //     navbar.setVersion(version);
-    //     persist("version", version);
-    // });
+    onMount(() => {
+        let localVersion = retrieve("version");
+        if (localVersion == undefined) {
+            console.log("Loading default options on the search panel!");
+            searchPanel.loadDefaultOptions();
+        } else if (
+            localVersion.split(".")[1] < 5 ||
+            localVersion.split(".")[2] < 4
+        ) {
+            // Force clear localStorage for versions lower than 0.5.4
+            clearOldLocalStorage();
+        }
+        let version = packageJSON.version;
+        navbar.setVersion(version);
+        persist("version", version);
+    });
 </script>
 
 <NavBar bind:this={navbar} />

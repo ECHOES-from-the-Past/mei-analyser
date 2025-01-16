@@ -1,22 +1,16 @@
 <script>
-    import { onMount } from "svelte";
-    import { retrieve } from "@utility/utils";
-    import RadioButton from "@components/RadioButton.svelte";
+    import { persist, retrieve } from "@utility/utils";
     import TextInput from "@components/TextInput.svelte";
     import Tooltip from "@components/Tooltip.svelte";
+    import { Label, RadioGroup } from "bits-ui";
 
-    const melodicPatternInputId = `melodic-pattern-input`; // unique, assuming only one instance of this component
+
     const placeholder = `E.g.: "1{2} +1 -2" or "a b? a* g"`;
 
-    let { onKeydown, onInput } = $props();
-    let searchModeSelection = $state(); // this will be the bind:group of the radio buttons
-    let searchModeName = "search-mode";
-
-    let patternInputBox = $state(),
+    let { onKeydown } = $props();
+    let searchMode = $state(retrieve("search-mode") || "wildcard"),
+        patternInputBox = $state(),
         /** Global error message */ error = $state("");
-
-    let /** @type {RadioButton} */ contourButton = $state(),
-        /** @type {RadioButton} */ wildcardButton = $state();
 
     /**
      * Takes in the raw input string, output a list of recognizable token
@@ -125,18 +119,17 @@
 
     export function reset() {
         patternInputBox.setValue("");
-        wildcardButton.setCheck();
+        searchMode = "wildcard";
     }
 
     export function getMelodicPatternSearchMode() {
-        return retrieve(searchModeName);
+        return retrieve("search-mode");
     }
 
     /**
      * @return {RegExp | Number[]}
      */
     export function getMelodicPatternInput() {
-        let searchMode = retrieve(searchModeName);
         if (searchMode == "wildcard") {
             return constructMatchingRegexp(
                 filterValidWildcardInput(patternInputBox.getValue()),
@@ -147,9 +140,13 @@
         }
     }
 
-    onMount(() => {
-        patternInputBox.setValue(retrieve(melodicPatternInputId));
-    });
+    // Styling classes
+    const radioGroupRoot = "flex flex-col gap-2 text-base font-medium my-1",
+        radioDiv =
+            "group flex select-none items-center text-foreground transition-all",
+        radioGroupItem =
+            "size-5 shrink-0 cursor-default rounded-full border border-border-input bg-background transition-all duration-100 ease-in-out hover:border-dark-40 data-[state=checked]:border-6 data-[state=checked]:border-emerald-900",
+        labelRoot = "pl-2";
 </script>
 
 <p>
@@ -157,206 +154,231 @@
     <span class="melodic-pattern-word"> melodic pattern </span>
 </p>
 
-<RadioButton
-    name={searchModeName}
-    value="wildcard"
-    bind:this={wildcardButton}
-    bind:group={searchModeSelection}
+<RadioGroup.Root
+    class={radioGroupRoot}
+    value={searchMode}
+    onValueChange={(newValue) => {
+        searchMode = newValue;
+        persist("search-mode", newValue);
+    }}
 >
-    Pitch (wildcards)
-</RadioButton>
-<Tooltip id="wildcard-tooltip">
-    {#snippet title()}
-        <h2>Wildcard tooltip</h2>
-    {/snippet}
-    {#snippet content()}
-        <div>
-            <p>
-                The following rules applies to both <b
-                    >square music script's pitches</b
-                >
-                (<code>A</code>/<code>a</code> to <code>G</code>/<code>g</code>,
-                <i>case insensitive</i>) and
-                <b>Aquitanian script's relative location to the line</b>
-                (e.g., <code>-1</code>, <code>0</code>, <code>+2</code>,
-                <code>+3</code>). Note that blank space between characters and
-                the plus sign "+" for positive integers are <i> optional </i>.
-            </p>
-            <hr />
-            <ul>
-                <li>
-                    Use a dot <b><code>.</code></b> to search for one arbitrary
-                    note.
-                    <br />
-                    For example:
-                    <ul>
-                        <li>
-                            <code>d . a</code> will look for the following
-                            sequences of notes: <code>d f a</code>,
-                            <code> d a a</code>, <code> d c a</code>, etc.
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    Use a question mark <code>?</code>
-                    <b> after a note or a dot </b>
-                    <code>.</code> to search for an optional note. For example:
-                    <ul>
-                        <li>
-                            <code>f d? a</code> will look for the following
-                            sequences of notes: <code>f d a</code>, or
-                            <code>f a</code>.
-                        </li>
-                        <li>
-                            <code>-2 .? +1</code> will look for the following
-                            sequences of notes: <code>-2 +1</code>,
-                            <code>-2 +1 +1</code>,
-                            <code>-2 0 +1</code>, or <code>-2 -3 +1</code>, etc.
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    Use an asterisk <code>*</code> <b> after a note </b>
-                    to search for any number of repetition of that note (0 or more
-                    occurrences).
-                    <br />
-                    For example:
-                    <ul>
-                        <li>
-                            <code>f d* a</code> will look for the following
-                            sequences of notes: <code>f a</code>, or
-                            <code>f d a</code>, <code>f d d a</code>,
-                            <code>f d d d a</code>, etc.
-                        </li>
-                        <li>
-                            <code>f .* a</code> will look for the sequences
-                            starting with <code>f</code>
-                            and ending with <code>a</code>, with any number of
-                            notes in between.
-                        </li>
-                    </ul>
-                </li>
-                <li>
-                    Use curly brackets and numerical value(s) <b>
-                        after a note
-                    </b>
-                    to search for a specific number or range of repetitions for that
-                    note.
-                    <br />
-                    For example:
-                    <ul>
-                        <li>
-                            Syntax: <code>{`c{2}`}</code>,
-                            <code>{`a{2,4}`}</code>,
-                            <code>{`+2{1,5}`}</code>, or <code> {`.{3}`} </code>
-                        </li>
-                        <li>
-                            <code> {`+2 +1{2} -1`} </code> would search for all
-                            occurences of <code> +2 +1 +1 -1 </code>
-                        </li>
-                        <li>
-                            <code> {`f c{1, 5} a`} </code> would search for all
-                            occurences of <code>f</code>, followed by
-                            <b>1 to 5</b>
-                            <code>c</code>, and ending with <code>a</code>.
-                        </li>
-                        <li>
-                            <code> {`-1 .{2,4} +3`} </code> would search for all
-                            occurences of <code>-1</code>, followed by
-                            <b>2 to 4</b>
-                            <i> arbitrary notes</i>, and ending with
-                            <code>+3</code>.
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-            <hr />
-            <p>
-                The wildcards follow the conventional <i>regular expression</i> standard.
-            </p>
-        </div>
-    {/snippet}
-</Tooltip>
-<br />
+    <div class={radioDiv}>
+        <RadioGroup.Item id="wildcard" value="wildcard" class={radioGroupItem}
+        ></RadioGroup.Item>
+        <Label.Root for="wildcard" class={labelRoot}>
+            Pitch (wildcards)
+        </Label.Root>
 
-<RadioButton
-    bind:group={searchModeSelection}
-    name={searchModeName}
-    value="contour"
-    bind:this={contourButton}
->
-    Contour (melodic intervals)
-</RadioButton>
-<Tooltip>
-    {#snippet title()}
-        <h2>Contour tooltip</h2>
-    {/snippet}
-    {#snippet content()}
-        <div>
-            <b> Contour (melodic intervals) </b> in the form of:
-            <ul>
-                <li>
-                    <b> Positive or negative integers </b>, the integers can be
-                    separated optionally by a space. For example:
+        <Tooltip id="wildcard-tooltip">
+            {#snippet title()}
+                <h2>Wildcard tooltip</h2>
+            {/snippet}
+            {#snippet content()}
+                <div>
+                    <p>
+                        The following rules applies to both <b
+                            >square music script's pitches</b
+                        >
+                        (<code>A</code>/<code>a</code> to <code>G</code>/<code
+                            >g</code
+                        >,
+                        <i>case insensitive</i>) and
+                        <b>Aquitanian script's relative location to the line</b>
+                        (e.g., <code>-1</code>, <code>0</code>, <code>+2</code>,
+                        <code>+3</code>). Note that blank space between
+                        characters and the plus sign "+" for positive integers
+                        are <i> optional </i>.
+                    </p>
+                    <hr />
                     <ul>
                         <li>
-                            <code>+1</code> indicates one step up - either a semitone
-                            or a tone - from the previous note
+                            Use a dot <b><code>.</code></b> to search for one
+                            arbitrary note.
+                            <br />
+                            For example:
+                            <ul>
+                                <li>
+                                    <code>d . a</code> will look for the
+                                    following sequences of notes:
+                                    <code>d f a</code>,
+                                    <code> d a a</code>, <code> d c a</code>,
+                                    etc.
+                                </li>
+                            </ul>
                         </li>
                         <li>
-                            <code>-2</code> indicates two steps down - either a major
-                            or minor third - from the previous note
+                            Use a question mark <code>?</code>
+                            <b> after a note or a dot </b>
+                            <code>.</code> to search for an optional note. For
+                            example:
+                            <ul>
+                                <li>
+                                    <code>f d? a</code> will look for the
+                                    following sequences of notes:
+                                    <code>f d a</code>, or
+                                    <code>f a</code>.
+                                </li>
+                                <li>
+                                    <code>-2 .? +1</code> will look for the
+                                    following sequences of notes:
+                                    <code>-2 +1</code>,
+                                    <code>-2 +1 +1</code>,
+                                    <code>-2 0 +1</code>, or
+                                    <code>-2 -3 +1</code>, etc.
+                                </li>
+                            </ul>
                         </li>
                         <li>
-                            <code>0</code> indicates unison
+                            Use an asterisk <code>*</code> <b> after a note </b>
+                            to search for any number of repetition of that note (0
+                            or more occurrences).
+                            <br />
+                            For example:
+                            <ul>
+                                <li>
+                                    <code>f d* a</code> will look for the
+                                    following sequences of notes:
+                                    <code>f a</code>, or
+                                    <code>f d a</code>, <code>f d d a</code>,
+                                    <code>f d d d a</code>, etc.
+                                </li>
+                                <li>
+                                    <code>f .* a</code> will look for the
+                                    sequences starting with <code>f</code>
+                                    and ending with <code>a</code>, with any
+                                    number of notes in between.
+                                </li>
+                            </ul>
                         </li>
                         <li>
-                            Example of a search query:
-                            <code>+2 -1 0 +1 +1</code> will search for patterns that
-                            go two steps up, one step down, unison, two steps up,
-                            and one step up.
+                            Use curly brackets and numerical value(s) <b>
+                                after a note
+                            </b>
+                            to search for a specific number or range of repetitions
+                            for that note.
+                            <br />
+                            For example:
+                            <ul>
+                                <li>
+                                    Syntax: <code>{`c{2}`}</code>,
+                                    <code>{`a{2,4}`}</code>,
+                                    <code>{`+2{1,5}`}</code>, or
+                                    <code> {`.{3}`} </code>
+                                </li>
+                                <li>
+                                    <code> {`+2 +1{2} -1`} </code> would search
+                                    for all occurences of
+                                    <code> +2 +1 +1 -1 </code>
+                                </li>
+                                <li>
+                                    <code> {`f c{1, 5} a`} </code> would search
+                                    for all occurences of <code>f</code>,
+                                    followed by
+                                    <b>1 to 5</b>
+                                    <code>c</code>, and ending with
+                                    <code>a</code>.
+                                </li>
+                                <li>
+                                    <code> {`-1 .{2,4} +3`} </code> would search
+                                    for all occurences of <code>-1</code>,
+                                    followed by
+                                    <b>2 to 4</b>
+                                    <i> arbitrary notes</i>, and ending with
+                                    <code>+3</code>.
+                                </li>
+                            </ul>
                         </li>
                     </ul>
-                </li>
-                <li>
-                    <b>General contour</b> (<i>case insensitive</i>, optional
-                    spaces):
+                    <hr />
+                    <p>
+                        The wildcards follow the conventional <i
+                            >regular expression</i
+                        > standard.
+                    </p>
+                </div>
+            {/snippet}
+        </Tooltip>
+    </div>
+
+    <div class={radioDiv}>
+        <RadioGroup.Item id="contour" value="contour" class={radioGroupItem} />
+        <Label.Root for="contour" class={labelRoot}>
+            Contour (melodic intervals)
+        </Label.Root>
+        <Tooltip id="contour-tooltip">
+            {#snippet title()}
+                <h2>Contour tooltip</h2>
+            {/snippet}
+            {#snippet content()}
+                <div>
+                    <b> Contour (melodic intervals) </b> in the form of:
                     <ul>
                         <li>
-                            <code>u</code> for upward contour (ascending pitches)
+                            <b> Positive or negative integers </b>, the integers
+                            can be separated optionally by a space. For example:
+                            <ul>
+                                <li>
+                                    <code>+1</code> indicates one step up - either
+                                    a semitone or a tone - from the previous note
+                                </li>
+                                <li>
+                                    <code>-2</code> indicates two steps down - either
+                                    a major or minor third - from the previous note
+                                </li>
+                                <li>
+                                    <code>0</code> indicates unison
+                                </li>
+                                <li>
+                                    Example of a search query:
+                                    <code>+2 -1 0 +1 +1</code> will search for patterns
+                                    that go two steps up, one step down, unison,
+                                    two steps up, and one step up.
+                                </li>
+                            </ul>
                         </li>
                         <li>
-                            <code>d</code> for downward contour (decending pitches)
+                            <b>General contour</b> (<i>case insensitive</i>,
+                            optional spaces):
+                            <ul>
+                                <li>
+                                    <code>u</code> for upward contour (ascending
+                                    pitches)
+                                </li>
+                                <li>
+                                    <code>d</code> for downward contour (decending
+                                    pitches)
+                                </li>
+                                <li>
+                                    <code>s</code> for the same note (unison)
+                                </li>
+                                <li>
+                                    Example of a search query:
+                                    <code>u d s u d</code> will search for a contour
+                                    pattern that goes up, down, same, up, down.
+                                </li>
+                            </ul>
                         </li>
                         <li>
-                            <code>s</code> for the same note (unison)
-                        </li>
-                        <li>
-                            Example of a search query:
-                            <code>u d s u d</code> will search for a contour pattern
-                            that goes up, down, same, up, down.
+                            A mix of both integers and general contour is
+                            allowed.
+                            <ul>
+                                <li>
+                                    E.g., <code>u -2 0 +1</code> will search for
+                                    a pattern that goes up, two steps down, unison,
+                                    and one step up.
+                                </li>
+                            </ul>
                         </li>
                     </ul>
-                </li>
-                <li>
-                    A mix of both integers and general contour is allowed.
-                    <ul>
-                        <li>
-                            E.g., <code>u -2 0 +1</code> will search for a pattern
-                            that goes up, two steps down, unison, and one step up.
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
-    {/snippet}
-</Tooltip>
-<br />
+                </div>
+            {/snippet}
+        </Tooltip>
+    </div>
+</RadioGroup.Root>
 
 <TextInput
-    id={melodicPatternInputId}
+    id="melodic-pattern-input"
     {onKeydown}
-    {onInput}
     {placeholder}
     bind:this={patternInputBox}
 />

@@ -102,3 +102,7 @@ code {
 .melisma-word {
   @apply bg-emerald-300;
 }
+
+hr {
+  @apply my-1 border-0 border-t border-gray-400;
+}

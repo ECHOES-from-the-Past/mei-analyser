@@ -1,14 +1,15 @@
 <script>
     import Button from "@components/Button.svelte";
-    import ComboBox from "@components/ComboBox.svelte";
+    import SelectInput from "@components/SelectInput.svelte";
     import Checkbox from "@components/Checkbox.svelte";
     import ClientStatus from "@components/ClientStatus.svelte";
-    import MelodicPatternInput from "@search/MelodicPatternInput.svelte";
     import NumberInput from "@components/NumberInput.svelte";
     import ResultTable from "@search/ResultTable.svelte";
     import Section from "@components/Section.svelte";
     import Tooltip from "@components/Tooltip.svelte";
     import TextInput from "@components/TextInput.svelte";
+
+    import MelodicPatternInput from "@search/MelodicPatternInput.svelte";
 
     import {
         Chant,
@@ -27,19 +28,10 @@
     } from "@search/search.mjs";
 
     import { onMount, mount } from "svelte";
-    import { persist, retrieve, env } from "@utility/utils";
+    import { env } from "@utility/utils";
 
     const databaseURL =
         env == "development" ? "src/database/database.json" : "./database.json";
-    let listOfChants = $state([]);
-
-    /**
-     * @typedef {Object} Props
-     * @property {boolean} [hidden]
-     */
-
-    /** @type {Props} */
-    let { hidden = false } = $props();
 
     // DOM Element binding via `bind:this`
 
@@ -53,9 +45,9 @@
 
     let /** @type {TextInput} */ finalisInputBox = $state(),
         /** @type {TextInput} */ textInputBox = $state(),
-        /** @type {ComboBox} */ titleComboBox = $state(),
-        /** @type {ComboBox} */ sourceComboBox = $state(),
-        /** @type {ComboBox} */ cantusIdComboBox = $state();
+        /** @type {SelectInput} */ titleComboBox = $state(),
+        /** @type {SelectInput} */ sourceComboBox = $state(),
+        /** @type {SelectInput} */ cantusIdComboBox = $state();
 
     let /** @type {Checkbox}  */ melismaHighlight = $state(),
         /** @type {TextInput} */ melismaInput = $state();
@@ -69,8 +61,10 @@
     let /** @type {HTMLDivElement}*/ searchResultDiv = $state(),
         /** @type {HTMLDivElement}*/ chantInfoDiv = $state(),
         /** @type {HTMLDivElement}*/ chantSVGDiv = $state();
-        
-    onMount(async () => {
+
+    let listOfChants = $state([]);
+
+    $effect(async () => {
         clientStatus.showStatus("Loading list of chants...");
         /**
          * Retrieving the "locally" stored list of chants
@@ -86,7 +80,7 @@
                     "Error loading list of chants, please reload the page.",
                 );
             });
-    });
+    });1
 
     /**
      * Perform highlighting when user clicks on "Search" button
@@ -239,7 +233,7 @@
         <Section id="search-filters">
             <h1>Search Filters</h1>
             <!-- Search by music script (notation type) -->
-            <p>Filter chants with the following music script:</p>
+            <p>Filter chants with the following music script(s):</p>
             <Checkbox value="aquitanian" bind:this={aquitanianCheckbox}
                 >Aquitanian</Checkbox
             >
@@ -308,7 +302,7 @@
                     (Title, Source, Cantus ID)</i
                 >
             </p>
-            <ComboBox
+            <SelectInput
                 bind:this={titleComboBox}
                 id="title-dropdown-filter"
                 placeholder="Search by a title"
@@ -322,7 +316,7 @@
                 onKeydown={searchOnEnter}
             />
 
-            <ComboBox
+            <SelectInput
                 bind:this={sourceComboBox}
                 id="source-dropdown-filter"
                 placeholder="Search by a chant's source"
@@ -336,7 +330,7 @@
                 onKeydown={searchOnEnter}
             />
 
-            <ComboBox
+            <SelectInput
                 bind:this={cantusIdComboBox}
                 id="cantusid-dropdown-filter"
                 placeholder="Search by Cantus ID"
@@ -454,9 +448,9 @@
             </Checkbox>
             <hr />
             <!-- Search/filter by mode -->
-            <div hidden>
+            <!-- <div>
                 <p>Filter by detected mode(s):</p>
-                <div id="mode-grid">
+                <div class="flex place-content-evenly">
                     <Checkbox value="mode-1">Mode 1</Checkbox>
                     <Checkbox value="mode-2">Mode 2</Checkbox>
                     <Checkbox value="mode-3">Mode 3</Checkbox>
@@ -471,7 +465,7 @@
                     <Checkbox value="unknown-mode">Unknown</Checkbox>
                 </div>
                 <hr />
-            </div>
+            </div> -->
         </Section>
     </div>
     <!-- End of leftside search panel -->
@@ -500,11 +494,3 @@
         </Section>
     </div>
 </div>
-
-<style>
-    #mode-grid {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-evenly;
-    }
-</style>
