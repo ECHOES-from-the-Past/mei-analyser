@@ -53,18 +53,13 @@
         on:click={update}
     >
         <Checkbox.Indicator
-            class="inline-flex items-center justify-center"
+            class="inline-flex items-center justify-center shirnk-0"
         >
-            <span
-                transition:blur|global
-                class="text-emerald-800 font-semibold"
-            >
-                {#if check}
-                    ✓
-                {:else}
-                    ⠀
-                {/if}
-            </span>
+            {#if check}
+                <span class="text-emerald-800 font-semibold"> ✔ </span>
+            {:else}
+                <span class="text-emerald-100 font-semibold"> ✗ </span>
+            {/if}
         </Checkbox.Indicator>
     </Checkbox.Root>
     <Label.Root
