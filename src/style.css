@@ -64,6 +64,26 @@ code {
   @apply font-mono text-white bg-emerald-700 p-1 rounded-lg border-[0.5px] border-emerald-200;
 }
 
+p {
+  @apply my-1;
+}
+
+ul {
+  @apply list-disc list-inside indent-2;
+}
+
+li {
+  @apply my-1;
+}
+
+a {
+  @apply text-blue-700;
+}
+
+a:hover {
+  @apply text-blue-900 underline;
+}
+
 .melodic-pattern-word {
   text-emphasis: triangle var(--highlight-fill);
   text-emphasis-position: under right;
@@ -80,11 +100,6 @@ code {
 
 .nonselectable-text {
   @apply select-none;
-  /* -webkit-touch-callout: none;
-  -webkit-user-select: none;
-  -khtml-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none; */
 }
 
 .liquescent-word {

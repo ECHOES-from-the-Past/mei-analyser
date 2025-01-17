@@ -91,7 +91,7 @@
     });
 </script>
 
-<div id="chant-information">
+<div class="grid grid-cols-2 gap-6 pb-6">
     <div bind:this={chantInfoDiv}></div>
     <div>
         <Section>
@@ -99,12 +99,3 @@
         </Section>
     </div>
 </div>
-
-<style>
-    #chant-information {
-        display: grid;
-        grid-template-columns: 2fr 2fr;
-        gap: 2rem;
-        padding: 0 0 2rem 0;
-    }
-</style>
