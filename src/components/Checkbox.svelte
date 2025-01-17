@@ -47,7 +47,7 @@
     <Checkbox.Root
         {id}
         aria-labelledby={label}
-        class="flex items-center justify-center rounded-md border border-emerald-800 size-6 my-2 mx-1"
+        class="flex items-center justify-center rounded-md border border-emerald-800 size-6 my-2 mx-1 shrink-0"
         {disabled}
         bind:checked={check}
         on:click={update}

@@ -145,7 +145,7 @@
         radioDiv =
             "group flex select-none items-center text-foreground transition-all",
         radioGroupItem =
-            "size-5 shrink-0 cursor-default rounded-full border border-border-input bg-background transition-all duration-100 ease-in-out hover:border-dark-40 data-[state=checked]:border-6 data-[state=checked]:border-emerald-900",
+            "size-5 shrink-0 cursor-default rounded-full border border-4 bg-white transition-all duration-150 ease-in-out hover:border-emerald-300 data-[state=checked]:border-emerald-800",
         labelRoot = "pl-2";
 </script>
 
