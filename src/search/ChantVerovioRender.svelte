@@ -45,16 +45,10 @@
     });
 </script>
 
-<div>
+<div class="shadow-md box-border rounded-md p-2 border-2 border-emerald-500">
     {@html svg}
     {#if error}
         <hr />
         {error}
     {/if}
 </div>
-
-<style>
-    div {
-        box-shadow: 0 0 2px 3px #888;
-    }
-</style>
