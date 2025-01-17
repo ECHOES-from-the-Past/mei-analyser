@@ -3,12 +3,15 @@
     import TextInput from "@components/TextInput.svelte";
     import Tooltip from "@components/Tooltip.svelte";
     import { Label, RadioGroup } from "bits-ui";
+    import SelectInput from "@components/SelectInput.svelte";
+    import NumberInput from "@components/NumberInput.svelte";
 
     const placeholder = `E.g.: "1{2} +1 -2" or "a b? a* g"`;
 
     let { onKeydown } = $props();
     let searchMode = $state(retrieve("search-mode") || "wildcard"),
         patternInputBox = $state(),
+        distributedMelodyInputBox = $state(),
         /** Global error message */ error = $state("");
 
     /**
@@ -137,6 +140,10 @@
             // Contour pattern input does not need the RegExp construction step!
             return filterValidContourInput(patternInputBox.getValue());
         }
+    }
+
+    export function getDistribution() {
+        return distributedMelodyInputBox.getValue();
     }
 
     // Styling classes
@@ -382,4 +389,21 @@
     bind:this={patternInputBox}
 />
 
+<!-- <TextInput
+    id="distributed-melody-input"
+    {onKeydown}
+    placeholder={`1 2 3 4 5 6 7 8 9 10`}
+    bind:this={distributedMelodyInputBox}
+/> -->
+<p>
+    over the span of
+    <NumberInput
+        id="melisma-input"
+        min="0"
+        max="10"
+        value="2"
+        bind:this={distributedMelodyInputBox}
+    />
+    syllabes.
+</p>
 {error}
