@@ -1,5 +1,5 @@
 <script>
-    let scrollUpBtn;
+    let scrollUpBtn = $state();
     window.onscroll = () => {
         if (window.scrollY > 500) {
             scrollUpBtn.style.display = "block";
@@ -12,40 +12,19 @@
     }
 </script>
 
-<button id="scroll-up-btn" bind:this={scrollUpBtn} on:click={scrollToTop}>
+<button id="scroll-up-btn" bind:this={scrollUpBtn} onclick={scrollToTop}>
     Back to top ▲
 </button>
 
-<style>
-    /* Default button styles */
+<style lang="postcss">
     button {
-        display: none; /* Hidden by default */
-        position: fixed; /* Fixed/sticky position */
-        bottom: 20px;
-        left: 30px;
-        z-index: 99;
-        border: 0px;
-        border-radius: 8px;
-        color: white;
-        padding: 0.6rem 1.2rem;
-        font-size: 1rem;
-        font-weight: 500;
-        font-family: inherit;
-        background-color: var(--button);
-        cursor: pointer;
-        transition: background-color 0.2s;
-    }
+        @apply hidden fixed bottom-4 left-4 z-50;
 
-    button:hover {
-        background-color: var(--button-hover);
-    }
+        /* Same styling as Button */
+        @apply border-0 rounded-lg text-white py-2 px-4 font-medium bg-emerald-800;
+        @apply cursor-pointer transition ease-in-out duration-300;
 
-    button:active {
-        background-color: var(--button-active);
-    }
-
-    button:disabled {
-        background-color: var(--button-disabled);
-        cursor: not-allowed;
+        @apply hover:bg-emerald-600;
+        @apply active:bg-emerald-700;
     }
 </style>

@@ -1,6 +1,6 @@
 <script>
-    $: hidden = false;
-    $: status = "Client status";
+    let hidden = $state(true);
+    let status = $state("Client status...");
 
     export function hideStatus() {
         hidden = true;
@@ -16,54 +16,10 @@
     }
 </script>
 
-<div id="status-bar">
-    <div id="refresh-wheel" {hidden}></div>
-    <span id="client-status" {hidden}> {status} </span>
+<div class="flex flex-row items-center gap-2 my-2">
+    <div
+        {hidden}
+        class="size-6 border-4 border-t-4 border-emerald-300 border-t-emerald-900 rounded-full animate-spin"
+    ></div>
+    <span {hidden} class="text-emerald-700 text-semibold"> {status} </span>
 </div>
-
-<style>
-    #status-bar {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 0.4rem;
-    }
-
-    #refresh-wheel {
-        --wheel-border: 0.4rem;
-        --wheel-size: 1rem;
-        --wheel-duration: 0.64s;
-
-        border: var(--wheel-border) solid var(--background-hover);
-        border-radius: 50%;
-        border-top: var(--wheel-border) solid var(--button);
-        width: 1rem;
-        height: 1rem;
-        animation: spin var(--wheel-duration) linear infinite;
-        -webkit-animation: spin var(--wheel-duration) linear infinite;
-    }
-
-    #client-status {
-        color: var(--emerald-700);
-    }
-
-    @-webkit-keyframes spin {
-        0% {
-            -webkit-transform: rotate(0deg);
-        }
-
-        100% {
-            -webkit-transform: rotate(360deg);
-        }
-    }
-
-    @keyframes spin {
-        0% {
-            transform: rotate(0deg);
-        }
-
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-</style>

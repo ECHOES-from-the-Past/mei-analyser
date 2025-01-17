@@ -1,35 +1,41 @@
 <script>
     import { onMount } from "svelte";
     import AnalysisChart from "@search/AnalysisChart.svelte";
-    import Section from "@/components/Section.svelte";
+    import Section from "@components/Section.svelte";
     import { capitalizeFirstLetter } from "@utility/utils";
-    import { Chant } from "@/utility/components";
-    
-    /** @type {Chant} */
-    export let chant;
-    let chantInfoDiv;
+    import { Chant } from "@utility/components";
+
+    /**
+     * @typedef {Object} Props
+     * @property {Chant} chant
+     */
+
+    /** @type {Props} */
+    let { chant } = $props();
+    let chantInfoDiv = $state();
 
     let modeCalcLink = document.createElement("a");
     modeCalcLink.rel = "external";
     modeCalcLink.target = "_blank";
     if (chant.notationType == "square") {
-        modeCalcLink.innerText = "Mode Detection for Square Script (github.com)";
+        modeCalcLink.innerText =
+            "Mode Detection for Square Script (github.com)";
         modeCalcLink.href =
             "https://github.com/ECHOES-from-the-Past/mei-analyser/wiki/Mode-Detection-for-Square-Script";
     } else if (chant.notationType == "aquitanian") {
-        modeCalcLink.innerText = "Mode Detection for Aquitanian Script (github.com)";
+        modeCalcLink.innerText =
+            "Mode Detection for Aquitanian Script (github.com)";
         modeCalcLink.href +=
             "https://github.com/ECHOES-from-the-Past/mei-analyser/wiki/Mode-Detection-for-Aquitanian-Script";
     }
 
     let modeMoreInfoLink = document.createElement("p");
-    modeMoreInfoLink.innerHTML =
-        "For more information, see ";
+    modeMoreInfoLink.innerHTML = "For more information, see ";
     modeMoreInfoLink.append(modeCalcLink);
 
     let info = {
-        "Title": chant.title,
-        "Source": chant.source,
+        Title: chant.title,
+        Source: chant.source,
         "Cantus ID": chant.cantusId,
         "PEM Database URL": chant.pemUrls,
         "Music Script": capitalizeFirstLetter(chant.notationType),
@@ -69,7 +75,10 @@
                 a.target = "_blank";
                 a.innerText = `${fileName.split("/").pop()} (GitHub)`; // showing the file name only
                 p.appendChild(a);
-            } else if (chant.notationType == "square" && k == "Possible Mode(s)") {
+            } else if (
+                chant.notationType == "square" &&
+                k == "Possible Mode(s)"
+            ) {
                 // Remove mode suggestion for square notation
                 continue;
             } else {
@@ -82,7 +91,7 @@
     });
 </script>
 
-<div id="chant-information">
+<div class="grid grid-cols-2 gap-6 pb-6">
     <div bind:this={chantInfoDiv}></div>
     <div>
         <Section>
@@ -90,12 +99,3 @@
         </Section>
     </div>
 </div>
-
-<style>
-    #chant-information {
-        display: grid;
-        grid-template-columns: 2fr 2fr;
-        gap: 2rem;
-        padding: 0 0 2rem 0;
-    }
-</style>

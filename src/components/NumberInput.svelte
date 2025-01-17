@@ -1,11 +1,25 @@
 <script>
-    import { persist, retrieve } from "../utility/utils";
-    export let id = "textbox";
-    export let placeholder = "Input here";
-    export let onKeydown;
-    export let min, max;
+    import { persist, retrieve } from "@utility/utils";
 
-    export let value = retrieve(id);
+    /**
+     * @typedef {Object} Props
+     * @property {string} [id]
+     * @property {string} [placeholder]
+     * @property {any} onKeydown
+     * @property {any} min
+     * @property {any} max
+     * @property {any} [value]
+     */
+
+    /** @type {Props} */
+    let {
+        id = "textbox",
+        placeholder = "Input here",
+        onKeydown,
+        min,
+        max,
+        value = $bindable(retrieve(id)),
+    } = $props();
 
     function handleInputChanges() {
         persist(id, value);
@@ -20,24 +34,17 @@
     type="number"
     {id}
     {placeholder}
-    {min} {max}
+    {min}
+    {max}
     bind:value
-    on:input={handleInputChanges}
-    on:keydown={onKeydown}
+    oninput={handleInputChanges}
+    onkeydown={onKeydown}
+    aria-describedby="number-input"
+    data-input-counter
 />
 
-<style>
+<style lang="postcss">
     input {
-        box-sizing: border-box;
-        border: 1px solid var(--button-active);
-        font-size: inherit;
-        text-align: center;
-        margin: 0 0.2rem;
-        width: 1.8rem;
-        height: 1.8rem;
-    }
-
-    input[type="number"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
+        @apply box-border border-2 border-emerald-600 rounded-md py-1 m-auto text-center;
     }
 </style>

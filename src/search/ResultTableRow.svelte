@@ -1,33 +1,22 @@
 <script>
     import ChantDetails from "@search/ChantDetails.svelte";
     import ChantVerovioRender from "@search/ChantVerovioRender.svelte";
-    import ExternalLink from "@components/ExternalLink.svelte";
     import Button from "@components/Button.svelte";
 
     import { Chant } from "@utility/components";
     import { capitalizeFirstLetter } from "@utility/utils";
-
-    /** @type {Chant} */
-    export let chant;
-    /** @type {NeumeComponents[][]} */
-    export let melodicPatternNc;
+    import { mount } from "svelte";
+    import { fly } from "svelte/transition";
 
     /**
-     * @type {{
-        "melisma": {
-            enabled: boolean,
-            value: number
-        },
-        "customGABC": {
-            enabled: boolean,
-            aquitanianPitch: boolean
-        },
-        "verovioRendition": {
-            enabled: boolean
-        }
-    }}
-    */
-    export let otherOptions;
+     * @typedef {Object} Props
+     * @property {Chant} chant
+     * @property {NeumeComponents[][]} melodicPatternNc
+     * @property {any} otherOptions
+     */
+
+    /** @type {Props} */
+    let { chant, melodicPatternNc, otherOptions } = $props();
 
     /* Constructing the text column  */
     let syllablesContent = [];
@@ -182,7 +171,7 @@
 
     let tdSyllables = syllablesContent.join(" ");
 
-    let customGABCDiv = document.createElement("div");
+    let customGABCDiv = $state(document.createElement("div"));
     customGABCDiv.classList.add("custom-gabc");
     customGABCDiv.innerHTML = "<hr>" + customGABC.join(" ");
 
@@ -206,7 +195,7 @@
     async function printChantInformation(chant) {
         let chantInfoDiv = document.getElementById("chant-info");
         chantInfoDiv.innerHTML = "";
-        new ChantDetails({
+        mount(ChantDetails, {
             target: chantInfoDiv,
             props: {
                 chant: chant,
@@ -216,7 +205,7 @@
         let chantSVGDiv = document.getElementById("chant-svg");
         chantSVGDiv.innerHTML = "";
         if (otherOptions.verovioRendition.enabled) {
-            new ChantVerovioRender({
+            mount(ChantVerovioRender, {
                 target: chantSVGDiv,
                 props: {
                     chant: chant,
@@ -240,7 +229,7 @@
     }
 </script>
 
-<tr>
+<tr transition:fly|global>
     <!-- Title column -->
     <td>
         {chant.title}
@@ -262,33 +251,23 @@
     </td>
     <!-- Options column -->
     <td>
-        <div id="options">
+        <div
+            id="options"
+            class="flex flex-row items-center justify-center gap-x-2"
+        >
             <Button onClick={() => printChantInformation(chant)}>
-                Display chant
+                More Details
             </Button>
-            {#each chant.pemUrls as url}
-                <ExternalLink href={url}>
-                    <Button>View image on PEM</Button>
-                </ExternalLink>
-            {/each}
         </div>
     </td>
 </tr>
 
-<style>
-    tr > td {
-        display: table-cell;
-        text-align: center;
-        padding: 0.5rem;
-        border: 1px solid hsla(142, 72%, 29%, 0.699);
-        height: inherit;
+<style lang="postcss">
+    tr {
+        @apply table-row;
     }
 
-    #options {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
+    tr > td {
+        @apply table-cell text-center p-2 border-2 border-emerald-500 w-fit;
     }
 </style>

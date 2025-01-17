@@ -1,4 +1,4 @@
-import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList, SearchResult, Syllable } from "@utility/components.js";
+import { NeumeComponent, toSeptenary, getNeumeComponentList, SearchResult, Syllable } from "@utility/components.js";
 
 import { Chant } from "@utility/components.js";
 
@@ -148,7 +148,7 @@ export function filterByMelodicPattern(chantList, searchInput, searchMode) {
 
     let /** @type {NeumeComponent[][]} */ patterns = [];
 
-    if (searchInput.length == 0 || String(searchInput) == String(RegExp("", "gi"))) {
+    if (!searchInput || searchInput.length == 0 || String(searchInput) == String(RegExp("", "gi"))) {
         chantList.forEach((chant) => searchResults.push(new SearchResult(chant, [])));
     } else {
         for (let chant of chantList) {

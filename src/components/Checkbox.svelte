@@ -1,13 +1,27 @@
 <script>
-    import { persist, retrieve } from "../utility/utils";
+    import { Checkbox, Label } from "bits-ui";
+    import { persist, retrieve } from "@utility/utils";
+    import { blur } from "svelte/transition";
 
-    export let value;
-    export let id = `${value}-checkbox`;
-    export let onClick;
-    export let disabled = false;
+    const label = `${value}-label`;
+    /**
+     * @typedef {Object} Props
+     * @property {any} value
+     * @property {any} [id]
+     * @property {boolean} [disabled]
+     * @property {import('svelte').Snippet} [children]
+     */
+
+    /** @type {Props} */
+    let {
+        value,
+        id = `${value}-checkbox`,
+        disabled = false,
+        children,
+    } = $props();
 
     /** @type {boolean} */
-    let check = retrieve(id) === true;
+    let check = $state(retrieve(id) == true);
 
     function update() {
         check = !check;
@@ -29,21 +43,35 @@
     }
 </script>
 
-<label>
-    <input
-        type="checkbox"
+<div class="inline-flex items-center justify-center gap-1">
+    <Checkbox.Root
         {id}
-        on:click={onClick}
-        on:change={update}
-        bind:checked={check}
+        aria-labelledby={label}
+        class="flex items-center justify-center rounded-md border border-emerald-800 size-6 my-2 mx-1 shrink-0"
         {disabled}
-    />
-    <slot />
-</label>
-
-<style>
-    label:hover {
-        cursor: pointer;
-        background-color: var(--label-hover);
-    }
-</style>
+        bind:checked={check}
+        on:click={update}
+    >
+        <Checkbox.Indicator
+            class="inline-flex items-center justify-center"
+        >
+            <span
+                transition:blur|global
+                class="text-emerald-800 font-semibold"
+            >
+                {#if check}
+                    ✓
+                {:else}
+                    ⠀
+                {/if}
+            </span>
+        </Checkbox.Indicator>
+    </Checkbox.Root>
+    <Label.Root
+        id={label}
+        for={id}
+        class="inline hover:cursor-pointer hover:bg-green-100 transition-all duration-150 ease-in-out py-2 break-normal"
+    >
+        {@render children?.()}
+    </Label.Root>
+</div>

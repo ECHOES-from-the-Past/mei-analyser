@@ -10,23 +10,34 @@
 
     let tableHeaders = ["Title", "Music Script", "Text", "Source", "Options"];
 
-    /** @type {SearchResult[]} */
-    export let searchResult;
-    /** See ResultTableRow::otherOptions */
-    export let otherOptions;
+    /**
+     * @typedef {Object} Props
+     * @property {SearchResult[]} searchResult
+     * @property {any} otherOptions - See ResultTableRow::otherOptions
+     */
 
-    $: numberOfResult = searchResult.length;
+    /** @type {Props} */
+    let { searchResult, otherOptions } = $props();
+
+    let numberOfResult = $derived(searchResult.length);
 </script>
 
 <div>
     <p>Found <b>{numberOfResult}</b> chants from the search options.</p>
 
     {#if numberOfResult > 0}
-        <table id="result-table">
+        <table id="result-table" class="w-full break-normal table-auto mt-4">
             <thead>
-                {#each tableHeaders as th}
-                    <th scope="col"> {th} </th>
-                {/each}
+                <tr>
+                    {#each tableHeaders as th}
+                        <th
+                            scope="col"
+                            class="text-center bg-emerald-700 text-white p-2 font-semibold border-x-2 border-emerald-900"
+                        >
+                            {th}
+                        </th>
+                    {/each}
+                </tr>
             </thead>
 
             <tbody>
@@ -41,18 +52,3 @@
         </table>
     {/if}
 </div>
-
-<style>
-    #result-table {
-        width: 100%;
-        word-break: normal;
-    }
-
-    #result-table > thead > th {
-        text-align: center;
-        background-color: var(--button);
-        color: white;
-        padding: 0.8rem;
-        font-size: 1.2rem;
-    }
-</style>

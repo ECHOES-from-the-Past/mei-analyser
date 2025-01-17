@@ -1,19 +1,17 @@
 <script>
     import { drawSVGFromMEIContent, spotlightText } from "@utility/utils";
-    import { Chant, Syllable, NeumeComponent } from "@utility/components";
-    import {
-        highlightPattern,
-    } from "@utility/utils";
+    import { Chant } from "@utility/components";
+    import { highlightPattern } from "@utility/utils";
     import { onMount } from "svelte";
 
-    /** @type {Chant} */
-    export let chant;
-    /** @type {{
-        melodicPatternNc: NeumeComponent[][],
-        melismaPatternSyl: Syllable[]
-    }}
-    */
-    export let highlightOptions;
+    /**
+     * @typedef {Object} Props
+     * @property {Chant} chant
+     * @property {any} highlightOptions
+     */
+
+    /** @type {Props} */
+    let { chant, highlightOptions } = $props();
 
     function highlightOnChant() {
         let melodicPattern = highlightOptions.melodicPatternNc;
@@ -25,11 +23,12 @@
     function highlightMelismaOnChant() {
         let melismaPattern = highlightOptions.melismaPatternSyl;
         melismaPattern.forEach((mp) => {
-            spotlightText(mp.syllableWord)
-        })
+            spotlightText(mp.syllableWord);
+        });
     }
 
-    let svg, error;
+    let svg = $state(),
+        error = $state();
     onMount(async () => {
         await drawSVGFromMEIContent(chant.meiContent)
             .then((chantSVG) => {
@@ -46,16 +45,10 @@
     });
 </script>
 
-<div>
+<div class="shadow-md box-border rounded-md p-2 border-2 border-emerald-500">
     {@html svg}
     {#if error}
         <hr />
         {error}
     {/if}
 </div>
-
-<style>
-    div {
-        box-shadow: 0 0 2px 3px #888;
-    }
-</style>

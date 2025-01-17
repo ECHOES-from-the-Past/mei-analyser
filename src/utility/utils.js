@@ -63,11 +63,12 @@ export async function drawSVGFromMEIContent(meiContent) {
       let zoom = 70;
 
       verovioToolkit.setOptions({
+        header: "auto",
+        footer: "none",
         pageWidth: document.getElementById("chant-svg").offsetWidth / zoom * 100,
         adjustPageHeight: true,
         shrinkToFit: true,
         scale: zoom,
-        footer: "none",
       });
       verovioToolkit.loadData(meiContent);
 

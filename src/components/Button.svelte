@@ -1,47 +1,38 @@
 <script>
-    /** @type {String} the component id */
-    export let id = "button-id";
+    /**
+     * @typedef {Object} Props
+     * @property {String} [id]
+     * @property {function} [onClick]
+     * @property {boolean} [disabled]
+     * @property {import('svelte').Snippet} [children]
+     */
 
-    /** @type {function} the button's action */
-    export let onClick = null;
-    export let disabled = false;
+    /** @type {Props} */
+    let {
+        id = "button-id",
+        onClick = null,
+        disabled = false,
+        children,
+    } = $props();
 
-    let button;
+    let button = $state();
     export function click() {
         button.click();
     }
 </script>
 
-<button id={id} on:click={onClick} bind:this={button} {disabled}>
-    <slot/>
+<button {id} onclick={onClick} bind:this={button} {disabled}>
+    {@render children?.()}
 </button>
 
-<style>
+<style lang="postcss">
     /* Default button styles */
     button {
-        /* width: max-content; */
-        border: 0px;
-        border-radius: 8px;
-        color: white;
-        padding: 0.54rem 1rem;
-        font-size: 1rem;
-        font-weight: 500;
-        font-family: inherit;
-        background-color: var(--button);
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
+        @apply border-0 rounded-lg text-white py-2 px-4 font-medium bg-emerald-800;
+        @apply cursor-pointer transition ease-in-out duration-300;
 
-    button:hover {
-        background-color: var(--button-hover);
-    }
-
-    button:active {
-        background-color: var(--button-active);
-    }
-
-    button:disabled {
-        background-color: var(--button-disabled);
-        cursor: not-allowed;
+        @apply hover:bg-emerald-600;
+        @apply active:bg-emerald-700;
+        @apply disabled:bg-gray-400 disabled:cursor-not-allowed;
     }
 </style>

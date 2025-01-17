@@ -1,12 +1,12 @@
 <script>
     import NavBar from "@components/NavBar.svelte";
     import ScrollUpButton from "@components/ScrollUpButton.svelte";
-    import SearchPanel from "@panels/SearchPanel.svelte";
-    import ExperimentalPanel from "@panels/ExperimentalPanel.svelte";
+    import SearchPanel from "./SearchPanel.svelte";
 
     import packageJSON from "../package.json";
-    import { env, persist, retrieve } from "@utility/utils";
+    import { persist, retrieve } from "@utility/utils";
     import { onMount } from "svelte";
+    import './style.css';
 
     /* Dynamically redraw the MEI content when the window is resized
      * See: https://www.geeksforgeeks.org/how-to-wait-resize-end-event-and-then-perform-an-action-using-javascript/
@@ -19,7 +19,8 @@
         }, 500);
     };
 
-    let navbar;
+    let navbar = $state();
+    let /** @type {SearchPanel} */ searchPanel = $state();
 
     /**
      * Clear old local storage data for apps that uses version prior to 0.5.x
@@ -31,14 +32,6 @@
         console.log(
             "Finished clearing, loading default options for the search panel!",
         );
-        loadDefaultOptions();
-    }
-
-    let /** @type {SearchPanel} */ searchPanel;
-    /**
-     * Load default options for the Search Panel
-     */
-    function loadDefaultOptions() {
         searchPanel.loadDefaultOptions();
     }
 
@@ -46,7 +39,7 @@
         let localVersion = retrieve("version");
         if (localVersion == undefined) {
             console.log("Loading default options on the search panel!");
-            loadDefaultOptions();
+            searchPanel.loadDefaultOptions();
         } else if (
             localVersion.split(".")[1] < 5 ||
             localVersion.split(".")[2] < 4
@@ -63,7 +56,6 @@
 <NavBar bind:this={navbar} />
 <div id="panels">
     <SearchPanel bind:this={searchPanel} />
-    <ExperimentalPanel hidden />
 </div>
 <ScrollUpButton />
 
