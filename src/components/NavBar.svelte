@@ -1,5 +1,5 @@
 <script>
-    import { env } from "../utility/utils";
+    import { env } from "@utility/utils";
     import Button from "./Button.svelte";
     import ExternalLink from "./ExternalLink.svelte";
 

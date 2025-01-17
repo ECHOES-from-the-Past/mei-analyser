@@ -1,4 +1,4 @@
-import { NeumeComponent, NeumeComponentSQ, toSeptenary, getNeumeComponentList, SearchResult, Syllable } from "@utility/components.js";
+import { NeumeComponent, toSeptenary, getNeumeComponentList, SearchResult, Syllable } from "@utility/components.js";
 
 import { Chant } from "@utility/components.js";
 

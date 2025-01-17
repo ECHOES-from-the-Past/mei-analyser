@@ -4,7 +4,6 @@
     import Tooltip from "@components/Tooltip.svelte";
     import { Label, RadioGroup } from "bits-ui";
 
-
     const placeholder = `E.g.: "1{2} +1 -2" or "a b? a* g"`;
 
     let { onKeydown } = $props();

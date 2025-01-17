@@ -1,9 +1,9 @@
 <script>
     import { onMount } from "svelte";
     import AnalysisChart from "@search/AnalysisChart.svelte";
-    import Section from "@/components/Section.svelte";
+    import Section from "@components/Section.svelte";
     import { capitalizeFirstLetter } from "@utility/utils";
-    import { Chant } from "@/utility/components";
+    import { Chant } from "@utility/components";
 
     /**
      * @typedef {Object} Props

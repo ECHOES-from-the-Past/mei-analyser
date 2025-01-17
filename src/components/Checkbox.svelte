@@ -1,6 +1,6 @@
 <script>
     import { Checkbox, Label } from "bits-ui";
-    import { persist, retrieve } from "../utility/utils";
+    import { persist, retrieve } from "@utility/utils";
     import { blur } from "svelte/transition";
 
     const label = `${value}-label`;

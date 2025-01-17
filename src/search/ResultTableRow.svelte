@@ -1,7 +1,6 @@
 <script>
     import ChantDetails from "@search/ChantDetails.svelte";
     import ChantVerovioRender from "@search/ChantVerovioRender.svelte";
-    import ExternalLink from "@components/ExternalLink.svelte";
     import Button from "@components/Button.svelte";
 
     import { Chant } from "@utility/components";

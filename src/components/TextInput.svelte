@@ -1,5 +1,5 @@
 <script>
-    import { persist, retrieve } from "../utility/utils";
+    import { persist, retrieve } from "@utility/utils";
 
     /**
      * @typedef {Object} Props
