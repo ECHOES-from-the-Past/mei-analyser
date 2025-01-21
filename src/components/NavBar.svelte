@@ -12,7 +12,7 @@
     }
 </script>
 
-<div id='navbar' class="flex items-center justify-between gap-3 bg-white px-2 pt-2">
+<div id='navbar' class="flex items-center justify-between gap-3 px-2 pt-2">
     <p>MEI Analyser</p>
     <ExternalLink
         href="https://github.com/ECHOES-from-the-Past/mei-analyser/wiki"
