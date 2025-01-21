@@ -5,10 +5,9 @@
 
     import { Chant } from "@utility/components";
     import { capitalizeFirstLetter } from "@utility/utils";
-    import { fly } from "svelte/transition";
     import { Accordion } from "bits-ui";
     import AnalysisChart from "./AnalysisChart.svelte";
-    import { slide } from "svelte/transition";
+    import { fly, slide, fade } from "svelte/transition";
 
     /**
      * @typedef {Object} Props
@@ -191,6 +190,12 @@
             }
         }
     }
+
+    /* Styling classes */
+    const accordionTrigger =
+        "flex w-full select-none items-center justify-between py-3 font-medium transition-all hover:bg-emerald-200";
+
+    const accordionItem = "group border-b border-dark-10 px-1.5";
 </script>
 
 <tr transition:fly|global>
@@ -232,19 +237,14 @@
 
 {#if moreDetails}
     <tr>
-        <td colspan="5">
+        <td colspan="5" transition:fade|global>
             <Accordion.Root type="multiple">
                 <!-- Chant Information -->
-                <Accordion.Item
-                    value="chant-info"
-                    class="group border-b border-dark-10 px-1.5"
-                >
+                <Accordion.Item value="chant-info" class={accordionItem}>
                     <Accordion.Header>
                         <!-- Title & dropdown button -->
-                        <Accordion.Trigger
-                            class="flex w-full flex-1 select-none items-center justify-between py-5 text-[15px] font-medium transition-all  hover:bg-emerald-200"
-                        >
-                            <span class="w-full text-left font-bold">
+                        <Accordion.Trigger class={accordionTrigger}>
+                            <span class="accordion-header">
                                 Chant Information
                             </span>
                         </Accordion.Trigger>
@@ -259,14 +259,12 @@
                 <!-- Neume Distribution Chart -->
                 <Accordion.Item
                     value="neume-distribution-chart"
-                    class="group border-b border-dark-10 px-1.5"
+                    class={accordionItem}
                 >
                     <Accordion.Header>
                         <!-- Title & dropdown button -->
-                        <Accordion.Trigger
-                            class="flex w-full flex-1 select-none items-center justify-between py-5 text-[15px] font-medium transition-all hover:bg-emerald-200"
-                        >
-                            <span class="w-full text-left">
+                        <Accordion.Trigger class={accordionTrigger}>
+                            <span class="accordion-header">
                                 Neume Distribution Chart
                             </span>
                         </Accordion.Trigger>
@@ -282,28 +280,17 @@
                 {#if otherOptions.verovioRendition.enabled}
                     <Accordion.Item
                         value="modern-rendition"
-                        class="group border-b border-dark-10 px-1.5"
+                        class={accordionItem}
                     >
-                        <!-- mount(ChantVerovioRender, {
-                            target: chantSVGDiv,
-                            props: {
-                                chant: chant,
-                                highlightOptions: {
-                                    melodicPatternNc: melodicPatternNc,
-                                    melismaPatternSyl: melismaPatternSyl,
-                                },
-                            },
-                        }); -->
+                        <!-- Title & dropdown button -->
                         <Accordion.Header>
-                            <!-- Title & dropdown button -->
-                            <Accordion.Trigger
-                                class="flex w-full flex-1 select-none items-center justify-between py-5 text-[15px] font-medium transition-all hover:bg-emerald-200"
-                            >
-                                <span class="w-full text-left">
+                            <Accordion.Trigger class={accordionTrigger}>
+                                <span class="accordion-header">
                                     Modern Rendition
                                 </span>
                             </Accordion.Trigger>
                         </Accordion.Header>
+                        <!-- Content: Modern Rendition -->
                         <Accordion.Content>
                             <div class="pb-6" transition:slide|global>
                                 <ChantVerovioRender
@@ -323,6 +310,10 @@
 {/if}
 
 <style lang="postcss">
+    .accordion-header {
+        @apply w-full text-left font-bold;
+    }
+
     tr {
         @apply table-row;
     }

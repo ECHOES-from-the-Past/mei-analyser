@@ -4,16 +4,6 @@
 @tailwind utilities;
 
 * {
-  font-family: system-ui, ui-sans-serif, Helvetica, sans-serif;
-  line-height: 1.48;
-  font-weight: 400;
-
-  color-scheme: light;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
   --melisma-text: hsl(115, 61%, 28%);
   --melisma-background: hsla(138, 100%, 66%, 0.4);
   --melisma-spotlight-fill: hsla(138, 100%, 72%, 0.2);
@@ -41,6 +31,9 @@
 }
 
 /* Custom button styles */
+body {
+  @apply bg-gray-50;
+}
 
 h1,
 h2,
