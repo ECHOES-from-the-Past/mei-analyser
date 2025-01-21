@@ -89,4 +89,4 @@
     });
 </script>
 
-<div bind:this={chantInfo}></div>
+<div bind:this={chantInfo} class="inline-block text-left px-4"></div>

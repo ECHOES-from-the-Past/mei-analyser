@@ -195,7 +195,9 @@
     const accordionTrigger =
         "flex w-full select-none items-center justify-between py-3 font-medium transition-all hover:bg-emerald-200";
 
-    const accordionItem = "group border-b border-dark-10 px-1.5";
+    const accordionItem = "group border-b-2 border-gray-300 p-1";
+
+    const accordionContent = "";
 </script>
 
 <tr transition:fly|global>
@@ -238,7 +240,7 @@
 {#if moreDetails}
     <tr>
         <td colspan="5" transition:fade|global>
-            <Accordion.Root type="multiple">
+            <Accordion.Root type='multiple' forceMount={true} class="w-full">
                 <!-- Chant Information -->
                 <Accordion.Item value="chant-info" class={accordionItem}>
                     <Accordion.Header>
@@ -249,8 +251,8 @@
                             </span>
                         </Accordion.Trigger>
                     </Accordion.Header>
-                    <Accordion.Content>
-                        <div class="pb-6" transition:slide|global>
+                    <Accordion.Content forceMount={true}>
+                        <div class="flex" transition:slide|global>
                             <ChantDetails {chant} />
                         </div>
                     </Accordion.Content>
@@ -269,7 +271,7 @@
                             </span>
                         </Accordion.Trigger>
                     </Accordion.Header>
-                    <Accordion.Content>
+                    <Accordion.Content forceMount={true}>
                         <div class="pb-6" transition:slide|global>
                             <AnalysisChart {chant} />
                         </div>
@@ -291,7 +293,7 @@
                             </Accordion.Trigger>
                         </Accordion.Header>
                         <!-- Content: Modern Rendition -->
-                        <Accordion.Content>
+                        <Accordion.Content forceMount={true} class={accordionContent}>
                             <div class="pb-6" transition:slide|global>
                                 <ChantVerovioRender
                                     {chant}

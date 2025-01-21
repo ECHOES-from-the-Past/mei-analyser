@@ -27,7 +27,6 @@
      * @param {string} localVersion
      */
     function clearOldLocalStorage() {
-        console.log("Clearing localStorage from version prior to 0.5.4...");
         localStorage.clear();
         console.log(
             "Finished clearing, loading default options for the search panel!",
@@ -37,14 +36,15 @@
 
     onMount(() => {
         let localVersion = retrieve("version");
+        console.log("Local version: ", localVersion);
+        
         if (localVersion == undefined) {
             console.log("Loading default options on the search panel!");
             searchPanel.loadDefaultOptions();
         } else if (
-            localVersion.split(".")[1] < 5 ||
-            localVersion.split(".")[2] < 4
+            localVersion.split(".")[1] < 5
         ) {
-            // Force clear localStorage for versions lower than 0.5.4
+            // Force clear localStorage for versions lower than 0.5
             clearOldLocalStorage();
         }
         let version = packageJSON.version;

@@ -3,13 +3,19 @@
     import TextInput from "@components/TextInput.svelte";
     import Tooltip from "@components/Tooltip.svelte";
     import { Label, RadioGroup } from "bits-ui";
+    import { onMount } from "svelte";
 
     const placeholder = `E.g.: "1{2} +1 -2" or "a b? a* g"`;
 
     let { onKeydown } = $props();
-    let searchMode = $state(retrieve("search-mode") || "wildcard"),
+    let searchMode = $state(),
         patternInputBox = $state(),
         /** Global error message */ error = $state("");
+
+    onMount(() => {
+        searchMode = retrieve("search-mode") || "wildcard";
+        persist("search-mode", searchMode);
+    });
 
     /**
      * Takes in the raw input string, output a list of recognizable token

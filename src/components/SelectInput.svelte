@@ -12,6 +12,7 @@
 
     /** @type {Props} */
     let {
+        id,
         allOptions = ["Placeholder 1", "Placeholder 2"],
         placeholder = "input-something-here",
         onKeydown
@@ -36,7 +37,7 @@
     }
 </script>
 
-<Combobox.Root bind:inputValue items={availableOptions} class="combobox">
+<Combobox.Root bind:inputValue items={availableOptions} class="combobox" {id}>
     <Combobox.Input
         {placeholder}
         aria-label={placeholder}

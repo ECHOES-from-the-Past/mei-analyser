@@ -28,6 +28,12 @@
             spotlightText(mp.syllableWord);
         });
     }
+    let verovioToolkit = $state(async () => {
+        createVerovioModule().then((VerovioModule) => {
+            // This line initializes the Verovio toolkit
+            verovioToolkit = new VerovioToolkit(VerovioModule);
+        });
+    });
 
     /**
      * Draw the MEI content to the screen
@@ -41,7 +47,7 @@
             /** @type {SVGElement} */
             await createVerovioModule().then((VerovioModule) => {
                 // This line initializes the Verovio toolkit
-                const verovioToolkit = new VerovioToolkit(VerovioModule);
+                verovioToolkit = new VerovioToolkit(VerovioModule);
 
                 const client = document.documentElement.clientWidth;
                 verovioToolkit.setOptions({
@@ -54,7 +60,7 @@
                     breaks: "line",
                 });
                 verovioToolkit.loadData(meiContent);
-                
+
                 svg = verovioToolkit.renderToSVG(1);
             });
         } catch (error) {

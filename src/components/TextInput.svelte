@@ -22,7 +22,7 @@
         autocomplete = "off",
     } = $props();
 
-    let value = $state(retrieve(id)?.value || "");
+    let value = $state(retrieve(id));
 
     function handleInputChanges() {
         persist(id, value);
