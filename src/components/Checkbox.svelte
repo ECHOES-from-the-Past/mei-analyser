@@ -56,9 +56,9 @@
             class="inline-flex items-center justify-center shirnk-0"
         >
             {#if check}
-                <span class="text-emerald-800 font-semibold"> ✔ </span>
+                <span class="text-emerald-800 font-semibold text-sm"> ✔ </span>
             {:else}
-                <span class="text-emerald-100 font-semibold"> ✗ </span>
+                <span class="text-emerald-100 font-semibold text-sm"> ✗ </span>
             {/if}
         </Checkbox.Indicator>
     </Checkbox.Root>
