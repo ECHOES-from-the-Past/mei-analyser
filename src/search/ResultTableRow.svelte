@@ -5,8 +5,10 @@
 
     import { Chant } from "@utility/components";
     import { capitalizeFirstLetter } from "@utility/utils";
-    import { mount } from "svelte";
     import { fly } from "svelte/transition";
+    import { Accordion } from "bits-ui";
+    import AnalysisChart from "./AnalysisChart.svelte";
+    import { slide } from "svelte/transition";
 
     /**
      * @typedef {Object} Props
@@ -17,6 +19,8 @@
 
     /** @type {Props} */
     let { chant, melodicPatternNc, otherOptions } = $props();
+
+    let moreDetails = $state(false);
 
     /* Constructing the text column  */
     let syllablesContent = [];
@@ -187,46 +191,6 @@
             }
         }
     }
-
-    /**
-     * Display the chant's information to the screen
-     * @param {Chant} chant the chant which information is to be extracted and printed
-     */
-    async function printChantInformation(chant) {
-        let chantInfoDiv = document.getElementById("chant-info");
-        chantInfoDiv.innerHTML = "";
-        mount(ChantDetails, {
-            target: chantInfoDiv,
-            props: {
-                chant: chant,
-            },
-        });
-
-        let chantSVGDiv = document.getElementById("chant-svg");
-        chantSVGDiv.innerHTML = "";
-        if (otherOptions.verovioRendition.enabled) {
-            mount(ChantVerovioRender, {
-                target: chantSVGDiv,
-                props: {
-                    chant: chant,
-                    highlightOptions: {
-                        melodicPatternNc: melodicPatternNc,
-                        melismaPatternSyl: melismaPatternSyl,
-                    },
-                },
-            });
-        }
-
-        // Add a little delay for Verovio to render the chant
-        setTimeout(() => {
-            const chantDisplay = document.getElementById("chant-display");
-            chantDisplay.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-                inline: "nearest",
-            });
-        }, 300);
-    }
 </script>
 
 <tr transition:fly|global>
@@ -255,12 +219,108 @@
             id="options"
             class="flex flex-row items-center justify-center gap-x-2"
         >
-            <Button onClick={() => printChantInformation(chant)}>
+            <Button
+                onClick={() => {
+                    moreDetails = !moreDetails;
+                }}
+            >
                 More Details
             </Button>
         </div>
     </td>
 </tr>
+
+{#if moreDetails}
+    <tr>
+        <td colspan="5">
+            <Accordion.Root type="multiple">
+                <!-- Chant Information -->
+                <Accordion.Item
+                    value="chant-info"
+                    class="group border-b border-dark-10 px-1.5"
+                >
+                    <Accordion.Header>
+                        <!-- Title & dropdown button -->
+                        <Accordion.Trigger
+                            class="flex w-full flex-1 select-none items-center justify-between py-5 text-[15px] font-medium transition-all  hover:bg-emerald-200"
+                        >
+                            <span class="w-full text-left font-bold">
+                                Chant Information
+                            </span>
+                        </Accordion.Trigger>
+                    </Accordion.Header>
+                    <Accordion.Content>
+                        <div class="pb-6" transition:slide|global>
+                            <ChantDetails {chant} />
+                        </div>
+                    </Accordion.Content>
+                </Accordion.Item>
+
+                <!-- Neume Distribution Chart -->
+                <Accordion.Item
+                    value="neume-distribution-chart"
+                    class="group border-b border-dark-10 px-1.5"
+                >
+                    <Accordion.Header>
+                        <!-- Title & dropdown button -->
+                        <Accordion.Trigger
+                            class="flex w-full flex-1 select-none items-center justify-between py-5 text-[15px] font-medium transition-all hover:bg-emerald-200"
+                        >
+                            <span class="w-full text-left">
+                                Neume Distribution Chart
+                            </span>
+                        </Accordion.Trigger>
+                    </Accordion.Header>
+                    <Accordion.Content>
+                        <div class="pb-6" transition:slide|global>
+                            <AnalysisChart {chant} />
+                        </div>
+                    </Accordion.Content>
+                </Accordion.Item>
+
+                <!-- Modern rendition -->
+                {#if otherOptions.verovioRendition.enabled}
+                    <Accordion.Item
+                        value="modern-rendition"
+                        class="group border-b border-dark-10 px-1.5"
+                    >
+                        <!-- mount(ChantVerovioRender, {
+                            target: chantSVGDiv,
+                            props: {
+                                chant: chant,
+                                highlightOptions: {
+                                    melodicPatternNc: melodicPatternNc,
+                                    melismaPatternSyl: melismaPatternSyl,
+                                },
+                            },
+                        }); -->
+                        <Accordion.Header>
+                            <!-- Title & dropdown button -->
+                            <Accordion.Trigger
+                                class="flex w-full flex-1 select-none items-center justify-between py-5 text-[15px] font-medium transition-all hover:bg-emerald-200"
+                            >
+                                <span class="w-full text-left">
+                                    Modern Rendition
+                                </span>
+                            </Accordion.Trigger>
+                        </Accordion.Header>
+                        <Accordion.Content>
+                            <div class="pb-6" transition:slide|global>
+                                <ChantVerovioRender
+                                    {chant}
+                                    highlightOptions={{
+                                        melodicPatternNc: melodicPatternNc,
+                                        melismaPatternSyl: melismaPatternSyl,
+                                    }}
+                                />
+                            </div>
+                        </Accordion.Content>
+                    </Accordion.Item>
+                {/if}
+            </Accordion.Root>
+        </td>
+    </tr>
+{/if}
 
 <style lang="postcss">
     tr {

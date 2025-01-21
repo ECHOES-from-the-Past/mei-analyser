@@ -1,7 +1,5 @@
 <script>
     import { onMount } from "svelte";
-    import AnalysisChart from "@search/AnalysisChart.svelte";
-    import Section from "@components/Section.svelte";
     import { capitalizeFirstLetter } from "@utility/utils";
     import { Chant } from "@utility/components";
 
@@ -12,7 +10,7 @@
 
     /** @type {Props} */
     let { chant } = $props();
-    let chantInfoDiv = $state();
+    let chantInfo = $state();
 
     let modeCalcLink = document.createElement("a");
     modeCalcLink.rel = "external";
@@ -86,16 +84,9 @@
                 p.innerHTML = `<b>${k}</b>: ${info[k]}`;
             }
 
-            chantInfoDiv.appendChild(p);
+            chantInfo.appendChild(p);
         }
     });
 </script>
 
-<div class="grid grid-cols-2 gap-6 pb-6">
-    <div bind:this={chantInfoDiv}></div>
-    <div>
-        <Section>
-            <AnalysisChart {chant}></AnalysisChart>
-        </Section>
-    </div>
-</div>
+<div bind:this={chantInfo}></div>

@@ -4,7 +4,6 @@
 @tailwind utilities;
 
 * {
-  font-size: 16px;
   font-family: system-ui, ui-sans-serif, Helvetica, sans-serif;
   line-height: 1.48;
   font-weight: 400;
@@ -14,9 +13,6 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  /* Reference for the attribute below: https://youtu.be/cH8VbLM1958 */
-  min-width: 0;
 
   --melisma-text: hsl(115, 61%, 28%);
   --melisma-background: hsla(138, 100%, 66%, 0.4);

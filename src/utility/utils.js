@@ -1,6 +1,4 @@
 import { NeumeComponent, SyllableWord } from './components.js';
-import createVerovioModule from 'verovio/wasm';
-import { VerovioToolkit } from 'verovio/esm';
 
 /*
 Note for utility functions: These functions are primarily used on the client side (DOM)
@@ -43,43 +41,6 @@ export async function loadMEIFile(fileName) {
     .catch((error) => {
       console.error(`Error: ${error}`);
     });
-}
-
-/**
- * Draw the MEI content to the screen
- * @async
- * @param {MEI_FileContent} meiContent file content of the MEI file
- * @returns {SVGElement} SVG content of the MEI file
- */
-export async function drawSVGFromMEIContent(meiContent) {
-  let svg;
-  try {
-    /** @type {SVGElement} */
-    await createVerovioModule().then(VerovioModule => {
-      // This line initializes the Verovio toolkit
-      const verovioToolkit = new VerovioToolkit(VerovioModule);
-
-      // Setting options for the toolkit
-      let zoom = 70;
-
-      verovioToolkit.setOptions({
-        header: "auto",
-        footer: "none",
-        pageWidth: document.getElementById("chant-svg").offsetWidth / zoom * 100,
-        adjustPageHeight: true,
-        shrinkToFit: true,
-        scale: zoom,
-      });
-      verovioToolkit.loadData(meiContent);
-
-      svg = verovioToolkit.renderToSVG(1);
-    });
-  } catch (error) {
-    console.error(error);
-    console.log("Please reload the page and try again.");
-    throw new Error(`Please reload the page and try again. Error(s): ${error}.`);
-  }
-  return svg;
 }
 
 /* ------------------------ HIGHLIGHTING SVGs --------------------------- */
