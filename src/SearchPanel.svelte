@@ -27,7 +27,7 @@
         filterByCantusId,
     } from "@search/search.mjs";
 
-    import { onMount, mount } from "svelte";
+    import { mount } from "svelte";
     import { env } from "@utility/utils";
 
     const databaseURL =
@@ -55,12 +55,10 @@
         /** @type {Checkbox}  */ aquitanianPitchCustomGABC = $state(),
         /** @type {Checkbox}  */ verovioRendition = $state();
 
-    let /** @type {Button}  */ searchButton = $state(); // bind this with the "Search" button
+    let /** @type {Button} */ searchButton = $state(); // bind this with the "Search" button
     let /** @type {ClientStatus} */ clientStatus = $state();
 
-    let /** @type {HTMLDivElement}*/ searchResultDiv = $state(),
-        /** @type {HTMLDivElement}*/ chantInfoDiv = $state(),
-        /** @type {HTMLDivElement}*/ chantSVGDiv = $state();
+    let /** @type {HTMLDivElement}*/ searchResultDiv = $state();
 
     let listOfChants = $state([]);
 
@@ -80,7 +78,8 @@
                     "Error loading list of chants, please reload the page.",
                 );
             });
-    });1
+    });
+    1;
 
     /**
      * Perform highlighting when user clicks on "Search" button
@@ -158,8 +157,6 @@
     export function clearSearchResultsAndInfo() {
         // Clear the search result display
         searchResultDiv.innerHTML = `<p>Search results will display here</p>`;
-        chantInfoDiv.innerHTML = `<p>Chant information will display here</p>`;
-        chantSVGDiv.innerHTML = `<p>Chant visual will appear here</p>`;
     }
 
     function searchButtonAction() {
@@ -217,7 +214,6 @@
     }
 
     /**
-     *
      * @param {KeyboardEvent} e
      */
     function searchOnEnter(e) {
@@ -288,11 +284,7 @@
             <TextInput
                 id="finalis-input-box"
                 placeholder="e.g.: '-1' or 'a'"
-                onKeydown={(e) => {
-                    if (e.key == "Enter") {
-                        searchButton.click();
-                    }
-                }}
+                onKeydown={searchOnEnter}
                 bind:this={finalisInputBox}
             />
             <!-- Metadata search filter -->
@@ -322,9 +314,9 @@
                 placeholder="Search by a chant's source"
                 allOptions={[
                     ...new Set(
-                        listOfChants.map((/** @type {Chant} */ chant) => {
-                            return chant.source;
-                        }),
+                        listOfChants.map(
+                            (/** @type {Chant} */ chant) => chant.source,
+                        ),
                     ),
                 ]}
                 onKeydown={searchOnEnter}
@@ -376,11 +368,7 @@
             <TextInput
                 id="text-input-box"
                 placeholder="e.g.: 'dominici'"
-                onKeydown={(e) => {
-                    if (e.key == "Enter") {
-                        searchButton.click();
-                    }
-                }}
+                onKeydown={searchOnEnter}
                 bind:this={textInputBox}
             />
 
@@ -389,19 +377,12 @@
             <!-- Search, Reset, and Clear Results buttons -->
             <Button
                 id="search-btn"
-                onClick={() => {
-                    searchButtonAction();
-                }}
+                onClick={searchButtonAction}
                 bind:this={searchButton}
             >
                 Search
             </Button>
-            <Button
-                id="reset-search-button"
-                onClick={() => {
-                    loadDefaultOptions();
-                }}
-            >
+            <Button id="reset-search-button" onClick={loadDefaultOptions}>
                 Reset
             </Button>
             <Button
@@ -448,24 +429,23 @@
             </Checkbox>
             <hr />
             <!-- Search/filter by mode -->
-            <!-- <div>
-                <p>Filter by detected mode(s):</p>
-                <div class="flex place-content-evenly">
-                    <Checkbox value="mode-1">Mode 1</Checkbox>
-                    <Checkbox value="mode-2">Mode 2</Checkbox>
-                    <Checkbox value="mode-3">Mode 3</Checkbox>
-                    <Checkbox value="mode-4">Mode 4</Checkbox>
+            <!-- <p>Filter by detected mode(s):</p>
+            <div class="grid grid-flow-row grid-cols-2 gap-1 align-left">
+                <Checkbox value="mode-1">Mode 1</Checkbox>
+                <Checkbox value="mode-2">Mode 2</Checkbox>
+                <Checkbox value="mode-3">Mode 3</Checkbox>
+                <Checkbox value="mode-4">Mode 4</Checkbox>
 
-                    <Checkbox value="mode-5">Mode 5</Checkbox>
-                    <Checkbox value="mode-6">Mode 6</Checkbox>
-                    <Checkbox value="mode-7">Mode 7</Checkbox>
-                    <Checkbox value="mode-8">Mode 8</Checkbox>
+                <Checkbox value="mode-5">Mode 5</Checkbox>
+                <Checkbox value="mode-6">Mode 6</Checkbox>
+                <Checkbox value="mode-7">Mode 7</Checkbox>
+                <Checkbox value="mode-8">Mode 8</Checkbox>
 
-                    <Checkbox value="all-mode">All Modes</Checkbox>
-                    <Checkbox value="unknown-mode">Unknown</Checkbox>
-                </div>
-                <hr />
-            </div> -->
+                <Checkbox value="all-mode">All Modes</Checkbox>
+                <Checkbox value="unknown-mode">Unknown</Checkbox>
+            </div>
+            <hr /> -->
+            <!-- </div> -->
         </Section>
     </div>
     <!-- End of leftside search panel -->
@@ -478,18 +458,6 @@
             <div id="search-result" bind:this={searchResultDiv}>
                 <!-- Search results -->
                 <p>Search results will display here</p>
-            </div>
-        </Section>
-
-        <Section id="chant-display">
-            <h1>Chant Information</h1>
-            <div id="chant-info" bind:this={chantInfoDiv}>
-                <!-- Chant information goes here -->
-                <p>Chant information will display here</p>
-            </div>
-            <div id="chant-svg" bind:this={chantSVGDiv}>
-                <!-- Chant SVG goes here -->
-                <p>Chant visual will appear here</p>
             </div>
         </Section>
     </div>

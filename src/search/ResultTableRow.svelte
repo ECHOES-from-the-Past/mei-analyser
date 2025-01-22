@@ -7,7 +7,7 @@
     import { capitalizeFirstLetter } from "@utility/utils";
     import { Accordion } from "bits-ui";
     import AnalysisChart from "./AnalysisChart.svelte";
-    import { fly, slide, fade } from "svelte/transition";
+    import { fly, slide, fade, draw, scale } from "svelte/transition";
 
     /**
      * @typedef {Object} Props
@@ -239,8 +239,22 @@
 
 {#if moreDetails}
     <tr>
-        <td colspan="5" transition:fade|global>
-            <Accordion.Root type='multiple' forceMount={true} class="w-full">
+        <td colspan="5" transition:fade>
+            <!--
+            Note for future developer:
+            Bits-UI version 0.22.0 has `multiple` prop for Accordion.Root,
+            implemented with Svelte 4.
+            Bits-UI "next" version, however, is implemented with Svelte 5 and
+            the `multiple` prop is replaced with `type="multiple"` instead.
+            Be aware of this when you update the library.
+
+            "Next"/Svelte 5 version:
+            https://github.com/huntabyte/bits-ui/blob/7592757c9162694d75ea844331e7c51219e8f307/packages/bits-ui/src/lib/bits/accordion/components/accordion.svelte
+
+            Current 0.22.0 / Svelte 4 version:
+            https://github.com/huntabyte/bits-ui/blob/338e6058327a3e1d42532bdcfeeb481139e04571/packages/bits-ui/src/lib/bits/accordion/components/accordion.svelte
+            -->
+            <Accordion.Root class="w-full" multiple>
                 <!-- Chant Information -->
                 <Accordion.Item value="chant-info" class={accordionItem}>
                     <Accordion.Header>
@@ -251,8 +265,8 @@
                             </span>
                         </Accordion.Trigger>
                     </Accordion.Header>
-                    <Accordion.Content forceMount={true}>
-                        <div class="flex" transition:slide|global>
+                    <Accordion.Content>
+                        <div class="flex" transition:slide>
                             <ChantDetails {chant} />
                         </div>
                     </Accordion.Content>
@@ -271,8 +285,8 @@
                             </span>
                         </Accordion.Trigger>
                     </Accordion.Header>
-                    <Accordion.Content forceMount={true}>
-                        <div class="pb-6" transition:slide|global>
+                    <Accordion.Content>
+                        <div class="pb-6" transition:scale>
                             <AnalysisChart {chant} />
                         </div>
                     </Accordion.Content>
@@ -293,8 +307,8 @@
                             </Accordion.Trigger>
                         </Accordion.Header>
                         <!-- Content: Modern Rendition -->
-                        <Accordion.Content forceMount={true} class={accordionContent}>
-                            <div class="pb-6" transition:slide|global>
+                        <Accordion.Content class={accordionContent}>
+                            <div transition:scale>
                                 <ChantVerovioRender
                                     {chant}
                                     highlightOptions={{

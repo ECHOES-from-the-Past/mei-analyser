@@ -94,7 +94,7 @@
     });
 </script>
 
-<div class="shadow-md box-border rounded-md p-2 border-2 border-emerald-100">
+<div class="shadow-md box-border rounded-md p-1 border-2 border-emerald-100 m-4">
     {@html svg}
     {#if error}
         <hr />
