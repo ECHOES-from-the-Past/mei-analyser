@@ -11,6 +11,7 @@
     import { getNeumeComponentList } from "@utility/components";
     import { NeumeComponent } from "@utility/components";
     import { onMount } from "svelte";
+    import Section from "@/components/Section.svelte";
 
     /**
      * @typedef {Object} Props
@@ -24,10 +25,10 @@
     let chart = $state();
 
     // Colours
-    const normalBg = "rgba(125, 179, 102, 0.2)",
-        normalBorder = "rgb(125, 179, 102)";
-    const rhombusBg = "rgba(55, 99, 132, 0.2)",
-        rhombusBorder = "rgb(55, 99, 132)";
+    const normalBg = "#10b98180",
+        normalBorder = "#047857aa";
+    const rhombusBg = "#67e8f980",
+        rhombusBorder = "#06b6d4aa";
 
     /**
      * Take the Aquitanian neume component list, output useable chant data for the chart
@@ -58,7 +59,8 @@
         let maxLoc = -99,
             minLoc = 99,
             temp;
-        const pitchList = chantNC.map((nc) => {
+
+        chantNC.forEach((nc) => {
             temp = nc.loc;
             if (temp > maxLoc) maxLoc = temp;
             if (temp < minLoc) minLoc = temp;
@@ -76,7 +78,7 @@
         // Count normal notes
 
         // Count rhombuses
-        chantNC.map((nc) => {
+        chantNC.forEach((nc) => {
             if (nc.tilt == "se") {
                 rhombus[nc.loc] += 1;
             } else {
@@ -92,7 +94,7 @@
         // Sort the countings of pitches
         let sortedKeys = Object.keys(counts).sort((a, b) => a - b);
 
-        sortedKeys.forEach((e, i, arr) => {
+        sortedKeys.forEach((e, i) => {
             let value = sortedKeys[i];
             sortedCountsFreq.regular.set(`${e}`, counts[value]);
             sortedCountsFreq.rhombus.set(`${e}`, rhombus[value]);
@@ -108,7 +110,6 @@
                 chantData.labels.push(key);
             }
         }
-        // chantData.labels.push(`${sortedCountsFreq[e]}`);
 
         // Adding colours
         Object.keys(sortedCountsFreq).forEach((e, i, arr) => {
@@ -216,6 +217,18 @@
                     title: {
                         display: true,
                         text: `Frequency of the notes across the chant ambitus`,
+                        font: {
+                            size: 18,
+                            weight: "bold",
+                        },
+                    },
+                    legend: {
+                        labels: {
+                            display: true,
+                            font: {
+                                size: 14,
+                            },
+                        },
                     },
                 },
                 scales: {
@@ -225,6 +238,15 @@
                             display: true,
                             padding: 1,
                             text: "Ambitus",
+                            font: {
+                                size: 16,
+                                weight: "bold",
+                            },
+                        },
+                        ticks: {
+                            font: {
+                                size: 14,
+                            },
                         },
                     },
                     y: {
@@ -232,6 +254,15 @@
                         title: {
                             display: true,
                             text: "Frequency",
+                            font: {
+                                size: 16,
+                                weight: "bold",
+                            },
+                        },
+                        ticks: {
+                            font: {
+                                size: 14,
+                            },
                         },
                     },
                 },
@@ -240,4 +271,8 @@
     });
 </script>
 
-<canvas bind:this={chart}> </canvas>
+<div
+    class="flex items-center justify-center w-full lg:w-4/5 border-2 rounded-lg border-gray-300 mx-auto mt-4"
+>
+    <canvas bind:this={chart} class="m-4"> </canvas>
+</div>
