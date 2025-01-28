@@ -147,6 +147,7 @@ function parseToSyllableObject(syllable, notationType) {
             for (let nc of neume.nc) {
                 const ncId = nc.$["xml:id"];
                 let ncTilt = nc.$.tilt ? nc.$.tilt : null;
+                let ncCurve = nc.$.curve ? nc.$.curve : null;
 
                 let ncOrnamental = null;
                 nc.liquescent ? ncOrnamental = {
@@ -171,13 +172,13 @@ function parseToSyllableObject(syllable, notationType) {
                     const pitch = nc.$.pname;
                     const octave = nc.$.oct;
 
-                    const nc_SQ = new NeumeComponentSQ(ncId, ncTilt, ncOrnamental, pitch, octave);
+                    const nc_SQ = new NeumeComponentSQ(ncId, ncTilt, ncCurve, ncOrnamental, pitch, octave);
                     neumeComponents.push(nc_SQ);
                 } else if (notationType === "aquitanian") {
                     // Getting the necessary attribute of NeumeComponentAQ
                     const loc = nc.$.loc;
 
-                    const nc_AQ = new NeumeComponentAQ(ncId, ncTilt, ncOrnamental, loc);
+                    const nc_AQ = new NeumeComponentAQ(ncId, ncTilt, ncCurve, ncOrnamental, loc);
                     neumeComponents.push(nc_AQ);
                 }
             }

@@ -1,18 +1,18 @@
 /**
  * An "abstract" class for a Neume Component (`<nc>`).
- * All Neume Components has an id and an optional tilt field.
  */
 export class NeumeComponent {
   /**
    * Constructor of a Neume Component.
-   * @param {String} id (required) the `@xml:id` attribute of the neume component 
-   * @param {*} tilt (optional) the tilt direction of the neume component (e.g., "s", "ne")
-   * @param {*} ornamental (optional) the ornamental shape of the component
-   * 
+   * @param {String} id (required) the ID (@xml:id) of the neume component
+   * @param {String | null} tilt (optional) the tilt direction of the neume component (e.g., "s", "ne")
+   * @param {String | null} curve (optional) the curve direction, "c" for clockwise, and "a" for anticlockwise
+   * @param {Object | null} ornamental (optional) the ornamental shape of the component
    */
-  constructor(id, tilt, ornamental) {
+  constructor(id, tilt, curve, ornamental) {
     this.id = id;
     this.tilt = tilt;
+    this.curve = curve;
     this.ornamental = ornamental;
   }
 }
@@ -23,14 +23,15 @@ export class NeumeComponent {
 export class NeumeComponentSQ extends NeumeComponent {
   /**
    * Constructor of a Neume Component for Square notation.
-   * @param {String} id (required) the `@xml:id` attribute of the neume component
-   * @param {*} tilt (optional) the tilt direction of the neume component (e.g., "s", "ne")
-   * @param {*} ornamental (optional) the ornamental shape of the component
-   * @param {String} pitch pitch name of the note. (e.g. "d")
-   * @param {Number} octave octave of the note. (e.g. 8)
+   * @param {String} id (required) the ID (@xml:id) of the neume component
+   * @param {String | null} tilt (optional) the tilt direction (e.g., "s", "ne")
+   * @param {String | null} curve (optional) the curve direction, "c" for clockwise, and "a" for anticlockwise
+   * @param {Object | null} ornamental (optional) the ornamental shape of the component
+   * @param {String} pitch (required) pitch name of the note. (e.g., "d")
+   * @param {Number} octave (required) octave of the note. (e.g., 8)
    */
-  constructor(id, tilt, ornamental, pitch, octave) {
-    super(id, tilt, ornamental);
+  constructor(id, tilt, curve, ornamental, pitch, octave) {
+    super(id, tilt, curve, ornamental);
     this.pitch = pitch;
     this.octave = Number(octave);
   }
@@ -47,8 +48,8 @@ export class NeumeComponentAQ extends NeumeComponent {
    * @param {*} ornamental (optional) the ornamental shape of the component
    * @param {Number} loc location of the note relative to the staff
    */
-  constructor(id, tilt, ornamental, loc) {
-    super(id, tilt, ornamental);
+  constructor(id, tilt, curve, ornamental, loc) {
+    super(id, tilt, curve, ornamental);
     this.loc = Number(loc);
   }
 }
