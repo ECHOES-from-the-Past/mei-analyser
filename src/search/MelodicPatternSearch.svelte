@@ -4,12 +4,15 @@
     import Tooltip from "@components/Tooltip.svelte";
     import { Label, RadioGroup } from "bits-ui";
     import { onMount } from "svelte";
+    import Checkbox from "@/components/Checkbox.svelte";
 
     const placeholder = `E.g.: "1{2} +1 -2" or "a b? a* g"`;
 
     let { onKeydown } = $props();
     let searchMode = $state(),
         patternInputBox = $state(),
+        excludeHigherLiquescentCheckbox = $state(),
+        excludeLowerLiquescentCheckbox = $state(),
         /** Global error message */ error = $state("");
 
     onMount(() => {
@@ -125,6 +128,10 @@
     export function reset() {
         patternInputBox.setValue("");
         searchMode = "wildcard";
+        persist("search-mode", searchMode);
+
+        excludeHigherLiquescentCheckbox.setUnchecked();
+        excludeLowerLiquescentCheckbox.setUnchecked();
     }
 
     export function getMelodicPatternSearchMode() {
@@ -143,6 +150,13 @@
             // Contour pattern input does not need the RegExp construction step!
             return filterValidContourInput(patternInputBox.getValue());
         }
+    }
+
+    export function getLiquescentExclusion() {
+        return {
+            excludeHigher: excludeHigherLiquescentCheckbox.isChecked(),
+            excludeLower: excludeLowerLiquescentCheckbox.isChecked(),
+        };
     }
 
     // Styling classes
@@ -387,5 +401,13 @@
     {placeholder}
     bind:this={patternInputBox}
 />
+
+<Checkbox value="excl-higher-liquescent" bind:this={excludeHigherLiquescentCheckbox}>
+    Excluding results with higher liquescences
+</Checkbox>
+
+<Checkbox value="excl-lower-liquescent" bind:this={excludeLowerLiquescentCheckbox}>
+    Excluding results with lower liquescences
+</Checkbox>
 
 {error}
