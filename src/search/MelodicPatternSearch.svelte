@@ -403,11 +403,13 @@
 />
 
 <Checkbox value="excl-higher-liquescent" bind:this={excludeHigherLiquescentCheckbox}>
-    Excluding results with higher liquescences
+    <!-- Excluding results with ascending liquescences -->
+    Excluding patterns with ascending liquescences
 </Checkbox>
 
 <Checkbox value="excl-lower-liquescent" bind:this={excludeLowerLiquescentCheckbox}>
-    Excluding results with lower liquescences
+    <!-- Excluding results with descending liquescences -->
+    Excluding patterns with descending liquescences
 </Checkbox>
 
 {error}

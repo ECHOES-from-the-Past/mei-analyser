@@ -50,13 +50,13 @@ function matchChantWithWildcards(chant, wildcardRegex) {
 
     const ncPitchStr = ncArray
         .map((nc) => {
-            if (chant.notationType == "aquitanian") {               
+            if (chant.notationType == "aquitanian") {
                 return nc.loc < 0 ? nc.loc : `+${nc.loc}`;
             } else if (chant.notationType == "square") {
                 return nc.pitch;
             }
         })
-        .join("");    
+        .join("");
 
     let patternMatches = ncPitchStr.matchAll(wildcardRegex);
     let patterns = [];
@@ -66,7 +66,7 @@ function matchChantWithWildcards(chant, wildcardRegex) {
         // matchIter[0] = the matching pattern
         // slice: takes in the starting index and the ending index (starting + pattern's length)
         if (chant.notationType == "aquitanian") {
-            patterns.push(ncArray.slice(matchIter.index/2, matchIter.index/2 + matchIter[0].length/2));
+            patterns.push(ncArray.slice(matchIter.index / 2, matchIter.index / 2 + matchIter[0].length / 2));
         } else if (chant.notationType == "square") {
             patterns.push(ncArray.slice(matchIter.index, matchIter.index + matchIter[0].length));
         }
@@ -140,18 +140,22 @@ function matchChantWithContour(chant, contourArray) {
  * @param {Chant[]} chantList
  * @param {RegExp | Number[]} searchInput a search regular expression pattern to match with the pitches, or contour array
  * @param {string} searchMode `wildcard` & `contour`
+ * @param {{"excludeHigher": boolean, "excludeLower": boolean}} liquescentExclusion filtering the search result from melodic pattern serach by the liquescent exclusion options
  * @returns {SearchResult[]} list of SearchResult object, each contains the chant and its detected melodic pattern
  */
-export function filterByMelodicPattern(chantList, searchInput, searchMode) {
-    console.log("searchInput: ", searchInput);
+export function filterByMelodicPattern(chantList, searchInput, searchMode, liquescentExclusion) {
     let searchResults = [];
-
-    let /** @type {NeumeComponent[][]} */ patterns = [];
 
     if (!searchInput || searchInput.length == 0 || String(searchInput) == String(RegExp("", "gi"))) {
         chantList.forEach((chant) => searchResults.push(new SearchResult(chant, [])));
     } else {
         for (let chant of chantList) {
+            /**
+             * A list of Neume Components that matches the input search pattern
+             * @type {NeumeComponent[][]} 
+            */
+            let patterns = [];
+
             switch (searchMode) {
                 case 'wildcard': {
                     patterns = matchChantWithWildcards(chant, searchInput);
@@ -166,10 +170,29 @@ export function filterByMelodicPattern(chantList, searchInput, searchMode) {
                     break;
                 }
             }
+
+            // filtering the search result by the liquescent exclusion options
+            if (patterns.length > 0) {
+                if (liquescentExclusion.excludeHigher) {
+                    /*
+                    filter() pattern `p` in `patterns`
+                    such that in each `p`, every Neume Component `nc`
+                    doesn't its curve `nc.curve` is a 'c' or 'a'.
+                    From that, we would have `patterns` without any curve=a or curve=c `nc`s
+                    */
+                    patterns = patterns.filter((p) => p.every((nc) => nc.curve != 'a'));
+                }
+
+                if (liquescentExclusion.excludeLower) {
+                    patterns = patterns.filter((p) => p.every((nc) => nc.curve != 'c'));
+                }
+            }
+
             if (patterns.length > 0) {
                 searchResults.push(new SearchResult(chant, patterns));
             }
         }
+
     }
 
     return searchResults;
