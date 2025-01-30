@@ -28,6 +28,7 @@
             spotlightText(mp.syllableWord);
         });
     }
+
     let verovioToolkit = $state(async () => {
         createVerovioModule().then((VerovioModule) => {
             // This line initializes the Verovio toolkit
@@ -94,7 +95,9 @@
     });
 </script>
 
-<div class="shadow-md box-border rounded-md p-1 border-2 border-emerald-100 m-4">
+<div
+    class="shadow-md box-border rounded-md p-1 border-2 border-emerald-100 m-4"
+>
     {@html svg}
     {#if error}
         <hr />

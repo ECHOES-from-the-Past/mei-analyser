@@ -9,12 +9,11 @@
     import Tooltip from "@components/Tooltip.svelte";
     import TextInput from "@components/TextInput.svelte";
 
-    import MelodicPatternInput from "@search/MelodicPatternInput.svelte";
+    import MelodicPatternSearch from "@/search/MelodicPatternSearch.svelte";
 
     import {
         Chant,
         SearchResult,
-        NeumeComponent,
     } from "@utility/components.js";
     import {
         filterByMusicScript,
@@ -41,7 +40,7 @@
         /** @type {Checkbox} */ quilismaCheckbox = $state(),
         /** @type {Checkbox} */ oriscusCheckbox = $state();
 
-    let /** @type {MelodicPatternInput} */ melodicPatternInput = $state();
+    let /** @type {MelodicPatternSearch} */ melodicPatternSearch = $state();
 
     let /** @type {TextInput} */ finalisInputBox = $state(),
         /** @type {TextInput} */ textInputBox = $state(),
@@ -146,8 +145,9 @@
          */
         let melodicPatternResults = filterByMelodicPattern(
             resultListOfChants,
-            melodicPatternInput.getMelodicPatternInput(),
-            melodicPatternInput.getMelodicPatternSearchMode(),
+            melodicPatternSearch.getMelodicPatternInput(),
+            melodicPatternSearch.getMelodicPatternSearchMode(),
+            melodicPatternSearch.getLiquescentExclusion()
         );
 
         /* Return the result */
@@ -184,7 +184,7 @@
         let /**@type {SearchResult[]}*/ result = performSearch();
 
         // Add a time delay for a feedback, since this is really fast
-        var delayMs = 60; // ms
+        var delayMs = 80; // ms
         setTimeout(() => {
             mount(ResultTable, {
                 target: searchResultDiv,
@@ -204,7 +204,7 @@
         );
         finalisInputBox.setValue("");
         textInputBox.setValue("");
-        melodicPatternInput.reset();
+        melodicPatternSearch.reset();
 
         melismaHighlight.setUnchecked();
         verovioRendition.setChecked();
@@ -255,8 +255,8 @@
 
             <!-- Search by melodic pattern -->
 
-            <MelodicPatternInput
-                bind:this={melodicPatternInput}
+            <MelodicPatternSearch
+                bind:this={melodicPatternSearch}
                 onKeydown={searchOnEnter}
             />
 

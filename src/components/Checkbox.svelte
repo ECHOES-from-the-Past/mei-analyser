@@ -1,13 +1,12 @@
 <script>
     import { Checkbox, Label } from "bits-ui";
     import { persist, retrieve } from "@utility/utils";
-    import { blur } from "svelte/transition";
 
     const label = `${value}-label`;
     /**
      * @typedef {Object} Props
-     * @property {any} value
-     * @property {any} [id]
+     * @property {String} value (required) The "code" value of the checkbox
+     * @property {any} [id] The id of the checkbox, default is `${value}-checkbox`
      * @property {boolean} [disabled]
      * @property {import('svelte').Snippet} [children]
      */
