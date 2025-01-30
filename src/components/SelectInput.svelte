@@ -1,7 +1,8 @@
 <script>
+    import { persist, retrieve } from "@/utility/utils";
     import { Combobox } from "bits-ui";
 
-    let inputValue = $state();
+    let inputValue = $state(retrieve(id) == null ? "" : retrieve(id));
     let availableOptions = $state();
 
     /**
@@ -43,6 +44,7 @@
         aria-label={placeholder}
         class="w-full border-2 border-emerald-600 rounded-md px-2 py-1 my-1"
         onkeydown={onKeydown}
+        onkeyup={() => {persist(id, inputValue)}}
     />
 
     <Combobox.Content
