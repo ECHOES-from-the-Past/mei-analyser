@@ -142,8 +142,12 @@ function parseToSyllableObject(syllable, notationType) {
     // Getting all the neume components enclosed in the syllable
     let neumeComponents = [];
     if (syllable.neume != undefined) {
-        const neumeList = syllable.neume;
-        for (let neume of neumeList) {
+        // Iterating through all the neume components <neume> in the syllable
+        for (let neume of syllable.neume) {
+            if(neume.nc == undefined) {
+                continue;
+            }
+            // Iterating through all the <nc> in the neume
             for (let nc of neume.nc) {
                 const ncId = nc.$["xml:id"];
                 let ncTilt = nc.$.tilt ? nc.$.tilt : null;
