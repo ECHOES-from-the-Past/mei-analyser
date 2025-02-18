@@ -14,27 +14,29 @@
 
 <Dialog.Root>
     <Dialog.Trigger>
-        <Tooltip.Root>
-            <Tooltip.Trigger
-                class="inline-flex size-6 items-center justify-center rounded-full mx-1
+        <Tooltip.Provider>
+            <Tooltip.Root>
+                <Tooltip.Trigger
+                    class="inline-flex size-6 items-center justify-center rounded-full mx-1
 	border-2 border-emerald-800 hover:border-emerald-400 shadow-md bg-white transition-colors"
-            >
-                i
-            </Tooltip.Trigger>
-
-            <Tooltip.Content
-                transition={fly}
-                transitionConfig={{ y: 2, duration: 200 }}
-                sideOffset={5}
-                side="right"
-            >
-                <div
-                    class="border-2 border-emerald-600 p-2 rounded-lg bg-white"
                 >
-                    Need more info?
-                </div>
-            </Tooltip.Content>
-        </Tooltip.Root>
+                    i
+                </Tooltip.Trigger>
+
+                <Tooltip.Content
+                    transition={fly}
+                    transitionConfig={{ y: 2, duration: 200 }}
+                    sideOffset={5}
+                    side="right"
+                >
+                    <div
+                        class="border-2 border-emerald-600 p-2 rounded-lg bg-white"
+                    >
+                        Need more info?
+                    </div>
+                </Tooltip.Content>
+            </Tooltip.Root>
+        </Tooltip.Provider>
     </Dialog.Trigger>
 
     <Dialog.Portal>

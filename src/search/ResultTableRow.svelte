@@ -254,7 +254,7 @@
             Current 0.22.0 / Svelte 4 version:
             https://github.com/huntabyte/bits-ui/blob/338e6058327a3e1d42532bdcfeeb481139e04571/packages/bits-ui/src/lib/bits/accordion/components/accordion.svelte
             -->
-            <Accordion.Root class="w-full" multiple>
+            <Accordion.Root class="w-full" type="multiple">
                 <!-- Chant Information -->
                 <Accordion.Item value="chant-info" class={accordionItem}>
                     <Accordion.Header>
@@ -266,7 +266,7 @@
                         </Accordion.Trigger>
                     </Accordion.Header>
                     <Accordion.Content>
-                        <div class="flex" transition:slide>
+                        <div class="flex" transition:slide={{ duration: 1000 }}>
                             <ChantDetails {chant} />
                         </div>
                     </Accordion.Content>

@@ -20,25 +20,20 @@
     } = $props();
 
     /** @type {boolean} */
-    let check = $state(retrieve(id) == true);
-
-    function update() {
-        check = !check;
-        persist(id, check);
-    }
+    let checked = $state(retrieve(id) == true);
 
     export function isChecked() {
-        return check;
+        return checked;
     }
 
     export function setChecked() {
-        check = true;
-        persist(id, check);
+        checked = true;
+        persist(id, checked);
     }
 
     export function setUnchecked() {
-        check = false;
-        persist(id, check);
+        checked = false;
+        persist(id, checked);
     }
 </script>
 
@@ -48,18 +43,31 @@
         aria-labelledby={label}
         class="flex items-center justify-center rounded-md border border-emerald-800 size-6 my-2 mx-1 shrink-0"
         {disabled}
-        bind:checked={check}
-        on:click={update}
+        bind:checked
+        onCheckedChange={() => {
+            persist(id, checked);
+        }}
     >
-        <Checkbox.Indicator
+        {#snippet children({ checked })}
+            <div
+                class="text-background inline-flex items-center justify-center"
+            >
+                {#if checked}
+                    <span class="text-emerald-800 font-semibold text-sm">
+                        ✔
+                    </span>
+                {:else}
+                    <span class="text-emerald-100 font-semibold text-sm">
+                        ✗
+                    </span>
+                {/if}
+            </div>
+        {/snippet}
+        <!-- <Checkbox.Indicator
             class="inline-flex items-center justify-center shirnk-0"
         >
-            {#if check}
-                <span class="text-emerald-800 font-semibold text-sm"> ✔ </span>
-            {:else}
-                <span class="text-emerald-100 font-semibold text-sm"> ✗ </span>
-            {/if}
-        </Checkbox.Indicator>
+            
+        </Checkbox.Indicator> -->
     </Checkbox.Root>
     <Label.Root
         id={label}
