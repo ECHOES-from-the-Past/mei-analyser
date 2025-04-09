@@ -2,9 +2,7 @@
   import { persist, retrieve } from "@/utility/utils";
   import { Combobox } from "bits-ui";
 
-  // let inputValue = $state(retrieve(id) == null ? "" : retrieve(id));
-  
-  let availableOptions = $state();
+    let availableOptions = $state();
 
   /**
    * @typedef {Object} Props
