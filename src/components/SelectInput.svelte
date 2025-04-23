@@ -2,8 +2,6 @@
   import { persist, retrieve } from "@/utility/utils";
   import { Combobox } from "bits-ui";
 
-    let availableOptions = $state();
-
   /**
    * @typedef {Object} Props
    * @property {string} [placeholder] - export let id = "search-dropdown";
@@ -15,19 +13,32 @@
     id,
     allOptions = ["Placeholder 1", "Placeholder 2"],
     placeholder = "input-something-here",
-    inputValue = $bindable(),
     onKeydown,
   } = $props();
 
-  $effect(() => {
+  let availableOptions = $state(allOptions);
+  let inputValue = $state("");
+  let displayOptions = $derived(availableOptions.slice(0,8))
+
+  // $effect(() => {
+  //   availableOptions = allOptions.filter((item) => {
+  //     // check if item is a list
+  //     if (typeof item == "object") {
+  //       return item[0].toLowerCase().includes(inputValue.toLowerCase());
+  //     }
+  //     return item.toLowerCase().includes(inputValue.toLowerCase());
+  //   });
+  // });
+
+  function filterOptions() {
     availableOptions = allOptions.filter((item) => {
-      // check if item is a list
-      if (typeof item == "object") {
-        return item[0].toLowerCase().includes(inputValue.toLowerCase());
-      }
+      // // check if item is a list
+      // if (typeof item == "object") {
+      //   return item[0].toLowerCase().includes(inputValue.toLowerCase());
+      // }
       return item.toLowerCase().includes(inputValue.toLowerCase());
     });
-  });
+  }
 
   export function getInputValue() {
     return inputValue;
@@ -38,22 +49,26 @@
   }
 </script>
 
-<Combobox.Root bind:inputValue type="multiple" name="combobox" {id}>
+<Combobox.Root type="multiple" name="combobox" {id}>
+  <!-- Input field of the combobox -->
   <Combobox.Input
     {placeholder}
     aria-label={placeholder}
     class="w-full border-2 border-emerald-600 rounded-md px-2 py-1 my-1"
-    oninput={() => {
+    oninput={(e) => {
+      inputValue = e.currentTarget.value;
       persist(id, inputValue);
+      filterOptions();
     }}
-  ></Combobox.Input>
+  />
+
   <Combobox.Portal>
     <Combobox.Content
-      class="w-full border border-emerald-800 bg-gray-50 px-1 py-2 rounded-md shadow-lg"
+    class="w-full border border-emerald-800 bg-gray-50 px-1 py-2 rounded-md shadow-lg"
     >
       <Combobox.Viewport>
         {#if availableOptions.length > 0}
-          {#each availableOptions.slice(0, 8) as option}
+          {#each availableOptions as option}
             <Combobox.Item
               value={option}
               label={option}
