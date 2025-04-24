@@ -18,14 +18,10 @@
   let inputValue = $state("");
   let selection = $state("");
   let availableOptions = $state(allOptions);
-  let displayOptions = $derived(availableOptions.slice(0, 8));
+  let displayOptions = $derived(availableOptions.slice(0, 7));
 
   $effect(() => {
     availableOptions = allOptions.filter((item) => {
-      // check if item is a list
-      if (typeof item == "object") {
-        return item[0].toLowerCase().includes(inputValue.toLowerCase());
-      }
       return item.toLowerCase().includes(inputValue.toLowerCase());
     });
   });
@@ -48,10 +44,9 @@
   {id}
   bind:value={getInputValue, setInputValue}
   type="single"
-  allowDeselect="true"
+  allowDeselect="false"
 >
   <!-- Input field of the combobox -->
-  <!-- TODO: onKeydown still ignores the selection on first try -->
   <Combobox.Input
     {placeholder}
     aria-label={placeholder}
@@ -61,7 +56,7 @@
     }}
     onkeydown={(e) => {
       if (e.key == "Enter") {
-        if (selection != inputValue && selection != "") {
+        if (inputValue != selection && selection != "") {
           inputValue = selection;
         }
       }
@@ -75,24 +70,28 @@
       class="transition-all ease-in-out w-[var(--bits-combobox-anchor-width)] min-w-[var(--bits-combobox-anchor-width)] border border-emerald-800 bg-gray-50 px-1 py-2 rounded-md shadow-lg"
     >
       <!-- Available options -->
-      {#if availableOptions.length > 0}
-        <!-- displayOptions is derrived value of avaiableOptions -->
-        {#each [inputValue, ...displayOptions] as option}
-          <Combobox.Item
-            value={option}
-            label={option}
-            class="flex h-10 w-full select-none items-center py-3 px-1 transition-all data-[highlighted]:bg-emerald-300 border-b border-emerald-500"
-            onkeydown={() => {
-              selection = option;
-            }}
-          >
-            {option}
-          </Combobox.Item>
-        {/each}
+      <!-- {#if availableOptions.length > 0} -->
+      <!-- displayOptions is derrived value of avaiableOptions -->
+      {#each [inputValue, ...displayOptions] as option}
+        <Combobox.Item
+          value={option}
+          label={option}
+          class="flex h-10 w-full select-none items-center py-3 px-1 transition-all data-[highlighted]:bg-emerald-300 border-b border-emerald-500 first:font-bold first:text-emerald-900"
+          onHighlight={() => {
+            selection = option;
+          }}
+          onUnhighlight={() => {
+            selection = "";
+          }}
+        >
+          {option}
+        </Combobox.Item>
+      {/each}
+      {#if availableOptions.length > displayOptions.length}
         <span class="block italic px-5 py-2 text-sm text-emerald-700">
           and more...
         </span>
-      {:else}
+      {:else if !availableOptions}
         <span class="block px-5 py-2 text-sm text-gray-500">
           No results found
         </span>
