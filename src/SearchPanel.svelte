@@ -223,7 +223,7 @@
     }
 </script>
 
-<div id="search-panel-grid" class="grid grid-cols-[1fr_3fr]">
+<div id="search-panel-grid" class="grid md:grid-cols-2 lg:grid-cols-[2fr_3fr] xl:grid-cols-[1fr_3fr]">
     <!-- Start of leftside search panel -->
     <div id="search-filters">
         <Section id="search-filters">
@@ -297,7 +297,7 @@
             <SelectInput
                 bind:this={titleComboBox}
                 id="title-dropdown-filter"
-                placeholder="Search by a title"
+                placeholder={`Title - e.g., "Benedictus"`}
                 allOptions={[
                     ...new Set(
                         listOfChants.map(
@@ -311,7 +311,7 @@
             <SelectInput
                 bind:this={sourceComboBox}
                 id="source-dropdown-filter"
-                placeholder="Search by a chant's source"
+                placeholder={`Source - e.g., "P-BRs Ms. 034"`}
                 allOptions={[
                     ...new Set(
                         listOfChants.map(
@@ -325,7 +325,7 @@
             <SelectInput
                 bind:this={cantusIdComboBox}
                 id="cantusid-dropdown-filter"
-                placeholder="Search by Cantus ID"
+                placeholder={`Cantus ID - e.g.: "g00398"`}
                 allOptions={[
                     ...new Set(
                         listOfChants.map(

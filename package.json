@@ -1,6 +1,6 @@
 {
   "name": "mei-analyser",
-  "version": "0.6.4",
+  "version": "0.6.5",
   "description": "A prototyping tool for searching and analysing MEI files. Made for project ECHOES from The Past.",
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^5.0.3",

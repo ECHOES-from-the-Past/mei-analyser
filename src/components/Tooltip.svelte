@@ -43,21 +43,21 @@
         <Dialog.Overlay />
         <Dialog.Content
             transition={fly}
-            class="fixed left-[50%] top-[50%] z-50 w-[80%] translate-x-[-50%] translate-y-[-50%] border-4 border-emerald-700 bg-white p-5 rounded-lg shadow-lg"
+            class="fixed left-[50%] top-[50%] z-50 w-[80%] translate-x-[-50%] translate-y-[-50%] border-4 border-emerald-700 bg-white p-5 rounded-xl shadow-lg"
         >
             <Dialog.Title
-                class="flex w-full items-center justify-center text-lg font-semibold tracking-tight"
+                class="flex w-full mb-6 items-center justify-center text-lg font-semibold tracking-tight border-b-4 border-b-emerald-700 border-dotted"
             >
                 {#if title}{@render title()}{:else}
                     Tooltip title. To fill in the title, use
-                    <code>{`<div slot="title"> Title </div>`}</code>
+                    <code>{`{#snippet title()} Title {/snippet}`}</code>
                     in your component.
                 {/if}
             </Dialog.Title>
             <Dialog.Description>
                 {#if content}{@render content()}{:else}
                     Tooltip description placeholder. To fill in the content, use
-                    <code>{`<div slot="content"> Content </div>`}</code>
+                    <code>{`{#snippet content()} Content, in HTML {/snippet}`}</code>
                     in your component.
                 {/if}
             </Dialog.Description>
