@@ -35,7 +35,7 @@
   }
 
   export function reset() {
-    inputValue = "";
+    setInputValue("");
   }
 </script>
 
@@ -51,6 +51,7 @@
     {placeholder}
     aria-label={placeholder}
     class="w-full border-2 border-emerald-600 rounded-md px-2 py-1 my-1"
+    clearOnDeselect=false
     oninput={(e) => {
       inputValue = e.currentTarget.value;
     }}
