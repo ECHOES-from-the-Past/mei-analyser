@@ -46,7 +46,7 @@
             class="fixed left-[50%] top-[50%] z-50 w-[80%] translate-x-[-50%] translate-y-[-50%] border-4 border-emerald-700 bg-white p-5 rounded-xl shadow-lg"
         >
             <Dialog.Title
-                class="flex w-full mb-6 items-center justify-center text-lg font-semibold tracking-tight border-b-4 border-b-emerald-700 border-dotted"
+                class="flex w-full mb-4 items-center justify-center text-lg font-semibold tracking-tight border-b-2 border-b-emerald-900 border-dotted"
             >
                 {#if title}{@render title()}{:else}
                     Tooltip title. To fill in the title, use

@@ -50,7 +50,7 @@ g {
 }
 
 code {
-  @apply font-mono text-white bg-emerald-700 p-1 rounded-lg border-[0.5px] border-emerald-200;
+  @apply font-mono text-white bg-emerald-700 py-[0.125rem] px-1 rounded-md;
 }
 
 p {
@@ -58,11 +58,16 @@ p {
 }
 
 ul {
-  @apply list-disc list-inside indent-2;
+  @apply list-disc list-outside pl-6;
 }
 
 li {
   @apply my-1;
+  
+}
+
+li > ul {
+  @apply list-[circle] list-outside pl-4 lg:pl-8;
 }
 
 a {

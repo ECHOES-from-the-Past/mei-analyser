@@ -208,13 +208,16 @@
                         characters and the plus sign "+" for positive integers
                         are <i> optional </i>.
                     </p>
+                    <p>
+                        The wildcards follow the conventional <i
+                            >regular expression</i
+                        > standard.
+                    </p>
                     <hr />
                     <ul>
                         <li>
                             Use a dot <b><code>.</code></b> to search for one
-                            arbitrary note.
-                            <br />
-                            For example:
+                            arbitrary note. For example:
                             <ul>
                                 <li>
                                     <code>d . a</code> will look for the
@@ -308,12 +311,6 @@
                             </ul>
                         </li>
                     </ul>
-                    <hr />
-                    <p>
-                        The wildcards follow the conventional <i
-                            >regular expression</i
-                        > standard.
-                    </p>
                 </div>
             {/snippet}
         </Tooltip>
@@ -337,7 +334,7 @@
                             can be separated optionally by a space. For example:
                             <ul>
                                 <li>
-                                    <code>+1</code> indicates one step up - either
+                                    <code>+1</code> or <code>1</code> indicates one step up - either
                                     a semitone or a tone - from the previous note
                                 </li>
                                 <li>
@@ -350,8 +347,8 @@
                                 <li>
                                     Example of a search query:
                                     <code>+2 -1 0 +1 +1</code> will search for patterns
-                                    that go two steps up, one step down, unison,
-                                    two steps up, and one step up.
+                                    that go <i>two steps up, one step down, unison,
+                                    two steps up, and one step up</i>.
                                 </li>
                             </ul>
                         </li>
