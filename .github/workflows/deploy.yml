@@ -39,7 +39,7 @@ jobs:
           cache: 'npm'
       - name: Install dependencies
         run: npm install
-      - name: Build Webpage & Documentation
+      - name: Build Webpage
         run: npm run build
       - name: Upload artifact
         uses: actions/upload-artifact@v4
