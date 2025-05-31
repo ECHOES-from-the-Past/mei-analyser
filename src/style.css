@@ -45,10 +45,6 @@ ul {
   @apply m-0;
 }
 
-g {
-  @apply fill-current;
-}
-
 code {
   @apply font-mono text-white bg-emerald-700 py-[0.125rem] px-1 rounded-md;
 }

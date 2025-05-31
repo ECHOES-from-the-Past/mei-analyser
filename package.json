@@ -7,8 +7,8 @@
     "@types/verovio": "^3.13.4",
     "@types/xml2js": "^0.4.14",
     "autoprefixer": "^10.4.21",
-    "postcss": "^8.5.3",
-    "svelte": "^5.33.2",
+    "postcss": "^8.5.4",
+    "svelte": "^5.33.10",
     "tailwindcss": "^3.4.17",
     "vite": "^6.3.5"
   },
@@ -25,7 +25,7 @@
     "@octokit/core": "^6.1.5",
     "bits-ui": "^1.8.0",
     "chart.js": "^4.4.9",
-    "verovio": "^5.3.0",
+    "verovio": "^5.3.2",
     "xml2js": "^0.6.2"
   }
 }
