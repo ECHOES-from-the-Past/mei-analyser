@@ -185,7 +185,7 @@
         <RadioGroup.Item id="wildcard" value="wildcard" class={radioGroupItem}
         ></RadioGroup.Item>
         <Label.Root for="wildcard" class={labelRoot}>
-            Pitch (wildcards)
+            Note pitches/Location (wildcards)
         </Label.Root>
 
         <Tooltip id="wildcard-tooltip">
