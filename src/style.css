@@ -14,7 +14,7 @@
   --highlight-stroke: hsl(276, 100%, 31%);
   --melodic-pattern-gabc: hsla(276, 100%, 75%, 0.596);
 
-  --spotlight-fill: hsla(276, 74%, 51%, 0.075);
+  --spotlight-fill: hsla(276, 74%, 51%, 0.2);
   --spotlight-stroke: hsla(276, 100%, 31%, 0.466);
 
   /* Gap highlighting */

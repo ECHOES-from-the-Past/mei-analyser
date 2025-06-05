@@ -1,4 +1,4 @@
-import { NeumeComponent, SyllableWord } from './components.js';
+import { NeumeComponent, SyllableWord } from "./components.js";
 
 /*
 Note for utility functions: These functions are primarily used on the client side (DOM)
@@ -13,7 +13,7 @@ console.debug(`Current environment: ${env}`);
  * @param {Number} certaintyPercentage the certainty percentage of the search result
  * @returns the certainty percentage
  * @example displayCertainty(0.8) --> "80%"
-*/
+ */
 export function displayCertainty(certaintyPercentage) {
   return (certaintyPercentage.toFixed(2) * 100).toFixed(0) + "%";
 }
@@ -51,13 +51,13 @@ export async function loadMEIFile(fileName) {
  * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
  */
 export function spotlightText(syllableWord) {
-  let color = 'var(--melisma-text)';
+  let color = "var(--melisma-text)";
   const syllableWords = document.querySelectorAll(`[id="${syllableWord.id}"]`);
   syllableWords.forEach((text) => {
-    let tspan = text.querySelector('tspan');
+    let tspan = text.querySelector("tspan");
     tspan.style.fill = color;
     tspan.style.fontWeight = "600";
-  })
+  });
 }
 
 /**
@@ -66,81 +66,106 @@ export function spotlightText(syllableWord) {
  * @param {String} color the fill colour of the surrounding box (default: 'rgba(149, 48, 217, 0.6)' - purple)
  * @param {String} stroke_color the stroke colour of the surrounding box (default: 'rgba(149, 48, 217, 1)' - purple)
  */
-export function spotlightNeumeComponent(neumeComponent, color = 'var(--spotlight-fill)', stroke_color = 'var(--spotlight-stroke)') {
+export function spotlightNeumeComponent(
+  neumeComponent,
+  color = "var(--spotlight-fill)",
+  stroke_color = "var(--spotlight-stroke)"
+) {
   const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
   nc_svg.forEach((nc) => {
-    const x_coord = nc.querySelector('use').attributes.getNamedItem('x').value;
-    const y_coord = nc.querySelector('use').attributes.getNamedItem('y').value;
-    const width = '300';
-    const height = '400';
+    // Newer version of Verovio gives "translate(438, 4653) scale(0.72, 0.72)"
+    // Translate (x, y), horizontal L2R, vertical T2B
+    let ncTransform = nc
+      .querySelector("use")
+      .attributes.getNamedItem("transform").value;
+    let coords = ncTransform.match(/\d+\.?\d+/g);
+    let x_coord = coords[0],
+      y_coord = coords[1];
+
+    const width = "300";
+    const height = "400";
 
     // construct a spotlight rectangle to highlight the neume component
-    const spotlight = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-    spotlight.setAttribute('class', 'spotlight-rect');
-    spotlight.setAttribute('x', x_coord - width / 3);
-    spotlight.setAttribute('y', y_coord - height / 2);
-    spotlight.setAttribute('width', width);
-    spotlight.setAttribute('height', height);
-    spotlight.setAttribute('fill', color);
-    spotlight.setAttribute('stroke', stroke_color);
-    spotlight.setAttribute('stroke-width', '30px');
+    const spotlight = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "rect"
+    );
+    spotlight.setAttribute("class", "spotlight-rect");
+    spotlight.setAttribute("x", x_coord - width / 3);
+    spotlight.setAttribute("y", y_coord - height / 2);
+    spotlight.setAttribute("width", width);
+    spotlight.setAttribute("height", height);
+    spotlight.setAttribute("fill", color);
+    spotlight.setAttribute("stroke", stroke_color);
+    spotlight.setAttribute("stroke-width", "30px");
     // Display the spotlight rectangle
     nc.appendChild(spotlight);
   });
 }
 
 /**
-   * Highlight the neume component.
-   * @param {NeumeComponent} nc the NeumeComponent object
-   * @param {String} color the fill colour of the neume component (default: 'rgba(149, 48, 217, 0.6)' - purple)
-   * @param {String} stroke_color the stroke colour of the neume component (default: 'rgba(149, 48, 217, 1)' - purple)
-   */
-export function highlightNeumeComponent(neumeComponent, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
+ * Highlight the neume component.
+ * @param {NeumeComponent} nc the NeumeComponent object
+ * @param {String} color the fill colour of the neume component (default: 'rgba(149, 48, 217, 0.6)' - purple)
+ * @param {String} stroke_color the stroke colour of the neume component (default: 'rgba(149, 48, 217, 1)' - purple)
+ */
+export function highlightNeumeComponent(
+  neumeComponent,
+  color = "var(--highlight-fill)",
+  stroke_color = "var(--highlight-stroke)"
+) {
   const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
   nc_svg.forEach((nc) => {
     nc.style.fill = color;
     nc.style.stroke = stroke_color;
-    nc.style.strokeWidth = '30px';
+    nc.style.strokeWidth = "30px";
   });
 }
 
-export function highlightSvgElementById(svgID, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)') {
+export function highlightSvgElementById(
+  svgID,
+  color = "var(--highlight-fill)",
+  stroke_color = "var(--highlight-stroke)"
+) {
   const nc_svg = document.querySelectorAll(`[id="${svgID}"]`);
   nc_svg.forEach((nc) => {
     nc.style.fill = color;
     nc.style.stroke = stroke_color;
-    nc.style.strokeWidth = '30px';
+    nc.style.strokeWidth = "30px";
   });
 }
 /**
- * 
+ *
  */
 export function unhighlight(neumeComponent) {
   const nc_svg = document.querySelectorAll(`[id="${neumeComponent.id}"]`);
   nc_svg.forEach((nc) => {
-    nc.style.fill = 'black';
+    nc.style.fill = "black";
   });
 }
-
 
 export function clearAllHighlights() {
   const allNeumeComponents = document.querySelectorAll("g.nc");
   // Clear all highlighted neume components
-  allNeumeComponents.forEach(element => {
+  allNeumeComponents.forEach((element) => {
     // @ts-ignore
-    element.style.fill = 'black';
+    element.style.fill = "black";
     // @ts-ignore
-    element.style.strokeWidth = '0px';
+    element.style.strokeWidth = "0px";
   });
   // Clear all spotlight rectangles
-  document.querySelectorAll('.spotlight-rect').forEach(e => e.remove());
+  document.querySelectorAll(".spotlight-rect").forEach((e) => e.remove());
 }
 
 /**
  * Highlighting a pattern of neume components on the screen
  * @param {NeumeComponent[]} pattern an array neume components
  */
-export function highlightPattern(pattern, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)'){
+export function highlightPattern(
+  pattern,
+  color = "var(--highlight-fill)",
+  stroke_color = "var(--highlight-stroke)"
+) {
   for (const nc of pattern) {
     highlightNeumeComponent(nc, color, stroke_color);
   }
@@ -150,7 +175,11 @@ export function highlightPattern(pattern, color = 'var(--highlight-fill)', strok
  * Spotlight a pattern of neume components on the screen
  * @param {NeumeComponent[]} pattern an array neume components
  */
-export function spotlightPattern(pattern, color = 'var(--highlight-fill)', stroke_color = 'var(--highlight-stroke)'){
+export function spotlightPattern(
+  pattern,
+  color = "var(--spotlight-fill)",
+  stroke_color = "var(--spotlight-stroke)"
+) {
   for (const nc of pattern) {
     spotlightNeumeComponent(nc, color, stroke_color);
   }
@@ -194,8 +223,8 @@ export function clearStorage() {
 }
 
 /**
- * 
- * @param {String} key 
+ *
+ * @param {String} key
  * @returns true if the key exists in the local storage, false otherwise
  */
 export function checkPersistanceExists(key) {
